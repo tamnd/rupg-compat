@@ -205,6 +205,11 @@ fn unknown(dir: Dir) -> &'static Spec {
 }
 
 impl Msg {
+    /// A message of the named type. An unknown name gives the raw `Message` type.
+    pub(crate) fn new(dir: Dir, name: &str, vals: Vec<Val>) -> Msg {
+        Msg { spec: spec_by_name(dir, name).unwrap_or_else(|| unknown(dir)), vals }
+    }
+
     pub(crate) fn name(&self) -> &'static str {
         self.spec.name
     }

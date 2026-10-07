@@ -9,12 +9,15 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
 mod args;
+mod client;
 mod frame;
 mod levels;
 mod message;
 mod oracle;
 mod pins;
 mod proxy;
+mod replay;
+mod scram;
 mod toml;
 mod trace;
 
@@ -34,6 +37,8 @@ commands:
   proxy --out FILE          record every connection to the oracle until stopped (--listen ADDR)
   record <name> [-- CMD]    run CMD, or clients/<name>/run.sh, through the proxy and write a trace
                             (default: corpus/traces/<name>.trace, --out FILE)
+  replay TRACE...           reset the databases of each trace, send it to the oracle and compare the answers
+                            (--server ADDR for another server, --timeout S, --out FILE)
   trace FILE...             check that each line of a trace parses and count its messages
 
 options:
@@ -78,6 +83,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("proxy") => proxy_command(args, &pins)?,
         Some("record") => return record_command(args, &pins),
         Some("trace") => trace_command(args)?,
+        Some("replay") => return replay_command(args, &pins),
         None if args.flag("help") => println!("{USAGE}"),
         _ if args.words.is_empty() && args.rest.is_empty() => {
             eprintln!("{USAGE}");
@@ -169,6 +175,17 @@ fn oracle_addr(o: &Oracle) -> SocketAddr {
     SocketAddr::from(([127, 0, 0, 1], o.port()))
 }
 
+/// The database that `record` gives to a client.
+const RECORD_DATABASE: &str = "compat";
+
+fn oracle_target(o: &Oracle) -> client::Target {
+    client::Target {
+        addr: oracle_addr(o),
+        user: oracle::USER.into(),
+        password: oracle::PASSWORD.into(),
+    }
+}
+
 fn proxy_command(args: &Args, pins: &Pins) -> Result<(), String> {
     args.only(&["compat-version", "listen", "out"])?;
     let o = running_oracle(args, pins)?;
@@ -221,12 +238,16 @@ fn record_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     }
     let what =
         if args.rest.is_empty() { format!("clients/{name}/run.sh") } else { args.rest.join(" ") };
+    // Each recording starts from a new database, and replay makes the same database again.
+    client::reset_database(&oracle_target(&o), RECORD_DATABASE)?;
     let p = proxy::Proxy::start("127.0.0.1:0", oracle_addr(&o), &out, &trace_header(&o, &what))?;
     // The proxy does not speak TLS, so the client must not require it.
     for (k, v) in o.env() {
         cmd.env(k, v);
     }
-    cmd.env("PGPORT", p.addr.port().to_string()).env("PGSSLMODE", "disable");
+    cmd.env("PGPORT", p.addr.port().to_string())
+        .env("PGSSLMODE", "disable")
+        .env("PGDATABASE", RECORD_DATABASE);
     let status = cmd.status().map_err(|e| format!("{what}: {e}"));
     p.finish()?;
     let status = status?;
@@ -260,4 +281,92 @@ fn trace_command(args: &Args) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// The databases that the connections of a trace open.
+fn trace_databases(t: &trace::Trace) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    for m in t.lines.iter().filter_map(trace::Line::msg).filter(|m| m.name() == "StartupMessage") {
+        let pairs = m.vals.get(1).map(message::Val::list).unwrap_or_default();
+        let get = |key: &[u8]| {
+            pairs
+                .chunks(2)
+                .find(|p| p[0].bytes() == Some(key))
+                .and_then(|p| p.get(1)?.bytes())
+                .map(|b| String::from_utf8_lossy(b).into_owned())
+        };
+        if let Some(db) = get(b"database").or_else(|| get(b"user"))
+            && !out.contains(&db)
+        {
+            out.push(db);
+        }
+    }
+    out
+}
+
+fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(&["compat-version", "server", "timeout", "out"])?;
+    let files = &args.words[1..];
+    if files.is_empty() {
+        return Err("usage: rupg-compat replay TRACE... [--server ADDR] [--out FILE]".into());
+    }
+    if args.get("out").is_some() && files.len() > 1 {
+        return Err("--out takes one trace".into());
+    }
+    let o = running_oracle(args, pins)?;
+    let mut target = oracle_target(&o);
+    if let Some(server) = args.get("server") {
+        target.addr = server.parse().map_err(|e| format!("--server {server}: {e}"))?;
+    }
+    let timeout = std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30));
+    let mut failed = false;
+    for file in files {
+        let t = trace::Trace::read(Path::new(file))?;
+        for db in trace_databases(&t) {
+            if let Err(e) = client::reset_database(&target, &db) {
+                println!("{file}: {e}");
+            }
+        }
+        let r = replay::replay(&t, &target, timeout);
+        let (equal, total) = count_equal(&t.lines, &r.lines);
+        println!(
+            "{file}: {equal} of {total} backend messages equal, {} OIDs mapped ({} values changed), {} SCRAM exchanges, {} cancel keys rewritten",
+            r.oids.len(),
+            r.oids.applied,
+            r.scram,
+            r.cancels
+        );
+        for n in &r.notes {
+            println!("  {n}");
+        }
+        failed |= equal != total || !r.notes.is_empty();
+        if let Some(out) = args.get("out") {
+            let replayed = trace::Trace { header: t.header.clone(), lines: r.lines };
+            std::fs::write(out, replayed.to_text()).map_err(|e| format!("{out}: {e}"))?;
+        }
+    }
+    Ok(if failed { ExitCode::FAILURE } else { ExitCode::SUCCESS })
+}
+
+/// Counts the backend messages of each connection that are equal at the same place. The comparison with the rules of each message type and the exclusions comes later.
+fn count_equal(want: &[trace::Line], got: &[trace::Line]) -> (usize, usize) {
+    let (want, got) = (backend_by_conn(want), backend_by_conn(got));
+    let mut equal = 0;
+    let mut total = 0;
+    for (conn, msgs) in &want {
+        total += msgs.len();
+        let other = got.get(conn).map(Vec::as_slice).unwrap_or_default();
+        equal += msgs.iter().zip(other).filter(|(a, b)| a == b).count();
+    }
+    (equal, total)
+}
+
+fn backend_by_conn(lines: &[trace::Line]) -> std::collections::BTreeMap<u32, Vec<&message::Msg>> {
+    let mut by_conn: std::collections::BTreeMap<u32, Vec<&message::Msg>> = Default::default();
+    for l in lines.iter().filter(|l| l.dir == message::Dir::B) {
+        if let Some(m) = l.msg() {
+            by_conn.entry(l.conn).or_default().push(m);
+        }
+    }
+    by_conn
 }

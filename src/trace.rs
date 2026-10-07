@@ -83,7 +83,6 @@ impl Trace {
         Trace::parse(&text).map_err(|e| format!("{}: {e}", path.display()))
     }
 
-    #[cfg(test)]
     pub(crate) fn to_text(&self) -> String {
         let mut out = String::new();
         for h in &self.header {
