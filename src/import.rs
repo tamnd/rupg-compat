@@ -372,6 +372,29 @@ pub(crate) fn import(src: &Path, major: u32, commit: &str) -> Result<Import, Str
     Ok(Import { outputs, counts })
 }
 
+/// Checks the files under `prefix` in the source tree against the manifest. Returns the number of files that it checked.
+pub(crate) fn verify(src: &Path, dir: &Path, prefix: &str) -> Result<usize, String> {
+    let path = dir.join("manifest.sha256");
+    let manifest = fs::read_to_string(&path)
+        .map_err(|e| format!("{}: {e}; run rupg-compat import first", path.display()))?;
+    let mut checked = 0;
+    for line in manifest.lines() {
+        let (sum, rel) =
+            line.split_once("  ").ok_or_else(|| format!("{}: bad line {line}", path.display()))?;
+        if !rel.starts_with(prefix) {
+            continue;
+        }
+        if hex(&sha256(&read(src, rel)?)) != sum {
+            return Err(format!("{rel} is not the file of the pin in {}", path.display()));
+        }
+        checked += 1;
+    }
+    if checked == 0 {
+        return Err(format!("{} has no file under {prefix}", path.display()));
+    }
+    Ok(checked)
+}
+
 /// The directory of the import of version N.
 pub(crate) fn corpus_dir(corpus: &Path, major: u32) -> PathBuf {
     corpus.join("postgres").join(major.to_string())
