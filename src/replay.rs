@@ -480,6 +480,13 @@ impl Session {
         self.last.map_or(Duration::MAX, |t| now.duration_since(t))
     }
 
+    /// The key that the server sent. Replay takes the messages of a server when the next line of the connection runs, so a connection that is idle until another connection cancels it still holds its `BackendKeyData` in `got`.
+    fn server_key(&self) -> Option<(i64, Vec<u8>)> {
+        self.key
+            .clone()
+            .or_else(|| self.got.iter().find(|m| m.name() == "BackendKeyData").and_then(key_of))
+    }
+
     /// How many received messages answer `step`, or None when replay must wait for more.
     fn answer(&self, step: &Step, now: Instant) -> Option<usize> {
         let done = self.eof || self.stream.is_none();
@@ -745,7 +752,7 @@ impl Runner<'_> {
                 let want = key_of(&msg);
                 let key =
                     self.sessions.values().find(|s| s.trace_key.is_some() && s.trace_key == want);
-                let Some((pid, key)) = key.and_then(|s| s.key.clone()) else {
+                let Some((pid, key)) = key.and_then(Session::server_key) else {
                     return Err("the CancelRequest names no connection of the trace".into());
                 };
                 self.out.cancels += 1;
@@ -761,6 +768,17 @@ impl Runner<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_cancel_finds_the_key_that_replay_did_not_take_yet() {
+        let key = Msg::new(Dir::B, "BackendKeyData", vec![Val::Int(7), Val::Str(b"abcd".to_vec())]);
+        let mut s = Session::default();
+        assert_eq!(s.server_key(), None);
+        s.got.push_back(key);
+        assert_eq!(s.server_key(), Some((7, b"abcd".to_vec())));
+        s.key = Some((8, b"efgh".to_vec()));
+        assert_eq!(s.server_key(), Some((8, b"efgh".to_vec())));
+    }
 
     #[test]
     fn the_gaps_between_user_oids_are_compared() {
