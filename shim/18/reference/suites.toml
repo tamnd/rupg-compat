@@ -1,0 +1,35 @@
+# The result of each suite on the oracle of 18 (spec/03 section 3.15). Written by `rupg-compat reference`.
+# The output of regress, isolation and pipeline is the expected files of the pin. Their SHA-256 digests are in corpus/postgres/18/manifest.sha256.
+# The answers of catalog and parameters are in catalog.sha256 and parameters.sha256.
+version = 18
+commit = "724edf9bde9d356724ad384a2e196edc3c9f80f7"
+
+[regress]
+started = "2026-10-07T10:59:39Z"
+cases = 231
+passed = 231
+unstable = 0
+
+[isolation]
+started = "2026-10-07T10:56:23Z"
+cases = 124
+passed = 124
+unstable = 0
+
+[pipeline]
+started = "2026-10-07T10:56:13Z"
+cases = 23
+passed = 23
+unstable = 0
+
+[catalog]
+started = "2026-10-07T13:10:00Z"
+cases = 209
+passed = 202
+unstable = 7
+
+[parameters]
+started = "2026-10-07T13:10:11Z"
+cases = 1199
+passed = 1199
+unstable = 0
