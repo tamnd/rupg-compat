@@ -1,0 +1,2 @@
+# The known divergences of the 14 shim (spec/05 section 5.6.5). Each entry names a test of the regression suite of 14 and the reason.
+# The list must stay short. A divergence that is not the grammar rule of spec/05 section 5.6.2 is a defect.

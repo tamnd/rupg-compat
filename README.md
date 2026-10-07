@@ -12,7 +12,7 @@ The design is [`spec/21-testing.md`](https://github.com/tamnd/rupg/blob/main/spe
 
 ## Status
 
-Early. The crate builds and CI is green, but no suite runs yet. `rupg-compat pins` prints the six oracle pins and `rupg-compat levels` prints the five levels. The first milestone, M0, builds the oracles and the runner, and it closes when the harness scores 100 percent against the oracle of 19. Every command below is the planned interface from the spec.
+Early. The crate builds and CI is green, but no suite runs yet. The pins are in `pins.toml`. `rupg-compat pins` prints them and `rupg-compat levels` prints the five levels. The first milestone, M0, builds the oracles and the runner, and it closes when the harness scores 100 percent against the oracle of 19. Every command below is the planned interface from the spec.
 
 ## The principle
 
