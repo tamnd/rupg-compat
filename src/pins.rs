@@ -153,10 +153,11 @@ mod tests {
         for c in &pins.clients {
             let dir = std::path::Path::new("clients").join(&c.name);
             assert!(dir.join("run.sh").exists(), "{} has no run.sh", c.name);
-            if c.name == "psql" {
+            // psql and pg_dump come with the oracle build.
+            if ["psql", "pg_dump"].contains(&c.name.as_str()) {
                 assert_eq!(c.version, reference.release);
             } else {
-                let install = ["run.sh", "go.mod"]
+                let install = ["run.sh", "go.mod", "Cargo.toml"]
                     .iter()
                     .filter_map(|f| std::fs::read_to_string(dir.join(f)).ok())
                     .collect::<String>();

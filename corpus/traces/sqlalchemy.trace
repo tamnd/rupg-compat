@@ -1,0 +1,620 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/sqlalchemy/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=9K1IWeS3utoYdLqzOZriG8pw"
+1 B AuthenticationSASLContinue "r=9K1IWeS3utoYdLqzOZriG8pw1UXt/hFhmitVEpsydzuKGa19,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=9K1IWeS3utoYdLqzOZriG8pw1UXt/hFhmitVEpsydzuKGa19,p=RUP9zZemZp58CYyARPHDpdPV2ZZLb6XcHV0LmREJILo="
+1 B AuthenticationSASLFinal "v=ycxyaqAuga3hOAHEW6PMUdP937u4boX7RSqaBDUs3lQ="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 738673 "\xfcP\x08\xa5"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "select pg_catalog.version()"
+1 B RowDescription [("version" 0 0 25 -1 -1 0)]
+1 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "select current_schema()"
+1 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+1 B DataRow ["public"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "show transaction isolation level"
+1 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+1 B DataRow ["read committed"]
+1 B CommandComplete "SHOW"
+1 B ReadyForQuery T
+1 F Query "show standard_conforming_strings"
+1 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+1 B DataRow ["on"]
+1 B CommandComplete "SHOW"
+1 B ReadyForQuery T
+1 F Query "SAVEPOINT \"_pg3_1\""
+1 B CommandComplete "SAVEPOINT"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT\n    typname AS name, oid, typarray AS array_oid,\n    oid::regtype::text AS regtype, typdelim AS delimiter\nFROM pg_type t\nWHERE t.oid = to_regtype($1)\nORDER BY t.oid\n" [0]
+1 F Bind "" "" [0] ["hstore"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("name" 1247 2 19 64 -1 0) ("oid" 1247 1 26 4 -1 0) ("array_oid" 1247 15 26 4 -1 0) ("regtype" 0 0 25 -1 -1 0) ("delimiter" 1247 11 18 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery T
+1 F Query "RELEASE \"_pg3_1\""
+1 B CommandComplete "RELEASE"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname \nFROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relname IN ($1::VARCHAR) AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR" [0 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0] ["compat_items" "r" "p" "f" "v" "m" "pg_catalog"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery T
+1 F Query "\nCREATE TABLE compat_items (\n\tid INTEGER NOT NULL, \n\tname TEXT NOT NULL, \n\tprice NUMERIC(10, 2), \n\tPRIMARY KEY (id)\n)\n\n"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Parse "" "BEGIN" []
+1 F Bind "" "" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "_pg3_0" "INSERT INTO compat_items (id, name, price) VALUES ($1::INTEGER, $2::VARCHAR, $3)" [21 0 1700]
+1 F Bind "" "_pg3_0" [1 0 0] ["\x00\x01" "one" "1.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Bind "" "_pg3_0" [1 0 0] ["\x00\x02" "two" "2.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 F Flush
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "_pg3_0" [1 0 0] ["\x00\x04" "four" "4.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "DEALLOCATE ALL"
+1 B CommandComplete "DEALLOCATE ALL"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT compat_items.id, compat_items.name, compat_items.price \nFROM compat_items \nWHERE compat_items.id >= $1::INTEGER ORDER BY compat_items.id" [21]
+1 F Bind "" "" [1] ["\x00\x01"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 251232 1 23 4 -1 0) ("name" 251232 2 25 -1 -1 0) ("price" 251232 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT compat_items.id, compat_items.name, compat_items.price \nFROM compat_items \nWHERE compat_items.id >= $1::INTEGER ORDER BY compat_items.id" [21]
+1 F Bind "" "" [1] ["\x00\x01"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 251232 1 23 4 -1 0) ("name" 251232 2 25 -1 -1 0) ("price" 251232 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT compat_items.id, compat_items.name, compat_items.price \nFROM compat_items \nWHERE compat_items.id >= $1::INTEGER ORDER BY compat_items.id" [21]
+1 F Bind "" "" [1] ["\x00\x01"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 251232 1 23 4 -1 0) ("name" 251232 2 25 -1 -1 0) ("price" 251232 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT compat_items.id, compat_items.name, compat_items.price \nFROM compat_items \nWHERE compat_items.id >= $1::INTEGER ORDER BY compat_items.id" [21]
+1 F Bind "" "" [1] ["\x00\x01"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 251232 1 23 4 -1 0) ("name" 251232 2 25 -1 -1 0) ("price" 251232 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT compat_items.id, compat_items.name, compat_items.price \nFROM compat_items \nWHERE compat_items.id >= $1::INTEGER ORDER BY compat_items.id" [21]
+1 F Bind "" "" [1] ["\x00\x01"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 251232 1 23 4 -1 0) ("name" 251232 2 25 -1 -1 0) ("price" 251232 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery T
+1 F Parse "_pg3_1" "SELECT compat_items.id, compat_items.name, compat_items.price \nFROM compat_items \nWHERE compat_items.id >= $1::INTEGER ORDER BY compat_items.id" [21]
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "_pg3_1" [1] ["\x00\x01"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 251232 1 23 4 -1 0) ("name" 251232 2 25 -1 -1 0) ("price" 251232 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery T
+1 F Parse "" "UPDATE compat_items SET price=(compat_items.price * $1::INTEGER) WHERE compat_items.id = $2::INTEGER" [21 21]
+1 F Bind "" "" [1 1] ["\x00\x02" "\x00\x02"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname \nFROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$1::VARCHAR, $2::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $3::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $4::VARCHAR" [0 0 0 0]
+1 F Bind "" "" [0 0 0 0] ["r" "p" "t" "pg_catalog"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["compat_items"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "DEALLOCATE ALL"
+1 B CommandComplete "DEALLOCATE ALL"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_attribute.attname AS name, pg_catalog.format_type(pg_catalog.pg_attribute.atttypid, pg_catalog.pg_attribute.atttypmod) AS format_type, CASE WHEN pg_catalog.pg_attribute.atthasdef THEN (SELECT pg_catalog.pg_get_expr(pg_catalog.pg_attrdef.adbin, pg_catalog.pg_attrdef.adrelid) AS pg_get_expr_1 \nFROM pg_catalog.pg_attrdef \nWHERE pg_catalog.pg_attribute.atthasdef AND pg_catalog.pg_attrdef.adrelid = pg_catalog.pg_attribute.attrelid AND pg_catalog.pg_attrdef.adnum = pg_catalog.pg_attribute.attnum) ELSE NULL END AS \"default\", pg_catalog.pg_attribute.attnotnull AS not_null, pg_catalog.pg_class.relname AS table_name, pg_catalog.pg_description.description AS comment, pg_catalog.pg_attribute.attgenerated AS generated, CASE WHEN (pg_catalog.pg_attribute.attidentity != $1::VARCHAR) THEN (SELECT json_build_object($2::VARCHAR, pg_catalog.pg_attribute.attidentity = $3::VARCHAR, $4::VARCHAR, pg_catalog.pg_sequence.seqstart, $5::VARCHAR, pg_catalog.pg_sequence.seqincrement, $6::VARCHAR, pg_catalog.pg_sequence.seqmin, $7::VARCHAR, pg_catalog.pg_sequence.seqmax, $8::VARCHAR, pg_catalog.pg_sequence.seqcache, $9::VARCHAR, pg_catalog.pg_sequence.seqcycle) AS json_build_object_1 \nFROM pg_catalog.pg_sequence \nWHERE pg_catalog.pg_attribute.attidentity != $10::VARCHAR AND pg_catalog.pg_sequence.seqrelid = CAST(CAST(pg_catalog.pg_get_serial_sequence(CAST(CAST(pg_catalog.pg_attribute.attrelid AS REGCLASS) AS TEXT), pg_catalog.pg_attribute.attname) AS REGCLASS) AS OID)) ELSE NULL END AS identity_options, CASE WHEN (pg_catalog.pg_attribute.attcollation != $11::INTEGER AND (SELECT pg_catalog.pg_type.typcollation \nFROM pg_catalog.pg_type \nWHERE pg_catalog.pg_type.oid = pg_catalog.pg_attribute.atttypid) != pg_catalog.pg_attribute.attcollation) THEN (SELECT json_build_object($12::VARCHAR, pg_catalog.pg_collation.collname, $13::VARCHAR, CASE WHEN pg_catalog.pg_collation_is_visible(pg_catalog.pg_collation.oid) THEN NULL ELSE pg_catalog.pg_namespace.nspname END) AS json_build_object_9 \nFROM pg_catalog.pg_collation JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_collation.collnamespace \nWHERE pg_catalog.pg_collation.oid = pg_catalog.pg_attribute.attcollation) ELSE NULL END AS collation \nFROM pg_catalog.pg_class LEFT OUTER JOIN pg_catalog.pg_attribute ON pg_catalog.pg_class.oid = pg_catalog.pg_attribute.attrelid AND pg_catalog.pg_attribute.attnum > $14::SMALLINT AND NOT pg_catalog.pg_attribute.attisdropped LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_attribute.attrelid AND pg_catalog.pg_description.objsubid = pg_catalog.pg_attribute.attnum JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$15::VARCHAR, $16::VARCHAR, $17::VARCHAR, $18::VARCHAR, $19::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $20::VARCHAR AND pg_catalog.pg_class.relname IN ($21::VARCHAR) ORDER BY pg_catalog.pg_class.relname, pg_catalog.pg_attribute.attnum" [0 0 0 0 0 0 0 0 0 0 21 0 0 21 0 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0] ["" "always" "a" "start" "increment" "minvalue" "maxvalue" "cache" "cycle" "" "\x00\x00" "name" "schema" "\x00\x00" "r" "p" "f" "v" "m" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("name" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("default" 0 0 25 -1 -1 0) ("not_null" 1249 12 16 1 -1 0) ("table_name" 1259 2 19 64 -1 0) ("comment" 2609 4 25 -1 -1 0) ("generated" 1249 16 18 1 -1 0) ("identity_options" 0 0 114 -1 -1 0) ("collation" 0 0 114 -1 -1 0)]
+1 B DataRow ["id" "integer" NULL "t" "compat_items" NULL "" NULL NULL]
+1 B DataRow ["name" "text" NULL "t" "compat_items" NULL "" NULL NULL]
+1 B DataRow ["price" "numeric(10,2)" NULL "f" "compat_items" NULL "" NULL NULL]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.oid, pg_catalog.pg_class.relname \nFROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$1::VARCHAR, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $6::VARCHAR AND pg_catalog.pg_class.relname IN ($7::VARCHAR)" [0 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0] ["r" "p" "f" "v" "m" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("oid" 1259 1 26 4 -1 0) ("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["251232" "compat_items"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT attr.conrelid, array_agg(CAST(attr.attname AS TEXT) ORDER BY attr.ord) AS cols, attr.conname, min(attr.description) AS description, min(attr.indnkeyatts) AS indnkeyatts, bool_and(attr.indnullsnotdistinct) AS indnullsnotdistinct \nFROM (SELECT con.conrelid AS conrelid, con.conname AS conname, con.description AS description, con.ord AS ord, con.indnkeyatts AS indnkeyatts, con.indnullsnotdistinct AS indnullsnotdistinct, pg_catalog.pg_attribute.attname AS attname \nFROM pg_catalog.pg_attribute JOIN (SELECT pg_catalog.pg_constraint.conrelid AS conrelid, pg_catalog.pg_constraint.conname AS conname, unnest(pg_catalog.pg_index.indkey) AS attnum, generate_subscripts(pg_catalog.pg_index.indkey, $1::INTEGER) AS ord, pg_catalog.pg_index.indnkeyatts AS indnkeyatts, pg_catalog.pg_index.indnullsnotdistinct AS indnullsnotdistinct, pg_catalog.pg_description.description AS description \nFROM pg_catalog.pg_constraint JOIN pg_catalog.pg_index ON pg_catalog.pg_constraint.conindid = pg_catalog.pg_index.indexrelid LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_constraint.oid AND pg_catalog.pg_description.classoid = CAST($2 AS REGCLASS) \nWHERE pg_catalog.pg_constraint.contype = $3::VARCHAR AND pg_catalog.pg_constraint.conrelid IN ($4)) AS con ON pg_catalog.pg_attribute.attnum = con.attnum AND pg_catalog.pg_attribute.attrelid = con.conrelid \nWHERE con.conrelid IN ($4)) AS attr GROUP BY attr.conrelid, attr.conname ORDER BY attr.conrelid, attr.conname" [21 0 0 23]
+1 F Bind "" "" [1 0 0 1] ["\x00\x01" "pg_catalog.pg_constraint" "p" "\x00\x03\xd5`"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("conrelid" 2606 9 26 4 -1 0) ("cols" 0 0 1009 -1 -1 0) ("conname" 2606 2 19 64 -1 0) ("description" 0 0 25 -1 -1 0) ("indnkeyatts" 0 0 21 2 -1 0) ("indnullsnotdistinct" 0 0 16 1 -1 0)]
+1 B DataRow ["251232" "{id}" "compat_items_pkey" NULL "1" "f"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_am.oid, pg_catalog.pg_am.amname \nFROM pg_catalog.pg_am \nWHERE pg_catalog.pg_am.amname = $1::VARCHAR" [0]
+1 F Bind "" "" [0] ["btree"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("oid" 2601 1 26 4 -1 0) ("amname" 2601 2 19 64 -1 0)]
+1 B DataRow ["403" "btree"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "SELECT pg_catalog.pg_opclass.oid, pg_catalog.pg_opclass.opcname \nFROM pg_catalog.pg_opclass \nWHERE NOT pg_catalog.pg_opclass.opcdefault"
+1 B RowDescription [("oid" 2616 1 26 4 -1 0) ("opcname" 2616 3 19 64 -1 0)]
+1 B DataRow ["10009" "cidr_ops"]
+1 B DataRow ["10010" "cidr_ops"]
+1 B DataRow ["10036" "record_image_ops"]
+1 B DataRow ["10044" "varchar_ops"]
+1 B DataRow ["10045" "varchar_ops"]
+1 B DataRow ["4217" "text_pattern_ops"]
+1 B DataRow ["4218" "varchar_pattern_ops"]
+1 B DataRow ["4219" "bpchar_pattern_ops"]
+1 B DataRow ["10058" "text_pattern_ops"]
+1 B DataRow ["10059" "varchar_pattern_ops"]
+1 B DataRow ["10060" "bpchar_pattern_ops"]
+1 B DataRow ["10087" "kd_point_ops"]
+1 B DataRow ["10093" "jsonb_path_ops"]
+1 B DataRow ["10095" "bytea_bloom_ops"]
+1 B DataRow ["10097" "char_bloom_ops"]
+1 B DataRow ["10099" "name_bloom_ops"]
+1 B DataRow ["10101" "int8_minmax_multi_ops"]
+1 B DataRow ["10102" "int8_bloom_ops"]
+1 B DataRow ["10104" "int2_minmax_multi_ops"]
+1 B DataRow ["10105" "int2_bloom_ops"]
+1 B DataRow ["10107" "int4_minmax_multi_ops"]
+1 B DataRow ["10108" "int4_bloom_ops"]
+1 B DataRow ["10110" "text_bloom_ops"]
+1 B DataRow ["10112" "oid_minmax_multi_ops"]
+1 B DataRow ["10113" "oid_bloom_ops"]
+1 B DataRow ["10115" "tid_bloom_ops"]
+1 B DataRow ["10116" "tid_minmax_multi_ops"]
+1 B DataRow ["10118" "float4_minmax_multi_ops"]
+1 B DataRow ["10119" "float4_bloom_ops"]
+1 B DataRow ["10121" "float8_minmax_multi_ops"]
+1 B DataRow ["10122" "float8_bloom_ops"]
+1 B DataRow ["10124" "macaddr_minmax_multi_ops"]
+1 B DataRow ["10125" "macaddr_bloom_ops"]
+1 B DataRow ["10127" "macaddr8_minmax_multi_ops"]
+1 B DataRow ["10128" "macaddr8_bloom_ops"]
+1 B DataRow ["10129" "inet_minmax_ops"]
+1 B DataRow ["10130" "inet_minmax_multi_ops"]
+1 B DataRow ["10131" "inet_bloom_ops"]
+1 B DataRow ["10134" "bpchar_bloom_ops"]
+1 B DataRow ["10136" "time_minmax_multi_ops"]
+1 B DataRow ["10137" "time_bloom_ops"]
+1 B DataRow ["10139" "date_minmax_multi_ops"]
+1 B DataRow ["10140" "date_bloom_ops"]
+1 B DataRow ["10142" "timestamp_minmax_multi_ops"]
+1 B DataRow ["10143" "timestamp_bloom_ops"]
+1 B DataRow ["10145" "timestamptz_minmax_multi_ops"]
+1 B DataRow ["10146" "timestamptz_bloom_ops"]
+1 B DataRow ["10148" "interval_minmax_multi_ops"]
+1 B DataRow ["10149" "interval_bloom_ops"]
+1 B DataRow ["10151" "timetz_minmax_multi_ops"]
+1 B DataRow ["10152" "timetz_bloom_ops"]
+1 B DataRow ["10156" "numeric_minmax_multi_ops"]
+1 B DataRow ["10157" "numeric_bloom_ops"]
+1 B DataRow ["10159" "uuid_minmax_multi_ops"]
+1 B DataRow ["10160" "uuid_bloom_ops"]
+1 B DataRow ["10163" "pg_lsn_minmax_multi_ops"]
+1 B DataRow ["10164" "pg_lsn_bloom_ops"]
+1 B CommandComplete "SELECT 57"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_index.indrelid, pg_catalog.pg_class.relname, pg_catalog.pg_index.indisunique, pg_catalog.pg_index.indisvalid, pg_catalog.pg_constraint.conrelid IS NOT NULL AS has_constraint, pg_catalog.pg_index.indoption, pg_catalog.pg_class.reloptions, pg_catalog.pg_class.relam, CASE WHEN (pg_catalog.pg_index.indpred IS NOT NULL) THEN pg_catalog.pg_get_expr(pg_catalog.pg_index.indpred, pg_catalog.pg_index.indrelid) END AS filter_definition, pg_catalog.pg_index.indnkeyatts, pg_catalog.pg_index.indnullsnotdistinct, idx_cols.elements, idx_cols.elements_is_expr, idx_cols.elements_opclass \nFROM pg_catalog.pg_index JOIN pg_catalog.pg_class ON pg_catalog.pg_index.indexrelid = pg_catalog.pg_class.oid LEFT OUTER JOIN (SELECT idx_attr.indexrelid AS indexrelid, min(idx_attr.indrelid) AS min_1, array_agg(idx_attr.element ORDER BY idx_attr.ord) AS elements, array_agg(idx_attr.is_expr ORDER BY idx_attr.ord) AS elements_is_expr, array_agg(idx_attr.att_opclass ORDER BY idx_attr.ord) AS elements_opclass \nFROM (SELECT idx.indexrelid AS indexrelid, idx.indrelid AS indrelid, idx.ord AS ord, CASE WHEN (idx.attnum = $1::INTEGER) THEN pg_catalog.pg_get_indexdef(idx.indexrelid, idx.ord + $2::INTEGER, $3) ELSE CAST(pg_catalog.pg_attribute.attname AS TEXT) END AS element, idx.attnum = $4::INTEGER AS is_expr, CAST(idx.att_opclass AS BIGINT) AS att_opclass \nFROM (SELECT pg_catalog.pg_index.indexrelid AS indexrelid, pg_catalog.pg_index.indrelid AS indrelid, unnest(pg_catalog.pg_index.indkey) AS attnum, unnest(pg_catalog.pg_index.indclass) AS att_opclass, generate_subscripts(pg_catalog.pg_index.indkey, $5::INTEGER) AS ord \nFROM pg_catalog.pg_index \nWHERE NOT pg_catalog.pg_index.indisprimary AND pg_catalog.pg_index.indrelid IN ($6)) AS idx LEFT OUTER JOIN pg_catalog.pg_attribute ON pg_catalog.pg_attribute.attnum = idx.attnum AND pg_catalog.pg_attribute.attrelid = idx.indrelid \nWHERE idx.indrelid IN ($6)) AS idx_attr GROUP BY idx_attr.indexrelid) AS idx_cols ON pg_catalog.pg_index.indexrelid = idx_cols.indexrelid LEFT OUTER JOIN pg_catalog.pg_constraint ON pg_catalog.pg_index.indrelid = pg_catalog.pg_constraint.conrelid AND pg_catalog.pg_index.indexrelid = pg_catalog.pg_constraint.conindid AND pg_catalog.pg_constraint.contype = ANY (ARRAY[$7::VARCHAR, $8::VARCHAR, $9::VARCHAR]) \nWHERE pg_catalog.pg_index.indrelid IN ($6) AND NOT pg_catalog.pg_index.indisprimary ORDER BY pg_catalog.pg_index.indrelid, pg_catalog.pg_class.relname" [21 21 16 21 21 23 0 0 0]
+1 F Bind "" "" [1 1 1 1 1 1 0 0 0] ["\x00\x00" "\x00\x01" "\x01" "\x00\x00" "\x00\x01" "\x00\x03\xd5`" "p" "u" "x"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("indrelid" 2610 2 26 4 -1 0) ("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indisvalid" 2610 11 16 1 -1 0) ("has_constraint" 0 0 16 1 -1 0) ("indoption" 2610 19 22 -1 -1 0) ("reloptions" 1259 33 1009 -1 -1 0) ("relam" 1259 7 26 4 -1 0) ("filter_definition" 0 0 25 -1 -1 0) ("indnkeyatts" 2610 4 21 2 -1 0) ("indnullsnotdistinct" 2610 6 16 1 -1 0) ("elements" 0 0 1009 -1 -1 0) ("elements_is_expr" 0 0 1000 -1 -1 0) ("elements_opclass" 0 0 1016 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname, pg_catalog.pg_constraint.conname, CASE WHEN (pg_catalog.pg_constraint.oid IS NOT NULL) THEN pg_catalog.pg_get_constraintdef(pg_catalog.pg_constraint.oid, $1) END AS anon_1, nsp_ref.nspname, pg_catalog.pg_description.description \nFROM pg_catalog.pg_class LEFT OUTER JOIN pg_catalog.pg_constraint ON pg_catalog.pg_class.oid = pg_catalog.pg_constraint.conrelid AND pg_catalog.pg_constraint.contype = $2::VARCHAR LEFT OUTER JOIN pg_catalog.pg_class AS cls_ref ON cls_ref.oid = pg_catalog.pg_constraint.confrelid LEFT OUTER JOIN pg_catalog.pg_namespace AS nsp_ref ON cls_ref.relnamespace = nsp_ref.oid LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_constraint.oid AND pg_catalog.pg_description.classoid = CAST($3 AS REGCLASS) JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$4::VARCHAR, $5::VARCHAR, $6::VARCHAR, $7::VARCHAR, $8::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $9::VARCHAR AND pg_catalog.pg_class.relname IN ($10::VARCHAR) ORDER BY pg_catalog.pg_class.relname, pg_catalog.pg_constraint.conname" [16 0 0 0 0 0 0 0 0 0]
+1 F Bind "" "" [1 0 0 0 0 0 0 0 0 0] ["\x01" "f" "pg_catalog.pg_constraint" "r" "p" "f" "v" "m" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0) ("conname" 2606 2 19 64 -1 0) ("anon_1" 0 0 25 -1 -1 0) ("nspname" 2615 2 19 64 -1 0) ("description" 2609 4 25 -1 -1 0)]
+1 B DataRow ["compat_items" NULL NULL NULL NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname \nFROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relname IN ($1::VARCHAR) AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR" [0 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0] ["alembic_version" "r" "p" "f" "v" "m" "pg_catalog"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname \nFROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$1::VARCHAR, $2::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $3::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $4::VARCHAR" [0 0 0 0]
+1 F Bind "" "" [0 0 0 0] ["r" "p" "t" "pg_catalog"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["compat_items"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_attribute.attname AS name, pg_catalog.format_type(pg_catalog.pg_attribute.atttypid, pg_catalog.pg_attribute.atttypmod) AS format_type, CASE WHEN pg_catalog.pg_attribute.atthasdef THEN (SELECT pg_catalog.pg_get_expr(pg_catalog.pg_attrdef.adbin, pg_catalog.pg_attrdef.adrelid) AS pg_get_expr_1 \nFROM pg_catalog.pg_attrdef \nWHERE pg_catalog.pg_attribute.atthasdef AND pg_catalog.pg_attrdef.adrelid = pg_catalog.pg_attribute.attrelid AND pg_catalog.pg_attrdef.adnum = pg_catalog.pg_attribute.attnum) ELSE NULL END AS \"default\", pg_catalog.pg_attribute.attnotnull AS not_null, pg_catalog.pg_class.relname AS table_name, pg_catalog.pg_description.description AS comment, pg_catalog.pg_attribute.attgenerated AS generated, CASE WHEN (pg_catalog.pg_attribute.attidentity != $1::VARCHAR) THEN (SELECT json_build_object($2::VARCHAR, pg_catalog.pg_attribute.attidentity = $3::VARCHAR, $4::VARCHAR, pg_catalog.pg_sequence.seqstart, $5::VARCHAR, pg_catalog.pg_sequence.seqincrement, $6::VARCHAR, pg_catalog.pg_sequence.seqmin, $7::VARCHAR, pg_catalog.pg_sequence.seqmax, $8::VARCHAR, pg_catalog.pg_sequence.seqcache, $9::VARCHAR, pg_catalog.pg_sequence.seqcycle) AS json_build_object_1 \nFROM pg_catalog.pg_sequence \nWHERE pg_catalog.pg_attribute.attidentity != $10::VARCHAR AND pg_catalog.pg_sequence.seqrelid = CAST(CAST(pg_catalog.pg_get_serial_sequence(CAST(CAST(pg_catalog.pg_attribute.attrelid AS REGCLASS) AS TEXT), pg_catalog.pg_attribute.attname) AS REGCLASS) AS OID)) ELSE NULL END AS identity_options, CASE WHEN (pg_catalog.pg_attribute.attcollation != $11::INTEGER AND (SELECT pg_catalog.pg_type.typcollation \nFROM pg_catalog.pg_type \nWHERE pg_catalog.pg_type.oid = pg_catalog.pg_attribute.atttypid) != pg_catalog.pg_attribute.attcollation) THEN (SELECT json_build_object($12::VARCHAR, pg_catalog.pg_collation.collname, $13::VARCHAR, CASE WHEN pg_catalog.pg_collation_is_visible(pg_catalog.pg_collation.oid) THEN NULL ELSE pg_catalog.pg_namespace.nspname END) AS json_build_object_9 \nFROM pg_catalog.pg_collation JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_collation.collnamespace \nWHERE pg_catalog.pg_collation.oid = pg_catalog.pg_attribute.attcollation) ELSE NULL END AS collation \nFROM pg_catalog.pg_class LEFT OUTER JOIN pg_catalog.pg_attribute ON pg_catalog.pg_class.oid = pg_catalog.pg_attribute.attrelid AND pg_catalog.pg_attribute.attnum > $14::SMALLINT AND NOT pg_catalog.pg_attribute.attisdropped LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_attribute.attrelid AND pg_catalog.pg_description.objsubid = pg_catalog.pg_attribute.attnum JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$15::VARCHAR, $16::VARCHAR, $17::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $18::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $19::VARCHAR AND pg_catalog.pg_class.relname IN ($20::VARCHAR) ORDER BY pg_catalog.pg_class.relname, pg_catalog.pg_attribute.attnum" [0 0 0 0 0 0 0 0 0 0 21 0 0 21 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0] ["" "always" "a" "start" "increment" "minvalue" "maxvalue" "cache" "cycle" "" "\x00\x00" "name" "schema" "\x00\x00" "r" "p" "f" "t" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("name" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("default" 0 0 25 -1 -1 0) ("not_null" 1249 12 16 1 -1 0) ("table_name" 1259 2 19 64 -1 0) ("comment" 2609 4 25 -1 -1 0) ("generated" 1249 16 18 1 -1 0) ("identity_options" 0 0 114 -1 -1 0) ("collation" 0 0 114 -1 -1 0)]
+1 B DataRow ["id" "integer" NULL "t" "compat_items" NULL "" NULL NULL]
+1 B DataRow ["name" "text" NULL "t" "compat_items" NULL "" NULL NULL]
+1 B DataRow ["price" "numeric(10,2)" NULL "f" "compat_items" NULL "" NULL NULL]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.oid, pg_catalog.pg_class.relname \nFROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$1::VARCHAR, $2::VARCHAR, $3::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $4::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $5::VARCHAR AND pg_catalog.pg_class.relname IN ($6::VARCHAR)" [0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0] ["r" "p" "f" "t" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("oid" 1259 1 26 4 -1 0) ("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["251232" "compat_items"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT attr.conrelid, array_agg(CAST(attr.attname AS TEXT) ORDER BY attr.ord) AS cols, attr.conname, min(attr.description) AS description, min(attr.indnkeyatts) AS indnkeyatts, bool_and(attr.indnullsnotdistinct) AS indnullsnotdistinct \nFROM (SELECT con.conrelid AS conrelid, con.conname AS conname, con.description AS description, con.ord AS ord, con.indnkeyatts AS indnkeyatts, con.indnullsnotdistinct AS indnullsnotdistinct, pg_catalog.pg_attribute.attname AS attname \nFROM pg_catalog.pg_attribute JOIN (SELECT pg_catalog.pg_constraint.conrelid AS conrelid, pg_catalog.pg_constraint.conname AS conname, unnest(pg_catalog.pg_index.indkey) AS attnum, generate_subscripts(pg_catalog.pg_index.indkey, $1::INTEGER) AS ord, pg_catalog.pg_index.indnkeyatts AS indnkeyatts, pg_catalog.pg_index.indnullsnotdistinct AS indnullsnotdistinct, pg_catalog.pg_description.description AS description \nFROM pg_catalog.pg_constraint JOIN pg_catalog.pg_index ON pg_catalog.pg_constraint.conindid = pg_catalog.pg_index.indexrelid LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_constraint.oid AND pg_catalog.pg_description.classoid = CAST($2 AS REGCLASS) \nWHERE pg_catalog.pg_constraint.contype = $3::VARCHAR AND pg_catalog.pg_constraint.conrelid IN ($4)) AS con ON pg_catalog.pg_attribute.attnum = con.attnum AND pg_catalog.pg_attribute.attrelid = con.conrelid \nWHERE con.conrelid IN ($4)) AS attr GROUP BY attr.conrelid, attr.conname ORDER BY attr.conrelid, attr.conname" [21 0 0 23]
+1 F Bind "" "" [1 0 0 1] ["\x00\x01" "pg_catalog.pg_constraint" "p" "\x00\x03\xd5`"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("conrelid" 2606 9 26 4 -1 0) ("cols" 0 0 1009 -1 -1 0) ("conname" 2606 2 19 64 -1 0) ("description" 0 0 25 -1 -1 0) ("indnkeyatts" 0 0 21 2 -1 0) ("indnullsnotdistinct" 0 0 16 1 -1 0)]
+1 B DataRow ["251232" "{id}" "compat_items_pkey" NULL "1" "f"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname, pg_catalog.pg_constraint.conname, CASE WHEN (pg_catalog.pg_constraint.oid IS NOT NULL) THEN pg_catalog.pg_get_constraintdef(pg_catalog.pg_constraint.oid, $1) END AS anon_1, nsp_ref.nspname, pg_catalog.pg_description.description \nFROM pg_catalog.pg_class LEFT OUTER JOIN pg_catalog.pg_constraint ON pg_catalog.pg_class.oid = pg_catalog.pg_constraint.conrelid AND pg_catalog.pg_constraint.contype = $2::VARCHAR LEFT OUTER JOIN pg_catalog.pg_class AS cls_ref ON cls_ref.oid = pg_catalog.pg_constraint.confrelid LEFT OUTER JOIN pg_catalog.pg_namespace AS nsp_ref ON cls_ref.relnamespace = nsp_ref.oid LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_constraint.oid AND pg_catalog.pg_description.classoid = CAST($3 AS REGCLASS) JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $7::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $8::VARCHAR AND pg_catalog.pg_class.relname IN ($9::VARCHAR) ORDER BY pg_catalog.pg_class.relname, pg_catalog.pg_constraint.conname" [16 0 0 0 0 0 0 0 0]
+1 F Bind "" "" [1 0 0 0 0 0 0 0 0] ["\x01" "f" "pg_catalog.pg_constraint" "r" "p" "f" "t" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0) ("conname" 2606 2 19 64 -1 0) ("anon_1" 0 0 25 -1 -1 0) ("nspname" 2615 2 19 64 -1 0) ("description" 2609 4 25 -1 -1 0)]
+1 B DataRow ["compat_items" NULL NULL NULL NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "SELECT pg_catalog.pg_opclass.oid, pg_catalog.pg_opclass.opcname \nFROM pg_catalog.pg_opclass \nWHERE NOT pg_catalog.pg_opclass.opcdefault"
+1 B RowDescription [("oid" 2616 1 26 4 -1 0) ("opcname" 2616 3 19 64 -1 0)]
+1 B DataRow ["10009" "cidr_ops"]
+1 B DataRow ["10010" "cidr_ops"]
+1 B DataRow ["10036" "record_image_ops"]
+1 B DataRow ["10044" "varchar_ops"]
+1 B DataRow ["10045" "varchar_ops"]
+1 B DataRow ["4217" "text_pattern_ops"]
+1 B DataRow ["4218" "varchar_pattern_ops"]
+1 B DataRow ["4219" "bpchar_pattern_ops"]
+1 B DataRow ["10058" "text_pattern_ops"]
+1 B DataRow ["10059" "varchar_pattern_ops"]
+1 B DataRow ["10060" "bpchar_pattern_ops"]
+1 B DataRow ["10087" "kd_point_ops"]
+1 B DataRow ["10093" "jsonb_path_ops"]
+1 B DataRow ["10095" "bytea_bloom_ops"]
+1 B DataRow ["10097" "char_bloom_ops"]
+1 B DataRow ["10099" "name_bloom_ops"]
+1 B DataRow ["10101" "int8_minmax_multi_ops"]
+1 B DataRow ["10102" "int8_bloom_ops"]
+1 B DataRow ["10104" "int2_minmax_multi_ops"]
+1 B DataRow ["10105" "int2_bloom_ops"]
+1 B DataRow ["10107" "int4_minmax_multi_ops"]
+1 B DataRow ["10108" "int4_bloom_ops"]
+1 B DataRow ["10110" "text_bloom_ops"]
+1 B DataRow ["10112" "oid_minmax_multi_ops"]
+1 B DataRow ["10113" "oid_bloom_ops"]
+1 B DataRow ["10115" "tid_bloom_ops"]
+1 B DataRow ["10116" "tid_minmax_multi_ops"]
+1 B DataRow ["10118" "float4_minmax_multi_ops"]
+1 B DataRow ["10119" "float4_bloom_ops"]
+1 B DataRow ["10121" "float8_minmax_multi_ops"]
+1 B DataRow ["10122" "float8_bloom_ops"]
+1 B DataRow ["10124" "macaddr_minmax_multi_ops"]
+1 B DataRow ["10125" "macaddr_bloom_ops"]
+1 B DataRow ["10127" "macaddr8_minmax_multi_ops"]
+1 B DataRow ["10128" "macaddr8_bloom_ops"]
+1 B DataRow ["10129" "inet_minmax_ops"]
+1 B DataRow ["10130" "inet_minmax_multi_ops"]
+1 B DataRow ["10131" "inet_bloom_ops"]
+1 B DataRow ["10134" "bpchar_bloom_ops"]
+1 B DataRow ["10136" "time_minmax_multi_ops"]
+1 B DataRow ["10137" "time_bloom_ops"]
+1 B DataRow ["10139" "date_minmax_multi_ops"]
+1 B DataRow ["10140" "date_bloom_ops"]
+1 B DataRow ["10142" "timestamp_minmax_multi_ops"]
+1 B DataRow ["10143" "timestamp_bloom_ops"]
+1 B DataRow ["10145" "timestamptz_minmax_multi_ops"]
+1 B DataRow ["10146" "timestamptz_bloom_ops"]
+1 B DataRow ["10148" "interval_minmax_multi_ops"]
+1 B DataRow ["10149" "interval_bloom_ops"]
+1 B DataRow ["10151" "timetz_minmax_multi_ops"]
+1 B DataRow ["10152" "timetz_bloom_ops"]
+1 B DataRow ["10156" "numeric_minmax_multi_ops"]
+1 B DataRow ["10157" "numeric_bloom_ops"]
+1 B DataRow ["10159" "uuid_minmax_multi_ops"]
+1 B DataRow ["10160" "uuid_bloom_ops"]
+1 B DataRow ["10163" "pg_lsn_minmax_multi_ops"]
+1 B DataRow ["10164" "pg_lsn_bloom_ops"]
+1 B CommandComplete "SELECT 57"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_index.indrelid, pg_catalog.pg_class.relname, pg_catalog.pg_index.indisunique, pg_catalog.pg_index.indisvalid, pg_catalog.pg_constraint.conrelid IS NOT NULL AS has_constraint, pg_catalog.pg_index.indoption, pg_catalog.pg_class.reloptions, pg_catalog.pg_class.relam, CASE WHEN (pg_catalog.pg_index.indpred IS NOT NULL) THEN pg_catalog.pg_get_expr(pg_catalog.pg_index.indpred, pg_catalog.pg_index.indrelid) END AS filter_definition, pg_catalog.pg_index.indnkeyatts, pg_catalog.pg_index.indnullsnotdistinct, idx_cols.elements, idx_cols.elements_is_expr, idx_cols.elements_opclass \nFROM pg_catalog.pg_index JOIN pg_catalog.pg_class ON pg_catalog.pg_index.indexrelid = pg_catalog.pg_class.oid LEFT OUTER JOIN (SELECT idx_attr.indexrelid AS indexrelid, min(idx_attr.indrelid) AS min_1, array_agg(idx_attr.element ORDER BY idx_attr.ord) AS elements, array_agg(idx_attr.is_expr ORDER BY idx_attr.ord) AS elements_is_expr, array_agg(idx_attr.att_opclass ORDER BY idx_attr.ord) AS elements_opclass \nFROM (SELECT idx.indexrelid AS indexrelid, idx.indrelid AS indrelid, idx.ord AS ord, CASE WHEN (idx.attnum = $1::INTEGER) THEN pg_catalog.pg_get_indexdef(idx.indexrelid, idx.ord + $2::INTEGER, $3) ELSE CAST(pg_catalog.pg_attribute.attname AS TEXT) END AS element, idx.attnum = $4::INTEGER AS is_expr, CAST(idx.att_opclass AS BIGINT) AS att_opclass \nFROM (SELECT pg_catalog.pg_index.indexrelid AS indexrelid, pg_catalog.pg_index.indrelid AS indrelid, unnest(pg_catalog.pg_index.indkey) AS attnum, unnest(pg_catalog.pg_index.indclass) AS att_opclass, generate_subscripts(pg_catalog.pg_index.indkey, $5::INTEGER) AS ord \nFROM pg_catalog.pg_index \nWHERE NOT pg_catalog.pg_index.indisprimary AND pg_catalog.pg_index.indrelid IN ($6)) AS idx LEFT OUTER JOIN pg_catalog.pg_attribute ON pg_catalog.pg_attribute.attnum = idx.attnum AND pg_catalog.pg_attribute.attrelid = idx.indrelid \nWHERE idx.indrelid IN ($6)) AS idx_attr GROUP BY idx_attr.indexrelid) AS idx_cols ON pg_catalog.pg_index.indexrelid = idx_cols.indexrelid LEFT OUTER JOIN pg_catalog.pg_constraint ON pg_catalog.pg_index.indrelid = pg_catalog.pg_constraint.conrelid AND pg_catalog.pg_index.indexrelid = pg_catalog.pg_constraint.conindid AND pg_catalog.pg_constraint.contype = ANY (ARRAY[$7::VARCHAR, $8::VARCHAR, $9::VARCHAR]) \nWHERE pg_catalog.pg_index.indrelid IN ($6) AND NOT pg_catalog.pg_index.indisprimary ORDER BY pg_catalog.pg_index.indrelid, pg_catalog.pg_class.relname" [21 21 16 21 21 23 0 0 0]
+1 F Bind "" "" [1 1 1 1 1 1 0 0 0] ["\x00\x00" "\x00\x01" "\x01" "\x00\x00" "\x00\x01" "\x00\x03\xd5`" "p" "u" "x"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("indrelid" 2610 2 26 4 -1 0) ("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indisvalid" 2610 11 16 1 -1 0) ("has_constraint" 0 0 16 1 -1 0) ("indoption" 2610 19 22 -1 -1 0) ("reloptions" 1259 33 1009 -1 -1 0) ("relam" 1259 7 26 4 -1 0) ("filter_definition" 0 0 25 -1 -1 0) ("indnkeyatts" 2610 4 21 2 -1 0) ("indnullsnotdistinct" 2610 6 16 1 -1 0) ("elements" 0 0 1009 -1 -1 0) ("elements_is_expr" 0 0 1000 -1 -1 0) ("elements_opclass" 0 0 1016 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT attr.conrelid, array_agg(CAST(attr.attname AS TEXT) ORDER BY attr.ord) AS cols, attr.conname, min(attr.description) AS description, min(attr.indnkeyatts) AS indnkeyatts, bool_and(attr.indnullsnotdistinct) AS indnullsnotdistinct \nFROM (SELECT con.conrelid AS conrelid, con.conname AS conname, con.description AS description, con.ord AS ord, con.indnkeyatts AS indnkeyatts, con.indnullsnotdistinct AS indnullsnotdistinct, pg_catalog.pg_attribute.attname AS attname \nFROM pg_catalog.pg_attribute JOIN (SELECT pg_catalog.pg_constraint.conrelid AS conrelid, pg_catalog.pg_constraint.conname AS conname, unnest(pg_catalog.pg_index.indkey) AS attnum, generate_subscripts(pg_catalog.pg_index.indkey, $1::INTEGER) AS ord, pg_catalog.pg_index.indnkeyatts AS indnkeyatts, pg_catalog.pg_index.indnullsnotdistinct AS indnullsnotdistinct, pg_catalog.pg_description.description AS description \nFROM pg_catalog.pg_constraint JOIN pg_catalog.pg_index ON pg_catalog.pg_constraint.conindid = pg_catalog.pg_index.indexrelid LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_constraint.oid AND pg_catalog.pg_description.classoid = CAST($2 AS REGCLASS) \nWHERE pg_catalog.pg_constraint.contype = $3::VARCHAR AND pg_catalog.pg_constraint.conrelid IN ($4)) AS con ON pg_catalog.pg_attribute.attnum = con.attnum AND pg_catalog.pg_attribute.attrelid = con.conrelid \nWHERE con.conrelid IN ($4)) AS attr GROUP BY attr.conrelid, attr.conname ORDER BY attr.conrelid, attr.conname" [21 0 0 23]
+1 F Bind "" "" [1 0 0 1] ["\x00\x01" "pg_catalog.pg_constraint" "u" "\x00\x03\xd5`"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("conrelid" 2606 9 26 4 -1 0) ("cols" 0 0 1009 -1 -1 0) ("conname" 2606 2 19 64 -1 0) ("description" 0 0 25 -1 -1 0) ("indnkeyatts" 0 0 21 2 -1 0) ("indnullsnotdistinct" 0 0 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname, pg_catalog.pg_description.description \nFROM pg_catalog.pg_class LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_class.oid = pg_catalog.pg_description.objoid AND pg_catalog.pg_description.objsubid = $1::INTEGER AND pg_catalog.pg_description.classoid = CAST($2 AS REGCLASS) JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$3::VARCHAR, $4::VARCHAR, $5::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $6::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR AND pg_catalog.pg_class.relname IN ($8::VARCHAR)" [21 0 0 0 0 0 0 0]
+1 F Bind "" "" [1 0 0 0 0 0 0 0] ["\x00\x00" "pg_catalog.pg_class" "r" "p" "f" "t" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0) ("description" 2609 4 25 -1 -1 0)]
+1 B DataRow ["compat_items" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname, pg_catalog.pg_constraint.conname, CASE WHEN (pg_catalog.pg_constraint.oid IS NOT NULL) THEN pg_catalog.pg_get_constraintdef(pg_catalog.pg_constraint.oid, $1) END AS anon_1, pg_catalog.pg_description.description \nFROM pg_catalog.pg_class LEFT OUTER JOIN pg_catalog.pg_constraint ON pg_catalog.pg_class.oid = pg_catalog.pg_constraint.conrelid AND pg_catalog.pg_constraint.contype = $2::VARCHAR LEFT OUTER JOIN pg_catalog.pg_description ON pg_catalog.pg_description.objoid = pg_catalog.pg_constraint.oid AND pg_catalog.pg_description.classoid = CAST($3 AS REGCLASS) JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $7::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $8::VARCHAR AND pg_catalog.pg_class.relname IN ($9::VARCHAR) ORDER BY pg_catalog.pg_class.relname, pg_catalog.pg_constraint.conname" [16 0 0 0 0 0 0 0 0]
+1 F Bind "" "" [1 0 0 0 0 0 0 0 0] ["\x01" "c" "pg_catalog.pg_constraint" "r" "p" "f" "t" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0) ("conname" 2606 2 19 64 -1 0) ("anon_1" 0 0 25 -1 -1 0) ("description" 2609 4 25 -1 -1 0)]
+1 B DataRow ["compat_items" NULL NULL NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.oid, pg_catalog.pg_class.relname, pg_catalog.pg_class.reloptions, NULL AS relhasoids, CASE WHEN (pg_catalog.pg_am.amname IS NOT NULL AND pg_catalog.pg_am.amname != current_setting($1::VARCHAR)) THEN pg_catalog.pg_am.amname ELSE NULL END AS access_method_name, pg_catalog.pg_tablespace.spcname AS tablespace_name, inherits.parent_table_names \nFROM pg_catalog.pg_class LEFT OUTER JOIN pg_catalog.pg_am ON pg_catalog.pg_class.relam = pg_catalog.pg_am.oid LEFT OUTER JOIN (SELECT pg_catalog.pg_inherits.inhrelid AS inhrelid, array_agg(pg_catalog.pg_class.relname ORDER BY pg_catalog.pg_inherits.inhseqno) AS parent_table_names \nFROM pg_catalog.pg_inherits JOIN pg_catalog.pg_class ON pg_catalog.pg_inherits.inhparent = pg_catalog.pg_class.oid GROUP BY pg_catalog.pg_inherits.inhrelid) AS inherits ON pg_catalog.pg_class.oid = inherits.inhrelid LEFT OUTER JOIN pg_catalog.pg_tablespace ON pg_catalog.pg_tablespace.oid = pg_catalog.pg_class.reltablespace JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR]) AND pg_catalog.pg_class.relpersistence != $5::VARCHAR AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $6::VARCHAR AND pg_catalog.pg_class.relname IN ($7::VARCHAR)" [0 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0] ["default_table_access_method" "r" "p" "f" "t" "pg_catalog" "compat_items"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("oid" 1259 1 26 4 -1 0) ("relname" 1259 2 19 64 -1 0) ("reloptions" 1259 33 1009 -1 -1 0) ("relhasoids" 0 0 25 -1 -1 0) ("access_method_name" 0 0 19 64 -1 0) ("tablespace_name" 1213 2 19 64 -1 0) ("parent_table_names" 0 0 1003 -1 -1 0)]
+1 B DataRow ["251232" "compat_items" NULL NULL NULL NULL NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "ALTER TABLE compat_items ADD COLUMN note TEXT"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT 1 / 0"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "SELECT pg_catalog.pg_class.relname \nFROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace \nWHERE pg_catalog.pg_class.relname IN ($1::VARCHAR) AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR" [0 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0] ["compat_items" "r" "p" "f" "v" "m" "pg_catalog"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["compat_items"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "\nDROP TABLE compat_items"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End

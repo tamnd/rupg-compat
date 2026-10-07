@@ -1,0 +1,11 @@
+# The trace scenario for sqlx. It is not part of the harness and has its own lock file.
+[package]
+name = "compat-client-sqlx"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+[dependencies]
+tokio = { version = "=1.53.2", features = ["rt", "macros"] }
+sqlx = { version = "=0.9.0", default-features = false, features = ["runtime-tokio", "postgres"] }

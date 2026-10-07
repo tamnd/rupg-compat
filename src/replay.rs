@@ -4,11 +4,11 @@
 //!
 //! Replay solves the three problems of section 21.3.5:
 //!
-//! 1. OIDs differ. Replay learns a map from the OIDs of the trace to the OIDs of the server. It reads them from the table and type OIDs of `RowDescription`, the types of `ParameterDescription` and the columns of type `oid` in `DataRow`, for user objects only (OID 16384 and up). It rewrites the OIDs in `Query`, `Parse`, `Bind` and `FunctionCall` before it sends them, and maps the answers back to the OIDs of the trace.
+//! 1. OIDs differ. Replay learns a map from the OIDs of the trace to the OIDs of the server. It reads them from the table and type OIDs of `RowDescription`, the types of `ParameterDescription` and the columns of type `oid` in `DataRow`, for user objects only (OID 16384 and up). It rewrites the OIDs in `Query`, `Parse`, `Bind` and `FunctionCall` before it sends them, and maps the answers back to the OIDs of the trace. In `Bind`, it maps text parameters and binary parameters of 4 or 8 bytes.
 //! 2. SCRAM has new nonces each time. Replay makes a new SCRAM exchange with each server.
 //! 3. Cancel keys differ. Replay rewrites each `CancelRequest` to the process ID and the key that the server sent on the connection that the trace cancels. The key keeps the length that the server sent, so it works for protocol 3.0 and 3.2.
 
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::net::{Shutdown, TcpStream};
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
@@ -25,6 +25,9 @@ pub(crate) const FIRST_NORMAL_OID: u32 = 16_384;
 /// The type OID of `oid`.
 const OID_TYPE: i64 = 26;
 
+/// The OID of the catalog `pg_enum`.
+const PG_ENUM: i64 = 3501;
+
 /// How long replay waits for a server that is quiet after a group without a terminator.
 const IDLE: Duration = Duration::from_millis(500);
 
@@ -33,6 +36,8 @@ const IDLE: Duration = Duration::from_millis(500);
 pub(crate) struct OidMap {
     to_server: BTreeMap<u32, u32>,
     to_trace: BTreeMap<u32, u32>,
+    /// The OIDs of the trace that are enum labels, from the `oid` column of `pg_enum`.
+    labels: BTreeSet<u32>,
     /// How many values replay changed with the map, in both directions.
     pub(crate) applied: usize,
 }
@@ -43,11 +48,29 @@ impl OidMap {
     }
 
     /// Spec/05 section 5.3 item 2 excludes the values of user OIDs but compares the gaps between consecutive ones. Returns the number of pairs of consecutive user OIDs of the trace and the number of pairs with another gap on the server.
+    ///
+    /// PostgreSQL gives only even OIDs to enum labels (`EnumValuesCreate` in `pg_enum.c` skips the odd ones). So the gap before a label is one more when the OID before it is even. The gap before a label may differ by 1 when the label is even on both sides.
     pub(crate) fn gaps(&self) -> (usize, usize) {
         let pairs: Vec<(i64, i64)> =
             self.to_server.iter().map(|(&t, &s)| (i64::from(t), i64::from(s))).collect();
-        let differ = pairs.windows(2).filter(|w| w[1].0 - w[0].0 != w[1].1 - w[0].1).count();
+        let differ = pairs
+            .windows(2)
+            .filter(|w| {
+                let (trace, server) = (w[1].0 - w[0].0, w[1].1 - w[0].1);
+                let label = u32::try_from(w[1].0).is_ok_and(|t| self.labels.contains(&t))
+                    && w[1].0 % 2 == 0
+                    && w[1].1 % 2 == 0;
+                trace != server && !(label && (trace - server).abs() == 1)
+            })
+            .count();
         (pairs.len().saturating_sub(1), differ)
+    }
+
+    /// Notes that `trace` is the OID of an enum label in the trace.
+    fn label(&mut self, trace: u32) {
+        if trace >= FIRST_NORMAL_OID {
+            self.labels.insert(trace);
+        }
     }
 
     /// Learns that `trace` in the trace is `server` on the server. The first pair for an OID wins.
@@ -97,6 +120,25 @@ impl OidMap {
         }
     }
 
+    /// Maps a binary parameter of 4 or 8 bytes whose value is a mapped OID, like an `oid`, `int4` or `int8` in binary format. A client such as psycopg 3 sends the OID of a table that it found before in this form.
+    fn map_binary_value(&mut self, v: &mut Val, back: bool) {
+        let Val::Str(b) = v else { return };
+        let Ok(bytes) = <[u8; 8]>::try_from(b.as_slice()).map(u64::from_be_bytes).or_else(|_| {
+            <[u8; 4]>::try_from(b.as_slice()).map(|x| u64::from(u32::from_be_bytes(x)))
+        }) else {
+            return;
+        };
+        let Ok(oid) = u32::try_from(bytes) else { return };
+        let m = self.map(oid, back);
+        if m != oid {
+            *b = if b.len() == 8 {
+                u64::from(m).to_be_bytes().to_vec()
+            } else {
+                m.to_be_bytes().to_vec()
+            };
+        }
+    }
+
     /// Maps each number in a statement that is a mapped OID. A number counts only when no letter, digit, `_` or `.` touches it.
     pub(crate) fn map_sql(&mut self, sql: &[u8], back: bool) -> Vec<u8> {
         let word = |b: u8| b.is_ascii_alphanumeric() || b == b'_' || b == b'.' || b >= 0x80;
@@ -139,6 +181,30 @@ fn parse_oid(s: &[u8]) -> Option<u32> {
 /// The types of the columns of a `RowDescription`.
 fn row_types(msg: &Msg) -> Vec<i64> {
     msg.vals[0].list().iter().map(|f| f.list().get(3).and_then(Val::int).unwrap_or(0)).collect()
+}
+
+/// The places of the columns of a `RowDescription` that are the `oid` column of `pg_enum`.
+fn label_columns(msg: &Msg) -> Vec<usize> {
+    let field = |f: &Val, i: usize| f.list().get(i).and_then(Val::int);
+    msg.vals[0]
+        .list()
+        .iter()
+        .enumerate()
+        .filter(|(_, f)| field(f, 1) == Some(PG_ENUM) && field(f, 2) == Some(1))
+        .map(|(i, _)| i)
+        .collect()
+}
+
+/// Notes the enum labels of a `DataRow` of the trace.
+fn learn_labels(map: &mut OidMap, trace: &Msg, columns: &[usize]) {
+    if trace.name() != "DataRow" {
+        return;
+    }
+    for &i in columns {
+        if let Some(oid) = trace.vals[0].list().get(i).and_then(Val::bytes).and_then(parse_oid) {
+            map.label(oid);
+        }
+    }
 }
 
 /// Learns the OIDs of one pair of messages: `trace` from the trace and `server` from the server.
@@ -241,6 +307,8 @@ fn map_frontend(map: &mut OidMap, msg: &mut Msg) {
                     };
                     if format == 0 {
                         map.map_text_value(p, false);
+                    } else {
+                        map.map_binary_value(p, false);
                     }
                 }
             }
@@ -337,6 +405,8 @@ struct Session {
     server_first: Vec<u8>,
     /// The column types of the last `RowDescription` of the server.
     types: Vec<i64>,
+    /// The columns of the last `RowDescription` of the server that hold enum labels.
+    labels: Vec<usize>,
     end_written: bool,
     trace_key: Option<(i64, Vec<u8>)>,
     key: Option<(i64, Vec<u8>)>,
@@ -517,12 +587,16 @@ impl Runner<'_> {
                     s.server_first = msg.vals[0].bytes().unwrap_or_default().to_vec();
                 }
                 "BackendKeyData" => s.key = key_of(&msg),
-                "RowDescription" => s.types = row_types(&msg),
+                "RowDescription" => {
+                    s.types = row_types(&msg);
+                    s.labels = label_columns(&msg);
+                }
                 _ => {}
             }
             let types = s.types.clone();
             if let Some(t) = pending.get(i) {
                 learn(&mut self.out.oids, t, &msg, &types);
+                learn_labels(&mut self.out.oids, t, &s.labels);
             }
             let mut shown = msg;
             map_backend(&mut self.out.oids, &mut shown, &types);
@@ -624,6 +698,46 @@ mod tests {
     }
 
     #[test]
+    fn the_gap_before_an_even_enum_label_may_differ_by_one() {
+        let field = |table: i64, column: i64| {
+            Val::Tuple(vec![
+                str_val("oid"),
+                Val::Int(table),
+                Val::Int(column),
+                Val::Int(26),
+                Val::Int(4),
+                Val::Int(-1),
+                Val::Int(0),
+            ])
+        };
+        let rd = Msg::new(Dir::B, "RowDescription", vec![Val::List(vec![field(3501, 1)])]);
+        assert_eq!(label_columns(&rd), [0]);
+        let other = Msg::new(Dir::B, "RowDescription", vec![Val::List(vec![field(1247, 1)])]);
+        assert!(label_columns(&other).is_empty());
+        let mut map = OidMap::default();
+        let dr = Msg::new(Dir::B, "DataRow", vec![Val::List(vec![str_val("16388")])]);
+        learn_labels(&mut map, &dr, &[0]);
+        // The type is 16386 in the trace, so the label skips 16387. On the server the type is 20001 and the label is 20002.
+        for (t, s) in [(16_386, 20_001), (16_388, 20_002), (16_390, 20_004)] {
+            map.learn(t, s);
+        }
+        assert_eq!(map.gaps(), (2, 0));
+        // An odd OID on the server is not an enum label, so the gap differs.
+        let mut map = OidMap::default();
+        learn_labels(&mut map, &dr, &[0]);
+        for (t, s) in [(16_386, 20_000), (16_388, 20_001)] {
+            map.learn(t, s);
+        }
+        assert_eq!(map.gaps(), (1, 1));
+        // The same gap before an OID that is not a label differs.
+        let mut map = OidMap::default();
+        for (t, s) in [(16_386, 20_001), (16_388, 20_002)] {
+            map.learn(t, s);
+        }
+        assert_eq!(map.gaps(), (1, 1));
+    }
+
+    #[test]
     fn the_map_rewrites_whole_numbers_only() {
         let mut m = OidMap::default();
         m.learn(16_400, 16_500);
@@ -684,6 +798,29 @@ mod tests {
         );
         map_frontend(&mut m, &mut b);
         assert_eq!(b.vals[3].list()[0], str_val("17002"));
+        let bin = |v: &[u8]| Val::Str(v.to_vec());
+        let mut b = Msg::new(
+            Dir::F,
+            "Bind",
+            vec![
+                str_val(""),
+                str_val(""),
+                Val::List(vec![Val::Int(1)]),
+                Val::List(vec![
+                    bin(&16_384u32.to_be_bytes()),
+                    bin(&16_386u64.to_be_bytes()),
+                    bin(&16_390u32.to_be_bytes()),
+                    bin(b"16384"),
+                ]),
+                Val::List(vec![]),
+            ],
+        );
+        map_frontend(&mut m, &mut b);
+        let p = b.vals[3].list();
+        assert_eq!(p[0], bin(&17_000u32.to_be_bytes()));
+        assert_eq!(p[1], bin(&17_002u64.to_be_bytes()));
+        assert_eq!(p[2], bin(&16_390u32.to_be_bytes()), "an OID that the map does not know stays");
+        assert_eq!(p[3], bin(b"16384"), "a value of 5 bytes is not an OID");
     }
 
     #[test]
