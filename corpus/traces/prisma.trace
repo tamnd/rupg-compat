@@ -1,0 +1,949 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/prisma/run.sh
+1 F StartupMessage 3.0 "client_encoding" "UTF8" "user" "postgres" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=?XQ\"Z}2u$\"KdrZL{J5Luu$Xb"
+1 B AuthenticationSASLContinue "r=?XQ\"Z}2u$\"KdrZL{J5Luu$XbRurW2EEhG9M7J3T0C/usgjK1,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=?XQ\"Z}2u$\"KdrZL{J5Luu$XbRurW2EEhG9M7J3T0C/usgjK1,p=aZkTAh4/yPEJ6UlSMK+zmp3oScNYPuTZn6PHs9DoajY="
+1 B AuthenticationSASLFinal "v=rBhnnNZGUPD197z8vM8r3SJ9rQZNP4hjmUN561xm/aI="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 810915 "\r\x8d\xb3\x92"
+1 B ReadyForQuery I
+1 F Parse "s0" "SELECT version()" []
+1 F Describe S "s0"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("version" 0 0 25 -1 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "s0" [] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Close S "s0"
+1 F Sync
+1 F Parse "s1" "SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = $1), version(), current_setting('server_version_num')::integer as numeric_version;" []
+1 F Describe S "s1"
+1 F Sync
+1 B CloseComplete
+1 B ReadyForQuery I
+1 B ParseComplete
+1 B ParameterDescription [19]
+1 B RowDescription [("exists" 0 0 16 1 -1 0) ("version" 0 0 25 -1 -1 0) ("numeric_version" 0 0 23 4 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "s1" [1] ["public"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x01" "PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit" "\x00\x02\xe60"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Close S "s1"
+1 F Sync
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
+2 F StartupMessage 3.0 "client_encoding" "UTF8" "user" "postgres" "database" "compat"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=eL.X^?5#yFo'SL6oUp%x-mp'"
+2 B AuthenticationSASLContinue "r=eL.X^?5#yFo'SL6oUp%x-mp'MQWbXkbbNA1jc4UX+gg50s3q,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=eL.X^?5#yFo'SL6oUp%x-mp'MQWbXkbbNA1jc4UX+gg50s3q,p=Lh3jx1Wi42w4IKj6xw1jDsH9WuTIc77wYXsMkwn+A2U="
+2 B AuthenticationSASLFinal "v=Q+uR/KI0MNydvhexsAPWlHntlsVdXNtjjHA9HIiNM8Q="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 810924 "\x17C\xc15"
+2 B ReadyForQuery I
+2 F Parse "s0" "SELECT version()" []
+2 F Describe S "s0"
+2 F Sync
+2 B ParseComplete
+2 B ParameterDescription []
+2 B RowDescription [("version" 0 0 25 -1 -1 0)]
+2 B ReadyForQuery I
+2 F Bind "" "s0" [] [] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Close S "s0"
+2 F Sync
+2 F Parse "s1" "SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = $1), version(), current_setting('server_version_num')::integer as numeric_version;" []
+2 F Describe S "s1"
+2 F Sync
+2 B CloseComplete
+2 B ReadyForQuery I
+2 B ParseComplete
+2 B ParameterDescription [19]
+2 B RowDescription [("exists" 0 0 16 1 -1 0) ("version" 0 0 25 -1 -1 0) ("numeric_version" 0 0 23 4 -1 0)]
+2 B ReadyForQuery I
+2 F Bind "" "s1" [1] ["public"] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x01" "PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit" "\x00\x02\xe60"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Close S "s1"
+2 F Sync
+2 B CloseComplete
+2 B ReadyForQuery I
+2 F Query "SELECT pg_advisory_lock(72707369)"
+2 B RowDescription [("pg_advisory_lock" 0 0 2278 4 -1 0)]
+2 B DataRow [""]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "s2" "\n                SELECT tbl.relname AS table_name, namespace.nspname AS table_namespace\n                FROM pg_class AS tbl\n                INNER JOIN pg_namespace AS namespace ON namespace.oid = tbl.relnamespace\n                WHERE tbl.relkind = 'r' AND namespace.nspname = ANY ( $1 )\n            " []
+2 F Describe S "s2"
+2 F Sync
+2 B ParseComplete
+2 B ParameterDescription [1003]
+2 B RowDescription [("table_name" 1259 2 19 64 -1 0) ("table_namespace" 2615 2 19 64 -1 0)]
+2 B ReadyForQuery I
+2 F Bind "" "s2" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Close S "s2"
+2 F Sync
+2 F Query "CREATE TABLE _prisma_migrations (\n    id                      VARCHAR(36) PRIMARY KEY NOT NULL,\n    checksum                VARCHAR(64) NOT NULL,\n    finished_at             TIMESTAMPTZ,\n    migration_name          VARCHAR(255) NOT NULL,\n    logs                    TEXT,\n    rolled_back_at          TIMESTAMPTZ,\n    started_at              TIMESTAMPTZ NOT NULL DEFAULT now(),\n    applied_steps_count     INTEGER NOT NULL DEFAULT 0\n);\n"
+2 B CloseComplete
+2 B ReadyForQuery I
+2 B CommandComplete "CREATE TABLE"
+2 B ReadyForQuery I
+2 F Parse "s3" "SELECT \"id\", \"checksum\", \"finished_at\", \"migration_name\", \"logs\", \"rolled_back_at\", \"started_at\", \"applied_steps_count\" FROM \"_prisma_migrations\" ORDER BY \"started_at\" ASC" []
+2 F Describe S "s3"
+2 F Sync
+2 B ParseComplete
+2 B ParameterDescription []
+2 B RowDescription [("id" 258086 1 1043 -1 40 0) ("checksum" 258086 2 1043 -1 68 0) ("finished_at" 258086 3 1184 8 -1 0) ("migration_name" 258086 4 1043 -1 259 0) ("logs" 258086 5 25 -1 -1 0) ("rolled_back_at" 258086 6 1184 8 -1 0) ("started_at" 258086 7 1184 8 -1 0) ("applied_steps_count" 258086 8 23 4 -1 0)]
+2 B ReadyForQuery I
+2 F Bind "" "s3" [] [] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Close S "s3"
+2 F Sync
+2 F Parse "s4" "INSERT INTO \"_prisma_migrations\" (\"id\",\"checksum\",\"started_at\",\"migration_name\") VALUES ($1,$2,$3,$4)" []
+2 F Describe S "s4"
+2 F Sync
+2 B CloseComplete
+2 B ReadyForQuery I
+2 B ParseComplete
+2 B ParameterDescription [1043 1043 1184 1043]
+2 B NoData
+2 B ReadyForQuery I
+2 F Bind "" "s4" [1 1 1 1] ["abdcd3f9-86c8-4821-bac3-852bacb31362" "2e44d866adf6e288761b998fa9eaef816ede7a3741d1ce0c60b78632b168fbeb" "\x00\x03\x00@\x0e(\xe3\x03" "20260101000000_init"] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery I
+2 F Close S "s4"
+2 F Sync
+2 B CloseComplete
+2 B ReadyForQuery I
+2 F Query "-- CreateSchema\nCREATE SCHEMA IF NOT EXISTS \"public\";"
+2 B NoticeResponse S "NOTICE" V "NOTICE" C "42P06" M "schema \"public\" already exists, skipping" F "schemacmds.c" L "132" R "CreateSchemaCommand"
+2 B CommandComplete "CREATE SCHEMA"
+2 B ReadyForQuery I
+2 F Query "\n\n-- CreateEnum\nCREATE TYPE \"compat_mood\" AS ENUM ('sad', 'ok', 'happy');"
+2 B CommandComplete "CREATE TYPE"
+2 B ReadyForQuery I
+2 F Query "\n\n-- CreateTable\nCREATE TABLE \"compat_items\" (\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"price\" DECIMAL(10,2),\n    \"mood\" \"compat_mood\" NOT NULL DEFAULT 'ok',\n    \"added\" TIMESTAMPTZ(6),\n    \"tags\" TEXT[],\n    \"extra\" JSONB,\n\n    CONSTRAINT \"compat_items_pkey\" PRIMARY KEY (\"id\")\n);"
+2 B CommandComplete "CREATE TABLE"
+2 B ReadyForQuery I
+2 F Query "\n\n-- CreateTable\nCREATE TABLE \"compat_orders\" (\n    \"id\" SERIAL NOT NULL,\n    \"item_id\" INTEGER NOT NULL,\n    \"qty\" INTEGER NOT NULL DEFAULT 1,\n\n    CONSTRAINT \"compat_orders_pkey\" PRIMARY KEY (\"id\")\n);"
+2 B CommandComplete "CREATE TABLE"
+2 B ReadyForQuery I
+2 F Query "\n\n-- CreateIndex\nCREATE UNIQUE INDEX \"compat_items_name_key\" ON \"compat_items\"(\"name\");"
+2 B CommandComplete "CREATE INDEX"
+2 B ReadyForQuery I
+2 F Query "\n\n-- CreateIndex\nCREATE INDEX \"compat_orders_item_id_idx\" ON \"compat_orders\"(\"item_id\");"
+2 B CommandComplete "CREATE INDEX"
+2 B ReadyForQuery I
+2 F Query "\n\n-- AddForeignKey\nALTER TABLE \"compat_orders\" ADD CONSTRAINT \"compat_orders_item_id_fkey\" FOREIGN KEY (\"item_id\") REFERENCES \"compat_items\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;"
+2 B CommandComplete "ALTER TABLE"
+2 B ReadyForQuery I
+2 F Parse "s5" "UPDATE \"_prisma_migrations\" SET \"applied_steps_count\" = (\"applied_steps_count\" + $1) WHERE \"id\" = $2" []
+2 F Describe S "s5"
+2 F Sync
+2 B ParseComplete
+2 B ParameterDescription [23 25]
+2 B NoData
+2 B ReadyForQuery I
+2 F Bind "" "s5" [1 1] ["\x00\x00\x00\x01" "abdcd3f9-86c8-4821-bac3-852bacb31362"] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery I
+2 F Close S "s5"
+2 F Sync
+2 F Parse "s6" "UPDATE \"_prisma_migrations\" SET \"finished_at\" = $1 WHERE \"id\" = $2" []
+2 F Describe S "s6"
+2 F Sync
+2 B CloseComplete
+2 B ReadyForQuery I
+2 B ParseComplete
+2 B ParameterDescription [1184 25]
+2 B NoData
+2 B ReadyForQuery I
+2 F Bind "" "s6" [1 1] ["\x00\x03\x00@\x0e)z\xf9" "abdcd3f9-86c8-4821-bac3-852bacb31362"] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery I
+2 F Close S "s6"
+2 F Sync
+2 B CloseComplete
+2 B ReadyForQuery I
+2 F Terminate
+2 F End
+2 B End
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=NXxsHwB9Hy8dG84Ej18yt7YL"
+3 B AuthenticationSASLContinue "r=NXxsHwB9Hy8dG84Ej18yt7YLqL5EXM0VSPDzASRJuUgvpsCG,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=NXxsHwB9Hy8dG84Ej18yt7YLqL5EXM0VSPDzASRJuUgvpsCG,p=5VCaa37AKwaNqOAQxqY4u2kCxJsdGkf5BzyBe/LFRTw="
+3 B AuthenticationSASLFinal "v=Pbo4xI59nrEnBMQDq7OA8q9LaVs2dIzdPlNRdbu/MNA="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" ""
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 810935 "\x99\\\x93\x9b"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Parse "" "INSERT INTO \"public\".\"compat_items\" (\"name\",\"price\",\"mood\",\"added\",\"tags\",\"extra\") VALUES ($1,$2,CAST($3::text AS \"public\".\"compat_mood\"),$4,$5,$6) RETURNING \"public\".\"compat_items\".\"id\"" []
+3 F Bind "" "" [0 0 0 0 0 0] ["one" "1.50" "happy" "2026-01-02 03:04:05" "{\"a\",\"b\"}" "{\"n\":1}"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0)]
+3 B DataRow ["1"]
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Parse "" "INSERT INTO \"public\".\"compat_orders\" (\"item_id\",\"qty\") VALUES ($1,$2) RETURNING \"public\".\"compat_orders\".\"id\"" []
+3 F Bind "" "" [0 0] ["1" "2"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258121 1 23 4 -1 0)]
+3 B DataRow ["1"]
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Parse "" "SELECT \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\" FROM \"public\".\"compat_items\" WHERE \"public\".\"compat_items\".\"id\" = $1 LIMIT $2 OFFSET $3" []
+3 F Bind "" "" [0 0 0] ["1" "1" "0"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B DataRow ["1" "one" "1.50" "happy" "2026-01-02 03:04:05+00" "{a,b}" "{\"n\": 1}"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery T
+3 F Parse "" "INSERT INTO \"public\".\"compat_items\" (\"name\",\"price\",\"mood\") VALUES ($1,$2,CAST($3::text AS \"public\".\"compat_mood\")) RETURNING \"public\".\"compat_items\".\"id\"" []
+3 F Bind "" "" [0 0 0] ["two" "2.50" "ok"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0)]
+3 B DataRow ["2"]
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Parse "" "INSERT INTO \"public\".\"compat_orders\" (\"item_id\",\"qty\") VALUES ($1,$2) RETURNING \"public\".\"compat_orders\".\"id\"" []
+3 F Bind "" "" [0 0] ["2" "1"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258121 1 23 4 -1 0)]
+3 B DataRow ["2"]
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Parse "" "SELECT \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\" FROM \"public\".\"compat_items\" WHERE \"public\".\"compat_items\".\"id\" = $1 LIMIT $2 OFFSET $3" []
+3 F Bind "" "" [0 0 0] ["2" "1" "0"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B DataRow ["2" "two" "2.50" "ok" NULL NULL NULL]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery T
+3 F Query "COMMIT"
+3 B CommandComplete "COMMIT"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Parse "" "INSERT INTO \"public\".\"compat_items\" (\"name\",\"price\",\"mood\") VALUES ($1,$2,CAST($3::text AS \"public\".\"compat_mood\")) RETURNING \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\"" []
+3 F Bind "" "" [0 0 0] ["three" "3.50" "ok"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B DataRow ["3" "three" "3.50" "ok" NULL NULL NULL]
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Query "ROLLBACK"
+3 B CommandComplete "ROLLBACK"
+3 B ReadyForQuery I
+3 F Parse "" "SELECT \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\" FROM \"public\".\"compat_items\" WHERE 1=1 ORDER BY \"public\".\"compat_items\".\"id\" ASC OFFSET $1" []
+3 F Bind "" "" [0] ["0"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B DataRow ["1" "one" "1.50" "happy" "2026-01-02 03:04:05+00" "{a,b}" "{\"n\": 1}"]
+3 B DataRow ["2" "two" "2.50" "ok" NULL NULL NULL]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Parse "" "SELECT \"public\".\"compat_orders\".\"id\", \"public\".\"compat_orders\".\"item_id\", \"public\".\"compat_orders\".\"qty\" FROM \"public\".\"compat_orders\" WHERE \"public\".\"compat_orders\".\"item_id\" IN ($1,$2) OFFSET $3" []
+3 F Bind "" "" [0 0 0] ["1" "2" "0"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258121 1 23 4 -1 0) ("item_id" 258121 2 23 4 -1 0) ("qty" 258121 3 23 4 -1 0)]
+3 B DataRow ["1" "1" "2"]
+3 B DataRow ["2" "2" "1"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Parse "" "SELECT \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\" FROM \"public\".\"compat_items\" WHERE (\"public\".\"compat_items\".\"name\" = $1 AND 1=1) LIMIT $2 OFFSET $3" []
+3 F Bind "" "" [0 0 0] ["two" "1" "0"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B DataRow ["2" "two" "2.50" "ok" NULL NULL NULL]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery I
+3 F Parse "" "SELECT COUNT(*) AS \"_count$_all\" FROM (SELECT \"public\".\"compat_orders\".\"id\" FROM \"public\".\"compat_orders\" WHERE \"public\".\"compat_orders\".\"qty\" = $1 OFFSET $2) AS \"sub\"" []
+3 F Bind "" "" [0 0] ["1" "0"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("_count$_all" 0 0 20 8 -1 0)]
+3 B DataRow ["1"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery I
+3 F Parse "" "SELECT SUM(\"price\") AS \"_sum$price\", MAX(\"added\") AS \"_max$added\" FROM (SELECT \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"added\" FROM \"public\".\"compat_items\" WHERE 1=1 OFFSET $1) AS \"sub\"" []
+3 F Bind "" "" [0] ["0"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("_sum$price" 0 0 1700 -1 -1 0) ("_max$added" 0 0 1184 8 -1 0)]
+3 B DataRow ["4.00" "2026-01-02 03:04:05+00"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery I
+3 F Parse "" "UPDATE \"public\".\"compat_items\" SET \"price\" = $1 WHERE (\"public\".\"compat_items\".\"name\" = $2 AND 1=1) RETURNING \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\"" []
+3 F Bind "" "" [0 0] ["5.00" "two"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B DataRow ["2" "two" "5.00" "ok" NULL NULL NULL]
+3 B CommandComplete "UPDATE 1"
+3 B ReadyForQuery I
+3 F Parse "" "INSERT INTO \"public\".\"compat_items\" (\"name\",\"mood\") VALUES ($1,CAST($2::text AS \"public\".\"compat_mood\")) ON CONFLICT (\"name\") DO UPDATE SET \"mood\" = CAST($3::text AS \"public\".\"compat_mood\") WHERE (\"public\".\"compat_items\".\"name\" = $4 AND 1=1) RETURNING \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\"" []
+3 F Bind "" "" [0 0 0 0] ["one" "ok" "ok" "one"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B DataRow ["1" "one" "1.50" "ok" "2026-01-02 03:04:05+00" "{a,b}" "{\"n\": 1}"]
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery I
+3 F Parse "" "SELECT id, name FROM compat_items WHERE price > $1" []
+3 F Bind "" "" [0] ["1"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0)]
+3 B DataRow ["2" "two"]
+3 B DataRow ["1" "one"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Parse "" "INSERT INTO \"public\".\"compat_items\" (\"name\",\"mood\") VALUES ($1,CAST($2::text AS \"public\".\"compat_mood\")) RETURNING \"public\".\"compat_items\".\"id\", \"public\".\"compat_items\".\"name\", \"public\".\"compat_items\".\"price\", \"public\".\"compat_items\".\"mood\"::text, \"public\".\"compat_items\".\"added\", \"public\".\"compat_items\".\"tags\", \"public\".\"compat_items\".\"extra\"" []
+3 F Bind "" "" [0 0] ["one" "ok"] [0]
+3 F Describe P ""
+3 F Execute "" 0
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("id" 258108 1 23 4 -1 0) ("name" 258108 2 25 -1 -1 0) ("price" 258108 3 1700 -1 655366 0) ("mood" 0 0 25 -1 -1 0) ("added" 258108 5 1184 8 6 0) ("tags" 258108 6 1009 -1 -1 0) ("extra" 258108 7 3802 -1 -1 0)]
+3 B ErrorResponse S "ERROR" V "ERROR" C "23505" M "duplicate key value violates unique constraint \"compat_items_name_key\"" D "Key (name)=(one) already exists." s "public" t "compat_items" n "compat_items_name_key" F "nbtinsert.c" L "669" R "_bt_check_unique"
+3 F Sync
+3 B ReadyForQuery I
+3 F Terminate
+3 B End
+3 F End
+4 F StartupMessage 3.0 "client_encoding" "UTF8" "user" "postgres" "database" "compat"
+4 B AuthenticationSASL "SCRAM-SHA-256"
+4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=iCq7UiE/6v|2QCqtZlPnHURq"
+4 B AuthenticationSASLContinue "r=iCq7UiE/6v|2QCqtZlPnHURqoJ/4iHgIEOiLKW8oG1bEsPiy,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F SASLResponse "c=biws,r=iCq7UiE/6v|2QCqtZlPnHURqoJ/4iHgIEOiLKW8oG1bEsPiy,p=nbyf6x9NcWVobcv56xqZvYJg/vVXJiprERSkR7PvFCQ="
+4 B AuthenticationSASLFinal "v=+ATzKdzIwTB2MjuUCUiF/S0zRTo6nL3LouvQqikz/HA="
+4 B AuthenticationOk
+4 B ParameterStatus "IntervalStyle" "postgres"
+4 B ParameterStatus "search_path" "\"$user\", public"
+4 B ParameterStatus "is_superuser" "on"
+4 B ParameterStatus "standard_conforming_strings" "on"
+4 B ParameterStatus "session_authorization" "postgres"
+4 B ParameterStatus "client_encoding" "UTF8"
+4 B ParameterStatus "server_version" "19beta4"
+4 B ParameterStatus "server_encoding" "UTF8"
+4 B ParameterStatus "in_hot_standby" "off"
+4 B ParameterStatus "integer_datetimes" "on"
+4 B ParameterStatus "TimeZone" "UTC"
+4 B ParameterStatus "application_name" ""
+4 B ParameterStatus "default_transaction_read_only" "off"
+4 B ParameterStatus "scram_iterations" "4096"
+4 B ParameterStatus "DateStyle" "ISO, MDY"
+4 B BackendKeyData 810982 "5G\x81\xe3"
+4 B ReadyForQuery I
+4 F Parse "s0" "SELECT version()" []
+4 F Describe S "s0"
+4 F Sync
+4 B ParseComplete
+4 B ParameterDescription []
+4 B RowDescription [("version" 0 0 25 -1 -1 0)]
+4 B ReadyForQuery I
+4 F Bind "" "s0" [] [] [1]
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Close S "s0"
+4 F Sync
+4 B CloseComplete
+4 B ReadyForQuery I
+4 F Parse "s1" "SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = $1), version(), current_setting('server_version_num')::integer as numeric_version;" []
+4 F Describe S "s1"
+4 F Sync
+4 B ParseComplete
+4 B ParameterDescription [19]
+4 B RowDescription [("exists" 0 0 16 1 -1 0) ("version" 0 0 25 -1 -1 0) ("numeric_version" 0 0 23 4 -1 0)]
+4 B ReadyForQuery I
+4 F Bind "" "s1" [1] ["public"] [1]
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B DataRow ["\x01" "PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit" "\x00\x02\xe60"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Close S "s1"
+4 F Sync
+4 B CloseComplete
+4 B ReadyForQuery I
+4 F Terminate
+4 F End
+4 B End
+5 F StartupMessage 3.0 "client_encoding" "UTF8" "user" "postgres" "database" "compat"
+5 B AuthenticationSASL "SCRAM-SHA-256"
+5 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=3Z<*N|;EZ&o1jlXNmCa52E^q"
+5 B AuthenticationSASLContinue "r=3Z<*N|;EZ&o1jlXNmCa52E^q+zQs56A4iUi+dY1GaZlTvWzd,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+5 F SASLResponse "c=biws,r=3Z<*N|;EZ&o1jlXNmCa52E^q+zQs56A4iUi+dY1GaZlTvWzd,p=y4TU7rHqZXso9cWYNW0Ja/hEGyoZNCjFc75pPaYg7Mk="
+5 B AuthenticationSASLFinal "v=OPrNoDztvjrkjV3LxMeEGx8odtPtoKBs06FPn40n4Hw="
+5 B AuthenticationOk
+5 B ParameterStatus "IntervalStyle" "postgres"
+5 B ParameterStatus "search_path" "\"$user\", public"
+5 B ParameterStatus "is_superuser" "on"
+5 B ParameterStatus "standard_conforming_strings" "on"
+5 B ParameterStatus "session_authorization" "postgres"
+5 B ParameterStatus "client_encoding" "UTF8"
+5 B ParameterStatus "server_version" "19beta4"
+5 B ParameterStatus "server_encoding" "UTF8"
+5 B ParameterStatus "in_hot_standby" "off"
+5 B ParameterStatus "integer_datetimes" "on"
+5 B ParameterStatus "TimeZone" "UTC"
+5 B ParameterStatus "application_name" ""
+5 B ParameterStatus "default_transaction_read_only" "off"
+5 B ParameterStatus "scram_iterations" "4096"
+5 B ParameterStatus "DateStyle" "ISO, MDY"
+5 B BackendKeyData 810992 "\xf4\x02\xc8C"
+5 B ReadyForQuery I
+5 F Parse "s0" "SELECT version()" []
+5 F Describe S "s0"
+5 F Sync
+5 B ParseComplete
+5 B ParameterDescription []
+5 B RowDescription [("version" 0 0 25 -1 -1 0)]
+5 B ReadyForQuery I
+5 F Bind "" "s0" [] [] [1]
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Close S "s0"
+5 F Sync
+5 F Parse "s1" "SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = $1), version(), current_setting('server_version_num')::integer as numeric_version;" []
+5 F Describe S "s1"
+5 F Sync
+5 B CloseComplete
+5 B ReadyForQuery I
+5 B ParseComplete
+5 B ParameterDescription [19]
+5 B RowDescription [("exists" 0 0 16 1 -1 0) ("version" 0 0 25 -1 -1 0) ("numeric_version" 0 0 23 4 -1 0)]
+5 F Bind "" "s1" [1] ["public"] [1]
+5 F Execute "" 0
+5 F Sync
+5 B ReadyForQuery I
+5 B BindComplete
+5 B DataRow ["\x01" "PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit" "\x00\x02\xe60"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Close S "s1"
+5 F Sync
+5 F Parse "s2" "SELECT \"id\", \"checksum\", \"finished_at\", \"migration_name\", \"logs\", \"rolled_back_at\", \"started_at\", \"applied_steps_count\" FROM \"_prisma_migrations\" ORDER BY \"started_at\" ASC" []
+5 F Describe S "s2"
+5 F Sync
+5 B CloseComplete
+5 B ReadyForQuery I
+5 B ParseComplete
+5 B ParameterDescription []
+5 B RowDescription [("id" 258086 1 1043 -1 40 0) ("checksum" 258086 2 1043 -1 68 0) ("finished_at" 258086 3 1184 8 -1 0) ("migration_name" 258086 4 1043 -1 259 0) ("logs" 258086 5 25 -1 -1 0) ("rolled_back_at" 258086 6 1184 8 -1 0) ("started_at" 258086 7 1184 8 -1 0) ("applied_steps_count" 258086 8 23 4 -1 0)]
+5 B ReadyForQuery I
+5 F Bind "" "s2" [] [] [1]
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B DataRow ["abdcd3f9-86c8-4821-bac3-852bacb31362" "2e44d866adf6e288761b998fa9eaef816ede7a3741d1ce0c60b78632b168fbeb" "\x00\x03\x00@\x0e)z\xf9" "20260101000000_init" NULL NULL "\x00\x03\x00@\x0e(\xe3\x03" "\x00\x00\x00\x01"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Close S "s2"
+5 F Sync
+5 B CloseComplete
+5 B ReadyForQuery I
+5 F Terminate
+5 F End
+5 B End
+6 F StartupMessage 3.0 "client_encoding" "UTF8" "user" "postgres" "database" "compat"
+6 B AuthenticationSASL "SCRAM-SHA-256"
+6 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r==n/'nMV7XH>k;R1(.d7vZijX"
+6 B AuthenticationSASLContinue "r==n/'nMV7XH>k;R1(.d7vZijXyJ7dznbED5zahsYTagi+y2fA,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+6 F SASLResponse "c=biws,r==n/'nMV7XH>k;R1(.d7vZijXyJ7dznbED5zahsYTagi+y2fA,p=xb8uqSFKwPmJLOBv0a9VANr05dugBgy9cHl4kyrsAHE="
+6 B AuthenticationSASLFinal "v=cBXIB84KnVk8vB0KgVOg+ECtKfuiPKBR7sJrFXrTlF0="
+6 B AuthenticationOk
+6 B ParameterStatus "IntervalStyle" "postgres"
+6 B ParameterStatus "search_path" "\"$user\", public"
+6 B ParameterStatus "is_superuser" "on"
+6 B ParameterStatus "standard_conforming_strings" "on"
+6 B ParameterStatus "session_authorization" "postgres"
+6 B ParameterStatus "client_encoding" "UTF8"
+6 B ParameterStatus "server_version" "19beta4"
+6 B ParameterStatus "server_encoding" "UTF8"
+6 B ParameterStatus "in_hot_standby" "off"
+6 B ParameterStatus "integer_datetimes" "on"
+6 B ParameterStatus "TimeZone" "UTC"
+6 B ParameterStatus "application_name" ""
+6 B ParameterStatus "default_transaction_read_only" "off"
+6 B ParameterStatus "scram_iterations" "4096"
+6 B ParameterStatus "DateStyle" "ISO, MDY"
+6 B BackendKeyData 811032 "\xfd\x1fcD"
+6 B ReadyForQuery I
+6 F Parse "s0" "SELECT version()" []
+6 F Describe S "s0"
+6 F Sync
+6 B ParseComplete
+6 B ParameterDescription []
+6 B RowDescription [("version" 0 0 25 -1 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s0" [] [] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+6 B CommandComplete "SELECT 1"
+6 B ReadyForQuery I
+6 F Close S "s0"
+6 F Sync
+6 F Parse "s1" "SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = $1), version(), current_setting('server_version_num')::integer as numeric_version;" []
+6 F Describe S "s1"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [19]
+6 B RowDescription [("exists" 0 0 16 1 -1 0) ("version" 0 0 25 -1 -1 0) ("numeric_version" 0 0 23 4 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s1" [1] ["public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B DataRow ["\x01" "PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit" "\x00\x02\xe60"]
+6 B CommandComplete "SELECT 1"
+6 B ReadyForQuery I
+6 F Close S "s1"
+6 F Sync
+6 F Parse "s2" "SELECT namespace.nspname as namespace_name\nFROM pg_namespace as namespace\nWHERE namespace.nspname = ANY ( $1 )\nORDER BY namespace_name;\n" []
+6 F Describe S "s2"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("namespace_name" 2615 2 19 64 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s2" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B DataRow ["public"]
+6 B CommandComplete "SELECT 1"
+6 B ReadyForQuery I
+6 F Close S "s2"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 F Parse "s3" "SELECT\n  tbl.relname AS table_name,\n  namespace.nspname as namespace,\n  (tbl.relhassubclass and tbl.relkind = 'p') as is_partition,\n  (tbl.relhassubclass and tbl.relkind = 'r') as has_subclass,\n  tbl.relrowsecurity as has_row_level_security,\n  reloptions,\n  obj_description(tbl.oid, 'pg_class') as description\nFROM pg_class AS tbl\nINNER JOIN pg_namespace AS namespace ON namespace.oid = tbl.relnamespace\nWHERE\n  ( -- (relkind = 'r' and relispartition = 't') matches partition table \"duplicates\"\n    (tbl.relkind = 'r' AND tbl.relispartition = 'f')\n      OR -- when it's a partition\n    tbl.relkind = 'p'\n  )\n  AND namespace.nspname = ANY ( $1 )\nORDER BY namespace, table_name;\n" []
+6 F Describe S "s3"
+6 F Sync
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("table_name" 1259 2 19 64 -1 0) ("namespace" 2615 2 19 64 -1 0) ("is_partition" 0 0 16 1 -1 0) ("has_subclass" 0 0 16 1 -1 0) ("has_row_level_security" 1259 24 16 1 -1 0) ("reloptions" 1259 33 1009 -1 -1 0) ("description" 0 0 25 -1 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s3" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B DataRow ["_prisma_migrations" "public" "\x00" "\x00" "\x00" NULL NULL]
+6 B DataRow ["compat_items" "public" "\x00" "\x00" "\x00" NULL NULL]
+6 B DataRow ["compat_orders" "public" "\x00" "\x00" "\x00" NULL NULL]
+6 B CommandComplete "SELECT 3"
+6 B ReadyForQuery I
+6 F Close S "s3"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 F Parse "s4" "SELECT\n    schemainfo.nspname AS namespace,\n    tableinfo.relname AS table_name,\n\tconstr.conname AS constraint_name,\n\tconstr.contype AS constraint_type,\n\tpg_get_constraintdef(constr.oid) AS constraint_definition,\n\tconstr.condeferrable AS is_deferrable,\n\tconstr.condeferred AS is_deferred\nFROM pg_constraint constr\nJOIN pg_class AS tableinfo\n\tON tableinfo.oid = constr.conrelid\nJOIN pg_namespace AS schemainfo\n\tON schemainfo.oid = tableinfo.relnamespace\nWHERE schemainfo.nspname = ANY ( $1 )\n\tAND contype NOT IN ('p', 'u', 'f')\nORDER BY namespace, table_name, constr.contype, constraint_name;\n" []
+6 F Describe S "s4"
+6 F Sync
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("namespace" 2615 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("constraint_name" 2606 2 19 64 -1 0) ("constraint_type" 2606 4 18 1 -1 0) ("constraint_definition" 0 0 25 -1 -1 0) ("is_deferrable" 2606 5 16 1 -1 0) ("is_deferred" 2606 6 16 1 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s4" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B DataRow ["public" "_prisma_migrations" "_prisma_migrations_applied_steps_count_not_null" "n" "NOT NULL applied_steps_count" "\x00" "\x00"]
+6 B DataRow ["public" "_prisma_migrations" "_prisma_migrations_checksum_not_null" "n" "NOT NULL checksum" "\x00" "\x00"]
+6 B DataRow ["public" "_prisma_migrations" "_prisma_migrations_id_not_null" "n" "NOT NULL id" "\x00" "\x00"]
+6 B DataRow ["public" "_prisma_migrations" "_prisma_migrations_migration_name_not_null" "n" "NOT NULL migration_name" "\x00" "\x00"]
+6 B DataRow ["public" "_prisma_migrations" "_prisma_migrations_started_at_not_null" "n" "NOT NULL started_at" "\x00" "\x00"]
+6 B DataRow ["public" "compat_items" "compat_items_id_not_null" "n" "NOT NULL id" "\x00" "\x00"]
+6 B DataRow ["public" "compat_items" "compat_items_mood_not_null" "n" "NOT NULL mood" "\x00" "\x00"]
+6 B DataRow ["public" "compat_items" "compat_items_name_not_null" "n" "NOT NULL name" "\x00" "\x00"]
+6 B DataRow ["public" "compat_orders" "compat_orders_id_not_null" "n" "NOT NULL id" "\x00" "\x00"]
+6 B DataRow ["public" "compat_orders" "compat_orders_item_id_not_null" "n" "NOT NULL item_id" "\x00" "\x00"]
+6 B DataRow ["public" "compat_orders" "compat_orders_qty_not_null" "n" "NOT NULL qty" "\x00" "\x00"]
+6 B CommandComplete "SELECT 11"
+6 B ReadyForQuery I
+6 F Close S "s4"
+6 F Sync
+6 F Parse "s5" "SELECT\n    views.viewname AS view_name,\n    views.definition AS view_sql,\n    views.schemaname AS namespace,\n    obj_description(class.oid, 'pg_class') AS description\nFROM pg_catalog.pg_views views\nINNER JOIN pg_catalog.pg_namespace ns ON views.schemaname = ns.nspname\nINNER JOIN pg_catalog.pg_class class ON class.relnamespace = ns.oid AND class.relname = views.viewname\nWHERE schemaname = ANY ( $1 )\n" []
+6 F Describe S "s5"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("view_name" 12028 2 19 64 -1 0) ("view_sql" 12028 4 25 -1 -1 0) ("namespace" 12028 1 19 64 -1 0) ("description" 0 0 25 -1 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s5" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B CommandComplete "SELECT 0"
+6 B ReadyForQuery I
+6 F Close S "s5"
+6 F Sync
+6 F Parse "s6" "\n            SELECT\n                t.typname AS name,\n                e.enumlabel AS value,\n                n.nspname AS namespace,\n                obj_description(t.oid, 'pg_type') AS description\n            FROM pg_type t\n            JOIN pg_enum e ON t.oid = e.enumtypid\n            JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n            WHERE n.nspname = ANY ( $1 )\n            ORDER BY e.enumsortorder" []
+6 F Describe S "s6"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("name" 1247 2 19 64 -1 0) ("value" 3501 4 19 64 -1 0) ("namespace" 2615 2 19 64 -1 0) ("description" 0 0 25 -1 -1 0)]
+6 F Bind "" "s6" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B ReadyForQuery I
+6 B BindComplete
+6 B DataRow ["compat_mood" "sad" "public" NULL]
+6 B DataRow ["compat_mood" "ok" "public" NULL]
+6 B DataRow ["compat_mood" "happy" "public" NULL]
+6 B CommandComplete "SELECT 3"
+6 B ReadyForQuery I
+6 F Close S "s6"
+6 F Sync
+6 F Parse "s7" "\n            SELECT\n                t.typname AS name,\n                n.nspname AS namespace\n            FROM pg_type t\n            JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n            WHERE n.nspname = ANY ( $1 )\n              AND t.typtype = 'b' -- only base types\n              AND t.typinput::regproc::text <> 'array_in' -- exclude array types\n        " []
+6 F Describe S "s7"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("name" 1247 2 19 64 -1 0) ("namespace" 2615 2 19 64 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s7" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B CommandComplete "SELECT 0"
+6 B ReadyForQuery I
+6 F Close S "s7"
+6 F Sync
+6 F Parse "s8" "\n            SELECT\n                oid.namespace,\n                info.table_name,\n                info.column_name,\n                format_type(att.atttypid, att.atttypmod) as formatted_type,\n                info.numeric_precision,\n                info.numeric_scale,\n                info.numeric_precision_radix,\n                info.datetime_precision,\n                info.data_type,\n                info.udt_schema as type_schema_name,\n                info.udt_name as full_data_type,\n                pg_get_expr(attdef.adbin, attdef.adrelid) AS column_default,\n                info.is_nullable,\n                info.is_identity,\n                info.character_maximum_length,\n                col_description(att.attrelid, ordinal_position) AS description\n            FROM information_schema.columns info\n            JOIN pg_attribute att ON att.attname = info.column_name\n            JOIN (\n                 SELECT pg_class.oid, relname, pg_namespace.nspname as namespace\n                 FROM pg_class\n                 JOIN pg_namespace on pg_namespace.oid = pg_class.relnamespace\n                 AND pg_namespace.nspname = ANY ( $1 )\n                 WHERE reltype > 0\n                ) as oid on oid.oid = att.attrelid\n                  AND relname = info.table_name\n                  AND namespace = info.table_schema\n            LEFT OUTER JOIN pg_attrdef attdef ON attdef.adrelid = att.attrelid AND attdef.adnum = att.attnum AND table_schema = namespace\n            WHERE table_schema = ANY ( $1 ) \n            ORDER BY namespace, table_name, ordinal_position;\n        " []
+6 F Describe S "s8"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("namespace" 2615 2 19 64 -1 0) ("table_name" 13428 3 19 64 -1 0) ("column_name" 13428 4 19 64 -1 0) ("formatted_type" 0 0 25 -1 -1 0) ("numeric_precision" 13428 11 23 4 -1 0) ("numeric_scale" 13428 13 23 4 -1 0) ("numeric_precision_radix" 13428 12 23 4 -1 0) ("datetime_precision" 13428 14 23 4 -1 0) ("data_type" 13428 8 1043 -1 -1 0) ("type_schema_name" 13428 27 19 64 -1 0) ("full_data_type" 13428 28 19 64 -1 0) ("column_default" 0 0 25 -1 -1 0) ("is_nullable" 13428 7 1043 -1 7 0) ("is_identity" 13428 35 1043 -1 7 0) ("character_maximum_length" 13428 9 23 4 -1 0) ("description" 0 0 25 -1 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s8" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B DataRow ["public" "_prisma_migrations" "id" "character varying(36)" NULL NULL NULL NULL "character varying" "pg_catalog" "varchar" NULL "NO" "NO" "\x00\x00\x00$" NULL]
+6 B DataRow ["public" "_prisma_migrations" "checksum" "character varying(64)" NULL NULL NULL NULL "character varying" "pg_catalog" "varchar" NULL "NO" "NO" "\x00\x00\x00@" NULL]
+6 B DataRow ["public" "_prisma_migrations" "finished_at" "timestamp with time zone" NULL NULL NULL "\x00\x00\x00\x06" "timestamp with time zone" "pg_catalog" "timestamptz" NULL "YES" "NO" NULL NULL]
+6 B DataRow ["public" "_prisma_migrations" "migration_name" "character varying(255)" NULL NULL NULL NULL "character varying" "pg_catalog" "varchar" NULL "NO" "NO" "\x00\x00\x00\xff" NULL]
+6 B DataRow ["public" "_prisma_migrations" "logs" "text" NULL NULL NULL NULL "text" "pg_catalog" "text" NULL "YES" "NO" NULL NULL]
+6 B DataRow ["public" "_prisma_migrations" "rolled_back_at" "timestamp with time zone" NULL NULL NULL "\x00\x00\x00\x06" "timestamp with time zone" "pg_catalog" "timestamptz" NULL "YES" "NO" NULL NULL]
+6 B DataRow ["public" "_prisma_migrations" "started_at" "timestamp with time zone" NULL NULL NULL "\x00\x00\x00\x06" "timestamp with time zone" "pg_catalog" "timestamptz" "now()" "NO" "NO" NULL NULL]
+6 B DataRow ["public" "_prisma_migrations" "applied_steps_count" "integer" "\x00\x00\x00 " "\x00\x00\x00\x00" "\x00\x00\x00\x02" NULL "integer" "pg_catalog" "int4" "0" "NO" "NO" NULL NULL]
+6 B DataRow ["public" "compat_items" "id" "integer" "\x00\x00\x00 " "\x00\x00\x00\x00" "\x00\x00\x00\x02" NULL "integer" "pg_catalog" "int4" "nextval('compat_items_id_seq'::regclass)" "NO" "NO" NULL NULL]
+6 B DataRow ["public" "compat_items" "name" "text" NULL NULL NULL NULL "text" "pg_catalog" "text" NULL "NO" "NO" NULL NULL]
+6 B DataRow ["public" "compat_items" "price" "numeric(10,2)" "\x00\x00\x00\n" "\x00\x00\x00\x02" "\x00\x00\x00\n" NULL "numeric" "pg_catalog" "numeric" NULL "YES" "NO" NULL NULL]
+6 B DataRow ["public" "compat_items" "mood" "compat_mood" NULL NULL NULL NULL "USER-DEFINED" "public" "compat_mood" "'ok'::compat_mood" "NO" "NO" NULL NULL]
+6 B DataRow ["public" "compat_items" "added" "timestamp(6) with time zone" NULL NULL NULL "\x00\x00\x00\x06" "timestamp with time zone" "pg_catalog" "timestamptz" NULL "YES" "NO" NULL NULL]
+6 B DataRow ["public" "compat_items" "tags" "text[]" NULL NULL NULL NULL "ARRAY" "pg_catalog" "_text" NULL "YES" "NO" NULL NULL]
+6 B DataRow ["public" "compat_items" "extra" "jsonb" NULL NULL NULL NULL "jsonb" "pg_catalog" "jsonb" NULL "YES" "NO" NULL NULL]
+6 B DataRow ["public" "compat_orders" "id" "integer" "\x00\x00\x00 " "\x00\x00\x00\x00" "\x00\x00\x00\x02" NULL "integer" "pg_catalog" "int4" "nextval('compat_orders_id_seq'::regclass)" "NO" "NO" NULL NULL]
+6 B DataRow ["public" "compat_orders" "item_id" "integer" "\x00\x00\x00 " "\x00\x00\x00\x00" "\x00\x00\x00\x02" NULL "integer" "pg_catalog" "int4" NULL "NO" "NO" NULL NULL]
+6 B DataRow ["public" "compat_orders" "qty" "integer" "\x00\x00\x00 " "\x00\x00\x00\x00" "\x00\x00\x00\x02" NULL "integer" "pg_catalog" "int4" "1" "NO" "NO" NULL NULL]
+6 B CommandComplete "SELECT 18"
+6 B ReadyForQuery I
+6 F Close S "s8"
+6 F Sync
+6 F Parse "s9" "\n            SELECT\n                con.oid         AS \"con_id\",\n                att2.attname    AS \"child_column\",\n                cl.relname      AS \"parent_table\",\n                att.attname     AS \"parent_column\",\n                con.confdeltype,\n                con.confupdtype,\n                rel_ns.nspname  AS \"referenced_schema_name\",\n                conname         AS constraint_name,\n                child,\n                parent,\n                table_name,\n                namespace,\n                condeferrable,\n                condeferred\n            FROM (SELECT\n                        ns.nspname AS \"namespace\",\n                        unnest(con1.conkey)                AS \"parent\",\n                        unnest(con1.confkey)                AS \"child\",\n                        cl.relname                          AS table_name,\n                        ns.nspname                          AS schema_name,\n                        generate_subscripts(con1.conkey, 1) AS colidx,\n                        con1.oid,\n                        con1.confrelid,\n                        con1.conrelid,\n                        con1.conname,\n                        con1.confdeltype,\n                        con1.confupdtype,\n                        con1.condeferrable                  AS condeferrable,\n                        con1.condeferred                    AS condeferred\n                FROM pg_class cl\n                        join pg_constraint con1 on con1.conrelid = cl.oid\n                        join pg_namespace ns on cl.relnamespace = ns.oid\n                WHERE\n                    ns.nspname = ANY ( $1 )\n                    and con1.contype = 'f'\n                ORDER BY colidx\n                ) con\n                    JOIN pg_attribute att on att.attrelid = con.confrelid and att.attnum = con.child\n                    JOIN pg_class cl on cl.oid = con.confrelid\n                    JOIN pg_attribute att2 on att2.attrelid = con.conrelid and att2.attnum = con.parent\n                    JOIN pg_class rel_cl on con.confrelid = rel_cl.oid\n                    JOIN pg_namespace rel_ns on rel_cl.relnamespace = rel_ns.oid\n            ORDER BY namespace, table_name, constraint_name, con_id, con.colidx;\n        " []
+6 F Describe S "s9"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("con_id" 2606 1 26 4 -1 0) ("child_column" 1249 2 19 64 -1 0) ("parent_table" 1259 2 19 64 -1 0) ("parent_column" 1249 2 19 64 -1 0) ("confdeltype" 2606 15 18 1 -1 0) ("confupdtype" 2606 14 18 1 -1 0) ("referenced_schema_name" 2615 2 19 64 -1 0) ("constraint_name" 2606 2 19 64 -1 0) ("child" 0 0 21 2 -1 0) ("parent" 0 0 21 2 -1 0) ("table_name" 1259 2 19 64 -1 0) ("namespace" 2615 2 19 64 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0)]
+6 B ReadyForQuery I
+6 F Bind "" "s9" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B DataRow ["\x00\x03\xf0U" "item_id" "compat_items" "id" "c" "c" "public" "compat_orders_item_id_fkey" "\x00\x01" "\x00\x02" "compat_orders" "public" "\x00" "\x00"]
+6 B CommandComplete "SELECT 1"
+6 B ReadyForQuery I
+6 F Close S "s9"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 F Parse "s10" "WITH rawindex AS (\n    SELECT\n        indrelid, \n        indexrelid,\n        indisunique,\n        indisprimary,\n        indpred,\n        unnest(indkey) AS indkeyid,\n        generate_subscripts(indkey, 1) AS indkeyidx,\n        unnest(indclass) AS indclass,\n        unnest(indoption) AS indoption\n    FROM pg_index -- https://www.postgresql.org/docs/current/catalog-pg-index.html\n    WHERE\n        NOT indisexclusion -- filter out exclusion constraints\n)\nSELECT\n    schemainfo.nspname AS namespace,\n    indexinfo.relname AS index_name,\n    tableinfo.relname AS table_name,\n    columninfo.attname AS column_name,\n    rawindex.indisunique AS is_unique,\n    rawindex.indisprimary AS is_primary_key,\n    rawindex.indkeyidx AS column_index,\n    opclass.opcname AS opclass,\n    opclass.opcdefault AS opcdefault,\n    indexaccess.amname AS index_algo,\n    CASE rawindex.indoption & 1\n        WHEN 1 THEN 'DESC'\n        ELSE 'ASC' END\n        AS column_order,\n    CASE rawindex.indoption & 2\n        WHEN 2 THEN true\n        ELSE false END\n        AS nulls_first,\n    pc.condeferrable AS condeferrable,\n    pc.condeferred AS condeferred,\n    pg_get_expr(rawindex.indpred, rawindex.indrelid) AS predicate\nFROM\n    rawindex\n    INNER JOIN pg_class AS tableinfo ON tableinfo.oid = rawindex.indrelid\n    INNER JOIN pg_class AS indexinfo ON indexinfo.oid = rawindex.indexrelid\n    INNER JOIN pg_namespace AS schemainfo ON schemainfo.oid = tableinfo.relnamespace\n    LEFT JOIN pg_attribute AS columninfo\n        ON columninfo.attrelid = tableinfo.oid AND columninfo.attnum = rawindex.indkeyid\n    INNER JOIN pg_am AS indexaccess ON indexaccess.oid = indexinfo.relam\n    LEFT JOIN pg_opclass AS opclass -- left join because crdb has no opclasses\n        ON opclass.oid = rawindex.indclass\n    LEFT JOIN pg_constraint pc ON rawindex.indexrelid = pc.conindid AND pc.contype <> 'f'\nWHERE schemainfo.nspname = ANY ( $1 )\nORDER BY namespace, table_name, index_name, column_index;\n" []
+6 F Describe S "s10"
+6 F Sync
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("namespace" 2615 2 19 64 -1 0) ("index_name" 1259 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("column_name" 1249 2 19 64 -1 0) ("is_unique" 2610 5 16 1 -1 0) ("is_primary_key" 2610 7 16 1 -1 0) ("column_index" 0 0 23 4 -1 0) ("opclass" 2616 3 19 64 -1 0) ("opcdefault" 2616 8 16 1 -1 0) ("index_algo" 2601 2 19 64 -1 0) ("column_order" 0 0 25 -1 -1 0) ("nulls_first" 0 0 16 1 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0) ("predicate" 0 0 25 -1 -1 0)]
+6 F Bind "" "s10" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B ReadyForQuery I
+6 B BindComplete
+6 B DataRow ["public" "_prisma_migrations_pkey" "_prisma_migrations" "id" "\x01" "\x01" "\x00\x00\x00\x00" "text_ops" "\x01" "btree" "ASC" "\x00" "\x00" "\x00" NULL]
+6 B DataRow ["public" "compat_items_name_key" "compat_items" "name" "\x01" "\x00" "\x00\x00\x00\x00" "text_ops" "\x01" "btree" "ASC" "\x00" NULL NULL NULL]
+6 B DataRow ["public" "compat_items_pkey" "compat_items" "id" "\x01" "\x01" "\x00\x00\x00\x00" "int4_ops" "\x01" "btree" "ASC" "\x00" "\x00" "\x00" NULL]
+6 B DataRow ["public" "compat_orders_item_id_idx" "compat_orders" "item_id" "\x00" "\x00" "\x00\x00\x00\x00" "int4_ops" "\x01" "btree" "ASC" "\x00" NULL NULL NULL]
+6 B DataRow ["public" "compat_orders_pkey" "compat_orders" "id" "\x01" "\x01" "\x00\x00\x00\x00" "int4_ops" "\x01" "btree" "ASC" "\x00" "\x00" "\x00" NULL]
+6 B CommandComplete "SELECT 5"
+6 B ReadyForQuery I
+6 F Close S "s10"
+6 F Sync
+6 F Parse "s11" "\n            SELECT p.proname AS name, n.nspname as namespace,\n                CASE WHEN l.lanname = 'internal' THEN p.prosrc\n                     ELSE pg_get_functiondef(p.oid)\n                     END as definition\n            FROM pg_proc p\n            LEFT JOIN pg_namespace n ON p.pronamespace = n.oid\n            LEFT JOIN pg_language l ON p.prolang = l.oid\n            WHERE n.nspname = ANY ( $1 )\n        " []
+6 F Describe S "s11"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("name" 1255 2 19 64 -1 0) ("namespace" 2615 2 19 64 -1 0) ("definition" 0 0 25 -1 -1 0)]
+6 F Bind "" "s11" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B ReadyForQuery I
+6 B BindComplete
+6 B CommandComplete "SELECT 0"
+6 B ReadyForQuery I
+6 F Close S "s11"
+6 F Sync
+6 F Parse "s12" "SELECT\n    ext.extname AS extension_name,\n    ext.extversion AS extension_version,\n    ext.extrelocatable AS extension_relocatable,\n    pn.nspname AS extension_schema\nFROM pg_extension ext\nINNER JOIN pg_namespace pn ON ext.extnamespace = pn.oid\nORDER BY ext.extname ASC\n" []
+6 F Describe S "s12"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription []
+6 B RowDescription [("extension_name" 3079 2 19 64 -1 0) ("extension_version" 3079 6 25 -1 -1 0) ("extension_relocatable" 3079 5 16 1 -1 0) ("extension_schema" 2615 2 19 64 -1 0)]
+6 F Bind "" "s12" [] [] [1]
+6 F Execute "" 0
+6 F Sync
+6 B ReadyForQuery I
+6 B BindComplete
+6 B DataRow ["plpgsql" "1.0" "\x00" "pg_catalog"]
+6 B CommandComplete "SELECT 1"
+6 B ReadyForQuery I
+6 F Close S "s12"
+6 F Sync
+6 F Parse "s13" "\n              SELECT\n                  sequence_name,\n                  sequence_schema AS namespace,\n                  start_value::INT8,\n                  minimum_value::INT8 AS min_value,\n                  maximum_value::INT8 AS max_value,\n                  increment::INT8 AS increment_by,\n                  (CASE cycle_option WHEN 'yes' THEN TRUE ELSE FALSE END) AS cycle,\n                  0::INT8 AS cache_size\n              FROM information_schema.sequences\n              WHERE sequence_schema = ANY ( $1 )\n              ORDER BY sequence_name\n            " []
+6 F Describe S "s13"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 B ParseComplete
+6 B ParameterDescription [1003]
+6 B RowDescription [("sequence_name" 13518 3 19 64 -1 0) ("namespace" 13518 2 19 64 -1 0) ("start_value" 0 0 20 8 -1 0) ("min_value" 0 0 20 8 -1 0) ("max_value" 0 0 20 8 -1 0) ("increment_by" 0 0 20 8 -1 0) ("cycle" 0 0 16 1 -1 0) ("cache_size" 0 0 20 8 -1 0)]
+6 F Bind "" "s13" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06public"] [1]
+6 F Execute "" 0
+6 F Sync
+6 B ReadyForQuery I
+6 B BindComplete
+6 B DataRow ["compat_items_id_seq" "public" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00\x00\x00\x00\x7f\xff\xff\xff" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00" "\x00\x00\x00\x00\x00\x00\x00\x00"]
+6 B DataRow ["compat_orders_id_seq" "public" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00\x00\x00\x00\x7f\xff\xff\xff" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00" "\x00\x00\x00\x00\x00\x00\x00\x00"]
+6 B CommandComplete "SELECT 2"
+6 B ReadyForQuery I
+6 F Close S "s13"
+6 F Sync
+6 B CloseComplete
+6 B ReadyForQuery I
+6 F Terminate
+6 F End
+6 B End
+7 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+7 B AuthenticationSASL "SCRAM-SHA-256"
+7 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=m8ygVJ01w6cqpmgErjeyPEFZ"
+7 B AuthenticationSASLContinue "r=m8ygVJ01w6cqpmgErjeyPEFZgWylEkoV4ZEGtlx4G6MODCvi,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+7 F SASLResponse "c=biws,r=m8ygVJ01w6cqpmgErjeyPEFZgWylEkoV4ZEGtlx4G6MODCvi,p=xrwuDhViASwKSIkezhbL4YbkaisMv89B92QNEo9NidM="
+7 B AuthenticationSASLFinal "v=EHAEHYpTzU2QqlSNnCSbrWZmMGs96Bu4i0xK8ZxNLbQ="
+7 B AuthenticationOk
+7 B ParameterStatus "IntervalStyle" "postgres"
+7 B ParameterStatus "search_path" "\"$user\", public"
+7 B ParameterStatus "is_superuser" "on"
+7 B ParameterStatus "standard_conforming_strings" "on"
+7 B ParameterStatus "session_authorization" "postgres"
+7 B ParameterStatus "client_encoding" "UTF8"
+7 B ParameterStatus "server_version" "19beta4"
+7 B ParameterStatus "server_encoding" "UTF8"
+7 B ParameterStatus "in_hot_standby" "off"
+7 B ParameterStatus "integer_datetimes" "on"
+7 B ParameterStatus "TimeZone" "UTC"
+7 B ParameterStatus "application_name" "psql"
+7 B ParameterStatus "default_transaction_read_only" "off"
+7 B ParameterStatus "scram_iterations" "4096"
+7 B ParameterStatus "DateStyle" "ISO, MDY"
+7 B BackendKeyData 811037 "\xa0\\\x85\xc5"
+7 B ReadyForQuery I
+7 F Query "DROP TABLE compat_orders, compat_items, _prisma_migrations; DROP TYPE compat_mood"
+7 B CommandComplete "DROP TABLE"
+7 B CommandComplete "DROP TYPE"
+7 B ReadyForQuery I
+7 F Terminate
+7 F End
+7 B End

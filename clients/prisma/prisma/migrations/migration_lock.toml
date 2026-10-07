@@ -1,0 +1,2 @@
+# Prisma writes this file with the first migration.
+provider = "postgresql"
