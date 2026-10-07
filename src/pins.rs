@@ -153,8 +153,8 @@ mod tests {
         for c in &pins.clients {
             let dir = std::path::Path::new("clients").join(&c.name);
             assert!(dir.join("run.sh").exists(), "{} has no run.sh", c.name);
-            // psql and pg_dump come with the oracle build.
-            if ["psql", "pg_dump"].contains(&c.name.as_str()) {
+            // libpq, psql and pg_dump come with the oracle build.
+            if ["libpq", "psql", "pg_dump"].contains(&c.name.as_str()) {
                 assert_eq!(c.version, reference.release);
             } else {
                 let install = ["run.sh", "go.mod", "Cargo.toml"]

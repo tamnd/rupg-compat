@@ -1,0 +1,2636 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/pgbouncer/run.sh
+1 F StartupMessage 3.0 "database" "compat" "user" "postgres"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=nyBxSAbYHWQ8buGDIdRCwpKb"
+1 B AuthenticationSASLContinue "r=nyBxSAbYHWQ8buGDIdRCwpKbjIiUmF5MSj+JMyL7uzRbKMbc,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=nyBxSAbYHWQ8buGDIdRCwpKbjIiUmF5MSj+JMyL7uzRbKMbc,p=/uQhNgEsllUMiThKlrn5z15ZixWezsdsWaLR5pCsWVY="
+1 B AuthenticationSASLFinal "v=L3hk8KwJVoAPgOUxByUo1mFC9RulIwpRbPgN5WbLQ5c="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 785078 "\n[\xcd!"
+1 B ReadyForQuery I
+1 F Query "SET application_name='psql';"
+1 B CommandComplete "SET"
+1 B ParameterStatus "application_name" "psql"
+1 B ReadyForQuery I
+1 F Query "SELECT 1;"
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT $1::int4 + 1, $2::text " []
+1 F Bind "" "" [] ["41" "abc"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("?column?" 0 0 23 4 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B DataRow ["42" "abc"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text;"
+1 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B DataRow ["42" "42" "9007199254740993" "1.5" "12.345" "t" "x" "\\x0102" "2026-01-02 03:04:05+00" "2026-01-02" "{1,2,3}" "{\"a\": 1}" "7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2));"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+1 F Bind "" "" [] ["1" "one" "1.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+1 F Bind "" "" [] ["2" "two" "2.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+1 F Bind "" "" [] ["3" "three" "3.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT;"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+1 F Bind "" "" [] ["4" "four" "4.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK;"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "PGBOUNCER_1" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id " []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_1" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255420 1 23 4 -1 0) ("name" 255420 2 25 -1 -1 0) ("price" 255420 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_1" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255420 1 23 4 -1 0) ("name" 255420 2 25 -1 -1 0) ("price" 255420 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_1" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255420 1 23 4 -1 0) ("name" 255420 2 25 -1 -1 0) ("price" 255420 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_1" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255420 1 23 4 -1 0) ("name" 255420 2 25 -1 -1 0) ("price" 255420 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_1" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255420 1 23 4 -1 0) ("name" 255420 2 25 -1 -1 0) ("price" 255420 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_1" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255420 1 23 4 -1 0) ("name" 255420 2 25 -1 -1 0) ("price" 255420 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Sync
+1 B ReadyForQuery I
+1 F Parse "" "UPDATE compat_items SET price = price * 2 WHERE id = $1 " []
+1 F Bind "" "" [] ["2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+1 F Query "SELECT 1 / 0;"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT 1 / 0;"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Query "ROLLBACK;"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE compat_items;"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Query "SET application_name='pgbench';"
+1 B CommandComplete "SET"
+1 B ParameterStatus "application_name" "pgbench"
+1 B ReadyForQuery I
+1 F Query "drop table if exists pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_accounts\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_branches\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_history\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_tellers\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_history(tid int,bid int,aid    int,delta int,mtime timestamp,filler char(22))"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_tellers(tid int not null,bid int,tbalance int,filler char(84)) with (fillfactor=100)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_accounts(aid    int not null,bid int,abalance int,filler char(84)) with (fillfactor=100)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_branches(bid int not null,bbalance int,filler char(88)) with (fillfactor=100)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "truncate table pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Query "insert into pgbench_branches(bid,bbalance) select bid, 0 from generate_series(1, 1) as bid"
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "insert into pgbench_tellers(tid,bid,tbalance) select tid, (tid - 1) / 10 + 1, 0 from generate_series(1, 10) as tid"
+1 B CommandComplete "INSERT 0 10"
+1 B ReadyForQuery T
+1 F Query "insert into pgbench_accounts(aid,bid,abalance,filler) select aid, (aid - 1) / 100000 + 1, 0, '' from generate_series(1, 100000) as aid"
+1 B CommandComplete "INSERT 0 100000"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "alter table pgbench_branches add primary key (bid)"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery I
+1 F Query "alter table pgbench_tellers add primary key (tid)"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery I
+1 F Query "alter table pgbench_accounts add primary key (aid)"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery I
+1 F Query "select count(*) from pgbench_branches"
+1 B RowDescription [("count" 0 0 20 8 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "select o.n, p.partstrat, pg_catalog.count(i.inhparent) from pg_catalog.pg_class as c join pg_catalog.pg_namespace as n on (n.oid = c.relnamespace) cross join lateral (select pg_catalog.array_position(pg_catalog.current_schemas(true), n.nspname)) as o(n) left join pg_catalog.pg_partitioned_table as p on (p.partrelid = c.oid) left join pg_catalog.pg_inherits as i on (c.oid = i.inhparent) where c.relname = 'pgbench_accounts' and o.n is not null group by 1, 2 order by 1 asc limit 1"
+1 B RowDescription [("n" 0 0 23 4 -1 0) ("partstrat" 3350 2 18 1 -1 0) ("count" 0 0 20 8 -1 0)]
+1 B DataRow ["2" NULL "0"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "PGBOUNCER_2" "BEGIN;" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F StartupMessage 3.0 "database" "compat" "user" "postgres"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=t1ZdXgqGy98stWFC9C3GPuAo"
+2 B AuthenticationSASLContinue "r=t1ZdXgqGy98stWFC9C3GPuAo7J9agExlE+6henmrl3YaOP8g,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=t1ZdXgqGy98stWFC9C3GPuAo7J9agExlE+6henmrl3YaOP8g,p=yzvRF4uJ7D/TO3IAKZ1aKdomgBfKEWlfr/wI6BAZmeg="
+2 B AuthenticationSASLFinal "v=5jl4Q9XgA4CnEfWxZ/YOmXzeLWSJ76Lqe1FYFylH7nY="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 785085 "\xfa\x14\x1a\xaf"
+2 B ReadyForQuery I
+2 F Query "SET application_name='pgbench';"
+2 B CommandComplete "SET"
+2 B ParameterStatus "application_name" "pgbench"
+2 B ReadyForQuery I
+2 F Parse "PGBOUNCER_2" "BEGIN;" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery I
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Parse "PGBOUNCER_3" "UPDATE pgbench_accounts SET abalance = abalance + $1 WHERE aid = $2;" []
+2 B BindComplete
+2 B NoData
+1 F Sync
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B ParseComplete
+1 B ReadyForQuery T
+2 F Parse "PGBOUNCER_3" "UPDATE pgbench_accounts SET abalance = abalance + $1 WHERE aid = $2;" []
+2 F Sync
+1 F Bind "" "PGBOUNCER_3" [] ["3374" "18243"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B ParseComplete
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["-1387" "327"] [0]
+1 F Parse "PGBOUNCER_4" "SELECT abalance FROM pgbench_accounts WHERE aid = $1;" []
+2 F Describe P ""
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["18243"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["3374"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Parse "PGBOUNCER_5" "UPDATE pgbench_tellers SET tbalance = tbalance + $1 WHERE tid = $2;" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["3374" "4"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Parse "PGBOUNCER_4" "SELECT abalance FROM pgbench_accounts WHERE aid = $1;" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["327"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Parse "PGBOUNCER_6" "UPDATE pgbench_branches SET bbalance = bbalance + $1 WHERE bid = $2;" []
+1 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-1387"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B ParseComplete
+1 B ReadyForQuery T
+2 F Parse "PGBOUNCER_5" "UPDATE pgbench_tellers SET tbalance = tbalance + $1 WHERE tid = $2;" []
+2 F Sync
+1 F Bind "" "PGBOUNCER_6" [] ["3374" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 B ParseComplete
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["-1387" "6"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Parse "PGBOUNCER_6" "UPDATE pgbench_branches SET bbalance = bbalance + $1 WHERE bid = $2;" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["-1387" "1"] [0]
+1 F Parse "PGBOUNCER_7" "INSERT INTO pgbench_history (tid, bid, aid, delta, mtime) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);" []
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["4" "1" "18243" "3374"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "PGBOUNCER_8" "END;" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Parse "PGBOUNCER_7" "INSERT INTO pgbench_history (tid, bid, aid, delta, mtime) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_7" [] ["6" "1" "327" "-1387"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_3" [] ["149" "74174"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Parse "PGBOUNCER_8" "END;" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_4" [] ["74174"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["149"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["149" "6"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["149" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["-501" "24524"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_7" [] ["6" "1" "74174" "149"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_4" [] ["24524"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-501"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_5" [] ["-501" "10"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_3" [] ["-3184" "95784"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["95784"] [0]
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Describe P ""
+2 F Bind "" "PGBOUNCER_6" [] ["-501" "1"] [0]
+1 F Execute "" 0
+2 F Describe P ""
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["-3184"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["-3184" "4"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_7" [] ["10" "1" "24524" "-501"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["-3184" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+2 B NoData
+1 B NoData
+2 B CommandComplete "COMMIT"
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B ReadyForQuery I
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Bind "" "PGBOUNCER_7" [] ["4" "1" "95784" "-3184"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Describe P ""
+1 F Execute "" 0
+2 F Sync
+1 F Sync
+2 B BindComplete
+1 B BindComplete
+1 B NoData
+2 B NoData
+1 B CommandComplete "INSERT 0 1"
+2 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+2 F Bind "" "PGBOUNCER_3" [] ["-25" "90260"] [0]
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGBOUNCER_4" [] ["90260"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-25"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["-25" "5"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_3" [] ["-4816" "68935"] [0]
+2 B BindComplete
+1 F Describe P ""
+1 F Execute "" 0
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 F Sync
+2 B ReadyForQuery T
+1 B BindComplete
+2 F Bind "" "PGBOUNCER_6" [] ["-25" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["68935"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_7" [] ["5" "1" "90260" "-25"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+2 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B NoData
+1 B DataRow ["-4816"]
+2 B CommandComplete "INSERT 0 1"
+1 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["-4816" "10"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["-4816" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+1 B BindComplete
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["10" "1" "68935" "-4816"] [0]
+1 F Describe P ""
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Execute "" 0
+2 F Describe P ""
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Bind "" "PGBOUNCER_3" [] ["-4990" "39756"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGBOUNCER_4" [] ["39756"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-4990"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["-4990" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 F Bind "" "PGBOUNCER_3" [] ["1623" "19598"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["19598"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["1623"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["1623" "5"] [0]
+2 F Bind "" "PGBOUNCER_6" [] ["-4990" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Describe P ""
+2 F Sync
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["1623" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_7" [] ["2" "1" "39756" "-4990"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["5" "1" "19598" "1623"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["2595" "55314"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["55314"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["2595"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["2595" "7"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["2595" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["7" "1" "55314" "2595"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+1 F Bind "" "PGBOUNCER_3" [] ["216" "7711"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B ReadyForQuery T
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Bind "" "PGBOUNCER_4" [] ["7711"] [0]
+2 F Sync
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["216"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["216" "6"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_6" [] ["216" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["1089" "55836"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_7" [] ["6" "1" "7711" "216"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["55836"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+2 B BindComplete
+1 B ReadyForQuery T
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["1089"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Bind "" "PGBOUNCER_5" [] ["1089" "10"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["1089" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["10" "1" "55836" "1089"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_3" [] ["4028" "67254"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 B BindComplete
+1 F Sync
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["67254"] [0]
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+2 F Describe P ""
+2 F Execute "" 0
+1 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["4028"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["4028" "5"] [0]
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["4028" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["-1567" "9796"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 F Bind "" "PGBOUNCER_7" [] ["5" "1" "67254" "4028"] [0]
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_4" [] ["9796"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-1567"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B BindComplete
+2 F Bind "" "PGBOUNCER_5" [] ["-1567" "2"] [0]
+1 B NoData
+2 F Describe P ""
+1 B CommandComplete "INSERT 0 1"
+2 F Execute "" 0
+1 B ReadyForQuery T
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_6" [] ["-1567" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_7" [] ["2" "1" "9796" "-1567"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_3" [] ["-425" "51957"] [0]
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+1 F Describe P ""
+2 F Execute "" 0
+1 F Execute "" 0
+2 F Sync
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_4" [] ["51957"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["-425"]
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["-425" "3"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["-425" "1"] [0]
+1 F Describe P ""
+2 F Bind "" "PGBOUNCER_3" [] ["-3757" "85572"] [0]
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["3" "1" "51957" "-425"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 B BindComplete
+1 F Sync
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["85572"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-3757"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_5" [] ["-3757" "5"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["-3757" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_7" [] ["5" "1" "85572" "-3757"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_3" [] ["3363" "1351"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["1351"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["3363"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_5" [] ["3363" "6"] [0]
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+2 F Describe P ""
+1 F Execute "" 0
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+2 B BindComplete
+1 B NoData
+2 B NoData
+1 B CommandComplete "UPDATE 1"
+2 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["3363" "1"] [0]
+2 F Bind "" "PGBOUNCER_3" [] ["2104" "66187"] [0]
+1 F Describe P ""
+2 F Describe P ""
+2 F Execute "" 0
+1 F Execute "" 0
+2 F Sync
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+2 B BindComplete
+2 B NoData
+1 B ReadyForQuery T
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["66187"] [0]
+1 F Bind "" "PGBOUNCER_7" [] ["6" "1" "1351" "3363"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["2104"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["2104" "7"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["2104" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B NoData
+2 B ReadyForQuery T
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_7" [] ["7" "1" "66187" "2104"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+1 F Bind "" "PGBOUNCER_3" [] ["542" "28395"] [0]
+1 F Describe P ""
+2 B NoData
+1 F Execute "" 0
+2 B CommandComplete "INSERT 0 1"
+1 F Sync
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Bind "" "PGBOUNCER_4" [] ["28395"] [0]
+2 F Sync
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["542"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["542" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_6" [] ["542" "1"] [0]
+1 F Describe P ""
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+1 F Execute "" 0
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["140" "41772"] [0]
+1 F Bind "" "PGBOUNCER_7" [] ["1" "1" "28395" "542"] [0]
+2 F Describe P ""
+1 F Describe P ""
+2 F Execute "" 0
+1 F Execute "" 0
+2 F Sync
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Bind "" "PGBOUNCER_4" [] ["41772"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["140"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["140" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["140" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+1 B BindComplete
+2 B CommandComplete "UPDATE 1"
+1 B NoData
+2 B ReadyForQuery T
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGBOUNCER_7" [] ["2" "1" "41772" "140"] [0]
+2 F Describe P ""
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Execute "" 0
+1 F Describe P ""
+2 F Sync
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Bind "" "PGBOUNCER_3" [] ["1714" "63364"] [0]
+2 F Describe P ""
+1 F Describe P ""
+1 F Execute "" 0
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Bind "" "PGBOUNCER_4" [] ["63364"] [0]
+2 F Describe P ""
+1 F Describe P ""
+1 F Execute "" 0
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["1714"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["-4390" "90051"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_5" [] ["1714" "2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["90051"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-4390"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["1714" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["-4390" "9"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 F Bind "" "PGBOUNCER_7" [] ["2" "1" "63364" "1714"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Bind "" "PGBOUNCER_6" [] ["-4390" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 F Describe P ""
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["9" "1" "90051" "-4390"] [0]
+1 F Bind "" "PGBOUNCER_3" [] ["-4709" "28117"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["28117"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["-4709"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["-4709" "5"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["-4709" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["5" "1" "28117" "-4709"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 F Bind "" "PGBOUNCER_3" [] ["896" "78411"] [0]
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+2 F Describe P ""
+1 B ReadyForQuery T
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 B BindComplete
+1 F Describe P ""
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 F Execute "" 0
+1 F Sync
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["78411"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["896"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["896" "4"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+2 F Bind "" "PGBOUNCER_6" [] ["896" "1"] [0]
+1 F Execute "" 0
+2 F Describe P ""
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_3" [] ["-3217" "52348"] [0]
+2 F Bind "" "PGBOUNCER_7" [] ["4" "1" "78411" "896"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 F Describe P ""
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+1 B BindComplete
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Bind "" "PGBOUNCER_4" [] ["52348"] [0]
+2 F Describe P ""
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 F Execute "" 0
+2 F Sync
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["-3217"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_5" [] ["-3217" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["547" "46436"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 F Bind "" "PGBOUNCER_6" [] ["-3217" "1"] [0]
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["46436"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Bind "" "PGBOUNCER_7" [] ["1" "1" "52348" "-3217"] [0]
+2 F Sync
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["547"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["547" "9"] [0]
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+1 F Describe P ""
+2 F Execute "" 0
+1 F Execute "" 0
+2 F Sync
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["547" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["9" "1" "46436" "547"] [0]
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Describe P ""
+2 F Sync
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B BindComplete
+1 B NoData
+2 B NoData
+1 B CommandComplete "BEGIN"
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+1 F Bind "" "PGBOUNCER_3" [] ["-3657" "99725"] [0]
+1 F Describe P ""
+2 F Execute "" 0
+1 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["99725"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["-3657"]
+2 B NoData
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_5" [] ["-3657" "3"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["-3657" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_3" [] ["2837" "75040"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["3" "1" "99725" "-3657"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_4" [] ["75040"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["2837"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["2837" "7"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+2 F Bind "" "PGBOUNCER_6" [] ["2837" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["7" "1" "75040" "2837"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_3" [] ["316" "90370"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+1 F Bind "" "PGBOUNCER_4" [] ["90370"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["316"]
+1 B CommandComplete "SELECT 1"
+2 F Execute "" 0
+1 B ReadyForQuery T
+2 F Sync
+1 F Bind "" "PGBOUNCER_5" [] ["316" "7"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_6" [] ["316" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["-4420" "9249"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_7" [] ["7" "1" "90370" "316"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B BindComplete
+2 B NoData
+1 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_4" [] ["9249"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-4420"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["-4420" "7"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_3" [] ["1863" "24552"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["-4420" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["7" "1" "9249" "-4420"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_4" [] ["24552"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+1 F Sync
+2 B ReadyForQuery T
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["1863"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_5" [] ["1863" "8"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_6" [] ["1863" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["8" "1" "24552" "1863"] [0]
+2 F Bind "" "PGBOUNCER_3" [] ["3277" "60998"] [0]
+2 F Describe P ""
+1 F Describe P ""
+2 F Execute "" 0
+1 F Execute "" 0
+2 F Sync
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Bind "" "PGBOUNCER_4" [] ["60998"] [0]
+1 F Describe P ""
+2 F Describe P ""
+1 F Execute "" 0
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["3277"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["3277" "4"] [0]
+2 F Describe P ""
+1 B BindComplete
+2 F Execute "" 0
+1 B NoData
+2 F Sync
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["3277" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_3" [] ["-3935" "2896"] [0]
+2 B BindComplete
+1 F Describe P ""
+1 F Execute "" 0
+2 B NoData
+1 F Sync
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["4" "1" "60998" "3277"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["2896"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 B BindComplete
+2 F Sync
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["-3935"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["-3935" "5"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_6" [] ["-3935" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_7" [] ["5" "1" "2896" "-3935"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["4872" "29669"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_4" [] ["29669"] [0]
+2 F Describe P ""
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_3" [] ["-4593" "9967"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B BindComplete
+1 B NoData
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["4872"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["9967"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_5" [] ["4872" "5"] [0]
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 F Describe P ""
+1 B DataRow ["-4593"]
+2 F Execute "" 0
+1 B CommandComplete "SELECT 1"
+2 F Sync
+1 B ReadyForQuery T
+2 B BindComplete
+1 F Bind "" "PGBOUNCER_5" [] ["-4593" "1"] [0]
+2 B NoData
+1 F Describe P ""
+2 B CommandComplete "UPDATE 1"
+1 F Execute "" 0
+2 B ReadyForQuery T
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["4872" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_6" [] ["-4593" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["5" "1" "29669" "4872"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["1" "1" "9967" "-4593"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_3" [] ["-1658" "74895"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["74895"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-1658"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_5" [] ["-1658" "5"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_3" [] ["-1829" "44321"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_6" [] ["-1658" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["5" "1" "74895" "-1658"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_4" [] ["44321"] [0]
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+2 F Describe P ""
+1 F Execute "" 0
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["-1829"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["-1829" "9"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_6" [] ["-1829" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_3" [] ["175" "39716"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+1 F Bind "" "PGBOUNCER_7" [] ["9" "1" "44321" "-1829"] [0]
+1 F Describe P ""
+2 B CommandComplete "UPDATE 1"
+1 F Execute "" 0
+2 B ReadyForQuery T
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_4" [] ["39716"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["175"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_5" [] ["175" "3"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["175" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B NoData
+2 B ReadyForQuery T
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGBOUNCER_7" [] ["3" "1" "39716" "175"] [0]
+1 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Describe P ""
+1 F Execute "" 0
+2 F Sync
+1 F Sync
+2 B BindComplete
+2 B NoData
+1 B BindComplete
+2 B CommandComplete "INSERT 0 1"
+1 B NoData
+2 B ReadyForQuery T
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_3" [] ["4696" "15170"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGBOUNCER_4" [] ["15170"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+1 B DataRow ["4696"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_5" [] ["4696" "9"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGBOUNCER_6" [] ["4696" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_2" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_7" [] ["9" "1" "15170" "4696"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_3" [] ["-4261" "51506"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGBOUNCER_8" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGBOUNCER_4" [] ["51506"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255436 3 23 4 -1 0)]
+2 B DataRow ["-4261"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_5" [] ["-4261" "9"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_6" [] ["-4261" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_7" [] ["9" "1" "51506" "-4261"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGBOUNCER_8" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Query "drop table if exists pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+2 B CommandComplete "DROP TABLE"
+2 B ReadyForQuery I
+2 F End
+1 F End
+2 B End
+1 B End

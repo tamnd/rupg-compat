@@ -1,0 +1,734 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/diesel/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=OvUvHBxkOQe5r7nAdb6MarZ8"
+1 B AuthenticationSASLContinue "r=OvUvHBxkOQe5r7nAdb6MarZ8DdmHaXBR8GGnGOOc1iX+m9J9,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=OvUvHBxkOQe5r7nAdb6MarZ8DdmHaXBR8GGnGOOc1iX+m9J9,p=TVOjmsOU9HQ8c8kYe0mg4WS4YCKVrgC7BZuWPcrf3xU="
+1 B AuthenticationSASLFinal "v=/d26HV9sBp1Thqr0hoJjmTUABPrdS6+d0wfmL/qmFDE="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 785227 "\xb4\\\xaf\x91"
+1 B ReadyForQuery I
+1 F Parse "" "SET TIME ZONE 'UTC'" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "SET"
+1 B ReadyForQuery I
+1 F Parse "" "SET CLIENT_ENCODING TO 'UTF8'" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "SET"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=aFl+XKULB/sNwagUiR8Yj0/g"
+2 B AuthenticationSASLContinue "r=aFl+XKULB/sNwagUiR8Yj0/g5jmalHOx98CzgvgBQnPMLO7H,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=aFl+XKULB/sNwagUiR8Yj0/g5jmalHOx98CzgvgBQnPMLO7H,p=6ooDAUOX2U5iOYkFaF207Vm50eZ//C6cDYTj6RMEmPY="
+2 B AuthenticationSASLFinal "v=rfmN3XEk+rhJNI4EZzvPvgkV7CHAxqEW8JJcL031Y/o="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 785230 "\xaf$\x089"
+2 B ReadyForQuery I
+2 F Parse "" "SET TIME ZONE 'UTC'" []
+2 F Bind "" "" [] [] [1]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "SET"
+2 B ReadyForQuery I
+2 F Parse "" "SET CLIENT_ENCODING TO 'UTF8'" []
+2 F Bind "" "" [] [] [1]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "SET"
+2 B ReadyForQuery I
+2 F Parse "" "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '__diesel_schema_migrations')" []
+2 F Bind "" "" [] [] [1]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("exists" 0 0 16 1 -1 1)]
+2 B DataRow ["\x00"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Terminate
+2 F End
+2 B End
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=IDYLejc2hIlb+aT7UNG2JIKw"
+3 B AuthenticationSASLContinue "r=IDYLejc2hIlb+aT7UNG2JIKwkVd94wk+kK9RDF60tmk4DZ4Y,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=IDYLejc2hIlb+aT7UNG2JIKwkVd94wk+kK9RDF60tmk4DZ4Y,p=9NzHf8bhDmXhfFXz7wg6vDKMQosZJ5knTtTT7L2I1ZA="
+3 B AuthenticationSASLFinal "v=vncp9PHcWhhoEL5vbi+wNKHs+o0bAlWZwxpesyNRLbA="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" ""
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 785233 "\xfc\x1dgw"
+3 B ReadyForQuery I
+3 F Parse "" "SET TIME ZONE 'UTC'" []
+3 F Bind "" "" [] [] [1]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B NoData
+3 B CommandComplete "SET"
+3 B ReadyForQuery I
+3 F Parse "" "SET CLIENT_ENCODING TO 'UTF8'" []
+3 F Bind "" "" [] [] [1]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B NoData
+3 B CommandComplete "SET"
+3 B ReadyForQuery I
+3 F Parse "" "CREATE TABLE IF NOT EXISTS __diesel_schema_migrations (\n       version VARCHAR(50) PRIMARY KEY NOT NULL,\n       run_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n" []
+3 F Bind "" "" [] [] [1]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B NoData
+3 B CommandComplete "CREATE TABLE"
+3 B ReadyForQuery I
+3 F Parse "__diesel_stmt_1" "SELECT \"__diesel_schema_migrations\".\"version\" FROM \"__diesel_schema_migrations\" ORDER BY \"__diesel_schema_migrations\".\"version\" DESC" []
+3 F Sync
+3 B ParseComplete
+3 B ReadyForQuery I
+3 F Bind "" "__diesel_stmt_1" [] [] [1]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B BindComplete
+3 B RowDescription [("version" 255745 1 1043 -1 54 1)]
+3 B CommandComplete "SELECT 0"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Query "-- This file was automatically created by Diesel to setup helper functions\n-- and other internal bookkeeping. This file is safe to edit, any future\n-- changes will be added to existing projects as new migrations.\n\n\n\n\n-- Sets up a trigger for the given table to automatically set a column called\n-- `updated_at` whenever the row is modified (unless `updated_at` was included\n-- in the modified columns)\n--\n-- # Example\n--\n-- ```sql\n-- CREATE TABLE users (id SERIAL PRIMARY KEY, updated_at TIMESTAMP NOT NULL DEFAULT NOW());\n--\n-- SELECT diesel_manage_updated_at('users');\n-- ```\nCREATE OR REPLACE FUNCTION diesel_manage_updated_at(_tbl regclass) RETURNS VOID AS $$\nBEGIN\n    EXECUTE format('CREATE TRIGGER set_updated_at BEFORE UPDATE ON %s\n                    FOR EACH ROW EXECUTE PROCEDURE diesel_set_updated_at()', _tbl);\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE OR REPLACE FUNCTION diesel_set_updated_at() RETURNS trigger AS $$\nBEGIN\n    IF (\n        NEW IS DISTINCT FROM OLD AND\n        NEW.updated_at IS NOT DISTINCT FROM OLD.updated_at\n    ) THEN\n        NEW.updated_at := current_timestamp;\n    END IF;\n    RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n"
+3 B CommandComplete "CREATE FUNCTION"
+3 B CommandComplete "CREATE FUNCTION"
+3 B ReadyForQuery T
+3 F Parse "__diesel_stmt_2" "INSERT INTO \"__diesel_schema_migrations\" (\"version\") VALUES ($1)" [25]
+3 F Sync
+3 B ParseComplete
+3 B ReadyForQuery T
+3 F Bind "" "__diesel_stmt_2" [1] ["00000000000000"] [1]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B BindComplete
+3 B NoData
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Query "COMMIT"
+3 B CommandComplete "COMMIT"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2), added timestamptz NOT NULL DEFAULT now(), active bool NOT NULL DEFAULT true);\n"
+3 B CommandComplete "CREATE TABLE"
+3 B ReadyForQuery T
+3 F Bind "" "__diesel_stmt_2" [1] ["20260101000000"] [1]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B BindComplete
+3 B NoData
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Query "COMMIT"
+3 B CommandComplete "COMMIT"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Query "CREATE TABLE compat_orders (id int8 GENERATED ALWAYS AS IDENTITY PRIMARY KEY, item int4 NOT NULL REFERENCES compat_items, qty int4 NOT NULL DEFAULT 1);\nCREATE INDEX compat_orders_item ON compat_orders (item);\n"
+3 B CommandComplete "CREATE TABLE"
+3 B CommandComplete "CREATE INDEX"
+3 B ReadyForQuery T
+3 F Bind "" "__diesel_stmt_2" [1] ["20260102000000"] [1]
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B BindComplete
+3 B NoData
+3 B CommandComplete "INSERT 0 1"
+3 B ReadyForQuery T
+3 F Query "COMMIT"
+3 B CommandComplete "COMMIT"
+3 B ReadyForQuery I
+3 F Terminate
+3 F End
+3 B End
+4 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+4 B AuthenticationSASL "SCRAM-SHA-256"
+4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=3/DKRQ7zml2DcRUameeqYkJc"
+4 B AuthenticationSASLContinue "r=3/DKRQ7zml2DcRUameeqYkJcoQP8GkG80QXzRJWJC/fFdWrI,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F SASLResponse "c=biws,r=3/DKRQ7zml2DcRUameeqYkJcoQP8GkG80QXzRJWJC/fFdWrI,p=Oaj0qNHi9dRK27zweMcHuUUT/0VdRuHMiR+y4v3JmlM="
+4 B AuthenticationSASLFinal "v=C1m/L3xvrPedVKSqmlwz9YQ+VkX5LBHCvI0B3mrHrWg="
+4 B AuthenticationOk
+4 B ParameterStatus "IntervalStyle" "postgres"
+4 B ParameterStatus "search_path" "\"$user\", public"
+4 B ParameterStatus "is_superuser" "on"
+4 B ParameterStatus "standard_conforming_strings" "on"
+4 B ParameterStatus "session_authorization" "postgres"
+4 B ParameterStatus "client_encoding" "UTF8"
+4 B ParameterStatus "server_version" "19beta4"
+4 B ParameterStatus "server_encoding" "UTF8"
+4 B ParameterStatus "in_hot_standby" "off"
+4 B ParameterStatus "integer_datetimes" "on"
+4 B ParameterStatus "TimeZone" "UTC"
+4 B ParameterStatus "application_name" ""
+4 B ParameterStatus "default_transaction_read_only" "off"
+4 B ParameterStatus "scram_iterations" "4096"
+4 B ParameterStatus "DateStyle" "ISO, MDY"
+4 B BackendKeyData 785240 "\xae(\xf3}"
+4 B ReadyForQuery I
+4 F Parse "" "SET TIME ZONE 'UTC'" []
+4 F Bind "" "" [] [] [1]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "SET CLIENT_ENCODING TO 'UTF8'" []
+4 F Bind "" "" [] [] [1]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "CREATE TABLE IF NOT EXISTS __diesel_schema_migrations (\n       version VARCHAR(50) PRIMARY KEY NOT NULL,\n       run_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n" []
+4 F Bind "" "" [] [] [1]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B NoticeResponse S "NOTICE" V "NOTICE" C "42P07" M "relation \"__diesel_schema_migrations\" already exists, skipping" F "parse_utilcmd.c" L "214" R "transformCreateStmt"
+4 B CommandComplete "CREATE TABLE"
+4 B ReadyForQuery I
+4 F Parse "__diesel_stmt_1" "SELECT \"__diesel_schema_migrations\".\"version\" FROM \"__diesel_schema_migrations\" ORDER BY \"__diesel_schema_migrations\".\"version\" DESC" []
+4 F Sync
+4 B ParseComplete
+4 B ReadyForQuery I
+4 F Bind "" "__diesel_stmt_1" [] [] [1]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("version" 255745 1 1043 -1 54 1)]
+4 B DataRow ["20260102000000"]
+4 B DataRow ["20260101000000"]
+4 B DataRow ["00000000000000"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Terminate
+4 F End
+4 B End
+5 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+5 B AuthenticationSASL "SCRAM-SHA-256"
+5 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=7yzXIYqtVf2Gulzn2VeHcX8X"
+5 B AuthenticationSASLContinue "r=7yzXIYqtVf2Gulzn2VeHcX8X0tn0YNYrx1qfM/nvaqMyrprq,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+5 F SASLResponse "c=biws,r=7yzXIYqtVf2Gulzn2VeHcX8X0tn0YNYrx1qfM/nvaqMyrprq,p=m/nyjiG7N2yw1LWBX+L5bwQ5MxpYoLAf+Wd1QplNBKE="
+5 B AuthenticationSASLFinal "v=giqkJeL/kiBpFwSE/wwJMo3v3B70xJFo/2hL7UD3124="
+5 B AuthenticationOk
+5 B ParameterStatus "IntervalStyle" "postgres"
+5 B ParameterStatus "search_path" "\"$user\", public"
+5 B ParameterStatus "is_superuser" "on"
+5 B ParameterStatus "standard_conforming_strings" "on"
+5 B ParameterStatus "session_authorization" "postgres"
+5 B ParameterStatus "client_encoding" "UTF8"
+5 B ParameterStatus "server_version" "19beta4"
+5 B ParameterStatus "server_encoding" "UTF8"
+5 B ParameterStatus "in_hot_standby" "off"
+5 B ParameterStatus "integer_datetimes" "on"
+5 B ParameterStatus "TimeZone" "UTC"
+5 B ParameterStatus "application_name" ""
+5 B ParameterStatus "default_transaction_read_only" "off"
+5 B ParameterStatus "scram_iterations" "4096"
+5 B ParameterStatus "DateStyle" "ISO, MDY"
+5 B BackendKeyData 785245 "X.\t4"
+5 B ReadyForQuery I
+5 F Parse "" "SET TIME ZONE 'UTC'" []
+5 F Bind "" "" [] [] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Parse "" "SET CLIENT_ENCODING TO 'UTF8'" []
+5 F Bind "" "" [] [] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Parse "__diesel_stmt_1" "SELECT \"information_schema\".\"tables\".\"table_name\" FROM \"information_schema\".\"tables\" WHERE (((\"information_schema\".\"tables\".\"table_schema\" = $1) AND (\"information_schema\".\"tables\".\"table_name\" NOT LIKE $2)) AND (\"information_schema\".\"tables\".\"table_type\" LIKE $3))" [25 25 25]
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery I
+5 F Bind "" "__diesel_stmt_1" [1 1 1] ["public" "\\_\\_%" "BASE TABLE"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("table_name" 13557 3 19 64 -1 1)]
+5 B DataRow ["compat_items"]
+5 B DataRow ["compat_orders"]
+5 B CommandComplete "SELECT 2"
+5 B ReadyForQuery I
+5 F Parse "" "SELECT\n   sch.nspname                                   AS \"self_schema\",\n   tbl.relname                                   AS \"self_table\",\n   ARRAY_AGG(col.attname ORDER BY u.attposition) AS \"self_columns\",\n   f_sch.nspname                                 AS \"foreign_schema\",\n   f_tbl.relname                                 AS \"foreign_table\",\n   ARRAY_AGG(f_col.attname ORDER BY f_u.attposition) AS \"foreign_columns\"\nFROM pg_constraint c\n       LEFT JOIN LATERAL UNNEST(c.conkey) WITH ORDINALITY AS u(attnum, attposition) ON TRUE\n       LEFT JOIN LATERAL UNNEST(c.confkey) WITH ORDINALITY AS f_u(attnum, attposition) ON f_u.attposition = u.attposition\n       JOIN pg_class tbl ON tbl.oid = c.conrelid\n       JOIN pg_namespace sch ON sch.oid = tbl.relnamespace\n       LEFT JOIN pg_attribute col ON (col.attrelid = tbl.oid AND col.attnum = u.attnum)\n       LEFT JOIN pg_class f_tbl ON f_tbl.oid = c.confrelid\n       LEFT JOIN pg_namespace f_sch ON f_sch.oid = f_tbl.relnamespace\n       LEFT JOIN pg_attribute f_col ON (f_col.attrelid = f_tbl.oid AND f_col.attnum = f_u.attnum)\nWHERE sch.nspname = $1 and f_sch.nspname = $1 and c.contype = 'f'\nGROUP BY \"self_schema\", \"self_table\", \"foreign_schema\", \"foreign_table\"\nORDER BY \"self_schema\", \"self_table\";\n" [25]
+5 F Bind "" "" [1] ["public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("self_schema" 2615 2 19 64 -1 1) ("self_table" 1259 2 19 64 -1 1) ("self_columns" 0 0 1003 -1 -1 1) ("foreign_schema" 2615 2 19 64 -1 1) ("foreign_table" 1259 2 19 64 -1 1) ("foreign_columns" 0 0 1003 -1 -1 1)]
+5 B DataRow ["public" "compat_orders" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x04item" "public" "compat_items" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x02id"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Parse "__diesel_stmt_2" "SELECT \"information_schema\".\"key_column_usage\".\"column_name\" FROM \"information_schema\".\"key_column_usage\" WHERE (((\"information_schema\".\"key_column_usage\".\"constraint_name\" = ANY(SELECT \"information_schema\".\"table_constraints\".\"constraint_name\" FROM \"information_schema\".\"table_constraints\" WHERE (\"information_schema\".\"table_constraints\".\"constraint_type\" = $1))) AND (\"information_schema\".\"key_column_usage\".\"table_name\" = $2)) AND (\"information_schema\".\"key_column_usage\".\"table_schema\" = $3)) ORDER BY \"information_schema\".\"key_column_usage\".\"ordinal_position\"" [25 25 25]
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery I
+5 F Bind "" "__diesel_stmt_2" [1 1 1] ["PRIMARY KEY" "compat_items" "public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("column_name" 13461 7 19 64 -1 1)]
+5 B DataRow ["id"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Bind "" "__diesel_stmt_2" [1 1 1] ["PRIMARY KEY" "compat_items" "public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("column_name" 13461 7 19 64 -1 1)]
+5 B DataRow ["id"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Parse "" "SELECT\n   sch.nspname                                   AS \"self_schema\",\n   tbl.relname                                   AS \"self_table\",\n   ARRAY_AGG(col.attname ORDER BY u.attposition) AS \"self_columns\",\n   f_sch.nspname                                 AS \"foreign_schema\",\n   f_tbl.relname                                 AS \"foreign_table\",\n   ARRAY_AGG(f_col.attname ORDER BY f_u.attposition) AS \"foreign_columns\"\nFROM pg_constraint c\n       LEFT JOIN LATERAL UNNEST(c.conkey) WITH ORDINALITY AS u(attnum, attposition) ON TRUE\n       LEFT JOIN LATERAL UNNEST(c.confkey) WITH ORDINALITY AS f_u(attnum, attposition) ON f_u.attposition = u.attposition\n       JOIN pg_class tbl ON tbl.oid = c.conrelid\n       JOIN pg_namespace sch ON sch.oid = tbl.relnamespace\n       LEFT JOIN pg_attribute col ON (col.attrelid = tbl.oid AND col.attnum = u.attnum)\n       LEFT JOIN pg_class f_tbl ON f_tbl.oid = c.confrelid\n       LEFT JOIN pg_namespace f_sch ON f_sch.oid = f_tbl.relnamespace\n       LEFT JOIN pg_attribute f_col ON (f_col.attrelid = f_tbl.oid AND f_col.attnum = f_u.attnum)\nWHERE sch.nspname = $1 and f_sch.nspname = $1 and c.contype = 'f'\nGROUP BY \"self_schema\", \"self_table\", \"foreign_schema\", \"foreign_table\"\nORDER BY \"self_schema\", \"self_table\";\n" [25]
+5 F Bind "" "" [1] ["public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("self_schema" 2615 2 19 64 -1 1) ("self_table" 1259 2 19 64 -1 1) ("self_columns" 0 0 1003 -1 -1 1) ("foreign_schema" 2615 2 19 64 -1 1) ("foreign_table" 1259 2 19 64 -1 1) ("foreign_columns" 0 0 1003 -1 -1 1)]
+5 B DataRow ["public" "compat_orders" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x04item" "public" "compat_items" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x02id"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Parse "__diesel_stmt_3" "SELECT \"information_schema\".\"columns\".\"column_name\", \"information_schema\".\"columns\".\"udt_name\", \"information_schema\".\"columns\".\"udt_schema\", \"information_schema\".\"columns\".\"domain_name\", \"information_schema\".\"columns\".\"domain_schema\", \"information_schema\".\"columns\".\"is_nullable\", \"information_schema\".\"columns\".\"character_maximum_length\", col_description(quote_ident($1)::regclass, \"information_schema\".\"columns\".\"ordinal_position\") FROM \"information_schema\".\"columns\" WHERE ((\"information_schema\".\"columns\".\"table_name\" = $2) AND (\"information_schema\".\"columns\".\"table_schema\" = $3)) ORDER BY \"information_schema\".\"columns\".\"ordinal_position\"" [25 25 25]
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery I
+5 F Bind "" "__diesel_stmt_3" [1 1 1] ["compat_items" "compat_items" "public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("column_name" 13428 4 19 64 -1 1) ("udt_name" 13428 28 19 64 -1 1) ("udt_schema" 13428 27 19 64 -1 1) ("domain_name" 13428 25 19 64 -1 1) ("domain_schema" 13428 24 19 64 -1 1) ("is_nullable" 13428 7 1043 -1 7 1) ("character_maximum_length" 13428 9 23 4 -1 1) ("col_description" 0 0 25 -1 -1 1)]
+5 B DataRow ["id" "int4" "pg_catalog" NULL NULL "NO" NULL NULL]
+5 B DataRow ["name" "text" "pg_catalog" NULL NULL "NO" NULL NULL]
+5 B DataRow ["price" "numeric" "pg_catalog" NULL NULL "YES" NULL NULL]
+5 B DataRow ["added" "timestamptz" "pg_catalog" NULL NULL "NO" NULL NULL]
+5 B DataRow ["active" "bool" "pg_catalog" NULL NULL "NO" NULL NULL]
+5 B CommandComplete "SELECT 5"
+5 B ReadyForQuery I
+5 F Bind "" "__diesel_stmt_2" [1 1 1] ["PRIMARY KEY" "compat_orders" "public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("column_name" 13461 7 19 64 -1 1)]
+5 B DataRow ["id"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Parse "" "SELECT\n   sch.nspname                                   AS \"self_schema\",\n   tbl.relname                                   AS \"self_table\",\n   ARRAY_AGG(col.attname ORDER BY u.attposition) AS \"self_columns\",\n   f_sch.nspname                                 AS \"foreign_schema\",\n   f_tbl.relname                                 AS \"foreign_table\",\n   ARRAY_AGG(f_col.attname ORDER BY f_u.attposition) AS \"foreign_columns\"\nFROM pg_constraint c\n       LEFT JOIN LATERAL UNNEST(c.conkey) WITH ORDINALITY AS u(attnum, attposition) ON TRUE\n       LEFT JOIN LATERAL UNNEST(c.confkey) WITH ORDINALITY AS f_u(attnum, attposition) ON f_u.attposition = u.attposition\n       JOIN pg_class tbl ON tbl.oid = c.conrelid\n       JOIN pg_namespace sch ON sch.oid = tbl.relnamespace\n       LEFT JOIN pg_attribute col ON (col.attrelid = tbl.oid AND col.attnum = u.attnum)\n       LEFT JOIN pg_class f_tbl ON f_tbl.oid = c.confrelid\n       LEFT JOIN pg_namespace f_sch ON f_sch.oid = f_tbl.relnamespace\n       LEFT JOIN pg_attribute f_col ON (f_col.attrelid = f_tbl.oid AND f_col.attnum = f_u.attnum)\nWHERE sch.nspname = $1 and f_sch.nspname = $1 and c.contype = 'f'\nGROUP BY \"self_schema\", \"self_table\", \"foreign_schema\", \"foreign_table\"\nORDER BY \"self_schema\", \"self_table\";\n" [25]
+5 F Bind "" "" [1] ["public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("self_schema" 2615 2 19 64 -1 1) ("self_table" 1259 2 19 64 -1 1) ("self_columns" 0 0 1003 -1 -1 1) ("foreign_schema" 2615 2 19 64 -1 1) ("foreign_table" 1259 2 19 64 -1 1) ("foreign_columns" 0 0 1003 -1 -1 1)]
+5 B DataRow ["public" "compat_orders" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x04item" "public" "compat_items" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x13\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x02id"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Bind "" "__diesel_stmt_3" [1 1 1] ["compat_orders" "compat_orders" "public"] [1]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("column_name" 13428 4 19 64 -1 1) ("udt_name" 13428 28 19 64 -1 1) ("udt_schema" 13428 27 19 64 -1 1) ("domain_name" 13428 25 19 64 -1 1) ("domain_schema" 13428 24 19 64 -1 1) ("is_nullable" 13428 7 1043 -1 7 1) ("character_maximum_length" 13428 9 23 4 -1 1) ("col_description" 0 0 25 -1 -1 1)]
+5 B DataRow ["id" "int8" "pg_catalog" NULL NULL "NO" NULL NULL]
+5 B DataRow ["item" "int4" "pg_catalog" NULL NULL "NO" NULL NULL]
+5 B DataRow ["qty" "int4" "pg_catalog" NULL NULL "NO" NULL NULL]
+5 B CommandComplete "SELECT 3"
+5 B ReadyForQuery I
+5 F Terminate
+5 F End
+5 B End
+6 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+6 B AuthenticationSASL "SCRAM-SHA-256"
+6 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=8cuNL9puiD8+uBe+CsC2NDy4"
+6 B AuthenticationSASLContinue "r=8cuNL9puiD8+uBe+CsC2NDy4wCVjJWcT5OeNAHbtFa+CWHP7,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+6 F SASLResponse "c=biws,r=8cuNL9puiD8+uBe+CsC2NDy4wCVjJWcT5OeNAHbtFa+CWHP7,p=I+wVytVAf6SDjBpgel9voyy6dKpAoE4T+Oz8NGjNcFg="
+6 B AuthenticationSASLFinal "v=5sGJPgQFyjjytVIKbD4LWwbn5Y+fMiAajsIOZkXMfNU="
+6 B AuthenticationOk
+6 B ParameterStatus "IntervalStyle" "postgres"
+6 B ParameterStatus "search_path" "\"$user\", public"
+6 B ParameterStatus "is_superuser" "on"
+6 B ParameterStatus "standard_conforming_strings" "on"
+6 B ParameterStatus "session_authorization" "postgres"
+6 B ParameterStatus "client_encoding" "UTF8"
+6 B ParameterStatus "server_version" "19beta4"
+6 B ParameterStatus "server_encoding" "UTF8"
+6 B ParameterStatus "in_hot_standby" "off"
+6 B ParameterStatus "integer_datetimes" "on"
+6 B ParameterStatus "TimeZone" "UTC"
+6 B ParameterStatus "application_name" ""
+6 B ParameterStatus "default_transaction_read_only" "off"
+6 B ParameterStatus "scram_iterations" "4096"
+6 B ParameterStatus "DateStyle" "ISO, MDY"
+6 B BackendKeyData 785258 "%\x8az."
+6 B ReadyForQuery I
+6 F Parse "" "SET TIME ZONE 'UTC'" []
+6 F Bind "" "" [] [] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B ParseComplete
+6 B BindComplete
+6 B NoData
+6 B CommandComplete "SET"
+6 B ReadyForQuery I
+6 F Parse "" "SET CLIENT_ENCODING TO 'UTF8'" []
+6 F Bind "" "" [] [] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B ParseComplete
+6 B BindComplete
+6 B NoData
+6 B CommandComplete "SET"
+6 B ReadyForQuery I
+6 F Parse "" "CREATE TABLE IF NOT EXISTS __diesel_schema_migrations (\n       version VARCHAR(50) PRIMARY KEY NOT NULL,\n       run_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n" []
+6 F Bind "" "" [] [] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B ParseComplete
+6 B BindComplete
+6 B NoData
+6 B NoticeResponse S "NOTICE" V "NOTICE" C "42P07" M "relation \"__diesel_schema_migrations\" already exists, skipping" F "parse_utilcmd.c" L "214" R "transformCreateStmt"
+6 B CommandComplete "CREATE TABLE"
+6 B ReadyForQuery I
+6 F Parse "__diesel_stmt_1" "SELECT \"__diesel_schema_migrations\".\"version\" FROM \"__diesel_schema_migrations\" ORDER BY \"__diesel_schema_migrations\".\"version\" DESC" []
+6 F Sync
+6 B ParseComplete
+6 B ReadyForQuery I
+6 F Bind "" "__diesel_stmt_1" [] [] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B RowDescription [("version" 255745 1 1043 -1 54 1)]
+6 B DataRow ["20260102000000"]
+6 B DataRow ["20260101000000"]
+6 B DataRow ["00000000000000"]
+6 B CommandComplete "SELECT 3"
+6 B ReadyForQuery I
+6 F Query "BEGIN"
+6 B CommandComplete "BEGIN"
+6 B ReadyForQuery T
+6 F Parse "" "CREATE TABLE IF NOT EXISTS __diesel_schema_migrations (\n       version VARCHAR(50) PRIMARY KEY NOT NULL,\n       run_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n" []
+6 F Bind "" "" [] [] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B ParseComplete
+6 B BindComplete
+6 B NoData
+6 B NoticeResponse S "NOTICE" V "NOTICE" C "42P07" M "relation \"__diesel_schema_migrations\" already exists, skipping" F "parse_utilcmd.c" L "214" R "transformCreateStmt"
+6 B CommandComplete "CREATE TABLE"
+6 B ReadyForQuery T
+6 F Bind "" "__diesel_stmt_1" [] [] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B RowDescription [("version" 255745 1 1043 -1 54 1)]
+6 B DataRow ["20260102000000"]
+6 B DataRow ["20260101000000"]
+6 B DataRow ["00000000000000"]
+6 B CommandComplete "SELECT 3"
+6 B ReadyForQuery T
+6 F Query "SAVEPOINT diesel_savepoint_1"
+6 B CommandComplete "SAVEPOINT"
+6 B ReadyForQuery T
+6 F Query "DROP TABLE compat_orders;\n"
+6 B CommandComplete "DROP TABLE"
+6 B ReadyForQuery T
+6 F Parse "__diesel_stmt_2" "DELETE FROM \"__diesel_schema_migrations\" WHERE (\"__diesel_schema_migrations\".\"version\" = $1)" [25]
+6 F Sync
+6 B ParseComplete
+6 B ReadyForQuery T
+6 F Bind "" "__diesel_stmt_2" [1] ["20260102000000"] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B NoData
+6 B CommandComplete "DELETE 1"
+6 B ReadyForQuery T
+6 F Query "RELEASE SAVEPOINT diesel_savepoint_1"
+6 B CommandComplete "RELEASE"
+6 B ReadyForQuery T
+6 F Query "SAVEPOINT diesel_savepoint_1"
+6 B CommandComplete "SAVEPOINT"
+6 B ReadyForQuery T
+6 F Query "CREATE TABLE compat_orders (id int8 GENERATED ALWAYS AS IDENTITY PRIMARY KEY, item int4 NOT NULL REFERENCES compat_items, qty int4 NOT NULL DEFAULT 1);\nCREATE INDEX compat_orders_item ON compat_orders (item);\n"
+6 B CommandComplete "CREATE TABLE"
+6 B CommandComplete "CREATE INDEX"
+6 B ReadyForQuery T
+6 F Parse "__diesel_stmt_3" "INSERT INTO \"__diesel_schema_migrations\" (\"version\") VALUES ($1)" [25]
+6 F Sync
+6 B ParseComplete
+6 B ReadyForQuery T
+6 F Bind "" "__diesel_stmt_3" [1] ["20260102000000"] [1]
+6 F Describe P ""
+6 F Execute "" 0
+6 F Sync
+6 B BindComplete
+6 B NoData
+6 B CommandComplete "INSERT 0 1"
+6 B ReadyForQuery T
+6 F Query "RELEASE SAVEPOINT diesel_savepoint_1"
+6 B CommandComplete "RELEASE"
+6 B ReadyForQuery T
+6 F Query "COMMIT"
+6 B CommandComplete "COMMIT"
+6 B ReadyForQuery I
+6 F Terminate
+6 F End
+7 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+7 B AuthenticationSASL "SCRAM-SHA-256"
+7 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=peKtSU8L0c0bi6/a7ZVn4PUh"
+7 B AuthenticationSASLContinue "r=peKtSU8L0c0bi6/a7ZVn4PUhhwiKV2ubgHWqXax5q7i8xAMi,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+7 F SASLResponse "c=biws,r=peKtSU8L0c0bi6/a7ZVn4PUhhwiKV2ubgHWqXax5q7i8xAMi,p=vP67a9I/SC61lShE6XH+t/BbJ1m6RGyLWUv0/dKqaP4="
+7 B AuthenticationSASLFinal "v=g9vaLmuCJcPC+vwkBxndyOuBfVCWLj4Eruhw92/nZ4Q="
+7 B AuthenticationOk
+7 B ParameterStatus "IntervalStyle" "postgres"
+7 B ParameterStatus "search_path" "\"$user\", public"
+7 B ParameterStatus "is_superuser" "on"
+7 B ParameterStatus "standard_conforming_strings" "on"
+7 B ParameterStatus "session_authorization" "postgres"
+7 B ParameterStatus "client_encoding" "UTF8"
+7 B ParameterStatus "server_version" "19beta4"
+7 B ParameterStatus "server_encoding" "UTF8"
+7 B ParameterStatus "in_hot_standby" "off"
+7 B ParameterStatus "integer_datetimes" "on"
+7 B ParameterStatus "TimeZone" "UTC"
+7 B ParameterStatus "application_name" ""
+7 B ParameterStatus "default_transaction_read_only" "off"
+7 B ParameterStatus "scram_iterations" "4096"
+7 B ParameterStatus "DateStyle" "ISO, MDY"
+7 B BackendKeyData 785262 "/\x82\xe3\xe8"
+7 B ReadyForQuery I
+7 F Parse "" "SET TIME ZONE 'UTC'" []
+7 F Bind "" "" [] [] [1]
+7 F Describe P ""
+7 F Execute "" 0
+7 F Sync
+6 B End
+7 B ParseComplete
+7 B BindComplete
+7 B NoData
+7 B CommandComplete "SET"
+7 B ReadyForQuery I
+7 F Parse "" "SET CLIENT_ENCODING TO 'UTF8'" []
+7 F Bind "" "" [] [] [1]
+7 F Describe P ""
+7 F Execute "" 0
+7 F Sync
+7 B ParseComplete
+7 B BindComplete
+7 B NoData
+7 B CommandComplete "SET"
+7 B ReadyForQuery I
+7 F Parse "" "CREATE TABLE IF NOT EXISTS __diesel_schema_migrations (\n       version VARCHAR(50) PRIMARY KEY NOT NULL,\n       run_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n" []
+7 F Bind "" "" [] [] [1]
+7 F Describe P ""
+7 F Execute "" 0
+7 F Sync
+7 B ParseComplete
+7 B BindComplete
+7 B NoData
+7 B NoticeResponse S "NOTICE" V "NOTICE" C "42P07" M "relation \"__diesel_schema_migrations\" already exists, skipping" F "parse_utilcmd.c" L "214" R "transformCreateStmt"
+7 B CommandComplete "CREATE TABLE"
+7 B ReadyForQuery I
+7 F Parse "__diesel_stmt_1" "SELECT \"__diesel_schema_migrations\".\"version\" FROM \"__diesel_schema_migrations\" ORDER BY \"__diesel_schema_migrations\".\"version\" DESC" []
+7 F Sync
+7 B ParseComplete
+7 B ReadyForQuery I
+7 F Bind "" "__diesel_stmt_1" [] [] [1]
+7 F Describe P ""
+7 F Execute "" 0
+7 F Sync
+7 B BindComplete
+7 B RowDescription [("version" 255745 1 1043 -1 54 1)]
+7 B DataRow ["20260102000000"]
+7 B DataRow ["20260101000000"]
+7 B DataRow ["00000000000000"]
+7 B CommandComplete "SELECT 3"
+7 B ReadyForQuery I
+7 F Query "BEGIN"
+7 B CommandComplete "BEGIN"
+7 B ReadyForQuery T
+7 F Query "DROP TABLE compat_orders;\n"
+7 B CommandComplete "DROP TABLE"
+7 B ReadyForQuery T
+7 F Parse "__diesel_stmt_2" "DELETE FROM \"__diesel_schema_migrations\" WHERE (\"__diesel_schema_migrations\".\"version\" = $1)" [25]
+7 F Sync
+7 B ParseComplete
+7 B ReadyForQuery T
+7 F Bind "" "__diesel_stmt_2" [1] ["20260102000000"] [1]
+7 F Describe P ""
+7 F Execute "" 0
+7 F Sync
+7 B BindComplete
+7 B NoData
+7 B CommandComplete "DELETE 1"
+7 B ReadyForQuery T
+7 F Query "COMMIT"
+7 B CommandComplete "COMMIT"
+7 B ReadyForQuery I
+7 F Query "BEGIN"
+7 B CommandComplete "BEGIN"
+7 B ReadyForQuery T
+7 F Query "DROP TABLE compat_items;\n"
+7 B CommandComplete "DROP TABLE"
+7 B ReadyForQuery T
+7 F Bind "" "__diesel_stmt_2" [1] ["20260101000000"] [1]
+7 F Describe P ""
+7 F Execute "" 0
+7 F Sync
+7 B BindComplete
+7 B NoData
+7 B CommandComplete "DELETE 1"
+7 B ReadyForQuery T
+7 F Query "COMMIT"
+7 B CommandComplete "COMMIT"
+7 B ReadyForQuery I
+7 F Query "BEGIN"
+7 B CommandComplete "BEGIN"
+7 B ReadyForQuery T
+7 F Query "-- This file was automatically created by Diesel to setup helper functions\n-- and other internal bookkeeping. This file is safe to edit, any future\n-- changes will be added to existing projects as new migrations.\n\nDROP FUNCTION IF EXISTS diesel_manage_updated_at(_tbl regclass);\nDROP FUNCTION IF EXISTS diesel_set_updated_at();\n"
+7 B CommandComplete "DROP FUNCTION"
+7 B CommandComplete "DROP FUNCTION"
+7 B ReadyForQuery T
+7 F Bind "" "__diesel_stmt_2" [1] ["00000000000000"] [1]
+7 F Describe P ""
+7 F Execute "" 0
+7 F Sync
+7 B BindComplete
+7 B NoData
+7 B CommandComplete "DELETE 1"
+7 B ReadyForQuery T
+7 F Query "COMMIT"
+7 B CommandComplete "COMMIT"
+7 B ReadyForQuery I
+7 F Terminate
+7 F End
+7 B End

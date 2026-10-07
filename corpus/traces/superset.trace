@@ -1,0 +1,2046 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/superset/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=2ATzr8xYIZkW0SIr4NnC9jVr"
+1 B AuthenticationSASLContinue "r=2ATzr8xYIZkW0SIr4NnC9jVrjR2kytRJvKcmHgQzlRfbdyBQ,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=2ATzr8xYIZkW0SIr4NnC9jVrjR2kytRJvKcmHgQzlRfbdyBQ,p=QQ2d/lFUh31jdyTTohXJZ60T6Udyd21mlfjLJzz5LgQ="
+1 B AuthenticationSASLFinal "v=LHZvGk9SUs6QJQqHbH+exJMmgBrWZLGbd2G3aascXlI="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "psql"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 785607 "\xd7<\x15\x98"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_regions (id int4 PRIMARY KEY, name text NOT NULL UNIQUE);"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_sales (id int8 GENERATED ALWAYS AS IDENTITY PRIMARY KEY, region int4 NOT NULL REFERENCES compat_regions, sold date NOT NULL, amount numeric(10, 2) NOT NULL);"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "CREATE INDEX compat_sales_sold ON compat_sales (sold);"
+1 B CommandComplete "CREATE INDEX"
+1 B ReadyForQuery I
+1 F Query "COMMENT ON TABLE compat_sales IS 'The sales of the scenario';"
+1 B CommandComplete "COMMENT"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO compat_regions VALUES (1, 'north'), (2, 'south');"
+1 B CommandComplete "INSERT 0 2"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO compat_sales (region, sold, amount) SELECT 1 + i % 2, DATE '2026-01-01' + i, 10 + i FROM generate_series(0, 19) AS i;"
+1 B CommandComplete "INSERT 0 20"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=X7i6jbzHCb3r/wAyIzEhuKvp"
+2 B AuthenticationSASLContinue "r=X7i6jbzHCb3r/wAyIzEhuKvpY5CuNouXRPpvUQFU+Oahu+Zk,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=X7i6jbzHCb3r/wAyIzEhuKvpY5CuNouXRPpvUQFU+Oahu+Zk,p=TqNNrFGFBGHujzU/3trivh1Qb08azB6yIMKoljsIc+w="
+2 B AuthenticationSASLFinal "v=cfjkFltneEFxb74bmnL+MUGTgDjzqo8gOvsqZFwYylM="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 785625 "^\xeb\x1b\xfa"
+2 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+2 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery T
+2 F Query "ROLLBACK"
+2 B CommandComplete "ROLLBACK"
+2 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Query "select pg_catalog.version()"
+2 B RowDescription [("version" 0 0 25 -1 -1 0)]
+2 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Query "select current_schema()"
+2 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+2 B DataRow ["public"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Query "show transaction isolation level"
+2 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+2 B DataRow ["read committed"]
+2 B CommandComplete "SHOW"
+2 B ReadyForQuery T
+2 F Query "show standard_conforming_strings"
+2 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+2 B DataRow ["on"]
+2 B CommandComplete "SHOW"
+2 B ReadyForQuery T
+2 F Query "ROLLBACK"
+2 B CommandComplete "ROLLBACK"
+2 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Query "SELECT 1"
+2 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+2 B DataRow ["1"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Query "ROLLBACK"
+2 B CommandComplete "ROLLBACK"
+2 B ReadyForQuery I
+2 F Terminate
+2 F End
+2 B End
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=nDoDGb7g3pRfVAqAw++hXjnf"
+3 B AuthenticationSASLContinue "r=nDoDGb7g3pRfVAqAw++hXjnf/tw9mcOKt6l5H0j2sYf/vhgq,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=nDoDGb7g3pRfVAqAw++hXjnf/tw9mcOKt6l5H0j2sYf/vhgq,p=8RDD5HffBSkbkifdFk/C7NZMetbWweONzzB4YDH1g4I="
+3 B AuthenticationSASLFinal "v=QzJIJAEXIiiw7goMmX5BWJukmtiExMRBTIXpMYAPl9I="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" ""
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 785628 "nO\x0eZ"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+3 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+3 B CommandComplete "SELECT 0"
+3 B ReadyForQuery T
+3 F Query "ROLLBACK"
+3 B CommandComplete "ROLLBACK"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Query "select pg_catalog.version()"
+3 B RowDescription [("version" 0 0 25 -1 -1 0)]
+3 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery T
+3 F Query "select current_schema()"
+3 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+3 B DataRow ["public"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery T
+3 F Query "show transaction isolation level"
+3 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+3 B DataRow ["read committed"]
+3 B CommandComplete "SHOW"
+3 B ReadyForQuery T
+3 F Query "show standard_conforming_strings"
+3 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+3 B DataRow ["on"]
+3 B CommandComplete "SHOW"
+3 B ReadyForQuery T
+3 F Query "ROLLBACK"
+3 B CommandComplete "ROLLBACK"
+3 B ReadyForQuery I
+3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
+3 F Query "SELECT 1"
+3 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+3 B DataRow ["1"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery T
+3 F Query "ROLLBACK"
+3 B CommandComplete "ROLLBACK"
+3 B ReadyForQuery I
+3 F Terminate
+3 F End
+3 B End
+4 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+4 B AuthenticationSASL "SCRAM-SHA-256"
+4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=+5nedKMVCqy6L7n1ftzr6k8Z"
+4 B AuthenticationSASLContinue "r=+5nedKMVCqy6L7n1ftzr6k8ZL7agmBYQzvrkrcNG/t+rqL0g,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F SASLResponse "c=biws,r=+5nedKMVCqy6L7n1ftzr6k8ZL7agmBYQzvrkrcNG/t+rqL0g,p=7aOI7pbc2RXgfxaWwaytgf9XY1Yp/93Og2dfpO1Lflc="
+4 B AuthenticationSASLFinal "v=ZgzbNY+hJicBr97vsh05mpc1PkeQnvrvU9bDTMc1If0="
+4 B AuthenticationOk
+4 B ParameterStatus "IntervalStyle" "postgres"
+4 B ParameterStatus "search_path" "\"$user\", public"
+4 B ParameterStatus "is_superuser" "on"
+4 B ParameterStatus "standard_conforming_strings" "on"
+4 B ParameterStatus "session_authorization" "postgres"
+4 B ParameterStatus "client_encoding" "UTF8"
+4 B ParameterStatus "server_version" "19beta4"
+4 B ParameterStatus "server_encoding" "UTF8"
+4 B ParameterStatus "in_hot_standby" "off"
+4 B ParameterStatus "integer_datetimes" "on"
+4 B ParameterStatus "TimeZone" "UTC"
+4 B ParameterStatus "application_name" ""
+4 B ParameterStatus "default_transaction_read_only" "off"
+4 B ParameterStatus "scram_iterations" "4096"
+4 B ParameterStatus "DateStyle" "ISO, MDY"
+4 B BackendKeyData 785631 "Jk\xe0="
+4 B ReadyForQuery I
+4 F Query "BEGIN"
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+4 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+4 B CommandComplete "SELECT 0"
+4 B ReadyForQuery T
+4 F Query "ROLLBACK"
+4 B CommandComplete "ROLLBACK"
+4 B ReadyForQuery I
+4 F Query "BEGIN"
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Query "select pg_catalog.version()"
+4 B RowDescription [("version" 0 0 25 -1 -1 0)]
+4 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+4 F Query "select current_schema()"
+4 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+4 B DataRow ["public"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+4 F Query "show transaction isolation level"
+4 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+4 B DataRow ["read committed"]
+4 B CommandComplete "SHOW"
+4 B ReadyForQuery T
+4 F Query "show standard_conforming_strings"
+4 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+4 B DataRow ["on"]
+4 B CommandComplete "SHOW"
+4 B ReadyForQuery T
+4 F Query "ROLLBACK"
+4 B CommandComplete "ROLLBACK"
+4 B ReadyForQuery I
+4 F Terminate
+4 F End
+4 B End
+5 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+5 B AuthenticationSASL "SCRAM-SHA-256"
+5 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=M6Rc7O2HxttnUt3OeenTeU7l"
+5 B AuthenticationSASLContinue "r=M6Rc7O2HxttnUt3OeenTeU7lxpwHXDZBNVtJthiR8oFs2rAZ,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+5 F SASLResponse "c=biws,r=M6Rc7O2HxttnUt3OeenTeU7lxpwHXDZBNVtJthiR8oFs2rAZ,p=sXnrNbdTLM344EkV2ilPJasb2opKk7XvKca0ZB77LJ8="
+5 B AuthenticationSASLFinal "v=9NGCa/oIueU/GD2WGkwukSyB49rg/3wibnsYoR1ilnM="
+5 B AuthenticationOk
+5 B ParameterStatus "IntervalStyle" "postgres"
+5 B ParameterStatus "search_path" "\"$user\", public"
+5 B ParameterStatus "is_superuser" "on"
+5 B ParameterStatus "standard_conforming_strings" "on"
+5 B ParameterStatus "session_authorization" "postgres"
+5 B ParameterStatus "client_encoding" "UTF8"
+5 B ParameterStatus "server_version" "19beta4"
+5 B ParameterStatus "server_encoding" "UTF8"
+5 B ParameterStatus "in_hot_standby" "off"
+5 B ParameterStatus "integer_datetimes" "on"
+5 B ParameterStatus "TimeZone" "UTC"
+5 B ParameterStatus "application_name" ""
+5 B ParameterStatus "default_transaction_read_only" "off"
+5 B ParameterStatus "scram_iterations" "4096"
+5 B ParameterStatus "DateStyle" "ISO, MDY"
+5 B BackendKeyData 785634 "g\x8b\xf0q"
+5 B ReadyForQuery I
+5 F Query "BEGIN"
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+5 F Query "SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'pg_%' ORDER BY nspname"
+5 B RowDescription [("nspname" 2615 2 19 64 -1 0)]
+5 B DataRow ["information_schema"]
+5 B DataRow ["public"]
+5 B CommandComplete "SELECT 2"
+5 B ReadyForQuery T
+5 F Query "ROLLBACK"
+5 B CommandComplete "ROLLBACK"
+5 B ReadyForQuery I
+5 F Terminate
+5 F End
+5 B End
+6 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+6 B AuthenticationSASL "SCRAM-SHA-256"
+6 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=HghtmYjowdsKJtrDvTaaDYGI"
+6 B AuthenticationSASLContinue "r=HghtmYjowdsKJtrDvTaaDYGIWHRy8KoDUmHXJgnbvbB9MDb+,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+6 F SASLResponse "c=biws,r=HghtmYjowdsKJtrDvTaaDYGIWHRy8KoDUmHXJgnbvbB9MDb+,p=99AW6qtNF8Bj0vjNUmdtFhuR6sCtb3kG4aMAH6wGWTc="
+6 B AuthenticationSASLFinal "v=p5QwqTpKoAy4VAUskj5yhqtnI/J9aV6juKOi2YNU3+k="
+6 B AuthenticationOk
+6 B ParameterStatus "IntervalStyle" "postgres"
+6 B ParameterStatus "search_path" "\"$user\", public"
+6 B ParameterStatus "is_superuser" "on"
+6 B ParameterStatus "standard_conforming_strings" "on"
+6 B ParameterStatus "session_authorization" "postgres"
+6 B ParameterStatus "client_encoding" "UTF8"
+6 B ParameterStatus "server_version" "19beta4"
+6 B ParameterStatus "server_encoding" "UTF8"
+6 B ParameterStatus "in_hot_standby" "off"
+6 B ParameterStatus "integer_datetimes" "on"
+6 B ParameterStatus "TimeZone" "UTC"
+6 B ParameterStatus "application_name" ""
+6 B ParameterStatus "default_transaction_read_only" "off"
+6 B ParameterStatus "scram_iterations" "4096"
+6 B ParameterStatus "DateStyle" "ISO, MDY"
+6 B BackendKeyData 785638 "NWyg"
+6 B ReadyForQuery I
+6 F Query "BEGIN"
+6 B CommandComplete "BEGIN"
+6 B ReadyForQuery T
+6 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+6 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+6 B CommandComplete "SELECT 0"
+6 B ReadyForQuery T
+6 F Query "ROLLBACK"
+6 B CommandComplete "ROLLBACK"
+6 B ReadyForQuery I
+6 F Query "BEGIN"
+6 B CommandComplete "BEGIN"
+6 B ReadyForQuery T
+6 F Query "select pg_catalog.version()"
+6 B RowDescription [("version" 0 0 25 -1 -1 0)]
+6 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+6 B CommandComplete "SELECT 1"
+6 B ReadyForQuery T
+6 F Query "select current_schema()"
+6 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+6 B DataRow ["public"]
+6 B CommandComplete "SELECT 1"
+6 B ReadyForQuery T
+6 F Query "show transaction isolation level"
+6 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+6 B DataRow ["read committed"]
+6 B CommandComplete "SHOW"
+6 B ReadyForQuery T
+6 F Query "show standard_conforming_strings"
+6 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+6 B DataRow ["on"]
+6 B CommandComplete "SHOW"
+6 B ReadyForQuery T
+6 F Query "ROLLBACK"
+6 B CommandComplete "ROLLBACK"
+6 B ReadyForQuery I
+6 F Terminate
+6 F End
+6 B End
+7 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+7 B AuthenticationSASL "SCRAM-SHA-256"
+7 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=kLqam5Hct2GzvfIdLPtdSTZY"
+7 B AuthenticationSASLContinue "r=kLqam5Hct2GzvfIdLPtdSTZYmdhBjEuWCO/LpXVAbYaegdsN,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+7 F SASLResponse "c=biws,r=kLqam5Hct2GzvfIdLPtdSTZYmdhBjEuWCO/LpXVAbYaegdsN,p=uh9R7H6G2kHbErN0vplXeGCeFUhpEsYxd+iUEh5tpho="
+7 B AuthenticationSASLFinal "v=DBOhRN70CywJVNO6/yxvvUJYVkL4E6WiiFs0oC5/Ycw="
+7 B AuthenticationOk
+7 B ParameterStatus "IntervalStyle" "postgres"
+7 B ParameterStatus "search_path" "\"$user\", public"
+7 B ParameterStatus "is_superuser" "on"
+7 B ParameterStatus "standard_conforming_strings" "on"
+7 B ParameterStatus "session_authorization" "postgres"
+7 B ParameterStatus "client_encoding" "UTF8"
+7 B ParameterStatus "server_version" "19beta4"
+7 B ParameterStatus "server_encoding" "UTF8"
+7 B ParameterStatus "in_hot_standby" "off"
+7 B ParameterStatus "integer_datetimes" "on"
+7 B ParameterStatus "TimeZone" "UTC"
+7 B ParameterStatus "application_name" ""
+7 B ParameterStatus "default_transaction_read_only" "off"
+7 B ParameterStatus "scram_iterations" "4096"
+7 B ParameterStatus "DateStyle" "ISO, MDY"
+7 B BackendKeyData 785641 "\xf8s\xbb\x87"
+7 B ReadyForQuery I
+7 F Query "BEGIN"
+7 B CommandComplete "BEGIN"
+7 B ReadyForQuery T
+7 F Query "SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'pg_%' ORDER BY nspname"
+7 B RowDescription [("nspname" 2615 2 19 64 -1 0)]
+7 B DataRow ["information_schema"]
+7 B DataRow ["public"]
+7 B CommandComplete "SELECT 2"
+7 B ReadyForQuery T
+7 F Query "ROLLBACK"
+7 B CommandComplete "ROLLBACK"
+7 B ReadyForQuery I
+7 F Terminate
+7 F End
+7 B End
+8 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+8 B AuthenticationSASL "SCRAM-SHA-256"
+8 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=j3ADLCcd3jQX3dJkrYqyLvY5"
+8 B AuthenticationSASLContinue "r=j3ADLCcd3jQX3dJkrYqyLvY5RGwLwVEJjM/2sRncOj7/8UPt,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+8 F SASLResponse "c=biws,r=j3ADLCcd3jQX3dJkrYqyLvY5RGwLwVEJjM/2sRncOj7/8UPt,p=Ta9bpne7tc4Y8qEet2Oy06VxqXoZF2sBeFJ92hdS2Gc="
+8 B AuthenticationSASLFinal "v=OyiWP4Aw9V8wMn2EI/r/sMc/uONS884hBsIscu/2dnQ="
+8 B AuthenticationOk
+8 B ParameterStatus "IntervalStyle" "postgres"
+8 B ParameterStatus "search_path" "\"$user\", public"
+8 B ParameterStatus "is_superuser" "on"
+8 B ParameterStatus "standard_conforming_strings" "on"
+8 B ParameterStatus "session_authorization" "postgres"
+8 B ParameterStatus "client_encoding" "UTF8"
+8 B ParameterStatus "server_version" "19beta4"
+8 B ParameterStatus "server_encoding" "UTF8"
+8 B ParameterStatus "in_hot_standby" "off"
+8 B ParameterStatus "integer_datetimes" "on"
+8 B ParameterStatus "TimeZone" "UTC"
+8 B ParameterStatus "application_name" ""
+8 B ParameterStatus "default_transaction_read_only" "off"
+8 B ParameterStatus "scram_iterations" "4096"
+8 B ParameterStatus "DateStyle" "ISO, MDY"
+8 B BackendKeyData 785644 "\xea\xdek\xc3"
+8 B ReadyForQuery I
+8 F Query "BEGIN"
+8 B CommandComplete "BEGIN"
+8 B ReadyForQuery T
+8 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+8 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+8 B CommandComplete "SELECT 0"
+8 B ReadyForQuery T
+8 F Query "ROLLBACK"
+8 B CommandComplete "ROLLBACK"
+8 B ReadyForQuery I
+8 F Query "BEGIN"
+8 B CommandComplete "BEGIN"
+8 B ReadyForQuery T
+8 F Query "select pg_catalog.version()"
+8 B RowDescription [("version" 0 0 25 -1 -1 0)]
+8 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+8 B CommandComplete "SELECT 1"
+8 B ReadyForQuery T
+8 F Query "select current_schema()"
+8 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+8 B DataRow ["public"]
+8 B CommandComplete "SELECT 1"
+8 B ReadyForQuery T
+8 F Query "show transaction isolation level"
+8 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+8 B DataRow ["read committed"]
+8 B CommandComplete "SHOW"
+8 B ReadyForQuery T
+8 F Query "show standard_conforming_strings"
+8 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+8 B DataRow ["on"]
+8 B CommandComplete "SHOW"
+8 B ReadyForQuery T
+8 F Query "ROLLBACK"
+8 B CommandComplete "ROLLBACK"
+8 B ReadyForQuery I
+8 F Terminate
+8 F End
+8 B End
+9 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+9 B AuthenticationSASL "SCRAM-SHA-256"
+9 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=0xU8j6SOnpgsQ9Z2OYlkbnDM"
+9 B AuthenticationSASLContinue "r=0xU8j6SOnpgsQ9Z2OYlkbnDMdkFRw13zZMRM/EFfRSInstpV,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+9 F SASLResponse "c=biws,r=0xU8j6SOnpgsQ9Z2OYlkbnDMdkFRw13zZMRM/EFfRSInstpV,p=PZkax0v5Ag0DAhWVawVof36vqbMP/dGWbM3GNqpbceY="
+9 B AuthenticationSASLFinal "v=mab7CogVtaxxS4ljuhJXzgnbMlNyrZpfpJ/LeBt7Z3Y="
+9 B AuthenticationOk
+9 B ParameterStatus "IntervalStyle" "postgres"
+9 B ParameterStatus "search_path" "\"$user\", public"
+9 B ParameterStatus "is_superuser" "on"
+9 B ParameterStatus "standard_conforming_strings" "on"
+9 B ParameterStatus "session_authorization" "postgres"
+9 B ParameterStatus "client_encoding" "UTF8"
+9 B ParameterStatus "server_version" "19beta4"
+9 B ParameterStatus "server_encoding" "UTF8"
+9 B ParameterStatus "in_hot_standby" "off"
+9 B ParameterStatus "integer_datetimes" "on"
+9 B ParameterStatus "TimeZone" "UTC"
+9 B ParameterStatus "application_name" ""
+9 B ParameterStatus "default_transaction_read_only" "off"
+9 B ParameterStatus "scram_iterations" "4096"
+9 B ParameterStatus "DateStyle" "ISO, MDY"
+9 B BackendKeyData 785647 "\xab\x15\xda\x1d"
+9 B ReadyForQuery I
+9 F Query "BEGIN"
+9 B CommandComplete "BEGIN"
+9 B ReadyForQuery T
+9 F Query "SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relkind in ('r', 'p')"
+9 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+9 B DataRow ["compat_regions"]
+9 B DataRow ["compat_sales"]
+9 B CommandComplete "SELECT 2"
+9 B ReadyForQuery T
+9 F Query "ROLLBACK"
+9 B CommandComplete "ROLLBACK"
+9 B ReadyForQuery I
+9 F Terminate
+9 F End
+10 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+9 B End
+10 B AuthenticationSASL "SCRAM-SHA-256"
+10 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=eeUNxEGjNaJBEx9SCYKZue6a"
+10 B AuthenticationSASLContinue "r=eeUNxEGjNaJBEx9SCYKZue6aL1YzoxhFGD809weUyZBJXI8M,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+10 F SASLResponse "c=biws,r=eeUNxEGjNaJBEx9SCYKZue6aL1YzoxhFGD809weUyZBJXI8M,p=UNYBulw5ERIU1JQzpo52CTm6S5EtXiTjVkO5vegTz80="
+10 B AuthenticationSASLFinal "v=/3vEMgdBw1YtxpXIs27eUMB2OD31zMVhis+XefJLVs0="
+10 B AuthenticationOk
+10 B ParameterStatus "IntervalStyle" "postgres"
+10 B ParameterStatus "search_path" "\"$user\", public"
+10 B ParameterStatus "is_superuser" "on"
+10 B ParameterStatus "standard_conforming_strings" "on"
+10 B ParameterStatus "session_authorization" "postgres"
+10 B ParameterStatus "client_encoding" "UTF8"
+10 B ParameterStatus "server_version" "19beta4"
+10 B ParameterStatus "server_encoding" "UTF8"
+10 B ParameterStatus "in_hot_standby" "off"
+10 B ParameterStatus "integer_datetimes" "on"
+10 B ParameterStatus "TimeZone" "UTC"
+10 B ParameterStatus "application_name" ""
+10 B ParameterStatus "default_transaction_read_only" "off"
+10 B ParameterStatus "scram_iterations" "4096"
+10 B ParameterStatus "DateStyle" "ISO, MDY"
+10 B BackendKeyData 785651 "\x0b\xa4\xf7\x10"
+10 B ReadyForQuery I
+10 F Query "BEGIN"
+10 B CommandComplete "BEGIN"
+10 B ReadyForQuery T
+10 F Query "SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relkind = 'f'"
+10 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+10 B CommandComplete "SELECT 0"
+10 B ReadyForQuery T
+10 F Query "ROLLBACK"
+10 B CommandComplete "ROLLBACK"
+10 B ReadyForQuery I
+10 F Terminate
+10 F End
+10 B End
+11 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+11 B AuthenticationSASL "SCRAM-SHA-256"
+11 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=0CqizVUzytgypX4ZVYZZkEW2"
+11 B AuthenticationSASLContinue "r=0CqizVUzytgypX4ZVYZZkEW2AGkobb879h2egR/1dohzXT3d,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+11 F SASLResponse "c=biws,r=0CqizVUzytgypX4ZVYZZkEW2AGkobb879h2egR/1dohzXT3d,p=G5tsqIasO0POkJQfPBxHhL0Ao0JWIAbeJLazQS68j84="
+11 B AuthenticationSASLFinal "v=z3X32BtzTumxKxXaYDuF33/GOOj/qG23kxOfG/LBqNk="
+11 B AuthenticationOk
+11 B ParameterStatus "IntervalStyle" "postgres"
+11 B ParameterStatus "search_path" "\"$user\", public"
+11 B ParameterStatus "is_superuser" "on"
+11 B ParameterStatus "standard_conforming_strings" "on"
+11 B ParameterStatus "session_authorization" "postgres"
+11 B ParameterStatus "client_encoding" "UTF8"
+11 B ParameterStatus "server_version" "19beta4"
+11 B ParameterStatus "server_encoding" "UTF8"
+11 B ParameterStatus "in_hot_standby" "off"
+11 B ParameterStatus "integer_datetimes" "on"
+11 B ParameterStatus "TimeZone" "UTC"
+11 B ParameterStatus "application_name" ""
+11 B ParameterStatus "default_transaction_read_only" "off"
+11 B ParameterStatus "scram_iterations" "4096"
+11 B ParameterStatus "DateStyle" "ISO, MDY"
+11 B BackendKeyData 785655 "\xa5r\xbcX"
+11 B ReadyForQuery I
+11 F Query "BEGIN"
+11 B CommandComplete "BEGIN"
+11 B ReadyForQuery T
+11 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+11 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+11 B CommandComplete "SELECT 0"
+11 B ReadyForQuery T
+11 F Query "ROLLBACK"
+11 B CommandComplete "ROLLBACK"
+11 B ReadyForQuery I
+11 F Query "BEGIN"
+11 B CommandComplete "BEGIN"
+11 B ReadyForQuery T
+11 F Query "select pg_catalog.version()"
+11 B RowDescription [("version" 0 0 25 -1 -1 0)]
+11 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+11 B CommandComplete "SELECT 1"
+11 B ReadyForQuery T
+11 F Query "select current_schema()"
+11 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+11 B DataRow ["public"]
+11 B CommandComplete "SELECT 1"
+11 B ReadyForQuery T
+11 F Query "show transaction isolation level"
+11 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+11 B DataRow ["read committed"]
+11 B CommandComplete "SHOW"
+11 B ReadyForQuery T
+11 F Query "show standard_conforming_strings"
+11 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+11 B DataRow ["on"]
+11 B CommandComplete "SHOW"
+11 B ReadyForQuery T
+11 F Query "ROLLBACK"
+11 B CommandComplete "ROLLBACK"
+11 B ReadyForQuery I
+11 F Terminate
+11 F End
+12 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+12 B AuthenticationSASL "SCRAM-SHA-256"
+12 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=Fcws0Yu1hK486z2tQ6cunQZU"
+11 B End
+12 B AuthenticationSASLContinue "r=Fcws0Yu1hK486z2tQ6cunQZU6LshMeWtKcMKUfYBZsIaYY2M,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+12 F SASLResponse "c=biws,r=Fcws0Yu1hK486z2tQ6cunQZU6LshMeWtKcMKUfYBZsIaYY2M,p=uEL4CCEfzyOMS62Lufp9YJ1BPD3xf8OKoAtGqmqiw00="
+12 B AuthenticationSASLFinal "v=39fsfqN/1654a98AfWDLXnWw29pwjme0DKonjueGs8o="
+12 B AuthenticationOk
+12 B ParameterStatus "IntervalStyle" "postgres"
+12 B ParameterStatus "search_path" "\"$user\", public"
+12 B ParameterStatus "is_superuser" "on"
+12 B ParameterStatus "standard_conforming_strings" "on"
+12 B ParameterStatus "session_authorization" "postgres"
+12 B ParameterStatus "client_encoding" "UTF8"
+12 B ParameterStatus "server_version" "19beta4"
+12 B ParameterStatus "server_encoding" "UTF8"
+12 B ParameterStatus "in_hot_standby" "off"
+12 B ParameterStatus "integer_datetimes" "on"
+12 B ParameterStatus "TimeZone" "UTC"
+12 B ParameterStatus "application_name" ""
+12 B ParameterStatus "default_transaction_read_only" "off"
+12 B ParameterStatus "scram_iterations" "4096"
+12 B ParameterStatus "DateStyle" "ISO, MDY"
+12 B BackendKeyData 785658 "\xab\xc97N"
+12 B ReadyForQuery I
+12 F Query "BEGIN"
+12 B CommandComplete "BEGIN"
+12 B ReadyForQuery T
+12 F Query "SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relkind IN ('v', 'm')"
+12 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+12 B CommandComplete "SELECT 0"
+12 B ReadyForQuery T
+12 F Query "ROLLBACK"
+12 B CommandComplete "ROLLBACK"
+12 B ReadyForQuery I
+12 F Terminate
+12 F End
+12 B End
+13 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+13 B AuthenticationSASL "SCRAM-SHA-256"
+13 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=uNRySeC0cdBgEATK48ACYj99"
+13 B AuthenticationSASLContinue "r=uNRySeC0cdBgEATK48ACYj99C2Uaa2VW5Xv0j/H+kAxPFVeu,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+13 F SASLResponse "c=biws,r=uNRySeC0cdBgEATK48ACYj99C2Uaa2VW5Xv0j/H+kAxPFVeu,p=mPYFGnC4ZI41ub6Cjv6CNbjjgPELB6Rzyb7SZ6ekXQw="
+13 B AuthenticationSASLFinal "v=/tBJUI54WTiPUI+IwR8ggsyO6VriD6EioaTVFS7K01w="
+13 B AuthenticationOk
+13 B ParameterStatus "IntervalStyle" "postgres"
+13 B ParameterStatus "search_path" "\"$user\", public"
+13 B ParameterStatus "is_superuser" "on"
+13 B ParameterStatus "standard_conforming_strings" "on"
+13 B ParameterStatus "session_authorization" "postgres"
+13 B ParameterStatus "client_encoding" "UTF8"
+13 B ParameterStatus "server_version" "19beta4"
+13 B ParameterStatus "server_encoding" "UTF8"
+13 B ParameterStatus "in_hot_standby" "off"
+13 B ParameterStatus "integer_datetimes" "on"
+13 B ParameterStatus "TimeZone" "UTC"
+13 B ParameterStatus "application_name" ""
+13 B ParameterStatus "default_transaction_read_only" "off"
+13 B ParameterStatus "scram_iterations" "4096"
+13 B ParameterStatus "DateStyle" "ISO, MDY"
+13 B BackendKeyData 785661 "\x82\x14d\xd7"
+13 B ReadyForQuery I
+13 F Query "BEGIN"
+13 B CommandComplete "BEGIN"
+13 B ReadyForQuery T
+13 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+13 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+13 B CommandComplete "SELECT 0"
+13 B ReadyForQuery T
+13 F Query "ROLLBACK"
+13 B CommandComplete "ROLLBACK"
+13 B ReadyForQuery I
+13 F Query "BEGIN"
+13 B CommandComplete "BEGIN"
+13 B ReadyForQuery T
+13 F Query "select pg_catalog.version()"
+13 B RowDescription [("version" 0 0 25 -1 -1 0)]
+13 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+13 B CommandComplete "SELECT 1"
+13 B ReadyForQuery T
+13 F Query "select current_schema()"
+13 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+13 B DataRow ["public"]
+13 B CommandComplete "SELECT 1"
+13 B ReadyForQuery T
+13 F Query "show transaction isolation level"
+13 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+13 B DataRow ["read committed"]
+13 B CommandComplete "SHOW"
+13 B ReadyForQuery T
+13 F Query "show standard_conforming_strings"
+13 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+13 B DataRow ["on"]
+13 B CommandComplete "SHOW"
+13 B ReadyForQuery T
+13 F Query "ROLLBACK"
+13 B CommandComplete "ROLLBACK"
+13 B ReadyForQuery I
+13 F Terminate
+13 F End
+13 B End
+14 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+14 B AuthenticationSASL "SCRAM-SHA-256"
+14 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=DSXx2ymcu2aKUixpZh0L5fQC"
+14 B AuthenticationSASLContinue "r=DSXx2ymcu2aKUixpZh0L5fQCNCKxjTYZk358W1gqFa/rihIF,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+14 F SASLResponse "c=biws,r=DSXx2ymcu2aKUixpZh0L5fQCNCKxjTYZk358W1gqFa/rihIF,p=lTubDsCCobUQbspDVDJ+4+Lw/XKG3y7m0tEwB6Osbcs="
+14 B AuthenticationSASLFinal "v=9RSsSUwBjwFg/meBicDOJBtxa0jt4BhlFIwnzX49Gq8="
+14 B AuthenticationOk
+14 B ParameterStatus "IntervalStyle" "postgres"
+14 B ParameterStatus "search_path" "\"$user\", public"
+14 B ParameterStatus "is_superuser" "on"
+14 B ParameterStatus "standard_conforming_strings" "on"
+14 B ParameterStatus "session_authorization" "postgres"
+14 B ParameterStatus "client_encoding" "UTF8"
+14 B ParameterStatus "server_version" "19beta4"
+14 B ParameterStatus "server_encoding" "UTF8"
+14 B ParameterStatus "in_hot_standby" "off"
+14 B ParameterStatus "integer_datetimes" "on"
+14 B ParameterStatus "TimeZone" "UTC"
+14 B ParameterStatus "application_name" ""
+14 B ParameterStatus "default_transaction_read_only" "off"
+14 B ParameterStatus "scram_iterations" "4096"
+14 B ParameterStatus "DateStyle" "ISO, MDY"
+14 B BackendKeyData 785664 "~v\x9e\xf4"
+14 B ReadyForQuery I
+14 F Query "BEGIN"
+14 B CommandComplete "BEGIN"
+14 B ReadyForQuery T
+14 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+14 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+14 B CommandComplete "SELECT 0"
+14 B ReadyForQuery T
+14 F Query "ROLLBACK"
+14 B CommandComplete "ROLLBACK"
+14 B ReadyForQuery I
+14 F Query "BEGIN"
+14 B CommandComplete "BEGIN"
+14 B ReadyForQuery T
+14 F Query "select pg_catalog.version()"
+14 B RowDescription [("version" 0 0 25 -1 -1 0)]
+14 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+14 B CommandComplete "SELECT 1"
+14 B ReadyForQuery T
+14 F Query "select current_schema()"
+14 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+14 B DataRow ["public"]
+14 B CommandComplete "SELECT 1"
+14 B ReadyForQuery T
+14 F Query "show transaction isolation level"
+14 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+14 B DataRow ["read committed"]
+14 B CommandComplete "SHOW"
+14 B ReadyForQuery T
+14 F Query "show standard_conforming_strings"
+14 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+14 B DataRow ["on"]
+14 B CommandComplete "SHOW"
+14 B ReadyForQuery T
+14 F Query "ROLLBACK"
+14 B CommandComplete "ROLLBACK"
+14 B ReadyForQuery I
+14 F Terminate
+14 F End
+14 B End
+15 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+15 B AuthenticationSASL "SCRAM-SHA-256"
+15 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=+d38soXTh+qRgj2okf8FMGv0"
+15 B AuthenticationSASLContinue "r=+d38soXTh+qRgj2okf8FMGv0fsR+47Oc7iU7sdBniEGY7B49,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+15 F SASLResponse "c=biws,r=+d38soXTh+qRgj2okf8FMGv0fsR+47Oc7iU7sdBniEGY7B49,p=1oo6kkevUg4P3XAyqiIyxOrw0k2KuopQeY61Agj5xZk="
+15 B AuthenticationSASLFinal "v=35s1KaAvUTR+UQQVeBxh9o+ivS1ezAijANCXUn/dfdU="
+15 B AuthenticationOk
+15 B ParameterStatus "IntervalStyle" "postgres"
+15 B ParameterStatus "search_path" "\"$user\", public"
+15 B ParameterStatus "is_superuser" "on"
+15 B ParameterStatus "standard_conforming_strings" "on"
+15 B ParameterStatus "session_authorization" "postgres"
+15 B ParameterStatus "client_encoding" "UTF8"
+15 B ParameterStatus "server_version" "19beta4"
+15 B ParameterStatus "server_encoding" "UTF8"
+15 B ParameterStatus "in_hot_standby" "off"
+15 B ParameterStatus "integer_datetimes" "on"
+15 B ParameterStatus "TimeZone" "UTC"
+15 B ParameterStatus "application_name" ""
+15 B ParameterStatus "default_transaction_read_only" "off"
+15 B ParameterStatus "scram_iterations" "4096"
+15 B ParameterStatus "DateStyle" "ISO, MDY"
+15 B BackendKeyData 785667 "\x8d\xc6?\xd4"
+15 B ReadyForQuery I
+15 F Query "BEGIN"
+15 B CommandComplete "BEGIN"
+15 B ReadyForQuery T
+15 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_sales' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+15 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+15 B DataRow ["255821"]
+15 B CommandComplete "SELECT 1"
+15 B ReadyForQuery T
+15 F Query "\n            SELECT a.attname,\n              pg_catalog.format_type(a.atttypid, a.atttypmod),\n              (\n                SELECT pg_catalog.pg_get_expr(d.adbin, d.adrelid)\n                FROM pg_catalog.pg_attrdef d\n                WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum\n                AND a.atthasdef\n              ) AS DEFAULT,\n              a.attnotnull,\n              a.attrelid as table_oid,\n              pgd.description as comment,\n              a.attgenerated as generated,\n                              (SELECT json_build_object(\n                    'always', a.attidentity = 'a',\n                    'start', s.seqstart,\n                    'increment', s.seqincrement,\n                    'minvalue', s.seqmin,\n                    'maxvalue', s.seqmax,\n                    'cache', s.seqcache,\n                    'cycle', s.seqcycle)\n                FROM pg_catalog.pg_sequence s\n                JOIN pg_catalog.pg_class c on s.seqrelid = c.\"oid\"\n                WHERE c.relkind = 'S'\n                AND a.attidentity != ''\n                AND s.seqrelid = pg_catalog.pg_get_serial_sequence(\n                    a.attrelid::regclass::text, a.attname\n                )::regclass::oid\n                ) as identity_options                \n            FROM pg_catalog.pg_attribute a\n            LEFT JOIN pg_catalog.pg_description pgd ON (\n                pgd.objoid = a.attrelid AND pgd.objsubid = a.attnum)\n            WHERE a.attrelid = 255821\n            AND a.attnum > 0 AND NOT a.attisdropped\n            ORDER BY a.attnum\n        "
+15 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("default" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("table_oid" 1249 1 26 4 -1 0) ("comment" 2609 4 25 -1 -1 0) ("generated" 1249 16 18 1 -1 0) ("identity_options" 0 0 114 -1 -1 0)]
+15 B DataRow ["id" "bigint" NULL "t" "255821" NULL "" "{\"always\" : true, \"start\" : 1, \"increment\" : 1, \"minvalue\" : 1, \"maxvalue\" : 9223372036854775807, \"cache\" : 1, \"cycle\" : false}"]
+15 B DataRow ["region" "integer" NULL "t" "255821" NULL "" NULL]
+15 B DataRow ["sold" "date" NULL "t" "255821" NULL "" NULL]
+15 B DataRow ["amount" "numeric(10,2)" NULL "t" "255821" NULL "" NULL]
+15 B CommandComplete "SELECT 4"
+15 B ReadyForQuery T
+15 F Query "\n            SELECT t.typname as \"name\",\n               pg_catalog.format_type(t.typbasetype, t.typtypmod) as \"attype\",\n               not t.typnotnull as \"nullable\",\n               t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\"\n            FROM pg_catalog.pg_type t\n               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n            WHERE t.typtype = 'd'\n        "
+15 B RowDescription [("name" 1247 2 19 64 -1 0) ("attype" 0 0 25 -1 -1 0) ("nullable" 0 0 16 1 -1 0) ("default" 1247 31 25 -1 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0)]
+15 B DataRow ["cardinal_number" "integer" "t" NULL "f" "information_schema"]
+15 B DataRow ["character_data" "character varying" "t" NULL "f" "information_schema"]
+15 B DataRow ["sql_identifier" "name" "t" NULL "f" "information_schema"]
+15 B DataRow ["time_stamp" "timestamp(2) with time zone" "t" "CURRENT_TIMESTAMP(2)" "f" "information_schema"]
+15 B DataRow ["yes_or_no" "character varying(3)" "t" NULL "f" "information_schema"]
+15 B CommandComplete "SELECT 5"
+15 B ReadyForQuery T
+15 F Query "\n            SELECT t.typname as \"name\",\n               -- no enum defaults in 8.4 at least\n               -- t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\",\n               e.enumlabel as \"label\"\n            FROM pg_catalog.pg_type t\n                 LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n                 LEFT JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid\n            WHERE t.typtype = 'e'\n        ORDER BY \"schema\", \"name\", e.oid"
+15 B RowDescription [("name" 1247 2 19 64 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+15 B CommandComplete "SELECT 0"
+15 B ReadyForQuery T
+15 F Query "ROLLBACK"
+15 B CommandComplete "ROLLBACK"
+15 B ReadyForQuery I
+15 F Terminate
+15 F End
+15 B End
+16 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+16 B AuthenticationSASL "SCRAM-SHA-256"
+16 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=NNEw+h3Fhr2sgw67gqIcGrl4"
+16 B AuthenticationSASLContinue "r=NNEw+h3Fhr2sgw67gqIcGrl4Gu0duD0X6qsRBS/Q/67/5AqG,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+16 F SASLResponse "c=biws,r=NNEw+h3Fhr2sgw67gqIcGrl4Gu0duD0X6qsRBS/Q/67/5AqG,p=pEQkYS57vwgVFiAN3potERh57hlD0GQEMJXciIZklYE="
+16 B AuthenticationSASLFinal "v=lHBerutvzf1IIdpyd77y3IgnVUjGTU2zirNbDYnK8fE="
+16 B AuthenticationOk
+16 B ParameterStatus "IntervalStyle" "postgres"
+16 B ParameterStatus "search_path" "\"$user\", public"
+16 B ParameterStatus "is_superuser" "on"
+16 B ParameterStatus "standard_conforming_strings" "on"
+16 B ParameterStatus "session_authorization" "postgres"
+16 B ParameterStatus "client_encoding" "UTF8"
+16 B ParameterStatus "server_version" "19beta4"
+16 B ParameterStatus "server_encoding" "UTF8"
+16 B ParameterStatus "in_hot_standby" "off"
+16 B ParameterStatus "integer_datetimes" "on"
+16 B ParameterStatus "TimeZone" "UTC"
+16 B ParameterStatus "application_name" ""
+16 B ParameterStatus "default_transaction_read_only" "off"
+16 B ParameterStatus "scram_iterations" "4096"
+16 B ParameterStatus "DateStyle" "ISO, MDY"
+16 B BackendKeyData 785670 "\x8cA\x9e\x92"
+16 B ReadyForQuery I
+16 F Query "BEGIN"
+16 B CommandComplete "BEGIN"
+16 B ReadyForQuery T
+16 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+16 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+16 B CommandComplete "SELECT 0"
+16 B ReadyForQuery T
+16 F Query "ROLLBACK"
+16 B CommandComplete "ROLLBACK"
+16 B ReadyForQuery I
+16 F Query "BEGIN"
+16 B CommandComplete "BEGIN"
+16 B ReadyForQuery T
+16 F Query "select pg_catalog.version()"
+16 B RowDescription [("version" 0 0 25 -1 -1 0)]
+16 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+16 B CommandComplete "SELECT 1"
+16 B ReadyForQuery T
+16 F Query "select current_schema()"
+16 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+16 B DataRow ["public"]
+16 B CommandComplete "SELECT 1"
+16 B ReadyForQuery T
+16 F Query "show transaction isolation level"
+16 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+16 B DataRow ["read committed"]
+16 B CommandComplete "SHOW"
+16 B ReadyForQuery T
+16 F Query "show standard_conforming_strings"
+16 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+16 B DataRow ["on"]
+16 B CommandComplete "SHOW"
+16 B ReadyForQuery T
+16 F Query "ROLLBACK"
+16 B CommandComplete "ROLLBACK"
+16 B ReadyForQuery I
+16 F Terminate
+16 F End
+16 B End
+17 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+17 B AuthenticationSASL "SCRAM-SHA-256"
+17 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=XcnwfKlmABjJUumZHHHgIbzV"
+17 B AuthenticationSASLContinue "r=XcnwfKlmABjJUumZHHHgIbzVhkutT++IE3iD2g8I+uvLoON/,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+17 F SASLResponse "c=biws,r=XcnwfKlmABjJUumZHHHgIbzVhkutT++IE3iD2g8I+uvLoON/,p=ygMuxmFiFkz/cSOChgbgMY+ufBBcpfzjEtYTtkFTPZM="
+17 B AuthenticationSASLFinal "v=H1dSA1L6eYzF8bB1pNSDa9BoGN7KA57PShLDz25Rx3s="
+17 B AuthenticationOk
+17 B ParameterStatus "IntervalStyle" "postgres"
+17 B ParameterStatus "search_path" "\"$user\", public"
+17 B ParameterStatus "is_superuser" "on"
+17 B ParameterStatus "standard_conforming_strings" "on"
+17 B ParameterStatus "session_authorization" "postgres"
+17 B ParameterStatus "client_encoding" "UTF8"
+17 B ParameterStatus "server_version" "19beta4"
+17 B ParameterStatus "server_encoding" "UTF8"
+17 B ParameterStatus "in_hot_standby" "off"
+17 B ParameterStatus "integer_datetimes" "on"
+17 B ParameterStatus "TimeZone" "UTC"
+17 B ParameterStatus "application_name" ""
+17 B ParameterStatus "default_transaction_read_only" "off"
+17 B ParameterStatus "scram_iterations" "4096"
+17 B ParameterStatus "DateStyle" "ISO, MDY"
+17 B BackendKeyData 785673 "fA\xdcP"
+17 B ReadyForQuery I
+17 F Query "BEGIN"
+17 B CommandComplete "BEGIN"
+17 B ReadyForQuery T
+17 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_sales' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+17 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+17 B DataRow ["255821"]
+17 B CommandComplete "SELECT 1"
+17 B ReadyForQuery T
+17 F Query "\n                SELECT a.attname\n                FROM pg_attribute a JOIN (\n                    SELECT unnest(ix.indkey) attnum,\n                           generate_subscripts(ix.indkey, 1) ord\n                    FROM pg_index ix\n                    WHERE ix.indrelid = 255821 AND ix.indisprimary\n                    ) k ON a.attnum=k.attnum\n                WHERE a.attrelid = 255821\n                ORDER BY k.ord\n            "
+17 B RowDescription [("attname" 1249 2 19 64 -1 0)]
+17 B DataRow ["id"]
+17 B CommandComplete "SELECT 1"
+17 B ReadyForQuery T
+17 F Query "\n        SELECT conname\n           FROM  pg_catalog.pg_constraint r\n           WHERE r.conrelid = 255821 AND r.contype = 'p'\n           ORDER BY 1\n        "
+17 B RowDescription [("conname" 2606 2 19 64 -1 0)]
+17 B DataRow ["compat_sales_pkey"]
+17 B CommandComplete "SELECT 1"
+17 B ReadyForQuery T
+17 F Query "ROLLBACK"
+17 B CommandComplete "ROLLBACK"
+17 B ReadyForQuery I
+17 F Terminate
+17 F End
+17 B End
+18 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+18 B AuthenticationSASL "SCRAM-SHA-256"
+18 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=TIy7yHa8VWqive4wez3p8eLK"
+18 B AuthenticationSASLContinue "r=TIy7yHa8VWqive4wez3p8eLKCueTGG2IGKMnZ6gaRvhl8V9I,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+18 F SASLResponse "c=biws,r=TIy7yHa8VWqive4wez3p8eLKCueTGG2IGKMnZ6gaRvhl8V9I,p=i9ItRpo6zpJ9SptixorVUkPr90nGhSJBWr0SACWGvxQ="
+18 B AuthenticationSASLFinal "v=mooCTAk1yynCO08c9dyJUo5odjPs1rvrH8ka8ekcJcE="
+18 B AuthenticationOk
+18 B ParameterStatus "IntervalStyle" "postgres"
+18 B ParameterStatus "search_path" "\"$user\", public"
+18 B ParameterStatus "is_superuser" "on"
+18 B ParameterStatus "standard_conforming_strings" "on"
+18 B ParameterStatus "session_authorization" "postgres"
+18 B ParameterStatus "client_encoding" "UTF8"
+18 B ParameterStatus "server_version" "19beta4"
+18 B ParameterStatus "server_encoding" "UTF8"
+18 B ParameterStatus "in_hot_standby" "off"
+18 B ParameterStatus "integer_datetimes" "on"
+18 B ParameterStatus "TimeZone" "UTC"
+18 B ParameterStatus "application_name" ""
+18 B ParameterStatus "default_transaction_read_only" "off"
+18 B ParameterStatus "scram_iterations" "4096"
+18 B ParameterStatus "DateStyle" "ISO, MDY"
+18 B BackendKeyData 785676 "\xa2\x8b\x02 "
+18 B ReadyForQuery I
+18 F Query "BEGIN"
+18 B CommandComplete "BEGIN"
+18 B ReadyForQuery T
+18 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+18 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+18 B CommandComplete "SELECT 0"
+18 B ReadyForQuery T
+18 F Query "ROLLBACK"
+18 B CommandComplete "ROLLBACK"
+18 B ReadyForQuery I
+18 F Query "BEGIN"
+18 B CommandComplete "BEGIN"
+18 B ReadyForQuery T
+18 F Query "select pg_catalog.version()"
+18 B RowDescription [("version" 0 0 25 -1 -1 0)]
+18 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+18 B CommandComplete "SELECT 1"
+18 B ReadyForQuery T
+18 F Query "select current_schema()"
+18 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+18 B DataRow ["public"]
+18 B CommandComplete "SELECT 1"
+18 B ReadyForQuery T
+18 F Query "show transaction isolation level"
+18 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+18 B DataRow ["read committed"]
+18 B CommandComplete "SHOW"
+18 B ReadyForQuery T
+18 F Query "show standard_conforming_strings"
+18 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+18 B DataRow ["on"]
+18 B CommandComplete "SHOW"
+18 B ReadyForQuery T
+18 F Query "ROLLBACK"
+18 B CommandComplete "ROLLBACK"
+18 B ReadyForQuery I
+18 F Terminate
+18 F End
+18 B End
+19 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+19 B AuthenticationSASL "SCRAM-SHA-256"
+19 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=l/kQ+KkwrG0GnecetkOaf3TW"
+19 B AuthenticationSASLContinue "r=l/kQ+KkwrG0GnecetkOaf3TWBvZpE16Znl2rknnsFC72QodT,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+19 F SASLResponse "c=biws,r=l/kQ+KkwrG0GnecetkOaf3TWBvZpE16Znl2rknnsFC72QodT,p=C+OVazQHSJ3orgW94/EPJ/Y7368ks5Lw46TWDyI+mlk="
+19 B AuthenticationSASLFinal "v=Z2ZygS0W2gZrCYqjg4LqVn5iv6mFtiVVWg8RfHykebs="
+19 B AuthenticationOk
+19 B ParameterStatus "IntervalStyle" "postgres"
+19 B ParameterStatus "search_path" "\"$user\", public"
+19 B ParameterStatus "is_superuser" "on"
+19 B ParameterStatus "standard_conforming_strings" "on"
+19 B ParameterStatus "session_authorization" "postgres"
+19 B ParameterStatus "client_encoding" "UTF8"
+19 B ParameterStatus "server_version" "19beta4"
+19 B ParameterStatus "server_encoding" "UTF8"
+19 B ParameterStatus "in_hot_standby" "off"
+19 B ParameterStatus "integer_datetimes" "on"
+19 B ParameterStatus "TimeZone" "UTC"
+19 B ParameterStatus "application_name" ""
+19 B ParameterStatus "default_transaction_read_only" "off"
+19 B ParameterStatus "scram_iterations" "4096"
+19 B ParameterStatus "DateStyle" "ISO, MDY"
+19 B BackendKeyData 785679 "\x8f\x94\xe0m"
+19 B ReadyForQuery I
+19 F Query "BEGIN"
+19 B CommandComplete "BEGIN"
+19 B ReadyForQuery T
+19 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_sales' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+19 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+19 B DataRow ["255821"]
+19 B CommandComplete "SELECT 1"
+19 B ReadyForQuery T
+19 F Query "\n          SELECT r.conname,\n                pg_catalog.pg_get_constraintdef(r.oid, true) as condef,\n                n.nspname as conschema\n          FROM  pg_catalog.pg_constraint r,\n                pg_namespace n,\n                pg_class c\n\n          WHERE r.conrelid = 255821 AND\n                r.contype = 'f' AND\n                c.oid = confrelid AND\n                n.oid = c.relnamespace\n          ORDER BY 1\n        "
+19 B RowDescription [("conname" 2606 2 19 64 -1 0) ("condef" 0 0 25 -1 -1 0) ("conschema" 2615 2 19 64 -1 0)]
+19 B DataRow ["compat_sales_region_fkey" "FOREIGN KEY (region) REFERENCES compat_regions(id)" "public"]
+19 B CommandComplete "SELECT 1"
+19 B ReadyForQuery T
+19 F Query "ROLLBACK"
+19 B CommandComplete "ROLLBACK"
+19 B ReadyForQuery I
+19 F Terminate
+19 F End
+19 B End
+20 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+20 B AuthenticationSASL "SCRAM-SHA-256"
+20 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=/83T9i6wOlRAkMgXDmRdHFS5"
+20 B AuthenticationSASLContinue "r=/83T9i6wOlRAkMgXDmRdHFS5Pz4lCBbnEMF+j2erJwTf3CPC,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+20 F SASLResponse "c=biws,r=/83T9i6wOlRAkMgXDmRdHFS5Pz4lCBbnEMF+j2erJwTf3CPC,p=04sPs7MiDvo3ILEcXm+Zih44YC8WSR7t+fjxQjCn8Fg="
+20 B AuthenticationSASLFinal "v=qKY6PGrGB1yCvDzN3pW/XFcFfeZv0efsitI6ng+uMdc="
+20 B AuthenticationOk
+20 B ParameterStatus "IntervalStyle" "postgres"
+20 B ParameterStatus "search_path" "\"$user\", public"
+20 B ParameterStatus "is_superuser" "on"
+20 B ParameterStatus "standard_conforming_strings" "on"
+20 B ParameterStatus "session_authorization" "postgres"
+20 B ParameterStatus "client_encoding" "UTF8"
+20 B ParameterStatus "server_version" "19beta4"
+20 B ParameterStatus "server_encoding" "UTF8"
+20 B ParameterStatus "in_hot_standby" "off"
+20 B ParameterStatus "integer_datetimes" "on"
+20 B ParameterStatus "TimeZone" "UTC"
+20 B ParameterStatus "application_name" ""
+20 B ParameterStatus "default_transaction_read_only" "off"
+20 B ParameterStatus "scram_iterations" "4096"
+20 B ParameterStatus "DateStyle" "ISO, MDY"
+20 B BackendKeyData 785682 "qɽT"
+20 B ReadyForQuery I
+20 F Query "BEGIN"
+20 B CommandComplete "BEGIN"
+20 B ReadyForQuery T
+20 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+20 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+20 B CommandComplete "SELECT 0"
+20 B ReadyForQuery T
+20 F Query "ROLLBACK"
+20 B CommandComplete "ROLLBACK"
+20 B ReadyForQuery I
+20 F Query "BEGIN"
+20 B CommandComplete "BEGIN"
+20 B ReadyForQuery T
+20 F Query "select pg_catalog.version()"
+20 B RowDescription [("version" 0 0 25 -1 -1 0)]
+20 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+20 B CommandComplete "SELECT 1"
+20 B ReadyForQuery T
+20 F Query "select current_schema()"
+20 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+20 B DataRow ["public"]
+20 B CommandComplete "SELECT 1"
+20 B ReadyForQuery T
+20 F Query "show transaction isolation level"
+20 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+20 B DataRow ["read committed"]
+20 B CommandComplete "SHOW"
+20 B ReadyForQuery T
+20 F Query "show standard_conforming_strings"
+20 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+20 B DataRow ["on"]
+20 B CommandComplete "SHOW"
+20 B ReadyForQuery T
+20 F Query "ROLLBACK"
+20 B CommandComplete "ROLLBACK"
+20 B ReadyForQuery I
+20 F Terminate
+20 F End
+20 B End
+21 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+21 B AuthenticationSASL "SCRAM-SHA-256"
+21 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=mRZW3MKBNAzbrZr7y9DMYyr8"
+21 B AuthenticationSASLContinue "r=mRZW3MKBNAzbrZr7y9DMYyr8rdmb/No0LPaYUbzp+q//R8x3,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+21 F SASLResponse "c=biws,r=mRZW3MKBNAzbrZr7y9DMYyr8rdmb/No0LPaYUbzp+q//R8x3,p=0HYluCHjQK9m66sK4/b21L3yEJJ5bSJADFPAp5XozPE="
+21 B AuthenticationSASLFinal "v=GpebV/KsFaFIAFglXTjTyr6/O6UASvfGtW5VbXuQhBA="
+21 B AuthenticationOk
+21 B ParameterStatus "IntervalStyle" "postgres"
+21 B ParameterStatus "search_path" "\"$user\", public"
+21 B ParameterStatus "is_superuser" "on"
+21 B ParameterStatus "standard_conforming_strings" "on"
+21 B ParameterStatus "session_authorization" "postgres"
+21 B ParameterStatus "client_encoding" "UTF8"
+21 B ParameterStatus "server_version" "19beta4"
+21 B ParameterStatus "server_encoding" "UTF8"
+21 B ParameterStatus "in_hot_standby" "off"
+21 B ParameterStatus "integer_datetimes" "on"
+21 B ParameterStatus "TimeZone" "UTC"
+21 B ParameterStatus "application_name" ""
+21 B ParameterStatus "default_transaction_read_only" "off"
+21 B ParameterStatus "scram_iterations" "4096"
+21 B ParameterStatus "DateStyle" "ISO, MDY"
+21 B BackendKeyData 785685 "\xccK\xf3\x1b"
+21 B ReadyForQuery I
+21 F Query "BEGIN"
+21 B CommandComplete "BEGIN"
+21 B ReadyForQuery T
+21 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_sales' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+21 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+21 B DataRow ["255821"]
+21 B CommandComplete "SELECT 1"
+21 B ReadyForQuery T
+21 F Query "\n              SELECT\n                  i.relname as relname,\n                  ix.indisunique, ix.indexprs,\n                  a.attname, a.attnum, c.conrelid, ix.indkey::varchar,\n                  ix.indoption::varchar, i.reloptions, am.amname,\n                  pg_get_expr(ix.indpred, ix.indrelid),\n                  ix.indnkeyatts as indnkeyatts\n              FROM\n                  pg_class t\n                        join pg_index ix on t.oid = ix.indrelid\n                        join pg_class i on i.oid = ix.indexrelid\n                        left outer join\n                            pg_attribute a\n                            on t.oid = a.attrelid and a.attnum = ANY(ix.indkey)\n                        left outer join\n                            pg_constraint c\n                            on (ix.indrelid = c.conrelid and\n                                ix.indexrelid = c.conindid and\n                                c.contype in ('p', 'u', 'x'))\n                        left outer join\n                            pg_am am\n                            on i.relam = am.oid\n              WHERE\n                  t.relkind IN ('r', 'v', 'f', 'm', 'p')\n                  and t.oid = 255821\n                  and ix.indisprimary = 'f'\n              ORDER BY\n                  t.relname,\n                  i.relname\n            "
+21 B RowDescription [("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indexprs" 2610 20 194 -1 -1 0) ("attname" 1249 2 19 64 -1 0) ("attnum" 1249 5 21 2 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("indkey" 0 0 1043 -1 -1 0) ("indoption" 0 0 1043 -1 -1 0) ("reloptions" 1259 33 1009 -1 -1 0) ("amname" 2601 2 19 64 -1 0) ("pg_get_expr" 0 0 25 -1 -1 0) ("indnkeyatts" 2610 4 21 2 -1 0)]
+21 B DataRow ["compat_sales_sold" "f" NULL "sold" "3" NULL "3" "0" NULL "btree" NULL "1"]
+21 B CommandComplete "SELECT 1"
+21 B ReadyForQuery T
+21 F Query "ROLLBACK"
+21 B CommandComplete "ROLLBACK"
+21 B ReadyForQuery I
+21 F Terminate
+21 F End
+21 B End
+22 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+22 B AuthenticationSASL "SCRAM-SHA-256"
+22 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=UBwZMTvUuBYu4tmQpMK6a/+i"
+22 B AuthenticationSASLContinue "r=UBwZMTvUuBYu4tmQpMK6a/+ikm0LdWx6aVkGdpodPr6m1csf,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+22 F SASLResponse "c=biws,r=UBwZMTvUuBYu4tmQpMK6a/+ikm0LdWx6aVkGdpodPr6m1csf,p=m61aoXQjpPGaej9cAWXaSCxFhr/1/HdNogZlKy95wAg="
+22 B AuthenticationSASLFinal "v=da1cW2iHMj2mmq5lEhfoDAcIHlO1MF7U+6MP5Dm+nng="
+22 B AuthenticationOk
+22 B ParameterStatus "IntervalStyle" "postgres"
+22 B ParameterStatus "search_path" "\"$user\", public"
+22 B ParameterStatus "is_superuser" "on"
+22 B ParameterStatus "standard_conforming_strings" "on"
+22 B ParameterStatus "session_authorization" "postgres"
+22 B ParameterStatus "client_encoding" "UTF8"
+22 B ParameterStatus "server_version" "19beta4"
+22 B ParameterStatus "server_encoding" "UTF8"
+22 B ParameterStatus "in_hot_standby" "off"
+22 B ParameterStatus "integer_datetimes" "on"
+22 B ParameterStatus "TimeZone" "UTC"
+22 B ParameterStatus "application_name" ""
+22 B ParameterStatus "default_transaction_read_only" "off"
+22 B ParameterStatus "scram_iterations" "4096"
+22 B ParameterStatus "DateStyle" "ISO, MDY"
+22 B BackendKeyData 785688 "\n\x94\x94\xdf"
+22 B ReadyForQuery I
+22 F Query "BEGIN"
+22 B CommandComplete "BEGIN"
+22 B ReadyForQuery T
+22 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+22 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+22 B CommandComplete "SELECT 0"
+22 B ReadyForQuery T
+22 F Query "ROLLBACK"
+22 B CommandComplete "ROLLBACK"
+22 B ReadyForQuery I
+22 F Query "BEGIN"
+22 B CommandComplete "BEGIN"
+22 B ReadyForQuery T
+22 F Query "select pg_catalog.version()"
+22 B RowDescription [("version" 0 0 25 -1 -1 0)]
+22 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+22 B CommandComplete "SELECT 1"
+22 B ReadyForQuery T
+22 F Query "select current_schema()"
+22 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+22 B DataRow ["public"]
+22 B CommandComplete "SELECT 1"
+22 B ReadyForQuery T
+22 F Query "show transaction isolation level"
+22 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+22 B DataRow ["read committed"]
+22 B CommandComplete "SHOW"
+22 B ReadyForQuery T
+22 F Query "show standard_conforming_strings"
+22 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+22 B DataRow ["on"]
+22 B CommandComplete "SHOW"
+22 B ReadyForQuery T
+22 F Query "ROLLBACK"
+22 B CommandComplete "ROLLBACK"
+22 B ReadyForQuery I
+22 F Terminate
+22 F End
+22 B End
+23 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+23 B AuthenticationSASL "SCRAM-SHA-256"
+23 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=k0ph8/L0GiHVuYaE5/oeNIIt"
+23 B AuthenticationSASLContinue "r=k0ph8/L0GiHVuYaE5/oeNIItHYeN6Iq5kyCaz0tQ+pQDtLkd,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+23 F SASLResponse "c=biws,r=k0ph8/L0GiHVuYaE5/oeNIItHYeN6Iq5kyCaz0tQ+pQDtLkd,p=jpMby4lkK5gpc/wu2+BtTrx4jVuGuRrUgl+l9j0P2Y8="
+23 B AuthenticationSASLFinal "v=I3o4CH+B6wKTzev0UU8ibpJHj92TN1fV/KUGGV9KKTk="
+23 B AuthenticationOk
+23 B ParameterStatus "IntervalStyle" "postgres"
+23 B ParameterStatus "search_path" "\"$user\", public"
+23 B ParameterStatus "is_superuser" "on"
+23 B ParameterStatus "standard_conforming_strings" "on"
+23 B ParameterStatus "session_authorization" "postgres"
+23 B ParameterStatus "client_encoding" "UTF8"
+23 B ParameterStatus "server_version" "19beta4"
+23 B ParameterStatus "server_encoding" "UTF8"
+23 B ParameterStatus "in_hot_standby" "off"
+23 B ParameterStatus "integer_datetimes" "on"
+23 B ParameterStatus "TimeZone" "UTC"
+23 B ParameterStatus "application_name" ""
+23 B ParameterStatus "default_transaction_read_only" "off"
+23 B ParameterStatus "scram_iterations" "4096"
+23 B ParameterStatus "DateStyle" "ISO, MDY"
+23 B BackendKeyData 785691 "\x92p`\x98"
+23 B ReadyForQuery I
+23 F Query "BEGIN"
+23 B CommandComplete "BEGIN"
+23 B ReadyForQuery T
+23 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_sales' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+23 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+23 B DataRow ["255821"]
+23 B CommandComplete "SELECT 1"
+23 B ReadyForQuery T
+23 F Query "\n            SELECT\n                pgd.description as table_comment\n            FROM\n                pg_catalog.pg_description pgd\n            WHERE\n                pgd.objsubid = 0 AND\n                pgd.objoid = 255821\n        "
+23 B RowDescription [("table_comment" 2609 4 25 -1 -1 0)]
+23 B DataRow ["The sales of the scenario"]
+23 B CommandComplete "SELECT 1"
+23 B ReadyForQuery T
+23 F Query "ROLLBACK"
+23 B CommandComplete "ROLLBACK"
+23 B ReadyForQuery I
+23 F Terminate
+23 F End
+23 B End
+24 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+24 B AuthenticationSASL "SCRAM-SHA-256"
+24 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=2Dj8TV3YDo9+Wx9aIUq2PgK5"
+24 B AuthenticationSASLContinue "r=2Dj8TV3YDo9+Wx9aIUq2PgK5oYrB9BZE+sF4uLSzIgPP54+z,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+24 F SASLResponse "c=biws,r=2Dj8TV3YDo9+Wx9aIUq2PgK5oYrB9BZE+sF4uLSzIgPP54+z,p=U7ssV1pSMqQMpn5kOAKLXEeLZ9dSFxhQAcIaBkqFWJY="
+24 B AuthenticationSASLFinal "v=OqYbgw5Dzs8XzClBMpVAVE2ONbzoQ6CJsLa5q91YBrY="
+24 B AuthenticationOk
+24 B ParameterStatus "IntervalStyle" "postgres"
+24 B ParameterStatus "search_path" "\"$user\", public"
+24 B ParameterStatus "is_superuser" "on"
+24 B ParameterStatus "standard_conforming_strings" "on"
+24 B ParameterStatus "session_authorization" "postgres"
+24 B ParameterStatus "client_encoding" "UTF8"
+24 B ParameterStatus "server_version" "19beta4"
+24 B ParameterStatus "server_encoding" "UTF8"
+24 B ParameterStatus "in_hot_standby" "off"
+24 B ParameterStatus "integer_datetimes" "on"
+24 B ParameterStatus "TimeZone" "UTC"
+24 B ParameterStatus "application_name" ""
+24 B ParameterStatus "default_transaction_read_only" "off"
+24 B ParameterStatus "scram_iterations" "4096"
+24 B ParameterStatus "DateStyle" "ISO, MDY"
+24 B BackendKeyData 785694 "\xbaG֯"
+24 B ReadyForQuery I
+24 F Query "BEGIN"
+24 B CommandComplete "BEGIN"
+24 B ReadyForQuery T
+24 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+24 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+24 B CommandComplete "SELECT 0"
+24 B ReadyForQuery T
+24 F Query "ROLLBACK"
+24 B CommandComplete "ROLLBACK"
+24 B ReadyForQuery I
+24 F Query "BEGIN"
+24 B CommandComplete "BEGIN"
+24 B ReadyForQuery T
+24 F Query "select pg_catalog.version()"
+24 B RowDescription [("version" 0 0 25 -1 -1 0)]
+24 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+24 B CommandComplete "SELECT 1"
+24 B ReadyForQuery T
+24 F Query "select current_schema()"
+24 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+24 B DataRow ["public"]
+24 B CommandComplete "SELECT 1"
+24 B ReadyForQuery T
+24 F Query "show transaction isolation level"
+24 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+24 B DataRow ["read committed"]
+24 B CommandComplete "SHOW"
+24 B ReadyForQuery T
+24 F Query "show standard_conforming_strings"
+24 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+24 B DataRow ["on"]
+24 B CommandComplete "SHOW"
+24 B ReadyForQuery T
+24 F Query "ROLLBACK"
+24 B CommandComplete "ROLLBACK"
+24 B ReadyForQuery I
+24 F Terminate
+24 F End
+24 B End
+25 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+25 B AuthenticationSASL "SCRAM-SHA-256"
+25 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=KvehHN+OglsNAf/iV6w26K4v"
+25 B AuthenticationSASLContinue "r=KvehHN+OglsNAf/iV6w26K4vA77ozquMjGPAtQNwBstv5GVU,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+25 F SASLResponse "c=biws,r=KvehHN+OglsNAf/iV6w26K4vA77ozquMjGPAtQNwBstv5GVU,p=xnIMXqerqZF9Fj3r6y9/OA8rDH+KBT2Bwl/NZFczDtM="
+25 B AuthenticationSASLFinal "v=wsReAZsWc5YUKk7vK3DiArUBTBzJalp/a/TG4wsRPeg="
+25 B AuthenticationOk
+25 B ParameterStatus "IntervalStyle" "postgres"
+25 B ParameterStatus "search_path" "\"$user\", public"
+25 B ParameterStatus "is_superuser" "on"
+25 B ParameterStatus "standard_conforming_strings" "on"
+25 B ParameterStatus "session_authorization" "postgres"
+25 B ParameterStatus "client_encoding" "UTF8"
+25 B ParameterStatus "server_version" "19beta4"
+25 B ParameterStatus "server_encoding" "UTF8"
+25 B ParameterStatus "in_hot_standby" "off"
+25 B ParameterStatus "integer_datetimes" "on"
+25 B ParameterStatus "TimeZone" "UTC"
+25 B ParameterStatus "application_name" ""
+25 B ParameterStatus "default_transaction_read_only" "off"
+25 B ParameterStatus "scram_iterations" "4096"
+25 B ParameterStatus "DateStyle" "ISO, MDY"
+25 B BackendKeyData 785697 "\x9d\x992\x1f"
+25 B ReadyForQuery I
+25 F Query "BEGIN"
+25 B CommandComplete "BEGIN"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_sales' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+25 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+25 B DataRow ["255821"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT a.attname,\n              pg_catalog.format_type(a.atttypid, a.atttypmod),\n              (\n                SELECT pg_catalog.pg_get_expr(d.adbin, d.adrelid)\n                FROM pg_catalog.pg_attrdef d\n                WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum\n                AND a.atthasdef\n              ) AS DEFAULT,\n              a.attnotnull,\n              a.attrelid as table_oid,\n              pgd.description as comment,\n              a.attgenerated as generated,\n                              (SELECT json_build_object(\n                    'always', a.attidentity = 'a',\n                    'start', s.seqstart,\n                    'increment', s.seqincrement,\n                    'minvalue', s.seqmin,\n                    'maxvalue', s.seqmax,\n                    'cache', s.seqcache,\n                    'cycle', s.seqcycle)\n                FROM pg_catalog.pg_sequence s\n                JOIN pg_catalog.pg_class c on s.seqrelid = c.\"oid\"\n                WHERE c.relkind = 'S'\n                AND a.attidentity != ''\n                AND s.seqrelid = pg_catalog.pg_get_serial_sequence(\n                    a.attrelid::regclass::text, a.attname\n                )::regclass::oid\n                ) as identity_options                \n            FROM pg_catalog.pg_attribute a\n            LEFT JOIN pg_catalog.pg_description pgd ON (\n                pgd.objoid = a.attrelid AND pgd.objsubid = a.attnum)\n            WHERE a.attrelid = 255821\n            AND a.attnum > 0 AND NOT a.attisdropped\n            ORDER BY a.attnum\n        "
+25 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("default" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("table_oid" 1249 1 26 4 -1 0) ("comment" 2609 4 25 -1 -1 0) ("generated" 1249 16 18 1 -1 0) ("identity_options" 0 0 114 -1 -1 0)]
+25 B DataRow ["id" "bigint" NULL "t" "255821" NULL "" "{\"always\" : true, \"start\" : 1, \"increment\" : 1, \"minvalue\" : 1, \"maxvalue\" : 9223372036854775807, \"cache\" : 1, \"cycle\" : false}"]
+25 B DataRow ["region" "integer" NULL "t" "255821" NULL "" NULL]
+25 B DataRow ["sold" "date" NULL "t" "255821" NULL "" NULL]
+25 B DataRow ["amount" "numeric(10,2)" NULL "t" "255821" NULL "" NULL]
+25 B CommandComplete "SELECT 4"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT t.typname as \"name\",\n               pg_catalog.format_type(t.typbasetype, t.typtypmod) as \"attype\",\n               not t.typnotnull as \"nullable\",\n               t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\"\n            FROM pg_catalog.pg_type t\n               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n            WHERE t.typtype = 'd'\n        "
+25 B RowDescription [("name" 1247 2 19 64 -1 0) ("attype" 0 0 25 -1 -1 0) ("nullable" 0 0 16 1 -1 0) ("default" 1247 31 25 -1 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0)]
+25 B DataRow ["cardinal_number" "integer" "t" NULL "f" "information_schema"]
+25 B DataRow ["character_data" "character varying" "t" NULL "f" "information_schema"]
+25 B DataRow ["sql_identifier" "name" "t" NULL "f" "information_schema"]
+25 B DataRow ["time_stamp" "timestamp(2) with time zone" "t" "CURRENT_TIMESTAMP(2)" "f" "information_schema"]
+25 B DataRow ["yes_or_no" "character varying(3)" "t" NULL "f" "information_schema"]
+25 B CommandComplete "SELECT 5"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT t.typname as \"name\",\n               -- no enum defaults in 8.4 at least\n               -- t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\",\n               e.enumlabel as \"label\"\n            FROM pg_catalog.pg_type t\n                 LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n                 LEFT JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid\n            WHERE t.typtype = 'e'\n        ORDER BY \"schema\", \"name\", e.oid"
+25 B RowDescription [("name" 1247 2 19 64 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+25 B CommandComplete "SELECT 0"
+25 B ReadyForQuery T
+25 F Query "\n                SELECT a.attname\n                FROM pg_attribute a JOIN (\n                    SELECT unnest(ix.indkey) attnum,\n                           generate_subscripts(ix.indkey, 1) ord\n                    FROM pg_index ix\n                    WHERE ix.indrelid = 255821 AND ix.indisprimary\n                    ) k ON a.attnum=k.attnum\n                WHERE a.attrelid = 255821\n                ORDER BY k.ord\n            "
+25 B RowDescription [("attname" 1249 2 19 64 -1 0)]
+25 B DataRow ["id"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n        SELECT conname\n           FROM  pg_catalog.pg_constraint r\n           WHERE r.conrelid = 255821 AND r.contype = 'p'\n           ORDER BY 1\n        "
+25 B RowDescription [("conname" 2606 2 19 64 -1 0)]
+25 B DataRow ["compat_sales_pkey"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n          SELECT r.conname,\n                pg_catalog.pg_get_constraintdef(r.oid, true) as condef,\n                n.nspname as conschema\n          FROM  pg_catalog.pg_constraint r,\n                pg_namespace n,\n                pg_class c\n\n          WHERE r.conrelid = 255821 AND\n                r.contype = 'f' AND\n                c.oid = confrelid AND\n                n.oid = c.relnamespace\n          ORDER BY 1\n        "
+25 B RowDescription [("conname" 2606 2 19 64 -1 0) ("condef" 0 0 25 -1 -1 0) ("conschema" 2615 2 19 64 -1 0)]
+25 B DataRow ["compat_sales_region_fkey" "FOREIGN KEY (region) REFERENCES compat_regions(id)" "public"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_regions' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+25 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+25 B DataRow ["255809"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT a.attname,\n              pg_catalog.format_type(a.atttypid, a.atttypmod),\n              (\n                SELECT pg_catalog.pg_get_expr(d.adbin, d.adrelid)\n                FROM pg_catalog.pg_attrdef d\n                WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum\n                AND a.atthasdef\n              ) AS DEFAULT,\n              a.attnotnull,\n              a.attrelid as table_oid,\n              pgd.description as comment,\n              a.attgenerated as generated,\n                              (SELECT json_build_object(\n                    'always', a.attidentity = 'a',\n                    'start', s.seqstart,\n                    'increment', s.seqincrement,\n                    'minvalue', s.seqmin,\n                    'maxvalue', s.seqmax,\n                    'cache', s.seqcache,\n                    'cycle', s.seqcycle)\n                FROM pg_catalog.pg_sequence s\n                JOIN pg_catalog.pg_class c on s.seqrelid = c.\"oid\"\n                WHERE c.relkind = 'S'\n                AND a.attidentity != ''\n                AND s.seqrelid = pg_catalog.pg_get_serial_sequence(\n                    a.attrelid::regclass::text, a.attname\n                )::regclass::oid\n                ) as identity_options                \n            FROM pg_catalog.pg_attribute a\n            LEFT JOIN pg_catalog.pg_description pgd ON (\n                pgd.objoid = a.attrelid AND pgd.objsubid = a.attnum)\n            WHERE a.attrelid = 255809\n            AND a.attnum > 0 AND NOT a.attisdropped\n            ORDER BY a.attnum\n        "
+25 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("default" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("table_oid" 1249 1 26 4 -1 0) ("comment" 2609 4 25 -1 -1 0) ("generated" 1249 16 18 1 -1 0) ("identity_options" 0 0 114 -1 -1 0)]
+25 B DataRow ["id" "integer" NULL "t" "255809" NULL "" NULL]
+25 B DataRow ["name" "text" NULL "t" "255809" NULL "" NULL]
+25 B CommandComplete "SELECT 2"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT t.typname as \"name\",\n               pg_catalog.format_type(t.typbasetype, t.typtypmod) as \"attype\",\n               not t.typnotnull as \"nullable\",\n               t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\"\n            FROM pg_catalog.pg_type t\n               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n            WHERE t.typtype = 'd'\n        "
+25 B RowDescription [("name" 1247 2 19 64 -1 0) ("attype" 0 0 25 -1 -1 0) ("nullable" 0 0 16 1 -1 0) ("default" 1247 31 25 -1 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0)]
+25 B DataRow ["cardinal_number" "integer" "t" NULL "f" "information_schema"]
+25 B DataRow ["character_data" "character varying" "t" NULL "f" "information_schema"]
+25 B DataRow ["sql_identifier" "name" "t" NULL "f" "information_schema"]
+25 B DataRow ["time_stamp" "timestamp(2) with time zone" "t" "CURRENT_TIMESTAMP(2)" "f" "information_schema"]
+25 B DataRow ["yes_or_no" "character varying(3)" "t" NULL "f" "information_schema"]
+25 B CommandComplete "SELECT 5"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT t.typname as \"name\",\n               -- no enum defaults in 8.4 at least\n               -- t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\",\n               e.enumlabel as \"label\"\n            FROM pg_catalog.pg_type t\n                 LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n                 LEFT JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid\n            WHERE t.typtype = 'e'\n        ORDER BY \"schema\", \"name\", e.oid"
+25 B RowDescription [("name" 1247 2 19 64 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+25 B CommandComplete "SELECT 0"
+25 B ReadyForQuery T
+25 F Query "\n                SELECT a.attname\n                FROM pg_attribute a JOIN (\n                    SELECT unnest(ix.indkey) attnum,\n                           generate_subscripts(ix.indkey, 1) ord\n                    FROM pg_index ix\n                    WHERE ix.indrelid = 255809 AND ix.indisprimary\n                    ) k ON a.attnum=k.attnum\n                WHERE a.attrelid = 255809\n                ORDER BY k.ord\n            "
+25 B RowDescription [("attname" 1249 2 19 64 -1 0)]
+25 B DataRow ["id"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n        SELECT conname\n           FROM  pg_catalog.pg_constraint r\n           WHERE r.conrelid = 255809 AND r.contype = 'p'\n           ORDER BY 1\n        "
+25 B RowDescription [("conname" 2606 2 19 64 -1 0)]
+25 B DataRow ["compat_regions_pkey"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n          SELECT r.conname,\n                pg_catalog.pg_get_constraintdef(r.oid, true) as condef,\n                n.nspname as conschema\n          FROM  pg_catalog.pg_constraint r,\n                pg_namespace n,\n                pg_class c\n\n          WHERE r.conrelid = 255809 AND\n                r.contype = 'f' AND\n                c.oid = confrelid AND\n                n.oid = c.relnamespace\n          ORDER BY 1\n        "
+25 B RowDescription [("conname" 2606 2 19 64 -1 0) ("condef" 0 0 25 -1 -1 0) ("conschema" 2615 2 19 64 -1 0)]
+25 B CommandComplete "SELECT 0"
+25 B ReadyForQuery T
+25 F Query "\n              SELECT\n                  i.relname as relname,\n                  ix.indisunique, ix.indexprs,\n                  a.attname, a.attnum, c.conrelid, ix.indkey::varchar,\n                  ix.indoption::varchar, i.reloptions, am.amname,\n                  pg_get_expr(ix.indpred, ix.indrelid),\n                  ix.indnkeyatts as indnkeyatts\n              FROM\n                  pg_class t\n                        join pg_index ix on t.oid = ix.indrelid\n                        join pg_class i on i.oid = ix.indexrelid\n                        left outer join\n                            pg_attribute a\n                            on t.oid = a.attrelid and a.attnum = ANY(ix.indkey)\n                        left outer join\n                            pg_constraint c\n                            on (ix.indrelid = c.conrelid and\n                                ix.indexrelid = c.conindid and\n                                c.contype in ('p', 'u', 'x'))\n                        left outer join\n                            pg_am am\n                            on i.relam = am.oid\n              WHERE\n                  t.relkind IN ('r', 'v', 'f', 'm', 'p')\n                  and t.oid = 255809\n                  and ix.indisprimary = 'f'\n              ORDER BY\n                  t.relname,\n                  i.relname\n            "
+25 B RowDescription [("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indexprs" 2610 20 194 -1 -1 0) ("attname" 1249 2 19 64 -1 0) ("attnum" 1249 5 21 2 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("indkey" 0 0 1043 -1 -1 0) ("indoption" 0 0 1043 -1 -1 0) ("reloptions" 1259 33 1009 -1 -1 0) ("amname" 2601 2 19 64 -1 0) ("pg_get_expr" 0 0 25 -1 -1 0) ("indnkeyatts" 2610 4 21 2 -1 0)]
+25 B DataRow ["compat_regions_name_key" "t" NULL "name" "2" "255809" "2" "0" NULL "btree" NULL "1"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT\n                cons.conname as name,\n                cons.conkey as key,\n                a.attnum as col_num,\n                a.attname as col_name\n            FROM\n                pg_catalog.pg_constraint cons\n                join pg_attribute a\n                  on cons.conrelid = a.attrelid AND\n                    a.attnum = ANY(cons.conkey)\n            WHERE\n                cons.conrelid = 255809 AND\n                cons.contype = 'u'\n        "
+25 B RowDescription [("name" 2606 2 19 64 -1 0) ("key" 2606 21 1005 -1 -1 0) ("col_num" 1249 5 21 2 -1 0) ("col_name" 1249 2 19 64 -1 0)]
+25 B DataRow ["compat_regions_name_key" "{2}" "2" "name"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT\n                cons.conname as name,\n                pg_get_constraintdef(cons.oid) as src\n            FROM\n                pg_catalog.pg_constraint cons\n            WHERE\n                cons.conrelid = 255809 AND\n                cons.contype = 'c'\n        "
+25 B RowDescription [("name" 2606 2 19 64 -1 0) ("src" 0 0 25 -1 -1 0)]
+25 B CommandComplete "SELECT 0"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT\n                pgd.description as table_comment\n            FROM\n                pg_catalog.pg_description pgd\n            WHERE\n                pgd.objsubid = 0 AND\n                pgd.objoid = 255809\n        "
+25 B RowDescription [("table_comment" 2609 4 25 -1 -1 0)]
+25 B CommandComplete "SELECT 0"
+25 B ReadyForQuery T
+25 F Query "\n              SELECT\n                  i.relname as relname,\n                  ix.indisunique, ix.indexprs,\n                  a.attname, a.attnum, c.conrelid, ix.indkey::varchar,\n                  ix.indoption::varchar, i.reloptions, am.amname,\n                  pg_get_expr(ix.indpred, ix.indrelid),\n                  ix.indnkeyatts as indnkeyatts\n              FROM\n                  pg_class t\n                        join pg_index ix on t.oid = ix.indrelid\n                        join pg_class i on i.oid = ix.indexrelid\n                        left outer join\n                            pg_attribute a\n                            on t.oid = a.attrelid and a.attnum = ANY(ix.indkey)\n                        left outer join\n                            pg_constraint c\n                            on (ix.indrelid = c.conrelid and\n                                ix.indexrelid = c.conindid and\n                                c.contype in ('p', 'u', 'x'))\n                        left outer join\n                            pg_am am\n                            on i.relam = am.oid\n              WHERE\n                  t.relkind IN ('r', 'v', 'f', 'm', 'p')\n                  and t.oid = 255821\n                  and ix.indisprimary = 'f'\n              ORDER BY\n                  t.relname,\n                  i.relname\n            "
+25 B RowDescription [("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indexprs" 2610 20 194 -1 -1 0) ("attname" 1249 2 19 64 -1 0) ("attnum" 1249 5 21 2 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("indkey" 0 0 1043 -1 -1 0) ("indoption" 0 0 1043 -1 -1 0) ("reloptions" 1259 33 1009 -1 -1 0) ("amname" 2601 2 19 64 -1 0) ("pg_get_expr" 0 0 25 -1 -1 0) ("indnkeyatts" 2610 4 21 2 -1 0)]
+25 B DataRow ["compat_sales_sold" "f" NULL "sold" "3" NULL "3" "0" NULL "btree" NULL "1"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT\n                cons.conname as name,\n                cons.conkey as key,\n                a.attnum as col_num,\n                a.attname as col_name\n            FROM\n                pg_catalog.pg_constraint cons\n                join pg_attribute a\n                  on cons.conrelid = a.attrelid AND\n                    a.attnum = ANY(cons.conkey)\n            WHERE\n                cons.conrelid = 255821 AND\n                cons.contype = 'u'\n        "
+25 B RowDescription [("name" 2606 2 19 64 -1 0) ("key" 2606 21 1005 -1 -1 0) ("col_num" 1249 5 21 2 -1 0) ("col_name" 1249 2 19 64 -1 0)]
+25 B CommandComplete "SELECT 0"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT\n                cons.conname as name,\n                pg_get_constraintdef(cons.oid) as src\n            FROM\n                pg_catalog.pg_constraint cons\n            WHERE\n                cons.conrelid = 255821 AND\n                cons.contype = 'c'\n        "
+25 B RowDescription [("name" 2606 2 19 64 -1 0) ("src" 0 0 25 -1 -1 0)]
+25 B CommandComplete "SELECT 0"
+25 B ReadyForQuery T
+25 F Query "\n            SELECT\n                pgd.description as table_comment\n            FROM\n                pg_catalog.pg_description pgd\n            WHERE\n                pgd.objsubid = 0 AND\n                pgd.objoid = 255821\n        "
+25 B RowDescription [("table_comment" 2609 4 25 -1 -1 0)]
+25 B DataRow ["The sales of the scenario"]
+25 B CommandComplete "SELECT 1"
+25 B ReadyForQuery T
+25 F Query "ROLLBACK"
+25 B CommandComplete "ROLLBACK"
+25 B ReadyForQuery I
+25 F Terminate
+25 F End
+25 B End
+26 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+26 B AuthenticationSASL "SCRAM-SHA-256"
+26 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=0ashQXXchvofZ2nccRmE0Qb6"
+26 B AuthenticationSASLContinue "r=0ashQXXchvofZ2nccRmE0Qb653l8yKH6OhBpPUeCxiFwe06+,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+26 F SASLResponse "c=biws,r=0ashQXXchvofZ2nccRmE0Qb653l8yKH6OhBpPUeCxiFwe06+,p=pO/Dsh1xuBfZXBFlQamSFiYIejU6ueDGf13eBpawuJo="
+26 B AuthenticationSASLFinal "v=YacUjdiDJQVuN17nFroITCoBuTo0e2yxND1UmelQHkc="
+26 B AuthenticationOk
+26 B ParameterStatus "IntervalStyle" "postgres"
+26 B ParameterStatus "search_path" "\"$user\", public"
+26 B ParameterStatus "is_superuser" "on"
+26 B ParameterStatus "standard_conforming_strings" "on"
+26 B ParameterStatus "session_authorization" "postgres"
+26 B ParameterStatus "client_encoding" "UTF8"
+26 B ParameterStatus "server_version" "19beta4"
+26 B ParameterStatus "server_encoding" "UTF8"
+26 B ParameterStatus "in_hot_standby" "off"
+26 B ParameterStatus "integer_datetimes" "on"
+26 B ParameterStatus "TimeZone" "UTC"
+26 B ParameterStatus "application_name" ""
+26 B ParameterStatus "default_transaction_read_only" "off"
+26 B ParameterStatus "scram_iterations" "4096"
+26 B ParameterStatus "DateStyle" "ISO, MDY"
+26 B BackendKeyData 785699 "fFn\xeb"
+26 B ReadyForQuery I
+26 F Query "BEGIN"
+26 B CommandComplete "BEGIN"
+26 B ReadyForQuery T
+26 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+26 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+26 B CommandComplete "SELECT 0"
+26 B ReadyForQuery T
+26 F Query "ROLLBACK"
+26 B CommandComplete "ROLLBACK"
+26 B ReadyForQuery I
+26 F Query "BEGIN"
+26 B CommandComplete "BEGIN"
+26 B ReadyForQuery T
+26 F Query "select pg_catalog.version()"
+26 B RowDescription [("version" 0 0 25 -1 -1 0)]
+26 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+26 B CommandComplete "SELECT 1"
+26 B ReadyForQuery T
+26 F Query "select current_schema()"
+26 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+26 B DataRow ["public"]
+26 B CommandComplete "SELECT 1"
+26 B ReadyForQuery T
+26 F Query "show transaction isolation level"
+26 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+26 B DataRow ["read committed"]
+26 B CommandComplete "SHOW"
+26 B ReadyForQuery T
+26 F Query "show standard_conforming_strings"
+26 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+26 B DataRow ["on"]
+26 B CommandComplete "SHOW"
+26 B ReadyForQuery T
+26 F Query "ROLLBACK"
+26 B CommandComplete "ROLLBACK"
+26 B ReadyForQuery I
+26 F Terminate
+26 F End
+26 B End
+27 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+27 B AuthenticationSASL "SCRAM-SHA-256"
+27 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=nHwKdlsOZ81+E4m1cSNrqLzb"
+27 B AuthenticationSASLContinue "r=nHwKdlsOZ81+E4m1cSNrqLzb5hWNYp/qu1tYBC99T8zPZHx4,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+27 F SASLResponse "c=biws,r=nHwKdlsOZ81+E4m1cSNrqLzb5hWNYp/qu1tYBC99T8zPZHx4,p=WA4grjG4Qm2zpJknUvl6kF2Sx0vlIJGptDDs5vtw4gc="
+27 B AuthenticationSASLFinal "v=ZwFxQGeX6Q/+z7v5o1ekTSHVGr1qYJdxcGB9RxCWXsc="
+27 B AuthenticationOk
+27 B ParameterStatus "IntervalStyle" "postgres"
+27 B ParameterStatus "search_path" "\"$user\", public"
+27 B ParameterStatus "is_superuser" "on"
+27 B ParameterStatus "standard_conforming_strings" "on"
+27 B ParameterStatus "session_authorization" "postgres"
+27 B ParameterStatus "client_encoding" "UTF8"
+27 B ParameterStatus "server_version" "19beta4"
+27 B ParameterStatus "server_encoding" "UTF8"
+27 B ParameterStatus "in_hot_standby" "off"
+27 B ParameterStatus "integer_datetimes" "on"
+27 B ParameterStatus "TimeZone" "UTC"
+27 B ParameterStatus "application_name" ""
+27 B ParameterStatus "default_transaction_read_only" "off"
+27 B ParameterStatus "scram_iterations" "4096"
+27 B ParameterStatus "DateStyle" "ISO, MDY"
+27 B BackendKeyData 785703 "\xf0\xf7\xbd8"
+27 B ReadyForQuery I
+27 F Query "BEGIN"
+27 B CommandComplete "BEGIN"
+27 B ReadyForQuery T
+27 F Query "select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and relname='compat_sales'"
+27 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+27 B DataRow ["compat_sales"]
+27 B CommandComplete "SELECT 1"
+27 B ReadyForQuery T
+27 F Query "ROLLBACK"
+27 B CommandComplete "ROLLBACK"
+27 B ReadyForQuery I
+27 F Terminate
+27 F End
+28 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+27 B End
+28 B AuthenticationSASL "SCRAM-SHA-256"
+28 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=YvYVXZ48k6iFJtsEay+kdD7i"
+28 B AuthenticationSASLContinue "r=YvYVXZ48k6iFJtsEay+kdD7ibMCjmUFVKH5Xnlso17lckJsE,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+28 F SASLResponse "c=biws,r=YvYVXZ48k6iFJtsEay+kdD7ibMCjmUFVKH5Xnlso17lckJsE,p=HbDpai9UakXusO2OOyzchwX62H06v7J6qcFBMU7erb0="
+28 B AuthenticationSASLFinal "v=aq6CRrWiOF2Y8Kp7qoaWlIkMnLH6Mmo+g12X0dEsZSQ="
+28 B AuthenticationOk
+28 B ParameterStatus "IntervalStyle" "postgres"
+28 B ParameterStatus "search_path" "\"$user\", public"
+28 B ParameterStatus "is_superuser" "on"
+28 B ParameterStatus "standard_conforming_strings" "on"
+28 B ParameterStatus "session_authorization" "postgres"
+28 B ParameterStatus "client_encoding" "UTF8"
+28 B ParameterStatus "server_version" "19beta4"
+28 B ParameterStatus "server_encoding" "UTF8"
+28 B ParameterStatus "in_hot_standby" "off"
+28 B ParameterStatus "integer_datetimes" "on"
+28 B ParameterStatus "TimeZone" "UTC"
+28 B ParameterStatus "application_name" ""
+28 B ParameterStatus "default_transaction_read_only" "off"
+28 B ParameterStatus "scram_iterations" "4096"
+28 B ParameterStatus "DateStyle" "ISO, MDY"
+28 B BackendKeyData 785706 "sًS"
+28 B ReadyForQuery I
+28 F Query "BEGIN"
+28 B CommandComplete "BEGIN"
+28 B ReadyForQuery T
+28 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+28 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+28 B CommandComplete "SELECT 0"
+28 B ReadyForQuery T
+28 F Query "ROLLBACK"
+28 B CommandComplete "ROLLBACK"
+28 B ReadyForQuery I
+28 F Query "BEGIN"
+28 B CommandComplete "BEGIN"
+28 B ReadyForQuery T
+28 F Query "select pg_catalog.version()"
+28 B RowDescription [("version" 0 0 25 -1 -1 0)]
+28 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+28 B CommandComplete "SELECT 1"
+28 B ReadyForQuery T
+28 F Query "select current_schema()"
+28 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+28 B DataRow ["public"]
+28 B CommandComplete "SELECT 1"
+28 B ReadyForQuery T
+28 F Query "show transaction isolation level"
+28 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+28 B DataRow ["read committed"]
+28 B CommandComplete "SHOW"
+28 B ReadyForQuery T
+28 F Query "show standard_conforming_strings"
+28 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+28 B DataRow ["on"]
+28 B CommandComplete "SHOW"
+28 B ReadyForQuery T
+28 F Query "ROLLBACK"
+28 B CommandComplete "ROLLBACK"
+28 B ReadyForQuery I
+28 F Terminate
+28 F End
+28 B End
+29 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+29 B AuthenticationSASL "SCRAM-SHA-256"
+29 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=kcNZbvukYzVWyldex4sQM5cQ"
+29 B AuthenticationSASLContinue "r=kcNZbvukYzVWyldex4sQM5cQSPwem4XyPSxwSGP/Op/Mp4y8,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+29 F SASLResponse "c=biws,r=kcNZbvukYzVWyldex4sQM5cQSPwem4XyPSxwSGP/Op/Mp4y8,p=jDP2gqUa0Ohv1NrkbD3WINiA+iPCCJout6o3WcXNxxU="
+29 B AuthenticationSASLFinal "v=+7RAh+jd6CEofR3bRa6096UiHDMysX3yzOlU7hyJxtE="
+29 B AuthenticationOk
+29 B ParameterStatus "IntervalStyle" "postgres"
+29 B ParameterStatus "search_path" "\"$user\", public"
+29 B ParameterStatus "is_superuser" "on"
+29 B ParameterStatus "standard_conforming_strings" "on"
+29 B ParameterStatus "session_authorization" "postgres"
+29 B ParameterStatus "client_encoding" "UTF8"
+29 B ParameterStatus "server_version" "19beta4"
+29 B ParameterStatus "server_encoding" "UTF8"
+29 B ParameterStatus "in_hot_standby" "off"
+29 B ParameterStatus "integer_datetimes" "on"
+29 B ParameterStatus "TimeZone" "UTC"
+29 B ParameterStatus "application_name" ""
+29 B ParameterStatus "default_transaction_read_only" "off"
+29 B ParameterStatus "scram_iterations" "4096"
+29 B ParameterStatus "DateStyle" "ISO, MDY"
+29 B BackendKeyData 785709 "\x89\xfc9g"
+29 B ReadyForQuery I
+29 F Query "BEGIN"
+29 B CommandComplete "BEGIN"
+29 B ReadyForQuery T
+29 F Query "\n            SELECT c.oid\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE (n.nspname = 'public')\n            AND c.relname = 'compat_sales' AND c.relkind in\n            ('r', 'v', 'm', 'f', 'p')\n        "
+29 B RowDescription [("oid" 1259 1 26 4 -1 0)]
+29 B DataRow ["255821"]
+29 B CommandComplete "SELECT 1"
+29 B ReadyForQuery T
+29 F Query "\n            SELECT a.attname,\n              pg_catalog.format_type(a.atttypid, a.atttypmod),\n              (\n                SELECT pg_catalog.pg_get_expr(d.adbin, d.adrelid)\n                FROM pg_catalog.pg_attrdef d\n                WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum\n                AND a.atthasdef\n              ) AS DEFAULT,\n              a.attnotnull,\n              a.attrelid as table_oid,\n              pgd.description as comment,\n              a.attgenerated as generated,\n                              (SELECT json_build_object(\n                    'always', a.attidentity = 'a',\n                    'start', s.seqstart,\n                    'increment', s.seqincrement,\n                    'minvalue', s.seqmin,\n                    'maxvalue', s.seqmax,\n                    'cache', s.seqcache,\n                    'cycle', s.seqcycle)\n                FROM pg_catalog.pg_sequence s\n                JOIN pg_catalog.pg_class c on s.seqrelid = c.\"oid\"\n                WHERE c.relkind = 'S'\n                AND a.attidentity != ''\n                AND s.seqrelid = pg_catalog.pg_get_serial_sequence(\n                    a.attrelid::regclass::text, a.attname\n                )::regclass::oid\n                ) as identity_options                \n            FROM pg_catalog.pg_attribute a\n            LEFT JOIN pg_catalog.pg_description pgd ON (\n                pgd.objoid = a.attrelid AND pgd.objsubid = a.attnum)\n            WHERE a.attrelid = 255821\n            AND a.attnum > 0 AND NOT a.attisdropped\n            ORDER BY a.attnum\n        "
+29 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("default" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("table_oid" 1249 1 26 4 -1 0) ("comment" 2609 4 25 -1 -1 0) ("generated" 1249 16 18 1 -1 0) ("identity_options" 0 0 114 -1 -1 0)]
+29 B DataRow ["id" "bigint" NULL "t" "255821" NULL "" "{\"always\" : true, \"start\" : 1, \"increment\" : 1, \"minvalue\" : 1, \"maxvalue\" : 9223372036854775807, \"cache\" : 1, \"cycle\" : false}"]
+29 B DataRow ["region" "integer" NULL "t" "255821" NULL "" NULL]
+29 B DataRow ["sold" "date" NULL "t" "255821" NULL "" NULL]
+29 B DataRow ["amount" "numeric(10,2)" NULL "t" "255821" NULL "" NULL]
+29 B CommandComplete "SELECT 4"
+29 B ReadyForQuery T
+29 F Query "\n            SELECT t.typname as \"name\",\n               pg_catalog.format_type(t.typbasetype, t.typtypmod) as \"attype\",\n               not t.typnotnull as \"nullable\",\n               t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\"\n            FROM pg_catalog.pg_type t\n               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n            WHERE t.typtype = 'd'\n        "
+29 B RowDescription [("name" 1247 2 19 64 -1 0) ("attype" 0 0 25 -1 -1 0) ("nullable" 0 0 16 1 -1 0) ("default" 1247 31 25 -1 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0)]
+29 B DataRow ["cardinal_number" "integer" "t" NULL "f" "information_schema"]
+29 B DataRow ["character_data" "character varying" "t" NULL "f" "information_schema"]
+29 B DataRow ["sql_identifier" "name" "t" NULL "f" "information_schema"]
+29 B DataRow ["time_stamp" "timestamp(2) with time zone" "t" "CURRENT_TIMESTAMP(2)" "f" "information_schema"]
+29 B DataRow ["yes_or_no" "character varying(3)" "t" NULL "f" "information_schema"]
+29 B CommandComplete "SELECT 5"
+29 B ReadyForQuery T
+29 F Query "\n            SELECT t.typname as \"name\",\n               -- no enum defaults in 8.4 at least\n               -- t.typdefault as \"default\",\n               pg_catalog.pg_type_is_visible(t.oid) as \"visible\",\n               n.nspname as \"schema\",\n               e.enumlabel as \"label\"\n            FROM pg_catalog.pg_type t\n                 LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n                 LEFT JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid\n            WHERE t.typtype = 'e'\n        ORDER BY \"schema\", \"name\", e.oid"
+29 B RowDescription [("name" 1247 2 19 64 -1 0) ("visible" 0 0 16 1 -1 0) ("schema" 2615 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+29 B CommandComplete "SELECT 0"
+29 B ReadyForQuery T
+29 F Query "ROLLBACK"
+29 B CommandComplete "ROLLBACK"
+29 B ReadyForQuery I
+29 F Terminate
+29 F End
+29 B End
+30 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+30 B AuthenticationSASL "SCRAM-SHA-256"
+30 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=3EC6jmPI/4aFcBr1/sEO0XX8"
+30 B AuthenticationSASLContinue "r=3EC6jmPI/4aFcBr1/sEO0XX8KdVrwug4kTs4Ms/7LBnYffdj,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+30 F SASLResponse "c=biws,r=3EC6jmPI/4aFcBr1/sEO0XX8KdVrwug4kTs4Ms/7LBnYffdj,p=yVZb9XY+uxS7EzyDm+t5Tm+fBmv/Jmb6CPUO+7vgPWA="
+30 B AuthenticationSASLFinal "v=vRi7tJxkYSUOcD4H3YeCjR3pmTg5LvDHAGY5oPqeFwc="
+30 B AuthenticationOk
+30 B ParameterStatus "IntervalStyle" "postgres"
+30 B ParameterStatus "search_path" "\"$user\", public"
+30 B ParameterStatus "is_superuser" "on"
+30 B ParameterStatus "standard_conforming_strings" "on"
+30 B ParameterStatus "session_authorization" "postgres"
+30 B ParameterStatus "client_encoding" "UTF8"
+30 B ParameterStatus "server_version" "19beta4"
+30 B ParameterStatus "server_encoding" "UTF8"
+30 B ParameterStatus "in_hot_standby" "off"
+30 B ParameterStatus "integer_datetimes" "on"
+30 B ParameterStatus "TimeZone" "UTC"
+30 B ParameterStatus "application_name" ""
+30 B ParameterStatus "default_transaction_read_only" "off"
+30 B ParameterStatus "scram_iterations" "4096"
+30 B ParameterStatus "DateStyle" "ISO, MDY"
+30 B BackendKeyData 785712 "=s\xa7M"
+30 B ReadyForQuery I
+30 F Query "BEGIN"
+30 B CommandComplete "BEGIN"
+30 B ReadyForQuery T
+30 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+30 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+30 B CommandComplete "SELECT 0"
+30 B ReadyForQuery T
+30 F Query "ROLLBACK"
+30 B CommandComplete "ROLLBACK"
+30 B ReadyForQuery I
+30 F Query "BEGIN"
+30 B CommandComplete "BEGIN"
+30 B ReadyForQuery T
+30 F Query "select pg_catalog.version()"
+30 B RowDescription [("version" 0 0 25 -1 -1 0)]
+30 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+30 B CommandComplete "SELECT 1"
+30 B ReadyForQuery T
+30 F Query "select current_schema()"
+30 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+30 B DataRow ["public"]
+30 B CommandComplete "SELECT 1"
+30 B ReadyForQuery T
+30 F Query "show transaction isolation level"
+30 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+30 B DataRow ["read committed"]
+30 B CommandComplete "SHOW"
+30 B ReadyForQuery T
+30 F Query "show standard_conforming_strings"
+30 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+30 B DataRow ["on"]
+30 B CommandComplete "SHOW"
+30 B ReadyForQuery T
+30 F Query "ROLLBACK"
+30 B CommandComplete "ROLLBACK"
+30 B ReadyForQuery I
+30 F Terminate
+30 F End
+30 B End
+31 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+31 B AuthenticationSASL "SCRAM-SHA-256"
+31 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=rTXy7kZwO1zLCKThk5fS3L3k"
+31 B AuthenticationSASLContinue "r=rTXy7kZwO1zLCKThk5fS3L3k7a92wEvXsszFlRtttXtqTngo,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+31 F SASLResponse "c=biws,r=rTXy7kZwO1zLCKThk5fS3L3k7a92wEvXsszFlRtttXtqTngo,p=XzydpBdJ5jFcz2FYyH2d75gLAFr0bcJw1eigrMquqFE="
+31 B AuthenticationSASLFinal "v=gTxdNBf1qLsc1gPgeQq6zaXUKWNOsiDcwbY4eJ/acOE="
+31 B AuthenticationOk
+31 B ParameterStatus "IntervalStyle" "postgres"
+31 B ParameterStatus "search_path" "\"$user\", public"
+31 B ParameterStatus "is_superuser" "on"
+31 B ParameterStatus "standard_conforming_strings" "on"
+31 B ParameterStatus "session_authorization" "postgres"
+31 B ParameterStatus "client_encoding" "UTF8"
+31 B ParameterStatus "server_version" "19beta4"
+31 B ParameterStatus "server_encoding" "UTF8"
+31 B ParameterStatus "in_hot_standby" "off"
+31 B ParameterStatus "integer_datetimes" "on"
+31 B ParameterStatus "TimeZone" "UTC"
+31 B ParameterStatus "application_name" ""
+31 B ParameterStatus "default_transaction_read_only" "off"
+31 B ParameterStatus "scram_iterations" "4096"
+31 B ParameterStatus "DateStyle" "ISO, MDY"
+31 B BackendKeyData 785715 "\x8a\xc6X\x10"
+31 B ReadyForQuery I
+31 F Query "BEGIN"
+31 B CommandComplete "BEGIN"
+31 B ReadyForQuery T
+31 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+31 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+31 B CommandComplete "SELECT 0"
+31 B ReadyForQuery T
+31 F Query "ROLLBACK"
+31 B CommandComplete "ROLLBACK"
+31 B ReadyForQuery I
+31 F Query "BEGIN"
+31 B CommandComplete "BEGIN"
+31 B ReadyForQuery T
+31 F Query "select pg_catalog.version()"
+31 B RowDescription [("version" 0 0 25 -1 -1 0)]
+31 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+31 B CommandComplete "SELECT 1"
+31 B ReadyForQuery T
+31 F Query "select current_schema()"
+31 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+31 B DataRow ["public"]
+31 B CommandComplete "SELECT 1"
+31 B ReadyForQuery T
+31 F Query "show transaction isolation level"
+31 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+31 B DataRow ["read committed"]
+31 B CommandComplete "SHOW"
+31 B ReadyForQuery T
+31 F Query "show standard_conforming_strings"
+31 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+31 B DataRow ["on"]
+31 B CommandComplete "SHOW"
+31 B ReadyForQuery T
+31 F Query "ROLLBACK"
+31 B CommandComplete "ROLLBACK"
+31 B ReadyForQuery I
+31 F Query "BEGIN"
+31 B CommandComplete "BEGIN"
+31 B ReadyForQuery T
+31 F Query "set search_path = \"public\""
+31 B CommandComplete "SET"
+31 B ParameterStatus "search_path" "public"
+31 B ReadyForQuery T
+31 F Query "SELECT\n  region AS region,\n  SUM(amount) AS total\nFROM public.compat_sales\nGROUP BY\n  region\nORDER BY\n  region ASC\nLIMIT 100"
+31 B RowDescription [("region" 255821 2 23 4 -1 0) ("total" 0 0 1700 -1 -1 0)]
+31 B DataRow ["1" "190.00"]
+31 B DataRow ["2" "200.00"]
+31 B CommandComplete "SELECT 2"
+31 B ReadyForQuery T
+31 F Query "ROLLBACK"
+31 B CommandComplete "ROLLBACK"
+31 B ParameterStatus "search_path" "\"$user\", public"
+31 B ReadyForQuery I
+31 F Terminate
+31 F End
+31 B End
+32 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+32 B AuthenticationSASL "SCRAM-SHA-256"
+32 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=GkVkoRs1KA5hR8FxHk62eS8O"
+32 B AuthenticationSASLContinue "r=GkVkoRs1KA5hR8FxHk62eS8OB9NtAkXI2letPpx98jsuwvdx,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+32 F SASLResponse "c=biws,r=GkVkoRs1KA5hR8FxHk62eS8OB9NtAkXI2letPpx98jsuwvdx,p=lfN3r7TBMG8gAlIKCDfoIVLEN0m+UcTlt2SD3ilLXcE="
+32 B AuthenticationSASLFinal "v=NHXXjA9R3IMu2RAc0Zy7VK5iFGOhi9vpSDy31p9l1H4="
+32 B AuthenticationOk
+32 B ParameterStatus "IntervalStyle" "postgres"
+32 B ParameterStatus "search_path" "\"$user\", public"
+32 B ParameterStatus "is_superuser" "on"
+32 B ParameterStatus "standard_conforming_strings" "on"
+32 B ParameterStatus "session_authorization" "postgres"
+32 B ParameterStatus "client_encoding" "UTF8"
+32 B ParameterStatus "server_version" "19beta4"
+32 B ParameterStatus "server_encoding" "UTF8"
+32 B ParameterStatus "in_hot_standby" "off"
+32 B ParameterStatus "integer_datetimes" "on"
+32 B ParameterStatus "TimeZone" "UTC"
+32 B ParameterStatus "application_name" ""
+32 B ParameterStatus "default_transaction_read_only" "off"
+32 B ParameterStatus "scram_iterations" "4096"
+32 B ParameterStatus "DateStyle" "ISO, MDY"
+32 B BackendKeyData 785721 "\xe2\x01\x16#"
+32 B ReadyForQuery I
+32 F Query "BEGIN"
+32 B CommandComplete "BEGIN"
+32 B ReadyForQuery T
+32 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+32 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+32 B CommandComplete "SELECT 0"
+32 B ReadyForQuery T
+32 F Query "ROLLBACK"
+32 B CommandComplete "ROLLBACK"
+32 B ReadyForQuery I
+32 F Query "BEGIN"
+32 B CommandComplete "BEGIN"
+32 B ReadyForQuery T
+32 F Query "select pg_catalog.version()"
+32 B RowDescription [("version" 0 0 25 -1 -1 0)]
+32 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+32 B CommandComplete "SELECT 1"
+32 B ReadyForQuery T
+32 F Query "select current_schema()"
+32 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+32 B DataRow ["public"]
+32 B CommandComplete "SELECT 1"
+32 B ReadyForQuery T
+32 F Query "show transaction isolation level"
+32 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+32 B DataRow ["read committed"]
+32 B CommandComplete "SHOW"
+32 B ReadyForQuery T
+32 F Query "show standard_conforming_strings"
+32 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+32 B DataRow ["on"]
+32 B CommandComplete "SHOW"
+32 B ReadyForQuery T
+32 F Query "ROLLBACK"
+32 B CommandComplete "ROLLBACK"
+32 B ReadyForQuery I
+32 F Query "BEGIN"
+32 B CommandComplete "BEGIN"
+32 B ReadyForQuery T
+32 F Query "set search_path = \"public\""
+32 B CommandComplete "SET"
+32 B ParameterStatus "search_path" "public"
+32 B ReadyForQuery T
+32 F Query "SELECT pg_backend_pid()"
+32 B RowDescription [("pg_backend_pid" 0 0 23 4 -1 0)]
+32 B DataRow ["785721"]
+32 B CommandComplete "SELECT 1"
+32 B ReadyForQuery T
+32 F Query "SELECT\n  s.sold,\n  r.name,\n  s.amount\nFROM compat_sales AS s\nJOIN compat_regions AS r\n  ON r.id = s.region\nORDER BY\n  s.id\nLIMIT 100001"
+32 B RowDescription [("sold" 255821 3 1082 4 -1 0) ("name" 255809 2 25 -1 -1 0) ("amount" 255821 4 1700 -1 655366 0)]
+32 B DataRow ["2026-01-01" "north" "10.00"]
+32 B DataRow ["2026-01-02" "south" "11.00"]
+32 B DataRow ["2026-01-03" "north" "12.00"]
+32 B DataRow ["2026-01-04" "south" "13.00"]
+32 B DataRow ["2026-01-05" "north" "14.00"]
+32 B DataRow ["2026-01-06" "south" "15.00"]
+32 B DataRow ["2026-01-07" "north" "16.00"]
+32 B DataRow ["2026-01-08" "south" "17.00"]
+32 B DataRow ["2026-01-09" "north" "18.00"]
+32 B DataRow ["2026-01-10" "south" "19.00"]
+32 B DataRow ["2026-01-11" "north" "20.00"]
+32 B DataRow ["2026-01-12" "south" "21.00"]
+32 B DataRow ["2026-01-13" "north" "22.00"]
+32 B DataRow ["2026-01-14" "south" "23.00"]
+32 B DataRow ["2026-01-15" "north" "24.00"]
+32 B DataRow ["2026-01-16" "south" "25.00"]
+32 B DataRow ["2026-01-17" "north" "26.00"]
+32 B DataRow ["2026-01-18" "south" "27.00"]
+32 B DataRow ["2026-01-19" "north" "28.00"]
+32 B DataRow ["2026-01-20" "south" "29.00"]
+32 B CommandComplete "SELECT 20"
+32 B ReadyForQuery T
+32 F Query "ROLLBACK"
+32 B CommandComplete "ROLLBACK"
+32 B ParameterStatus "search_path" "\"$user\", public"
+32 B ReadyForQuery I
+32 F Terminate
+32 F End
+32 B End
+33 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+33 B AuthenticationSASL "SCRAM-SHA-256"
+33 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=v2puky52ULEvduQk1cXl4MJH"
+33 B AuthenticationSASLContinue "r=v2puky52ULEvduQk1cXl4MJHYbmenJhm1KvoTNNkqBxUdfZg,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+33 F SASLResponse "c=biws,r=v2puky52ULEvduQk1cXl4MJHYbmenJhm1KvoTNNkqBxUdfZg,p=zGJEAengA2OK0SPICmou/ZvOa+sZCjcJVryIji4Ob3I="
+33 B AuthenticationSASLFinal "v=Zf8iNxPclkEIUv5hjpHzVxBb9E5pGUf+et2pr8+X5Ck="
+33 B AuthenticationOk
+33 B ParameterStatus "IntervalStyle" "postgres"
+33 B ParameterStatus "search_path" "\"$user\", public"
+33 B ParameterStatus "is_superuser" "on"
+33 B ParameterStatus "standard_conforming_strings" "on"
+33 B ParameterStatus "session_authorization" "postgres"
+33 B ParameterStatus "client_encoding" "UTF8"
+33 B ParameterStatus "server_version" "19beta4"
+33 B ParameterStatus "server_encoding" "UTF8"
+33 B ParameterStatus "in_hot_standby" "off"
+33 B ParameterStatus "integer_datetimes" "on"
+33 B ParameterStatus "TimeZone" "UTC"
+33 B ParameterStatus "application_name" ""
+33 B ParameterStatus "default_transaction_read_only" "off"
+33 B ParameterStatus "scram_iterations" "4096"
+33 B ParameterStatus "DateStyle" "ISO, MDY"
+33 B BackendKeyData 785727 "΍S\xa9"
+33 B ReadyForQuery I
+33 F Query "BEGIN"
+33 B CommandComplete "BEGIN"
+33 B ReadyForQuery T
+33 F Query "SELECT t.oid, typarray\nFROM pg_type t JOIN pg_namespace ns\n    ON typnamespace = ns.oid\nWHERE typname = 'hstore';\n"
+33 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+33 B CommandComplete "SELECT 0"
+33 B ReadyForQuery T
+33 F Query "ROLLBACK"
+33 B CommandComplete "ROLLBACK"
+33 B ReadyForQuery I
+33 F Query "BEGIN"
+33 B CommandComplete "BEGIN"
+33 B ReadyForQuery T
+33 F Query "select pg_catalog.version()"
+33 B RowDescription [("version" 0 0 25 -1 -1 0)]
+33 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+33 B CommandComplete "SELECT 1"
+33 B ReadyForQuery T
+33 F Query "select current_schema()"
+33 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+33 B DataRow ["public"]
+33 B CommandComplete "SELECT 1"
+33 B ReadyForQuery T
+33 F Query "show transaction isolation level"
+33 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+33 B DataRow ["read committed"]
+33 B CommandComplete "SHOW"
+33 B ReadyForQuery T
+33 F Query "show standard_conforming_strings"
+33 B RowDescription [("standard_conforming_strings" 0 0 25 -1 -1 0)]
+33 B DataRow ["on"]
+33 B CommandComplete "SHOW"
+33 B ReadyForQuery T
+33 F Query "ROLLBACK"
+33 B CommandComplete "ROLLBACK"
+33 B ReadyForQuery I
+33 F Query "BEGIN"
+33 B CommandComplete "BEGIN"
+33 B ReadyForQuery T
+33 F Query "set search_path = \"public\""
+33 B CommandComplete "SET"
+33 B ParameterStatus "search_path" "public"
+33 B ReadyForQuery T
+33 F Query "SELECT pg_backend_pid()"
+33 B RowDescription [("pg_backend_pid" 0 0 23 4 -1 0)]
+33 B DataRow ["785727"]
+33 B CommandComplete "SELECT 1"
+33 B ReadyForQuery T
+33 F Query "SELECT\n  1 / 0\nLIMIT 100001"
+33 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+33 B ParameterStatus "search_path" "\"$user\", public"
+33 B ReadyForQuery E
+33 F Query "ROLLBACK"
+33 B CommandComplete "ROLLBACK"
+33 B ReadyForQuery I
+33 F Terminate
+33 F End
+33 B End
+34 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+34 B AuthenticationSASL "SCRAM-SHA-256"
+34 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=azxfNrbt0rnTjfTf0kDlFOAS"
+34 B AuthenticationSASLContinue "r=azxfNrbt0rnTjfTf0kDlFOASq+6bnYkZvL8x470IZmaGhm6t,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+34 F SASLResponse "c=biws,r=azxfNrbt0rnTjfTf0kDlFOASq+6bnYkZvL8x470IZmaGhm6t,p=IfeQEM75DBtwx7w633RDgHn3yIMhcZOsLiJrDHM7uoI="
+34 B AuthenticationSASLFinal "v=suU/lgpw4+5bONHo41U25EEdYajbH8vzxBnFd8M/mTk="
+34 B AuthenticationOk
+34 B ParameterStatus "IntervalStyle" "postgres"
+34 B ParameterStatus "search_path" "\"$user\", public"
+34 B ParameterStatus "is_superuser" "on"
+34 B ParameterStatus "standard_conforming_strings" "on"
+34 B ParameterStatus "session_authorization" "postgres"
+34 B ParameterStatus "client_encoding" "UTF8"
+34 B ParameterStatus "server_version" "19beta4"
+34 B ParameterStatus "server_encoding" "UTF8"
+34 B ParameterStatus "in_hot_standby" "off"
+34 B ParameterStatus "integer_datetimes" "on"
+34 B ParameterStatus "TimeZone" "UTC"
+34 B ParameterStatus "application_name" "psql"
+34 B ParameterStatus "default_transaction_read_only" "off"
+34 B ParameterStatus "scram_iterations" "4096"
+34 B ParameterStatus "DateStyle" "ISO, MDY"
+34 B BackendKeyData 785732 "\x90¶D"
+34 B ReadyForQuery I
+34 F Query "DROP TABLE compat_sales, compat_regions"
+34 B CommandComplete "DROP TABLE"
+34 B ReadyForQuery I
+34 F Terminate
+34 F End
+34 B End
