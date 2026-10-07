@@ -8,8 +8,17 @@ use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 
+/// Prints a line to stdout like `println!`, but a closed pipe, as in `rupg-compat replay T | head`, is not a panic.
+macro_rules! out {
+    ($($arg:tt)*) => {{
+        use std::io::Write as _;
+        let _ = writeln!(std::io::stdout(), $($arg)*);
+    }};
+}
+
 mod args;
 mod client;
+mod compare;
 mod frame;
 mod levels;
 mod message;
@@ -38,7 +47,7 @@ commands:
   record <name> [-- CMD]    run CMD, or clients/<name>/run.sh, through the proxy and write a trace
                             (default: corpus/traces/<name>.trace, --out FILE)
   replay TRACE...           reset the databases of each trace, send it to the oracle and compare the answers
-                            (--server ADDR for another server, --timeout S, --out FILE)
+                            (--server ADDR for another server, --timeout S, --out FILE, --show N)
   trace FILE...             check that each line of a trace parses and count its messages
 
 options:
@@ -67,16 +76,16 @@ fn run(args: &Args) -> Result<ExitCode, String> {
     match args.word(0) {
         Some("pins") => {
             for pin in &pins.postgres {
-                println!("{:<4} {:<10} {:<16} {}", pin.major, pin.release, pin.git_ref, pin.commit);
+                out!("{:<4} {:<10} {:<16} {}", pin.major, pin.release, pin.git_ref, pin.commit);
             }
-            println!("rupg {}", pins.rupg_commit);
+            out!("rupg {}", pins.rupg_commit);
             for client in &pins.clients {
-                println!("client {} {}", client.name, client.version);
+                out!("client {} {}", client.name, client.version);
             }
         }
         Some("levels") => {
             for level in levels::LEVELS {
-                println!("{}  {}", level.id, level.name);
+                out!("{}  {}", level.id, level.name);
             }
         }
         Some("oracle") => oracle_command(args, &pins)?,
@@ -84,7 +93,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("record") => return record_command(args, &pins),
         Some("trace") => trace_command(args)?,
         Some("replay") => return replay_command(args, &pins),
-        None if args.flag("help") => println!("{USAGE}"),
+        None if args.flag("help") => out!("{USAGE}"),
         _ if args.words.is_empty() && args.rest.is_empty() => {
             eprintln!("{USAGE}");
             return Ok(ExitCode::from(2));
@@ -115,13 +124,13 @@ fn oracle_command(args: &Args, pins: &Pins) -> Result<(), String> {
         Some("start") => {
             for o in &oracles {
                 o.start()?;
-                println!("oracle {} runs on 127.0.0.1:{}", o.pin.major, o.port());
+                out!("oracle {} runs on 127.0.0.1:{}", o.pin.major, o.port());
             }
         }
         Some("stop") => {
             for o in oracles.iter().filter(|o| o.running()) {
                 o.stop()?;
-                println!("oracle {} stopped", o.pin.major);
+                out!("oracle {} stopped", o.pin.major);
             }
         }
         Some("status") => {
@@ -133,12 +142,12 @@ fn oracle_command(args: &Args, pins: &Pins) -> Result<(), String> {
                 } else {
                     "stopped".to_string()
                 };
-                println!("{:<4} {:<10} port {}  {state}", o.pin.major, o.pin.release, o.port());
+                out!("{:<4} {:<10} port {}  {state}", o.pin.major, o.pin.release, o.port());
             }
         }
         Some("env") => {
             for (k, v) in oracles[0].env() {
-                println!("export {k}={v}");
+                out!("export {k}={v}");
             }
         }
         _ => {
@@ -192,14 +201,14 @@ fn proxy_command(args: &Args, pins: &Pins) -> Result<(), String> {
     let out = PathBuf::from(args.get("out").ok_or("proxy needs --out FILE")?);
     let listen = args.get("listen").unwrap_or("127.0.0.1:0");
     let p = proxy::Proxy::start(listen, oracle_addr(&o), &out, &trace_header(&o, "proxy"))?;
-    println!(
+    out!(
         "proxy on {} for the oracle of {} on port {}, trace in {}",
         p.addr,
         o.pin.major,
         o.port(),
         out.display()
     );
-    println!("stop it with Control-C; the proxy writes each line when it sees the message");
+    out!("stop it with Control-C; the proxy writes each line when it sees the message");
     p.finish()
 }
 
@@ -253,7 +262,7 @@ fn record_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     let status = status?;
     let text = std::fs::read_to_string(&out).map_err(|e| format!("{}: {e}", out.display()))?;
     let lines = text.lines().filter(|l| !l.starts_with('#')).count();
-    println!("{}: {lines} lines, the command exited with {status}", out.display());
+    out!("{}: {lines} lines, the command exited with {status}", out.display());
     Ok(if status.success() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
@@ -305,7 +314,7 @@ fn trace_databases(t: &trace::Trace) -> Vec<String> {
 }
 
 fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "server", "timeout", "out"])?;
+    args.only(&["compat-version", "server", "timeout", "out", "show"])?;
     let files = &args.words[1..];
     if files.is_empty() {
         return Err("usage: rupg-compat replay TRACE... [--server ADDR] [--out FILE]".into());
@@ -320,53 +329,53 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     }
     let timeout = std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30));
     let mut failed = false;
+    let mut total = compare::Outcome::default();
     for file in files {
         let t = trace::Trace::read(Path::new(file))?;
         for db in trace_databases(&t) {
             if let Err(e) = client::reset_database(&target, &db) {
-                println!("{file}: {e}");
+                out!("{file}: {e}");
             }
         }
         let r = replay::replay(&t, &target, timeout);
-        let (equal, total) = count_equal(&t.lines, &r.lines);
-        println!(
-            "{file}: {equal} of {total} backend messages equal, {} OIDs mapped ({} values changed), {} SCRAM exchanges, {} cancel keys rewritten",
+        let mut o = compare::compare(&t.lines, &r.lines, &Default::default());
+        o.items[1].applied += r.oids.applied;
+        o.items[1].differed += r.oids.applied;
+        let (pairs, gaps) = r.oids.gaps();
+        out!(
+            "{file}: {} groups, {} backend messages, {} groups differ; {} OIDs mapped, {gaps} of {pairs} OID gaps differ, {} SCRAM exchanges, {} cancel keys rewritten",
+            o.groups,
+            o.messages,
+            o.diffs.len(),
             r.oids.len(),
-            r.oids.applied,
             r.scram,
             r.cancels
         );
-        for n in &r.notes {
-            println!("  {n}");
+        for ((conn, group), d) in o.diffs.iter().take(args.number("show")?.unwrap_or(5)) {
+            out!("  connection {conn} group {group}: {d}");
         }
-        failed |= equal != total || !r.notes.is_empty();
+        for n in &r.notes {
+            out!("  {n}");
+        }
+        total.add(&o);
+        failed |= !o.diffs.is_empty() || !r.notes.is_empty() || gaps > 0;
         if let Some(out) = args.get("out") {
             let replayed = trace::Trace { header: t.header.clone(), lines: r.lines };
             std::fs::write(out, replayed.to_text()).map_err(|e| format!("{out}: {e}"))?;
         }
     }
+    print_exclusions(&total);
     Ok(if failed { ExitCode::FAILURE } else { ExitCode::SUCCESS })
 }
 
-/// Counts the backend messages of each connection that are equal at the same place. The comparison with the rules of each message type and the exclusions comes later.
-fn count_equal(want: &[trace::Line], got: &[trace::Line]) -> (usize, usize) {
-    let (want, got) = (backend_by_conn(want), backend_by_conn(got));
-    let mut equal = 0;
-    let mut total = 0;
-    for (conn, msgs) in &want {
-        total += msgs.len();
-        let other = got.get(conn).map(Vec::as_slice).unwrap_or_default();
-        equal += msgs.iter().zip(other).filter(|(a, b)| a == b).count();
+/// Prints each exclusion of spec/05 section 5.3 and each rule of section 5.2 with its counts.
+fn print_exclusions(o: &compare::Outcome) {
+    out!("exclusions (spec/05 section 5.3): applied, differed");
+    for (i, (name, c)) in compare::ITEMS.iter().zip(o.items).enumerate() {
+        out!("  {:>2}  {:>8} {:>8}  {name}", i + 1, c.applied, c.differed);
     }
-    (equal, total)
-}
-
-fn backend_by_conn(lines: &[trace::Line]) -> std::collections::BTreeMap<u32, Vec<&message::Msg>> {
-    let mut by_conn: std::collections::BTreeMap<u32, Vec<&message::Msg>> = Default::default();
-    for l in lines.iter().filter(|l| l.dir == message::Dir::B) {
-        if let Some(m) = l.msg() {
-            by_conn.entry(l.conn).or_default().push(m);
-        }
+    out!("rules (spec/05 section 5.2): applied, differed");
+    for (name, c) in compare::RULES.iter().zip(o.rules) {
+        out!("      {:>8} {:>8}  {name}", c.applied, c.differed);
     }
-    by_conn
 }

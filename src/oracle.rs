@@ -105,7 +105,7 @@ impl Oracle {
         let log = self.dir.join("build.log");
         let mut steps = Steps::new(&log)?;
         let total = Instant::now();
-        println!("oracle {}: {} at {}", self.pin.major, self.pin.git_ref, self.pin.commit);
+        out!("oracle {}: {} at {}", self.pin.major, self.pin.git_ref, self.pin.commit);
         if force || !self.done("fetch") {
             self.fetch(&mut steps, repository)?;
             self.mark("fetch")?;
@@ -118,7 +118,7 @@ impl Oracle {
             self.initdb(&mut steps)?;
             self.mark("initdb")?;
         }
-        println!(
+        out!(
             "oracle {}: ready in {:.1} s, log in {}",
             self.pin.major,
             total.elapsed().as_secs_f64(),
@@ -371,14 +371,14 @@ impl Steps {
 
     fn run(&mut self, name: &str, cmd: &mut Command) -> Result<(), String> {
         let line = format!("{cmd:?}");
-        println!("  $ {line}");
+        out!("  $ {line}");
         writeln!(self.log, "\n$ {line}").map_err(|e| e.to_string())?;
         let out = self.log.try_clone().map_err(|e| e.to_string())?;
         let err = self.log.try_clone().map_err(|e| e.to_string())?;
         let start = Instant::now();
         let status = cmd.stdout(out).stderr(err).status().map_err(|e| format!("{name}: {e}"))?;
         let secs = start.elapsed().as_secs_f64();
-        println!("    {name}: {secs:.1} s");
+        out!("    {name}: {secs:.1} s");
         writeln!(self.log, "# {name}: {secs:.1} s, {status}").map_err(|e| e.to_string())?;
         if !status.success() {
             return Err(format!("{name} failed ({status}), see {}", self.path.display()));

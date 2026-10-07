@@ -42,6 +42,14 @@ impl OidMap {
         self.to_server.len()
     }
 
+    /// Spec/05 section 5.3 item 2 excludes the values of user OIDs but compares the gaps between consecutive ones. Returns the number of pairs of consecutive user OIDs of the trace and the number of pairs with another gap on the server.
+    pub(crate) fn gaps(&self) -> (usize, usize) {
+        let pairs: Vec<(i64, i64)> =
+            self.to_server.iter().map(|(&t, &s)| (i64::from(t), i64::from(s))).collect();
+        let differ = pairs.windows(2).filter(|w| w[1].0 - w[0].0 != w[1].1 - w[0].1).count();
+        (pairs.len().saturating_sub(1), differ)
+    }
+
     /// Learns that `trace` in the trace is `server` on the server. The first pair for an OID wins.
     pub(crate) fn learn(&mut self, trace: u32, server: u32) {
         if trace < FIRST_NORMAL_OID || server < FIRST_NORMAL_OID {
@@ -604,6 +612,15 @@ impl Runner<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_gaps_between_user_oids_are_compared() {
+        let mut map = OidMap::default();
+        for (t, s) in [(16_384, 20_000), (16_387, 20_003), (16_390, 20_010)] {
+            map.learn(t, s);
+        }
+        assert_eq!(map.gaps(), (2, 1));
+    }
 
     #[test]
     fn the_map_rewrites_whole_numbers_only() {
