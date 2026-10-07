@@ -1,0 +1,1046 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/activerecord/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "scenario.rb"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=tnAPjPgVP9bPzmi08xoYcxyG"
+1 B AuthenticationSASLContinue "r=tnAPjPgVP9bPzmi08xoYcxyGqdwB/3pHQX6sgDyekUP2cPLE,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=tnAPjPgVP9bPzmi08xoYcxyGqdwB/3pHQX6sgDyekUP2cPLE,p=OaQmmk0vByhkH/KLEQ/u51/tbVmJEm8fA2tmme4ldGI="
+1 B AuthenticationSASLFinal "v=2l3qDMzIL22Ijmz02wpgObW+DuYF8w1FNeQl4Nn0T0c="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "scenario.rb"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 964753 ",P֕"
+1 B ReadyForQuery I
+1 F Query "SET client_min_messages TO 'warning'"
+1 B CommandComplete "SET"
+1 B ReadyForQuery I
+1 F Query "SET standard_conforming_strings = on"
+1 B CommandComplete "SET"
+1 B ReadyForQuery I
+1 F Query "SET intervalstyle = iso_8601"
+1 B CommandComplete "SET"
+1 B ParameterStatus "IntervalStyle" "iso_8601"
+1 B ReadyForQuery I
+1 F Query "SELECT t.oid, t.typname\nFROM pg_type as t\nWHERE t.typname IN ('int2', 'int4', 'int8', 'oid', 'float4', 'float8', 'numeric', 'bool', 'timestamp', 'timestamptz')\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0)]
+1 B DataRow ["16" "bool"]
+1 B DataRow ["20" "int8"]
+1 B DataRow ["21" "int2"]
+1 B DataRow ["23" "int4"]
+1 B DataRow ["26" "oid"]
+1 B DataRow ["700" "float4"]
+1 B DataRow ["701" "float8"]
+1 B DataRow ["1114" "timestamp"]
+1 B DataRow ["1184" "timestamptz"]
+1 B DataRow ["1700" "numeric"]
+1 B CommandComplete "SELECT 10"
+1 B ReadyForQuery I
+1 F Query "SET SESSION timezone TO 'UTC'"
+1 B CommandComplete "SET"
+1 B ReadyForQuery I
+1 F Query "SHOW search_path"
+1 B RowDescription [("search_path" 0 0 25 -1 -1 0)]
+1 B DataRow ["\"$user\", public"]
+1 B CommandComplete "SHOW"
+1 B ReadyForQuery I
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typname IN ('int2', 'int4', 'int8', 'oid', 'float4', 'float8', 'text', 'varchar', 'char', 'name', 'bpchar', 'bool', 'bit', 'varbit', 'date', 'money', 'bytea', 'point', 'hstore', 'json', 'jsonb', 'cidr', 'inet', 'uuid', 'xml', 'tsvector', 'macaddr', 'citext', 'ltree', 'line', 'lseg', 'box', 'path', 'polygon', 'circle', 'numeric', 'interval', 'time', 'timestamp', 'timestamptz')\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["16" "bool" "0" "," "boolin" NULL "b" "0"]
+1 B DataRow ["17" "bytea" "0" "," "byteain" NULL "b" "0"]
+1 B DataRow ["18" "char" "0" "," "charin" NULL "b" "0"]
+1 B DataRow ["19" "name" "18" "," "namein" NULL "b" "0"]
+1 B DataRow ["20" "int8" "0" "," "int8in" NULL "b" "0"]
+1 B DataRow ["21" "int2" "0" "," "int2in" NULL "b" "0"]
+1 B DataRow ["23" "int4" "0" "," "int4in" NULL "b" "0"]
+1 B DataRow ["25" "text" "0" "," "textin" NULL "b" "0"]
+1 B DataRow ["26" "oid" "0" "," "oidin" NULL "b" "0"]
+1 B DataRow ["114" "json" "0" "," "json_in" NULL "b" "0"]
+1 B DataRow ["142" "xml" "0" "," "xml_in" NULL "b" "0"]
+1 B DataRow ["600" "point" "701" "," "point_in" NULL "b" "0"]
+1 B DataRow ["601" "lseg" "600" "," "lseg_in" NULL "b" "0"]
+1 B DataRow ["602" "path" "0" "," "path_in" NULL "b" "0"]
+1 B DataRow ["603" "box" "600" ";" "box_in" NULL "b" "0"]
+1 B DataRow ["604" "polygon" "0" "," "poly_in" NULL "b" "0"]
+1 B DataRow ["628" "line" "701" "," "line_in" NULL "b" "0"]
+1 B DataRow ["700" "float4" "0" "," "float4in" NULL "b" "0"]
+1 B DataRow ["701" "float8" "0" "," "float8in" NULL "b" "0"]
+1 B DataRow ["718" "circle" "0" "," "circle_in" NULL "b" "0"]
+1 B DataRow ["790" "money" "0" "," "cash_in" NULL "b" "0"]
+1 B DataRow ["829" "macaddr" "0" "," "macaddr_in" NULL "b" "0"]
+1 B DataRow ["869" "inet" "0" "," "inet_in" NULL "b" "0"]
+1 B DataRow ["650" "cidr" "0" "," "cidr_in" NULL "b" "0"]
+1 B DataRow ["1042" "bpchar" "0" "," "bpcharin" NULL "b" "0"]
+1 B DataRow ["1043" "varchar" "0" "," "varcharin" NULL "b" "0"]
+1 B DataRow ["1082" "date" "0" "," "date_in" NULL "b" "0"]
+1 B DataRow ["1083" "time" "0" "," "time_in" NULL "b" "0"]
+1 B DataRow ["1114" "timestamp" "0" "," "timestamp_in" NULL "b" "0"]
+1 B DataRow ["1184" "timestamptz" "0" "," "timestamptz_in" NULL "b" "0"]
+1 B DataRow ["1186" "interval" "0" "," "interval_in" NULL "b" "0"]
+1 B DataRow ["1560" "bit" "0" "," "bit_in" NULL "b" "0"]
+1 B DataRow ["1562" "varbit" "0" "," "varbit_in" NULL "b" "0"]
+1 B DataRow ["1700" "numeric" "0" "," "numeric_in" NULL "b" "0"]
+1 B DataRow ["2950" "uuid" "0" "," "uuid_in" NULL "b" "0"]
+1 B DataRow ["3614" "tsvector" "0" "," "tsvectorin" NULL "b" "0"]
+1 B DataRow ["3802" "jsonb" "0" "," "jsonb_in" NULL "b" "0"]
+1 B CommandComplete "SELECT 37"
+1 B ReadyForQuery I
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typtype IN ('r', 'e', 'd')\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["3904" "int4range" "0" "," "range_in" "23" "r" "0"]
+1 B DataRow ["3906" "numrange" "0" "," "range_in" "1700" "r" "0"]
+1 B DataRow ["3908" "tsrange" "0" "," "range_in" "1114" "r" "0"]
+1 B DataRow ["3910" "tstzrange" "0" "," "range_in" "1184" "r" "0"]
+1 B DataRow ["3912" "daterange" "0" "," "range_in" "1082" "r" "0"]
+1 B DataRow ["3926" "int8range" "0" "," "range_in" "20" "r" "0"]
+1 B DataRow ["13354" "cardinal_number" "0" "," "domain_in" NULL "d" "23"]
+1 B DataRow ["13357" "character_data" "0" "," "domain_in" NULL "d" "1043"]
+1 B DataRow ["13359" "sql_identifier" "0" "," "domain_in" NULL "d" "19"]
+1 B DataRow ["13365" "time_stamp" "0" "," "domain_in" NULL "d" "1184"]
+1 B DataRow ["13367" "yes_or_no" "0" "," "domain_in" NULL "d" "1043"]
+1 B CommandComplete "SELECT 11"
+1 B ReadyForQuery I
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typelem IN (16, 17, 18, 19, 20, 21, 23, 25, 26, 114, 142, 600, 601, 602, 603, 604, 628, 700, 701, 718, 790, 829, 869, 650, 1042, 1043, 1082, 1083, 1114, 1184, 1186, 1560, 1562, 1700, 2950, 3614, 3802, 13354, 13357, 13359, 13365, 13367, 3904, 3906, 3908, 3910, 3912, 3926)\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["19" "name" "18" "," "namein" NULL "b" "0"]
+1 B DataRow ["22" "int2vector" "21" "," "int2vectorin" NULL "b" "0"]
+1 B DataRow ["30" "oidvector" "26" "," "oidvectorin" NULL "b" "0"]
+1 B DataRow ["600" "point" "701" "," "point_in" NULL "b" "0"]
+1 B DataRow ["601" "lseg" "600" "," "lseg_in" NULL "b" "0"]
+1 B DataRow ["603" "box" "600" ";" "box_in" NULL "b" "0"]
+1 B DataRow ["628" "line" "701" "," "line_in" NULL "b" "0"]
+1 B DataRow ["1000" "_bool" "16" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1001" "_bytea" "17" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1002" "_char" "18" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1003" "_name" "19" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1016" "_int8" "20" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1005" "_int2" "21" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1007" "_int4" "23" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1009" "_text" "25" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1028" "_oid" "26" "," "array_in" NULL "b" "0"]
+1 B DataRow ["199" "_json" "114" "," "array_in" NULL "b" "0"]
+1 B DataRow ["143" "_xml" "142" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1017" "_point" "600" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1018" "_lseg" "601" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1019" "_path" "602" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1020" "_box" "603" ";" "array_in" NULL "b" "0"]
+1 B DataRow ["1027" "_polygon" "604" "," "array_in" NULL "b" "0"]
+1 B DataRow ["629" "_line" "628" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1021" "_float4" "700" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1022" "_float8" "701" "," "array_in" NULL "b" "0"]
+1 B DataRow ["719" "_circle" "718" "," "array_in" NULL "b" "0"]
+1 B DataRow ["791" "_money" "790" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1040" "_macaddr" "829" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1041" "_inet" "869" "," "array_in" NULL "b" "0"]
+1 B DataRow ["651" "_cidr" "650" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1014" "_bpchar" "1042" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1015" "_varchar" "1043" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1182" "_date" "1082" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1183" "_time" "1083" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1115" "_timestamp" "1114" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1185" "_timestamptz" "1184" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1187" "_interval" "1186" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1561" "_bit" "1560" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1563" "_varbit" "1562" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1231" "_numeric" "1700" "," "array_in" NULL "b" "0"]
+1 B DataRow ["2951" "_uuid" "2950" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3643" "_tsvector" "3614" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3807" "_jsonb" "3802" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3905" "_int4range" "3904" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3907" "_numrange" "3906" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3909" "_tsrange" "3908" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3911" "_tstzrange" "3910" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3913" "_daterange" "3912" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3927" "_int8range" "3926" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13353" "_cardinal_number" "13354" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13356" "_character_data" "13357" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13358" "_sql_identifier" "13359" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13364" "_time_stamp" "13365" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13366" "_yes_or_no" "13367" "," "array_in" NULL "b" "0"]
+1 B CommandComplete "SELECT 55"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relname = 'schema_migrations' AND c.relkind IN ('r','p')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SHOW max_identifier_length"
+1 B RowDescription [("max_identifier_length" 0 0 25 -1 -1 0)]
+1 B DataRow ["63"]
+1 B CommandComplete "SHOW"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE \"schema_migrations\" (\"version\" character varying NOT NULL PRIMARY KEY)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relname = 'ar_internal_metadata' AND c.relkind IN ('r','p')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE \"ar_internal_metadata\" (\"key\" character varying NOT NULL PRIMARY KEY, \"value\" character varying, \"created_at\" timestamp(6) NOT NULL, \"updated_at\" timestamp(6) NOT NULL)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "SELECT current_database()"
+1 B RowDescription [("current_database" 0 0 19 64 -1 0)]
+1 B DataRow ["compat"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_try_advisory_lock(5062682877816473070)"
+1 B RowDescription [("pg_try_advisory_lock" 0 0 16 1 -1 0)]
+1 B DataRow ["t"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "a1" "SELECT \"schema_migrations\".\"version\" FROM \"schema_migrations\" ORDER BY \"schema_migrations\".\"version\" ASC" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery I
+1 F Bind "" "a1" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("version" 272281 1 1043 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT * FROM \"ar_internal_metadata\" WHERE \"ar_internal_metadata\".\"key\" = $1 ORDER BY \"ar_internal_metadata\".\"key\" ASC LIMIT 1" [0]
+1 F Bind "" "" [0] ["environment"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("key" 272289 1 1043 -1 -1 0) ("value" 272289 2 1043 -1 -1 0) ("created_at" 272289 3 1114 8 6 0) ("updated_at" 272289 4 1114 8 6 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO \"ar_internal_metadata\" (\"key\", \"value\", \"created_at\", \"updated_at\") VALUES ('environment', 'default_env', '2026-10-07 18:40:24.467178', '2026-10-07 18:40:24.467183') RETURNING \"key\""
+1 B RowDescription [("key" 272289 1 1043 -1 -1 0)]
+1 B DataRow ["environment"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "DO $$\nBEGIN\n    IF NOT EXISTS (\n      SELECT 1\n      FROM pg_type t\n      JOIN pg_namespace n ON t.typnamespace = n.oid\n      WHERE t.typname = 'compat_mood'\n        AND n.nspname = ANY (current_schemas(false))\n    ) THEN\n        CREATE TYPE \"compat_mood\" AS ENUM ('happy', 'sad');\n    END IF;\nEND\n$$;\n"
+1 B CommandComplete "DO"
+1 B ReadyForQuery T
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typname IN ('int2', 'int4', 'int8', 'oid', 'float4', 'float8', 'text', 'varchar', 'char', 'name', 'bpchar', 'bool', 'bit', 'varbit', 'date', 'money', 'bytea', 'point', 'hstore', 'json', 'jsonb', 'cidr', 'inet', 'uuid', 'xml', 'tsvector', 'macaddr', 'citext', 'ltree', 'line', 'lseg', 'box', 'path', 'polygon', 'circle', 'numeric', 'interval', 'time', 'timestamp', 'timestamptz')\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["16" "bool" "0" "," "boolin" NULL "b" "0"]
+1 B DataRow ["17" "bytea" "0" "," "byteain" NULL "b" "0"]
+1 B DataRow ["18" "char" "0" "," "charin" NULL "b" "0"]
+1 B DataRow ["19" "name" "18" "," "namein" NULL "b" "0"]
+1 B DataRow ["20" "int8" "0" "," "int8in" NULL "b" "0"]
+1 B DataRow ["21" "int2" "0" "," "int2in" NULL "b" "0"]
+1 B DataRow ["23" "int4" "0" "," "int4in" NULL "b" "0"]
+1 B DataRow ["25" "text" "0" "," "textin" NULL "b" "0"]
+1 B DataRow ["26" "oid" "0" "," "oidin" NULL "b" "0"]
+1 B DataRow ["114" "json" "0" "," "json_in" NULL "b" "0"]
+1 B DataRow ["142" "xml" "0" "," "xml_in" NULL "b" "0"]
+1 B DataRow ["600" "point" "701" "," "point_in" NULL "b" "0"]
+1 B DataRow ["601" "lseg" "600" "," "lseg_in" NULL "b" "0"]
+1 B DataRow ["602" "path" "0" "," "path_in" NULL "b" "0"]
+1 B DataRow ["603" "box" "600" ";" "box_in" NULL "b" "0"]
+1 B DataRow ["604" "polygon" "0" "," "poly_in" NULL "b" "0"]
+1 B DataRow ["628" "line" "701" "," "line_in" NULL "b" "0"]
+1 B DataRow ["700" "float4" "0" "," "float4in" NULL "b" "0"]
+1 B DataRow ["701" "float8" "0" "," "float8in" NULL "b" "0"]
+1 B DataRow ["718" "circle" "0" "," "circle_in" NULL "b" "0"]
+1 B DataRow ["790" "money" "0" "," "cash_in" NULL "b" "0"]
+1 B DataRow ["829" "macaddr" "0" "," "macaddr_in" NULL "b" "0"]
+1 B DataRow ["869" "inet" "0" "," "inet_in" NULL "b" "0"]
+1 B DataRow ["650" "cidr" "0" "," "cidr_in" NULL "b" "0"]
+1 B DataRow ["1042" "bpchar" "0" "," "bpcharin" NULL "b" "0"]
+1 B DataRow ["1043" "varchar" "0" "," "varcharin" NULL "b" "0"]
+1 B DataRow ["1082" "date" "0" "," "date_in" NULL "b" "0"]
+1 B DataRow ["1083" "time" "0" "," "time_in" NULL "b" "0"]
+1 B DataRow ["1114" "timestamp" "0" "," "timestamp_in" NULL "b" "0"]
+1 B DataRow ["1184" "timestamptz" "0" "," "timestamptz_in" NULL "b" "0"]
+1 B DataRow ["1186" "interval" "0" "," "interval_in" NULL "b" "0"]
+1 B DataRow ["1560" "bit" "0" "," "bit_in" NULL "b" "0"]
+1 B DataRow ["1562" "varbit" "0" "," "varbit_in" NULL "b" "0"]
+1 B DataRow ["1700" "numeric" "0" "," "numeric_in" NULL "b" "0"]
+1 B DataRow ["2950" "uuid" "0" "," "uuid_in" NULL "b" "0"]
+1 B DataRow ["3614" "tsvector" "0" "," "tsvectorin" NULL "b" "0"]
+1 B DataRow ["3802" "jsonb" "0" "," "jsonb_in" NULL "b" "0"]
+1 B CommandComplete "SELECT 37"
+1 B ReadyForQuery T
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typtype IN ('r', 'e', 'd')\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["3904" "int4range" "0" "," "range_in" "23" "r" "0"]
+1 B DataRow ["3906" "numrange" "0" "," "range_in" "1700" "r" "0"]
+1 B DataRow ["3908" "tsrange" "0" "," "range_in" "1114" "r" "0"]
+1 B DataRow ["3910" "tstzrange" "0" "," "range_in" "1184" "r" "0"]
+1 B DataRow ["3912" "daterange" "0" "," "range_in" "1082" "r" "0"]
+1 B DataRow ["3926" "int8range" "0" "," "range_in" "20" "r" "0"]
+1 B DataRow ["13354" "cardinal_number" "0" "," "domain_in" NULL "d" "23"]
+1 B DataRow ["13357" "character_data" "0" "," "domain_in" NULL "d" "1043"]
+1 B DataRow ["13359" "sql_identifier" "0" "," "domain_in" NULL "d" "19"]
+1 B DataRow ["13365" "time_stamp" "0" "," "domain_in" NULL "d" "1184"]
+1 B DataRow ["13367" "yes_or_no" "0" "," "domain_in" NULL "d" "1043"]
+1 B DataRow ["272300" "compat_mood" "0" "," "enum_in" NULL "e" "0"]
+1 B CommandComplete "SELECT 12"
+1 B ReadyForQuery T
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typelem IN (16, 17, 18, 19, 20, 21, 23, 25, 26, 114, 142, 600, 601, 602, 603, 604, 628, 700, 701, 718, 790, 829, 869, 650, 1042, 1043, 1082, 1083, 1114, 1184, 1186, 1560, 1562, 1700, 2950, 3614, 3802, 272300, 13354, 13357, 13359, 13365, 13367, 3904, 3906, 3908, 3910, 3912, 3926)\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["19" "name" "18" "," "namein" NULL "b" "0"]
+1 B DataRow ["22" "int2vector" "21" "," "int2vectorin" NULL "b" "0"]
+1 B DataRow ["30" "oidvector" "26" "," "oidvectorin" NULL "b" "0"]
+1 B DataRow ["600" "point" "701" "," "point_in" NULL "b" "0"]
+1 B DataRow ["601" "lseg" "600" "," "lseg_in" NULL "b" "0"]
+1 B DataRow ["603" "box" "600" ";" "box_in" NULL "b" "0"]
+1 B DataRow ["628" "line" "701" "," "line_in" NULL "b" "0"]
+1 B DataRow ["1000" "_bool" "16" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1001" "_bytea" "17" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1002" "_char" "18" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1003" "_name" "19" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1016" "_int8" "20" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1005" "_int2" "21" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1007" "_int4" "23" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1009" "_text" "25" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1028" "_oid" "26" "," "array_in" NULL "b" "0"]
+1 B DataRow ["199" "_json" "114" "," "array_in" NULL "b" "0"]
+1 B DataRow ["143" "_xml" "142" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1017" "_point" "600" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1018" "_lseg" "601" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1019" "_path" "602" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1020" "_box" "603" ";" "array_in" NULL "b" "0"]
+1 B DataRow ["1027" "_polygon" "604" "," "array_in" NULL "b" "0"]
+1 B DataRow ["629" "_line" "628" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1021" "_float4" "700" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1022" "_float8" "701" "," "array_in" NULL "b" "0"]
+1 B DataRow ["719" "_circle" "718" "," "array_in" NULL "b" "0"]
+1 B DataRow ["791" "_money" "790" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1040" "_macaddr" "829" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1041" "_inet" "869" "," "array_in" NULL "b" "0"]
+1 B DataRow ["651" "_cidr" "650" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1014" "_bpchar" "1042" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1015" "_varchar" "1043" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1182" "_date" "1082" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1183" "_time" "1083" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1115" "_timestamp" "1114" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1185" "_timestamptz" "1184" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1187" "_interval" "1186" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1561" "_bit" "1560" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1563" "_varbit" "1562" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1231" "_numeric" "1700" "," "array_in" NULL "b" "0"]
+1 B DataRow ["2951" "_uuid" "2950" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3643" "_tsvector" "3614" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3807" "_jsonb" "3802" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3905" "_int4range" "3904" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3907" "_numrange" "3906" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3909" "_tsrange" "3908" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3911" "_tstzrange" "3910" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3913" "_daterange" "3912" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3927" "_int8range" "3926" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13353" "_cardinal_number" "13354" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13356" "_character_data" "13357" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13358" "_sql_identifier" "13359" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13364" "_time_stamp" "13365" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13366" "_yes_or_no" "13367" "," "array_in" NULL "b" "0"]
+1 B DataRow ["272299" "_compat_mood" "272300" "," "array_in" NULL "b" "0"]
+1 B CommandComplete "SELECT 56"
+1 B ReadyForQuery T
+1 F Query "SELECT 'compat_mood'::regtype::oid"
+1 B RowDescription [("oid" 0 0 26 4 -1 0)]
+1 B DataRow ["272300"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "CREATE TABLE \"compat_items\" (\"id\" bigserial primary key, \"name\" character varying(100) NOT NULL, \"price\" decimal(10,2), \"mood\" compat_mood DEFAULT 'happy' NOT NULL, \"tags\" character varying[], \"extra\" jsonb, \"created_at\" timestamp(6) NOT NULL, \"updated_at\" timestamp(6) NOT NULL)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery T
+1 F Query "CREATE UNIQUE INDEX \"index_compat_items_on_name\" ON \"compat_items\" (\"name\")"
+1 B CommandComplete "CREATE INDEX"
+1 B ReadyForQuery T
+1 F Query "INSERT INTO \"schema_migrations\" (\"version\") VALUES ('20260101000001') RETURNING \"version\""
+1 B RowDescription [("version" 272281 1 1043 -1 -1 0)]
+1 B DataRow ["20260101000001"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT 'integer'::regtype::oid"
+1 B RowDescription [("oid" 0 0 26 4 -1 0)]
+1 B DataRow ["23"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "CREATE TABLE \"compat_orders\" (\"id\" bigserial primary key, \"item_id\" bigint NOT NULL, \"qty\" integer DEFAULT 1 NOT NULL, \"created_at\" timestamp(6) NOT NULL, \"updated_at\" timestamp(6) NOT NULL, CONSTRAINT \"fk_rails_344066d5eb\"\nFOREIGN KEY (\"item_id\")\n  REFERENCES \"compat_items\" (\"id\")\n)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery T
+1 F Query "CREATE INDEX \"index_compat_orders_on_item_id\" ON \"compat_orders\" (\"item_id\")"
+1 B CommandComplete "CREATE INDEX"
+1 B ReadyForQuery T
+1 F Query "INSERT INTO \"schema_migrations\" (\"version\") VALUES ('20260101000002') RETURNING \"version\""
+1 B RowDescription [("version" 272281 1 1043 -1 -1 0)]
+1 B DataRow ["20260101000002"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_advisory_unlock(5062682877816473070)"
+1 B RowDescription [("pg_advisory_unlock" 0 0 16 1 -1 0)]
+1 B DataRow ["t"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT a.attname, format_type(a.atttypid, a.atttypmod),\n       pg_get_expr(d.adbin, d.adrelid), a.attnotnull, a.atttypid, a.atttypmod,\n       c.collname, col_description(a.attrelid, a.attnum) AS comment,\n       attidentity AS identity,\n       attgenerated as attgenerated\n  FROM pg_attribute a\n  LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum\n  LEFT JOIN pg_type t ON a.atttypid = t.oid\n  LEFT JOIN pg_collation c ON a.attcollation = c.oid AND a.attcollation <> t.typcollation\n WHERE a.attrelid = '\"compat_items\"'::regclass\n   AND a.attnum > 0 AND NOT a.attisdropped\n ORDER BY a.attnum\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("pg_get_expr" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("atttypid" 1249 3 26 4 -1 0) ("atttypmod" 1249 6 23 4 -1 0) ("collname" 3456 2 19 64 -1 0) ("comment" 0 0 25 -1 -1 0) ("identity" 1249 15 18 1 -1 0) ("attgenerated" 1249 16 18 1 -1 0)]
+1 B DataRow ["id" "bigint" "nextval('compat_items_id_seq'::regclass)" "t" "20" "-1" NULL NULL "" ""]
+1 B DataRow ["name" "character varying(100)" NULL "t" "1043" "104" NULL NULL "" ""]
+1 B DataRow ["price" "numeric(10,2)" NULL "f" "1700" "655366" NULL NULL "" ""]
+1 B DataRow ["mood" "compat_mood" "'happy'::compat_mood" "t" "272300" "-1" NULL NULL "" ""]
+1 B DataRow ["tags" "character varying[]" NULL "f" "1015" "-1" NULL NULL "" ""]
+1 B DataRow ["extra" "jsonb" NULL "f" "3802" "-1" NULL NULL "" ""]
+1 B DataRow ["created_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B DataRow ["updated_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B CommandComplete "SELECT 8"
+1 B ReadyForQuery T
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relkind IN ('r','v','m','p','f')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["schema_migrations"]
+1 B DataRow ["ar_internal_metadata"]
+1 B DataRow ["compat_items"]
+1 B DataRow ["compat_orders"]
+1 B CommandComplete "SELECT 4"
+1 B ReadyForQuery T
+1 F Query "SELECT a.attname\nFROM pg_index i\nJOIN pg_attribute a\n  ON a.attrelid = i.indrelid\n  AND a.attnum = ANY(i.indkey)\nWHERE i.indrelid = '\"compat_items\"'::regclass\n  AND i.indisprimary\nORDER BY array_position(i.indkey, a.attnum)\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0)]
+1 B DataRow ["id"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO \"compat_items\" (\"name\", \"price\", \"tags\", \"extra\", \"created_at\", \"updated_at\") VALUES ($1, $2, $3, $4, $5, $6) RETURNING \"id\"" [0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0] ["one" "1.5" "{a}" "{\"n\":1}" "2026-01-02 03:04:05" "2026-01-02 03:04:05"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 272306 1 20 8 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO \"compat_items\" (\"name\", \"price\", \"mood\", \"tags\", \"extra\", \"created_at\", \"updated_at\") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING \"id\"" [0 0 0 0 0 0 0]
+1 F Bind "" "" [0 0 0 0 0 0 0] ["two" "2.5" "sad" "{b,c}" "{\"n\":2}" "2026-01-02 03:04:05" "2026-01-02 03:04:05"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 272306 1 20 8 -1 0)]
+1 B DataRow ["2"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "SELECT a.attname\nFROM pg_index i\nJOIN pg_attribute a\n  ON a.attrelid = i.indrelid\n  AND a.attnum = ANY(i.indkey)\nWHERE i.indrelid = '\"compat_orders\"'::regclass\n  AND i.indisprimary\nORDER BY array_position(i.indkey, a.attnum)\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0)]
+1 B DataRow ["id"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "SELECT a.attname, format_type(a.atttypid, a.atttypmod),\n       pg_get_expr(d.adbin, d.adrelid), a.attnotnull, a.atttypid, a.atttypmod,\n       c.collname, col_description(a.attrelid, a.attnum) AS comment,\n       attidentity AS identity,\n       attgenerated as attgenerated\n  FROM pg_attribute a\n  LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum\n  LEFT JOIN pg_type t ON a.atttypid = t.oid\n  LEFT JOIN pg_collation c ON a.attcollation = c.oid AND a.attcollation <> t.typcollation\n WHERE a.attrelid = '\"compat_orders\"'::regclass\n   AND a.attnum > 0 AND NOT a.attisdropped\n ORDER BY a.attnum\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("pg_get_expr" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("atttypid" 1249 3 26 4 -1 0) ("atttypmod" 1249 6 23 4 -1 0) ("collname" 3456 2 19 64 -1 0) ("comment" 0 0 25 -1 -1 0) ("identity" 1249 15 18 1 -1 0) ("attgenerated" 1249 16 18 1 -1 0)]
+1 B DataRow ["id" "bigint" "nextval('compat_orders_id_seq'::regclass)" "t" "20" "-1" NULL NULL "" ""]
+1 B DataRow ["item_id" "bigint" NULL "t" "20" "-1" NULL NULL "" ""]
+1 B DataRow ["qty" "integer" "1" "t" "23" "-1" NULL NULL "" ""]
+1 B DataRow ["created_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B DataRow ["updated_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B CommandComplete "SELECT 5"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO \"compat_orders\" (\"item_id\", \"qty\", \"created_at\", \"updated_at\") VALUES ($1, $2, $3, $4) RETURNING \"id\"" [0 0 0 0]
+1 F Bind "" "" [0 0 0 0] ["1" "2" "2026-01-02 03:04:05" "2026-01-02 03:04:05"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 272322 1 20 8 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO \"compat_orders\" (\"item_id\", \"created_at\", \"updated_at\") VALUES ($1, $2, $3) RETURNING \"id\"" [0 0 0]
+1 F Bind "" "" [0 0 0] ["2" "2026-01-02 03:04:05" "2026-01-02 03:04:05"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 272322 1 20 8 -1 0)]
+1 B DataRow ["2"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO \"compat_items\" (\"name\", \"price\", \"created_at\", \"updated_at\") VALUES ($1, $2, $3, $4) RETURNING \"id\"" [0 0 0 0]
+1 F Bind "" "" [0 0 0 0] ["three" "3.5" "2026-01-02 03:04:05" "2026-01-02 03:04:05"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 272306 1 20 8 -1 0)]
+1 B DataRow ["3"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "a2" "SELECT \"compat_items\".* FROM \"compat_items\" ORDER BY \"compat_items\".\"id\" ASC" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery I
+1 F Bind "" "a2" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 272306 1 20 8 -1 0) ("name" 272306 2 1043 -1 104 0) ("price" 272306 3 1700 -1 655366 0) ("mood" 272306 4 272300 4 -1 0) ("tags" 272306 5 1015 -1 -1 0) ("extra" 272306 6 3802 -1 -1 0) ("created_at" 272306 7 1114 8 6 0) ("updated_at" 272306 8 1114 8 6 0)]
+1 B DataRow ["1" "one" "1.50" "happy" "{a}" "{\"n\": 1}" "2026-01-02 03:04:05" "2026-01-02 03:04:05"]
+1 B DataRow ["2" "two" "2.50" "sad" "{b,c}" "{\"n\": 2}" "2026-01-02 03:04:05" "2026-01-02 03:04:05"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT \"compat_orders\".* FROM \"compat_orders\" WHERE \"compat_orders\".\"item_id\" IN ($1, $2)" [0 0]
+1 F Bind "" "" [0 0] ["1" "2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 272322 1 20 8 -1 0) ("item_id" 272322 2 20 8 -1 0) ("qty" 272322 3 23 4 -1 0) ("created_at" 272322 4 1114 8 6 0) ("updated_at" 272322 5 1114 8 6 0)]
+1 B DataRow ["1" "1" "2" "2026-01-02 03:04:05" "2026-01-02 03:04:05"]
+1 B DataRow ["2" "2" "1" "2026-01-02 03:04:05" "2026-01-02 03:04:05"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Parse "a3" "SELECT \"compat_items\".* FROM \"compat_items\" WHERE \"compat_items\".\"name\" = $1 LIMIT $2" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery I
+1 F Bind "" "a3" [0 0] ["two" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 272306 1 20 8 -1 0) ("name" 272306 2 1043 -1 104 0) ("price" 272306 3 1700 -1 655366 0) ("mood" 272306 4 272300 4 -1 0) ("tags" 272306 5 1015 -1 -1 0) ("extra" 272306 6 3802 -1 -1 0) ("created_at" 272306 7 1114 8 6 0) ("updated_at" 272306 8 1114 8 6 0)]
+1 B DataRow ["2" "two" "2.50" "sad" "{b,c}" "{\"n\": 2}" "2026-01-02 03:04:05" "2026-01-02 03:04:05"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT COUNT(*) FROM \"compat_items\" WHERE \"compat_items\".\"mood\" = $1" [0]
+1 F Bind "" "" [0] ["sad"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("count" 0 0 20 8 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT COUNT(*) FROM \"compat_orders\" WHERE \"compat_orders\".\"qty\" = $1" [0]
+1 F Bind "" "" [0] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("count" 0 0 20 8 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT SUM(qty) AS \"sum_qty\", \"compat_items\".\"name\" AS \"compat_items_name\" FROM \"compat_items\" INNER JOIN \"compat_orders\" ON \"compat_orders\".\"item_id\" = \"compat_items\".\"id\" GROUP BY \"compat_items\".\"name\" ORDER BY \"compat_items\".\"name\" ASC"
+1 B RowDescription [("sum_qty" 0 0 20 8 -1 0) ("compat_items_name" 272306 2 1043 -1 104 0)]
+1 B DataRow ["2" "one"]
+1 B DataRow ["1" "two"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Query "SELECT * FROM compat_items WHERE price > 2 ORDER BY id"
+1 B RowDescription [("id" 272306 1 20 8 -1 0) ("name" 272306 2 1043 -1 104 0) ("price" 272306 3 1700 -1 655366 0) ("mood" 272306 4 272300 4 -1 0) ("tags" 272306 5 1015 -1 -1 0) ("extra" 272306 6 3802 -1 -1 0) ("created_at" 272306 7 1114 8 6 0) ("updated_at" 272306 8 1114 8 6 0)]
+1 B DataRow ["2" "two" "2.50" "sad" "{b,c}" "{\"n\": 2}" "2026-01-02 03:04:05" "2026-01-02 03:04:05"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "a3" [0 0] ["two" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 272306 1 20 8 -1 0) ("name" 272306 2 1043 -1 104 0) ("price" 272306 3 1700 -1 655366 0) ("mood" 272306 4 272300 4 -1 0) ("tags" 272306 5 1015 -1 -1 0) ("extra" 272306 6 3802 -1 -1 0) ("created_at" 272306 7 1114 8 6 0) ("updated_at" 272306 8 1114 8 6 0)]
+1 B DataRow ["2" "two" "2.50" "sad" "{b,c}" "{\"n\": 2}" "2026-01-02 03:04:05" "2026-01-02 03:04:05"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "UPDATE \"compat_items\" SET \"price\" = $1, \"updated_at\" = $2 WHERE \"compat_items\".\"id\" = $3" [0 0 0]
+1 F Bind "" "" [0 0 0] ["5.0" "2026-10-07 18:40:25.058544" "2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Parse "" "UPDATE \"compat_orders\" SET \"qty\" = $1 WHERE \"compat_orders\".\"qty\" = $2" [0 0]
+1 F Bind "" "" [0 0] ["3" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relname = 'schema_migrations' AND c.relkind IN ('r','v','m','p','f')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["schema_migrations"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "a1" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("version" 272281 1 1043 -1 -1 0)]
+1 B DataRow ["20260101000001"]
+1 B DataRow ["20260101000002"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Query "SELECT current_schemas(false)"
+1 B RowDescription [("current_schemas" 0 0 1003 -1 -1 0)]
+1 B DataRow ["{public}"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT\n  pg_extension.extname,\n  n.nspname AS schema\nFROM pg_extension\nJOIN pg_namespace n ON pg_extension.extnamespace = n.oid\n"
+1 B RowDescription [("extname" 3079 2 19 64 -1 0) ("schema" 2615 2 19 64 -1 0)]
+1 B DataRow ["plpgsql" "pg_catalog"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT current_schema"
+1 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+1 B DataRow ["public"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SET search_path TO public"
+1 B CommandComplete "SET"
+1 B ParameterStatus "search_path" "public"
+1 B ReadyForQuery I
+1 F Query "SELECT\n  type.typname AS name,\n  type.OID AS oid,\n  n.nspname AS schema,\n  array_agg(enum.enumlabel ORDER BY enum.enumsortorder) AS value\nFROM pg_enum AS enum\nJOIN pg_type AS type ON (type.oid = enum.enumtypid)\nJOIN pg_namespace n ON type.typnamespace = n.oid\nWHERE n.nspname = ANY (current_schemas(false))\nGROUP BY type.OID, n.nspname, type.typname;\n"
+1 B RowDescription [("name" 1247 2 19 64 -1 0) ("oid" 1247 1 26 4 -1 0) ("schema" 2615 2 19 64 -1 0) ("value" 0 0 1003 -1 -1 0)]
+1 B DataRow ["compat_mood" "272300" "public" "{happy,sad}"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT current_schema"
+1 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+1 B DataRow ["public"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SET search_path TO \"$user\", public"
+1 B CommandComplete "SET"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ReadyForQuery I
+1 F Query "SET search_path TO public"
+1 B CommandComplete "SET"
+1 B ParameterStatus "search_path" "public"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relkind IN ('r','p')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["schema_migrations"]
+1 B DataRow ["ar_internal_metadata"]
+1 B DataRow ["compat_items"]
+1 B DataRow ["compat_orders"]
+1 B CommandComplete "SELECT 4"
+1 B ReadyForQuery I
+1 F Query "SELECT a.attname, format_type(a.atttypid, a.atttypmod),\n       pg_get_expr(d.adbin, d.adrelid), a.attnotnull, a.atttypid, a.atttypmod,\n       c.collname, col_description(a.attrelid, a.attnum) AS comment,\n       attidentity AS identity,\n       attgenerated as attgenerated\n  FROM pg_attribute a\n  LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum\n  LEFT JOIN pg_type t ON a.atttypid = t.oid\n  LEFT JOIN pg_collation c ON a.attcollation = c.oid AND a.attcollation <> t.typcollation\n WHERE a.attrelid = '\"compat_items\"'::regclass\n   AND a.attnum > 0 AND NOT a.attisdropped\n ORDER BY a.attnum\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("pg_get_expr" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("atttypid" 1249 3 26 4 -1 0) ("atttypmod" 1249 6 23 4 -1 0) ("collname" 3456 2 19 64 -1 0) ("comment" 0 0 25 -1 -1 0) ("identity" 1249 15 18 1 -1 0) ("attgenerated" 1249 16 18 1 -1 0)]
+1 B DataRow ["id" "bigint" "nextval('compat_items_id_seq'::regclass)" "t" "20" "-1" NULL NULL "" ""]
+1 B DataRow ["name" "character varying(100)" NULL "t" "1043" "104" NULL NULL "" ""]
+1 B DataRow ["price" "numeric(10,2)" NULL "f" "1700" "655366" NULL NULL "" ""]
+1 B DataRow ["mood" "compat_mood" "'happy'::compat_mood" "t" "272300" "-1" NULL NULL "" ""]
+1 B DataRow ["tags" "character varying[]" NULL "f" "1015" "-1" NULL NULL "" ""]
+1 B DataRow ["extra" "jsonb" NULL "f" "3802" "-1" NULL NULL "" ""]
+1 B DataRow ["created_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B DataRow ["updated_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B CommandComplete "SELECT 8"
+1 B ReadyForQuery I
+1 F Query "SELECT a.attname\nFROM pg_index i\nJOIN pg_attribute a\n  ON a.attrelid = i.indrelid\n  AND a.attnum = ANY(i.indkey)\nWHERE i.indrelid = '\"compat_items\"'::regclass\n  AND i.indisprimary\nORDER BY array_position(i.indkey, a.attnum)\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0)]
+1 B DataRow ["id"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_catalog.obj_description(c.oid, 'pg_class')\nFROM pg_catalog.pg_class c\n  LEFT JOIN pg_namespace n ON n.oid = c.relnamespace\nWHERE c.relname = 'compat_items'\n  AND c.relkind IN ('r','p')\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("obj_description" 0 0 25 -1 -1 0)]
+1 B DataRow [NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT parent.relname\nFROM pg_catalog.pg_inherits i\n  JOIN pg_catalog.pg_class child ON i.inhrelid = child.oid\n  JOIN pg_catalog.pg_class parent ON i.inhparent = parent.oid\n  LEFT JOIN pg_namespace n ON n.oid = child.relnamespace\nWHERE child.relname = 'compat_items'\n  AND child.relkind IN ('r','p')\n  AND n.nspname = ANY (current_schemas(false))\nORDER BY i.inhseqno\n"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_catalog.pg_get_partkeydef(c.oid)\nFROM pg_catalog.pg_class c\n  LEFT JOIN pg_namespace n ON n.oid = c.relnamespace\nWHERE c.relname = 'compat_items'\n  AND c.relkind IN ('r','p')\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("pg_get_partkeydef" 0 0 25 -1 -1 0)]
+1 B DataRow [NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid),\n                pg_catalog.obj_description(i.oid, 'pg_class') AS comment, d.indisvalid,\n                ARRAY(\n                  SELECT pg_get_indexdef(d.indexrelid, k + 1, true)\n                  FROM generate_subscripts(d.indkey, 1) AS k\n                  ORDER BY k\n                ) AS columns\nFROM pg_class t\nINNER JOIN pg_index d ON t.oid = d.indrelid\nINNER JOIN pg_class i ON d.indexrelid = i.oid\nLEFT JOIN pg_namespace n ON n.oid = t.relnamespace\nWHERE i.relkind IN ('i', 'I')\n  AND d.indisprimary = 'f'\n  AND t.relname = 'compat_items'\n  AND n.nspname = ANY (current_schemas(false))\nORDER BY i.relname\n"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indkey" 2610 16 22 -1 -1 0) ("pg_get_indexdef" 0 0 25 -1 -1 0) ("comment" 0 0 25 -1 -1 0) ("indisvalid" 2610 11 16 1 -1 0) ("columns" 0 0 1009 -1 -1 0)]
+1 B DataRow ["index_compat_items_on_name" "t" "2" "CREATE UNIQUE INDEX index_compat_items_on_name ON public.compat_items USING btree (name)" NULL "t" "{name}"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "            SELECT conname, pg_get_constraintdef(c.oid) AS constraintdef, c.condeferrable, c.condeferred\n            FROM pg_constraint c\n            JOIN pg_class t ON c.conrelid = t.oid\n            JOIN pg_namespace n ON n.oid = c.connamespace\n            WHERE c.contype = 'x'\n              AND t.relname = 'compat_items'\n              AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT c.conname, c.conrelid, c.condeferrable, c.condeferred, pg_get_constraintdef(c.oid) AS constraintdef,\n(\n  SELECT array_agg(a.attname ORDER BY idx)\n  FROM (\n    SELECT idx, c.conkey[idx] AS conkey_elem\n    FROM generate_subscripts(c.conkey, 1) AS idx\n  ) indexed_conkeys\n  JOIN pg_attribute a ON a.attrelid = t.oid\n  AND a.attnum = indexed_conkeys.conkey_elem\n) AS conkey_names\nFROM pg_constraint c\nJOIN pg_class t ON c.conrelid = t.oid\nJOIN pg_namespace n ON n.oid = c.connamespace\nWHERE c.contype = 'u'\n  AND t.relname = 'compat_items'\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("conkey_names" 0 0 1003 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "            SELECT conname, pg_get_constraintdef(c.oid, true) AS constraintdef, c.convalidated AS valid\n            FROM pg_constraint c\n            JOIN pg_class t ON c.conrelid = t.oid\n            JOIN pg_namespace n ON n.oid = c.connamespace\n            WHERE c.contype = 'c'\n              AND t.relname = 'compat_items'\n              AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("valid" 2606 8 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "            SELECT conname, pg_get_constraintdef(c.oid) AS constraintdef, c.condeferrable, c.condeferred\n            FROM pg_constraint c\n            JOIN pg_class t ON c.conrelid = t.oid\n            JOIN pg_namespace n ON n.oid = c.connamespace\n            WHERE c.contype = 'x'\n              AND t.relname = 'compat_items'\n              AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT c.conname, c.conrelid, c.condeferrable, c.condeferred, pg_get_constraintdef(c.oid) AS constraintdef,\n(\n  SELECT array_agg(a.attname ORDER BY idx)\n  FROM (\n    SELECT idx, c.conkey[idx] AS conkey_elem\n    FROM generate_subscripts(c.conkey, 1) AS idx\n  ) indexed_conkeys\n  JOIN pg_attribute a ON a.attrelid = t.oid\n  AND a.attnum = indexed_conkeys.conkey_elem\n) AS conkey_names\nFROM pg_constraint c\nJOIN pg_class t ON c.conrelid = t.oid\nJOIN pg_namespace n ON n.oid = c.connamespace\nWHERE c.contype = 'u'\n  AND t.relname = 'compat_items'\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("conkey_names" 0 0 1003 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT a.attname, format_type(a.atttypid, a.atttypmod),\n       pg_get_expr(d.adbin, d.adrelid), a.attnotnull, a.atttypid, a.atttypmod,\n       c.collname, col_description(a.attrelid, a.attnum) AS comment,\n       attidentity AS identity,\n       attgenerated as attgenerated\n  FROM pg_attribute a\n  LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum\n  LEFT JOIN pg_type t ON a.atttypid = t.oid\n  LEFT JOIN pg_collation c ON a.attcollation = c.oid AND a.attcollation <> t.typcollation\n WHERE a.attrelid = '\"compat_orders\"'::regclass\n   AND a.attnum > 0 AND NOT a.attisdropped\n ORDER BY a.attnum\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0) ("format_type" 0 0 25 -1 -1 0) ("pg_get_expr" 0 0 25 -1 -1 0) ("attnotnull" 1249 12 16 1 -1 0) ("atttypid" 1249 3 26 4 -1 0) ("atttypmod" 1249 6 23 4 -1 0) ("collname" 3456 2 19 64 -1 0) ("comment" 0 0 25 -1 -1 0) ("identity" 1249 15 18 1 -1 0) ("attgenerated" 1249 16 18 1 -1 0)]
+1 B DataRow ["id" "bigint" "nextval('compat_orders_id_seq'::regclass)" "t" "20" "-1" NULL NULL "" ""]
+1 B DataRow ["item_id" "bigint" NULL "t" "20" "-1" NULL NULL "" ""]
+1 B DataRow ["qty" "integer" "1" "t" "23" "-1" NULL NULL "" ""]
+1 B DataRow ["created_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B DataRow ["updated_at" "timestamp(6) without time zone" NULL "t" "1114" "6" NULL NULL "" ""]
+1 B CommandComplete "SELECT 5"
+1 B ReadyForQuery I
+1 F Query "SELECT a.attname\nFROM pg_index i\nJOIN pg_attribute a\n  ON a.attrelid = i.indrelid\n  AND a.attnum = ANY(i.indkey)\nWHERE i.indrelid = '\"compat_orders\"'::regclass\n  AND i.indisprimary\nORDER BY array_position(i.indkey, a.attnum)\n"
+1 B RowDescription [("attname" 1249 2 19 64 -1 0)]
+1 B DataRow ["id"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_catalog.obj_description(c.oid, 'pg_class')\nFROM pg_catalog.pg_class c\n  LEFT JOIN pg_namespace n ON n.oid = c.relnamespace\nWHERE c.relname = 'compat_orders'\n  AND c.relkind IN ('r','p')\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("obj_description" 0 0 25 -1 -1 0)]
+1 B DataRow [NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT parent.relname\nFROM pg_catalog.pg_inherits i\n  JOIN pg_catalog.pg_class child ON i.inhrelid = child.oid\n  JOIN pg_catalog.pg_class parent ON i.inhparent = parent.oid\n  LEFT JOIN pg_namespace n ON n.oid = child.relnamespace\nWHERE child.relname = 'compat_orders'\n  AND child.relkind IN ('r','p')\n  AND n.nspname = ANY (current_schemas(false))\nORDER BY i.inhseqno\n"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_catalog.pg_get_partkeydef(c.oid)\nFROM pg_catalog.pg_class c\n  LEFT JOIN pg_namespace n ON n.oid = c.relnamespace\nWHERE c.relname = 'compat_orders'\n  AND c.relkind IN ('r','p')\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("pg_get_partkeydef" 0 0 25 -1 -1 0)]
+1 B DataRow [NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid),\n                pg_catalog.obj_description(i.oid, 'pg_class') AS comment, d.indisvalid,\n                ARRAY(\n                  SELECT pg_get_indexdef(d.indexrelid, k + 1, true)\n                  FROM generate_subscripts(d.indkey, 1) AS k\n                  ORDER BY k\n                ) AS columns\nFROM pg_class t\nINNER JOIN pg_index d ON t.oid = d.indrelid\nINNER JOIN pg_class i ON d.indexrelid = i.oid\nLEFT JOIN pg_namespace n ON n.oid = t.relnamespace\nWHERE i.relkind IN ('i', 'I')\n  AND d.indisprimary = 'f'\n  AND t.relname = 'compat_orders'\n  AND n.nspname = ANY (current_schemas(false))\nORDER BY i.relname\n"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indkey" 2610 16 22 -1 -1 0) ("pg_get_indexdef" 0 0 25 -1 -1 0) ("comment" 0 0 25 -1 -1 0) ("indisvalid" 2610 11 16 1 -1 0) ("columns" 0 0 1009 -1 -1 0)]
+1 B DataRow ["index_compat_orders_on_item_id" "f" "2" "CREATE INDEX index_compat_orders_on_item_id ON public.compat_orders USING btree (item_id)" NULL "t" "{item_id}"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "            SELECT conname, pg_get_constraintdef(c.oid) AS constraintdef, c.condeferrable, c.condeferred\n            FROM pg_constraint c\n            JOIN pg_class t ON c.conrelid = t.oid\n            JOIN pg_namespace n ON n.oid = c.connamespace\n            WHERE c.contype = 'x'\n              AND t.relname = 'compat_orders'\n              AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT c.conname, c.conrelid, c.condeferrable, c.condeferred, pg_get_constraintdef(c.oid) AS constraintdef,\n(\n  SELECT array_agg(a.attname ORDER BY idx)\n  FROM (\n    SELECT idx, c.conkey[idx] AS conkey_elem\n    FROM generate_subscripts(c.conkey, 1) AS idx\n  ) indexed_conkeys\n  JOIN pg_attribute a ON a.attrelid = t.oid\n  AND a.attnum = indexed_conkeys.conkey_elem\n) AS conkey_names\nFROM pg_constraint c\nJOIN pg_class t ON c.conrelid = t.oid\nJOIN pg_namespace n ON n.oid = c.connamespace\nWHERE c.contype = 'u'\n  AND t.relname = 'compat_orders'\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("conkey_names" 0 0 1003 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "            SELECT conname, pg_get_constraintdef(c.oid, true) AS constraintdef, c.convalidated AS valid\n            FROM pg_constraint c\n            JOIN pg_class t ON c.conrelid = t.oid\n            JOIN pg_namespace n ON n.oid = c.connamespace\n            WHERE c.contype = 'c'\n              AND t.relname = 'compat_orders'\n              AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("valid" 2606 8 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "            SELECT conname, pg_get_constraintdef(c.oid) AS constraintdef, c.condeferrable, c.condeferred\n            FROM pg_constraint c\n            JOIN pg_class t ON c.conrelid = t.oid\n            JOIN pg_namespace n ON n.oid = c.connamespace\n            WHERE c.contype = 'x'\n              AND t.relname = 'compat_orders'\n              AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT c.conname, c.conrelid, c.condeferrable, c.condeferred, pg_get_constraintdef(c.oid) AS constraintdef,\n(\n  SELECT array_agg(a.attname ORDER BY idx)\n  FROM (\n    SELECT idx, c.conkey[idx] AS conkey_elem\n    FROM generate_subscripts(c.conkey, 1) AS idx\n  ) indexed_conkeys\n  JOIN pg_attribute a ON a.attrelid = t.oid\n  AND a.attnum = indexed_conkeys.conkey_elem\n) AS conkey_names\nFROM pg_constraint c\nJOIN pg_class t ON c.conrelid = t.oid\nJOIN pg_namespace n ON n.oid = c.connamespace\nWHERE c.contype = 'u'\n  AND t.relname = 'compat_orders'\n  AND n.nspname = ANY (current_schemas(false))\n"
+1 B RowDescription [("conname" 2606 2 19 64 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("condeferrable" 2606 5 16 1 -1 0) ("condeferred" 2606 6 16 1 -1 0) ("constraintdef" 0 0 25 -1 -1 0) ("conkey_names" 0 0 1003 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT t2.oid::regclass::text AS to_table, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete, c.convalidated AS valid, c.condeferrable AS deferrable, c.condeferred AS deferred, c.conrelid, c.confrelid,\n  (\n    SELECT array_agg(a.attname ORDER BY idx)\n    FROM (\n      SELECT idx, c.conkey[idx] AS conkey_elem\n      FROM generate_subscripts(c.conkey, 1) AS idx\n    ) indexed_conkeys\n    JOIN pg_attribute a ON a.attrelid = t1.oid\n    AND a.attnum = indexed_conkeys.conkey_elem\n  ) AS conkey_names,\n  (\n    SELECT array_agg(a.attname ORDER BY idx)\n    FROM (\n      SELECT idx, c.confkey[idx] AS confkey_elem\n      FROM generate_subscripts(c.confkey, 1) AS idx\n    ) indexed_confkeys\n    JOIN pg_attribute a ON a.attrelid = t2.oid\n    AND a.attnum = indexed_confkeys.confkey_elem\n  ) AS confkey_names\nFROM pg_constraint c\nJOIN pg_class t1 ON c.conrelid = t1.oid\nJOIN pg_class t2 ON c.confrelid = t2.oid\nJOIN pg_namespace n ON c.connamespace = n.oid\nWHERE c.contype = 'f'\n  AND t1.relname = 'compat_items'\n  AND n.nspname = ANY (current_schemas(false))\nORDER BY c.conname\n"
+1 B RowDescription [("to_table" 0 0 25 -1 -1 0) ("name" 2606 2 19 64 -1 0) ("on_update" 2606 14 18 1 -1 0) ("on_delete" 2606 15 18 1 -1 0) ("valid" 2606 8 16 1 -1 0) ("deferrable" 2606 5 16 1 -1 0) ("deferred" 2606 6 16 1 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("confrelid" 2606 13 26 4 -1 0) ("conkey_names" 0 0 1003 -1 -1 0) ("confkey_names" 0 0 1003 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT t2.oid::regclass::text AS to_table, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete, c.convalidated AS valid, c.condeferrable AS deferrable, c.condeferred AS deferred, c.conrelid, c.confrelid,\n  (\n    SELECT array_agg(a.attname ORDER BY idx)\n    FROM (\n      SELECT idx, c.conkey[idx] AS conkey_elem\n      FROM generate_subscripts(c.conkey, 1) AS idx\n    ) indexed_conkeys\n    JOIN pg_attribute a ON a.attrelid = t1.oid\n    AND a.attnum = indexed_conkeys.conkey_elem\n  ) AS conkey_names,\n  (\n    SELECT array_agg(a.attname ORDER BY idx)\n    FROM (\n      SELECT idx, c.confkey[idx] AS confkey_elem\n      FROM generate_subscripts(c.confkey, 1) AS idx\n    ) indexed_confkeys\n    JOIN pg_attribute a ON a.attrelid = t2.oid\n    AND a.attnum = indexed_confkeys.confkey_elem\n  ) AS confkey_names\nFROM pg_constraint c\nJOIN pg_class t1 ON c.conrelid = t1.oid\nJOIN pg_class t2 ON c.confrelid = t2.oid\nJOIN pg_namespace n ON c.connamespace = n.oid\nWHERE c.contype = 'f'\n  AND t1.relname = 'compat_orders'\n  AND n.nspname = ANY (current_schemas(false))\nORDER BY c.conname\n"
+1 B RowDescription [("to_table" 0 0 25 -1 -1 0) ("name" 2606 2 19 64 -1 0) ("on_update" 2606 14 18 1 -1 0) ("on_delete" 2606 15 18 1 -1 0) ("valid" 2606 8 16 1 -1 0) ("deferrable" 2606 5 16 1 -1 0) ("deferred" 2606 6 16 1 -1 0) ("conrelid" 2606 9 26 4 -1 0) ("confrelid" 2606 13 26 4 -1 0) ("conkey_names" 0 0 1003 -1 -1 0) ("confkey_names" 0 0 1003 -1 -1 0)]
+1 B DataRow ["compat_items" "fk_rails_344066d5eb" "a" "a" "t" "f" "f" "272322" "272306" "{item_id}" "{id}"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relkind IN ('r','p')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["schema_migrations"]
+1 B DataRow ["ar_internal_metadata"]
+1 B DataRow ["compat_items"]
+1 B DataRow ["compat_orders"]
+1 B CommandComplete "SELECT 4"
+1 B ReadyForQuery I
+1 F Query "SET search_path TO \"$user\", public"
+1 B CommandComplete "SET"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO \"compat_items\" (\"name\", \"created_at\", \"updated_at\") VALUES ($1, $2, $3) RETURNING \"id\"" [0 0 0]
+1 F Bind "" "" [0 0 0] ["one" "2026-01-02 03:04:05" "2026-01-02 03:04:05"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 272306 1 20 8 -1 0)]
+1 B ErrorResponse S "ERROR" V "ERROR" C "23505" M "duplicate key value violates unique constraint \"index_compat_items_on_name\"" D "Key (name)=(one) already exists." s "public" t "compat_items" n "index_compat_items_on_name" F "nbtinsert.c" L "669" R "_bt_check_unique"
+1 B ReadyForQuery E
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "SELECT 1 / 0"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relname = 'schema_migrations' AND c.relkind IN ('r','v','m','p','f')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["schema_migrations"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "a1" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("version" 272281 1 1043 -1 -1 0)]
+1 B DataRow ["20260101000001"]
+1 B DataRow ["20260101000002"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relname = 'schema_migrations' AND c.relkind IN ('r','v','m','p','f')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["schema_migrations"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "a1" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("version" 272281 1 1043 -1 -1 0)]
+1 B DataRow ["20260101000001"]
+1 B DataRow ["20260101000002"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relname = 'schema_migrations' AND c.relkind IN ('r','p')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["schema_migrations"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = ANY (current_schemas(false)) AND c.relname = 'ar_internal_metadata' AND c.relkind IN ('r','p')"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0)]
+1 B DataRow ["ar_internal_metadata"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT current_database()"
+1 B RowDescription [("current_database" 0 0 19 64 -1 0)]
+1 B DataRow ["compat"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_try_advisory_lock(5062682877816473070)"
+1 B RowDescription [("pg_try_advisory_lock" 0 0 16 1 -1 0)]
+1 B DataRow ["t"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "a1" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("version" 272281 1 1043 -1 -1 0)]
+1 B DataRow ["20260101000001"]
+1 B DataRow ["20260101000002"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "DROP TABLE \"compat_orders\""
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery T
+1 F Query "DELETE FROM \"schema_migrations\" WHERE \"schema_migrations\".\"version\" = '20260101000002'"
+1 B CommandComplete "DELETE 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid),\n                pg_catalog.obj_description(i.oid, 'pg_class') AS comment, d.indisvalid,\n                ARRAY(\n                  SELECT pg_get_indexdef(d.indexrelid, k + 1, true)\n                  FROM generate_subscripts(d.indkey, 1) AS k\n                  ORDER BY k\n                ) AS columns\nFROM pg_class t\nINNER JOIN pg_index d ON t.oid = d.indrelid\nINNER JOIN pg_class i ON d.indexrelid = i.oid\nLEFT JOIN pg_namespace n ON n.oid = t.relnamespace\nWHERE i.relkind IN ('i', 'I')\n  AND d.indisprimary = 'f'\n  AND t.relname = 'compat_items'\n  AND n.nspname = ANY (current_schemas(false))\nORDER BY i.relname\n"
+1 B RowDescription [("relname" 1259 2 19 64 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indkey" 2610 16 22 -1 -1 0) ("pg_get_indexdef" 0 0 25 -1 -1 0) ("comment" 0 0 25 -1 -1 0) ("indisvalid" 2610 11 16 1 -1 0) ("columns" 0 0 1009 -1 -1 0)]
+1 B DataRow ["index_compat_items_on_name" "t" "2" "CREATE UNIQUE INDEX index_compat_items_on_name ON public.compat_items USING btree (name)" NULL "t" "{name}"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Query "DROP INDEX  \"index_compat_items_on_name\""
+1 B CommandComplete "DROP INDEX"
+1 B ReadyForQuery T
+1 F Query "DROP TABLE \"compat_items\""
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery T
+1 F Query "DROP TYPE \"compat_mood\";\n"
+1 B CommandComplete "DROP TYPE"
+1 B ReadyForQuery T
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typname IN ('int2', 'int4', 'int8', 'oid', 'float4', 'float8', 'text', 'varchar', 'char', 'name', 'bpchar', 'bool', 'bit', 'varbit', 'date', 'money', 'bytea', 'point', 'hstore', 'json', 'jsonb', 'cidr', 'inet', 'uuid', 'xml', 'tsvector', 'macaddr', 'citext', 'ltree', 'line', 'lseg', 'box', 'path', 'polygon', 'circle', 'numeric', 'interval', 'time', 'timestamp', 'timestamptz')\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["16" "bool" "0" "," "boolin" NULL "b" "0"]
+1 B DataRow ["17" "bytea" "0" "," "byteain" NULL "b" "0"]
+1 B DataRow ["18" "char" "0" "," "charin" NULL "b" "0"]
+1 B DataRow ["19" "name" "18" "," "namein" NULL "b" "0"]
+1 B DataRow ["20" "int8" "0" "," "int8in" NULL "b" "0"]
+1 B DataRow ["21" "int2" "0" "," "int2in" NULL "b" "0"]
+1 B DataRow ["23" "int4" "0" "," "int4in" NULL "b" "0"]
+1 B DataRow ["25" "text" "0" "," "textin" NULL "b" "0"]
+1 B DataRow ["26" "oid" "0" "," "oidin" NULL "b" "0"]
+1 B DataRow ["114" "json" "0" "," "json_in" NULL "b" "0"]
+1 B DataRow ["142" "xml" "0" "," "xml_in" NULL "b" "0"]
+1 B DataRow ["600" "point" "701" "," "point_in" NULL "b" "0"]
+1 B DataRow ["601" "lseg" "600" "," "lseg_in" NULL "b" "0"]
+1 B DataRow ["602" "path" "0" "," "path_in" NULL "b" "0"]
+1 B DataRow ["603" "box" "600" ";" "box_in" NULL "b" "0"]
+1 B DataRow ["604" "polygon" "0" "," "poly_in" NULL "b" "0"]
+1 B DataRow ["628" "line" "701" "," "line_in" NULL "b" "0"]
+1 B DataRow ["700" "float4" "0" "," "float4in" NULL "b" "0"]
+1 B DataRow ["701" "float8" "0" "," "float8in" NULL "b" "0"]
+1 B DataRow ["718" "circle" "0" "," "circle_in" NULL "b" "0"]
+1 B DataRow ["790" "money" "0" "," "cash_in" NULL "b" "0"]
+1 B DataRow ["829" "macaddr" "0" "," "macaddr_in" NULL "b" "0"]
+1 B DataRow ["869" "inet" "0" "," "inet_in" NULL "b" "0"]
+1 B DataRow ["650" "cidr" "0" "," "cidr_in" NULL "b" "0"]
+1 B DataRow ["1042" "bpchar" "0" "," "bpcharin" NULL "b" "0"]
+1 B DataRow ["1043" "varchar" "0" "," "varcharin" NULL "b" "0"]
+1 B DataRow ["1082" "date" "0" "," "date_in" NULL "b" "0"]
+1 B DataRow ["1083" "time" "0" "," "time_in" NULL "b" "0"]
+1 B DataRow ["1114" "timestamp" "0" "," "timestamp_in" NULL "b" "0"]
+1 B DataRow ["1184" "timestamptz" "0" "," "timestamptz_in" NULL "b" "0"]
+1 B DataRow ["1186" "interval" "0" "," "interval_in" NULL "b" "0"]
+1 B DataRow ["1560" "bit" "0" "," "bit_in" NULL "b" "0"]
+1 B DataRow ["1562" "varbit" "0" "," "varbit_in" NULL "b" "0"]
+1 B DataRow ["1700" "numeric" "0" "," "numeric_in" NULL "b" "0"]
+1 B DataRow ["2950" "uuid" "0" "," "uuid_in" NULL "b" "0"]
+1 B DataRow ["3614" "tsvector" "0" "," "tsvectorin" NULL "b" "0"]
+1 B DataRow ["3802" "jsonb" "0" "," "jsonb_in" NULL "b" "0"]
+1 B CommandComplete "SELECT 37"
+1 B ReadyForQuery T
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typtype IN ('r', 'e', 'd')\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["3904" "int4range" "0" "," "range_in" "23" "r" "0"]
+1 B DataRow ["3906" "numrange" "0" "," "range_in" "1700" "r" "0"]
+1 B DataRow ["3908" "tsrange" "0" "," "range_in" "1114" "r" "0"]
+1 B DataRow ["3910" "tstzrange" "0" "," "range_in" "1184" "r" "0"]
+1 B DataRow ["3912" "daterange" "0" "," "range_in" "1082" "r" "0"]
+1 B DataRow ["3926" "int8range" "0" "," "range_in" "20" "r" "0"]
+1 B DataRow ["13354" "cardinal_number" "0" "," "domain_in" NULL "d" "23"]
+1 B DataRow ["13357" "character_data" "0" "," "domain_in" NULL "d" "1043"]
+1 B DataRow ["13359" "sql_identifier" "0" "," "domain_in" NULL "d" "19"]
+1 B DataRow ["13365" "time_stamp" "0" "," "domain_in" NULL "d" "1184"]
+1 B DataRow ["13367" "yes_or_no" "0" "," "domain_in" NULL "d" "1043"]
+1 B CommandComplete "SELECT 11"
+1 B ReadyForQuery T
+1 F Query "SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, t.typtype, t.typbasetype\nFROM pg_type as t\nLEFT JOIN pg_range as r ON oid = rngtypid\nWHERE\n  t.typelem IN (16, 17, 18, 19, 20, 21, 23, 25, 26, 114, 142, 600, 601, 602, 603, 604, 628, 700, 701, 718, 790, 829, 869, 650, 1042, 1043, 1082, 1083, 1114, 1184, 1186, 1560, 1562, 1700, 2950, 3614, 3802, 13354, 13357, 13359, 13365, 13367, 3904, 3906, 3908, 3910, 3912, 3926)\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typinput" 1247 16 24 4 -1 0) ("rngsubtype" 3541 2 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0)]
+1 B DataRow ["19" "name" "18" "," "namein" NULL "b" "0"]
+1 B DataRow ["22" "int2vector" "21" "," "int2vectorin" NULL "b" "0"]
+1 B DataRow ["30" "oidvector" "26" "," "oidvectorin" NULL "b" "0"]
+1 B DataRow ["600" "point" "701" "," "point_in" NULL "b" "0"]
+1 B DataRow ["601" "lseg" "600" "," "lseg_in" NULL "b" "0"]
+1 B DataRow ["603" "box" "600" ";" "box_in" NULL "b" "0"]
+1 B DataRow ["628" "line" "701" "," "line_in" NULL "b" "0"]
+1 B DataRow ["1000" "_bool" "16" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1001" "_bytea" "17" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1002" "_char" "18" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1003" "_name" "19" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1016" "_int8" "20" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1005" "_int2" "21" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1007" "_int4" "23" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1009" "_text" "25" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1028" "_oid" "26" "," "array_in" NULL "b" "0"]
+1 B DataRow ["199" "_json" "114" "," "array_in" NULL "b" "0"]
+1 B DataRow ["143" "_xml" "142" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1017" "_point" "600" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1018" "_lseg" "601" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1019" "_path" "602" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1020" "_box" "603" ";" "array_in" NULL "b" "0"]
+1 B DataRow ["1027" "_polygon" "604" "," "array_in" NULL "b" "0"]
+1 B DataRow ["629" "_line" "628" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1021" "_float4" "700" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1022" "_float8" "701" "," "array_in" NULL "b" "0"]
+1 B DataRow ["719" "_circle" "718" "," "array_in" NULL "b" "0"]
+1 B DataRow ["791" "_money" "790" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1040" "_macaddr" "829" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1041" "_inet" "869" "," "array_in" NULL "b" "0"]
+1 B DataRow ["651" "_cidr" "650" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1014" "_bpchar" "1042" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1015" "_varchar" "1043" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1182" "_date" "1082" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1183" "_time" "1083" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1115" "_timestamp" "1114" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1185" "_timestamptz" "1184" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1187" "_interval" "1186" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1561" "_bit" "1560" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1563" "_varbit" "1562" "," "array_in" NULL "b" "0"]
+1 B DataRow ["1231" "_numeric" "1700" "," "array_in" NULL "b" "0"]
+1 B DataRow ["2951" "_uuid" "2950" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3643" "_tsvector" "3614" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3807" "_jsonb" "3802" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3905" "_int4range" "3904" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3907" "_numrange" "3906" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3909" "_tsrange" "3908" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3911" "_tstzrange" "3910" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3913" "_daterange" "3912" "," "array_in" NULL "b" "0"]
+1 B DataRow ["3927" "_int8range" "3926" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13353" "_cardinal_number" "13354" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13356" "_character_data" "13357" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13358" "_sql_identifier" "13359" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13364" "_time_stamp" "13365" "," "array_in" NULL "b" "0"]
+1 B DataRow ["13366" "_yes_or_no" "13367" "," "array_in" NULL "b" "0"]
+1 B CommandComplete "SELECT 55"
+1 B ReadyForQuery T
+1 F Query "DELETE FROM \"schema_migrations\" WHERE \"schema_migrations\".\"version\" = '20260101000001'"
+1 B CommandComplete "DELETE 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "SELECT pg_advisory_unlock(5062682877816473070)"
+1 B RowDescription [("pg_advisory_unlock" 0 0 16 1 -1 0)]
+1 B DataRow ["t"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE \"schema_migrations\""
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE \"ar_internal_metadata\""
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End

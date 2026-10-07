@@ -164,6 +164,7 @@ mod tests {
                     "package.json",
                     "pom.xml",
                     "scenario.csproj",
+                    "Gemfile",
                 ]
                 .iter()
                 .filter_map(|f| std::fs::read_to_string(dir.join(f)).ok())
