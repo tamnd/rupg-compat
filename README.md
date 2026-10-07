@@ -78,6 +78,7 @@ cargo run --release -- bisect corpus/reduced/case.sql
 cargo run --release -- tap
 cargo run --release -- jepsen
 cargo run --release -- report
+cargo run --release -- reference --check
 ```
 
 Every command takes `--compat-version V`, which sets `rupg.compat_version` on rupg and picks the oracle of version V. `up` starts the servers, and `client`, `regress`, `isolation`, `tap` and `jepsen` each run one suite. Replay maps OIDs, runs a new SCRAM exchange for each server, and rewrites the key of each `CancelRequest`.
@@ -101,7 +102,7 @@ oracle/            build scripts for the six oracles
 src/               the runner, the proxy, the comparison, the generator
 clients/<name>/    run.sh, oracle-fail.txt, expected-fail.txt
 corpus/            traces, the differential corpus, reduced cases
-shim/<N>/          divergences.toml for each shim version
+shim/<N>/          divergences.toml, and the reference output of the oracle of N in reference/
 jepsen/            the Jepsen and Elle workloads
 ratchet.toml       the best number of each row
 reports/<date>/    one table for each level, and each shim version

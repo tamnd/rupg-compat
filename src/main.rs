@@ -28,6 +28,7 @@ mod message;
 mod oracle;
 mod pins;
 mod proxy;
+mod reference;
 mod replay;
 mod report;
 mod scram;
@@ -74,6 +75,10 @@ commands:
                             table for each level and version and the exclusions of each run, then check each row
                             of ratchet.toml (--compat-version N for one version, --date YYYY-MM-DD, --out DIR,
                             --ratchet FILE, --raise to write the numbers above the ratchet to it)
+  reference                 write shim/N/reference/ for the shim versions 14 to 18 from the oracle runs of the
+                            work directory: a SHA-256 of each answer of the catalog and parameter suites, and
+                            the result of each suite (--compat-version N for one version, --shim DIR,
+                            --check to compare the runs with the files and write nothing)
 
 options:
   --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
@@ -123,6 +128,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("diff") => return diff_command(args, &pins),
         Some("import") => return import_command(args, &pins),
         Some("report") => return report_command(args, &pins),
+        Some("reference") => return reference_command(args, &pins),
         Some(suite @ ("catalog" | "parameters")) => return introspect_command(args, &pins, suite),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
@@ -685,6 +691,106 @@ fn report_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         out!("ratchet: wrote {} rows to {}", check.above.len(), ratchet_file.display());
     }
     Ok(if check.below.is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Writes or checks the reference outputs of the shim suites (spec/03 section 3.15, item 7).
+fn reference_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(&["compat-version", "check", "shim"])?;
+    let work = args.work_dir();
+    let shim = PathBuf::from(args.get("shim").unwrap_or("shim"));
+    let shims: Vec<&pins::Pin> =
+        pins.postgres.iter().filter(|p| p.major != pins.reference).rev().collect();
+    let versions: Vec<&pins::Pin> = match args.number::<u32>("compat-version")? {
+        Some(v) => match shims.iter().find(|p| p.major == v) {
+            Some(p) => vec![p],
+            None if v == pins.reference => {
+                return Err(format!("{v} is the reference version and has no shim"));
+            }
+            None => return Err(format!("pins.toml has no PostgreSQL {v}")),
+        },
+        None => shims,
+    };
+    let checking = args.flag("check");
+    let mut failed = 0;
+    for pin in versions {
+        let v = pin.major;
+        let dir = shim.join(v.to_string()).join("reference");
+        let mut records = Vec::new();
+        for suite in reference::SUITES {
+            let path = suites::result_file(&work, v, suite, "oracle");
+            let text =
+                std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+            let r = report::Record::parse(&text).map_err(|e| format!("{}: {e}", path.display()))?;
+            if r.commit != pin.commit {
+                return Err(format!(
+                    "{}: the commit is {}, but the pin of {v} is {}",
+                    path.display(),
+                    r.commit,
+                    pin.commit
+                ));
+            }
+            records.push(r);
+        }
+        let mut digests = Vec::new();
+        for suite in reference::DIGEST_SUITES {
+            let run = work.join("runs").join(v.to_string()).join(format!("{suite}-oracle"));
+            let read = |name: &str| trace::Trace::read(&run.join(name)).map(|t| t.lines);
+            let entries = reference::entries(&read("oracle-1.trace")?, &read("oracle-2.trace")?)
+                .map_err(|e| format!("{}: {e}", run.display()))?;
+            let started = &records.iter().find(|r| r.suite == suite).expect("a suite").started;
+            digests.push((suite, entries, started.clone()));
+        }
+        if checking {
+            for (suite, entries, _) in &digests {
+                let path = dir.join(format!("{suite}.sha256"));
+                let text = std::fs::read_to_string(&path)
+                    .map_err(|e| format!("{}: {e}", path.display()))?;
+                let old = reference::read_entries(&text)
+                    .map_err(|e| format!("{}: {e}", path.display()))?;
+                let c = reference::check(&old, entries);
+                out!(
+                    "{v} {suite}: {} equal, {} unstable, {} differ",
+                    c.equal,
+                    c.unstable,
+                    c.differ.len()
+                );
+                for ((conn, group), query, why) in &c.differ {
+                    out!("  {conn}.{group} {query}: {why}");
+                }
+                failed += c.differ.len();
+            }
+            let path = dir.join("suites.toml");
+            let old =
+                std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+            let now = reference::write_suites(v, &pin.commit, &records);
+            for diff in reference::check_suites(&old, &now)? {
+                out!("{v} suites.toml: {diff}");
+                failed += 1;
+            }
+            continue;
+        }
+        std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+        for (suite, entries, started) in &digests {
+            let header = [
+                format!("The answers of the {suite} suite on the oracle of {v} (spec/03 section 3.15)."),
+                format!("PostgreSQL {} {}, run started {started}.", pin.release, pin.commit),
+                "Written by `rupg-compat reference`. `rupg-compat reference --check` compares new runs with this file.".to_string(),
+            ];
+            let path = dir.join(format!("{suite}.sha256"));
+            std::fs::write(&path, reference::write_entries(&header, entries))
+                .map_err(|e| format!("{}: {e}", path.display()))?;
+            let unstable = entries.iter().filter(|e| e.digest.is_none()).count();
+            out!("{}: {} answers, {unstable} unstable", path.display(), entries.len());
+        }
+        let path = dir.join("suites.toml");
+        std::fs::write(&path, reference::write_suites(v, &pin.commit, &records))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        out!("{}: {} suites", path.display(), records.len());
+    }
+    if checking {
+        out!("reference: {failed} differences");
+    }
+    Ok(if failed == 0 { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Prints each exclusion of spec/05 section 5.3 and each rule of section 5.2 with its counts.

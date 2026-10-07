@@ -142,6 +142,8 @@ struct Context {
     language_c: bool,
     statistics: bool,
     sizes: bool,
+    /// The query reads `pg_shmem_allocations`, whose sizes and offsets grow while the server runs.
+    shared_memory: bool,
     time: bool,
     files: bool,
     version: bool,
@@ -201,6 +203,7 @@ impl Context {
                 || s.split(';').any(|st| st.trim_start().starts_with("load ")),
             statistics: s.contains("pg_stat"),
             sizes: s.contains("_size(") || s.contains("pg_size_pretty"),
+            shared_memory: s.contains("shmem_allocations"),
             time: TIME_FUNCTIONS.iter().any(|f| s.contains(f)),
             files: FILE_FUNCTIONS.iter().any(|f| s.contains(f)),
             version: s.contains("version()"),
@@ -351,6 +354,7 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     }
     if ["relpages", "relallvisible", "relallfrozen"].contains(&name)
         || ctx.sizes && (NUMERIC_TYPES.contains(&ty) || name.contains("size"))
+        || ctx.shared_memory && (name == "off" || name.contains("size"))
     {
         return Some(5);
     }
@@ -656,6 +660,45 @@ pub(crate) fn compare(want: &[Line], got: &[Line], skip: &BTreeSet<Place>) -> Ou
     out
 }
 
+/// One group of a trace after the rules of spec/05 section 5.2 and the exclusions of section 5.3.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Answer {
+    pub(crate) place: Place,
+    /// The text of the `Query` messages of the group.
+    pub(crate) query: String,
+    /// The backend messages, as trace text. Two answers are equal for `compare` when these texts are equal.
+    pub(crate) messages: Vec<String>,
+    pub(crate) rows: usize,
+}
+
+/// The answers of each group of a trace, after the rules and the exclusions. The shim references store a digest of each answer.
+pub(crate) fn answers(lines: &[Line]) -> Vec<Answer> {
+    let mut out = Vec::new();
+    for (conn, gs) in groups(lines) {
+        let replication = startup_has_replication(&gs);
+        let mut prepared = BTreeMap::new();
+        let mut cols = Columns::default();
+        for (i, g) in gs.iter().enumerate() {
+            let ctx = context(g, &mut prepared, replication);
+            let shown = show(g, &ctx, &mut cols);
+            let query: Vec<String> = g
+                .front
+                .iter()
+                .filter(|m| m.name() == "Query")
+                .filter_map(|m| m.vals.first()?.bytes())
+                .map(|b| String::from_utf8_lossy(b).into_owned())
+                .collect();
+            out.push(Answer {
+                place: (conn, i),
+                query: query.join("; "),
+                messages: shown.iter().map(|s| format_msg(&s.msg)).collect(),
+                rows: shown.iter().filter(|s| s.msg.name() == "DataRow").count(),
+            });
+        }
+    }
+    out
+}
+
 /// The unstable filter of spec/21 section 21.1: the groups whose answers differ between two runs on the oracle.
 pub(crate) fn unstable(first: &[Line], second: &[Line]) -> BTreeSet<Place> {
     compare(first, second, &BTreeSet::new()).diffs.into_keys().collect()
@@ -832,6 +875,25 @@ mod tests {
         let o = run(&q(sql, &d, "\"pg_database\" \"f\""), &q(sql, &d, "\"pg_database\" \"t\""));
         assert!(o.diffs.is_empty());
         let o = run(&q(sql, &d, "\"pg_database\" \"f\""), &q(sql, &d, "\"pg_class\" \"f\""));
+        assert_eq!(o.diffs.len(), 1);
+    }
+
+    #[test]
+    fn the_sizes_of_shared_memory_are_out() {
+        let q = |row: &str| {
+            format!(
+                "1 F Query \"SELECT * FROM pg_catalog.pg_shmem_allocations\"\n\
+                 1 B RowDescription [(\"name\" 0 0 25 -1 -1 0) (\"off\" 0 0 20 8 -1 0) (\"size\" 0 0 20 8 -1 0) (\"allocated_size\" 0 0 20 8 -1 0)]\n\
+                 1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let o = run(
+            &q("NULL \"148556672\" \"2192512\" \"2192512\""),
+            &q("NULL \"148558720\" \"2190464\" \"2190464\""),
+        );
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[4], Count { applied: 3, differed: 3 });
+        let o = run(&q("\"a\" \"1\" \"2\" \"2\""), &q("\"b\" \"1\" \"2\" \"2\""));
         assert_eq!(o.diffs.len(), 1);
     }
 

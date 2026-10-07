@@ -1,0 +1,1143 @@
+# The answers of the parameters suite on the oracle of 17 (spec/03 section 3.15).
+# PostgreSQL 17.11 083ac033419f690758508e08c1736089384bbee8, run started 2026-10-07T13:10:21Z.
+# Written by `rupg-compat reference`. `rupg-compat reference --check` compares new runs with this file.
+# digest, connection.group, messages, rows, query
+aac115b97cdb29109b51fc4ead4aaf764f8bc3c89e1ad94442d22ae0fc9d15cd 1.0 382 379 SHOW ALL
+9e177f9df0f8b992f07283f2d790b077726b912918614370ff95b7de230676bb 1.1 382 379 SELECT * FROM pg_catalog.pg_settings
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.2 2 0 SET DateStyle TO DEFAULT
+eac2672109031b737803bdfba022fcd4c6ceb3ad120500429ec5154903aa7f75 1.3 4 1 SELECT pg_catalog.set_config('DateStyle', 'ISO, MDY', false)
+f23c473cbe78fe648e71502b82e4c767a9c8d68f32630e22b71e7a454fa0a0e0 1.4 4 1 SHOW DateStyle
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.5 2 0 SET IntervalStyle TO DEFAULT
+fa3dbf6b8ff69a6c7d9cb00578596b80703bdc34e9a0e5150a1d6f9499efc09b 1.6 4 1 SELECT pg_catalog.set_config('IntervalStyle', 'postgres', false)
+1641912a9ae59da166d3e2c77201d138e767e9f06766fcf802a5d686980c3356 1.7 4 1 SHOW IntervalStyle
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.8 2 0 SET TimeZone TO DEFAULT
+835e031c0add83199f5fad88b5d7b8dd234608c808e6708ae45a74c3131fd48f 1.9 4 1 SELECT pg_catalog.set_config('TimeZone', 'UTC', false)
+90a74a54f909e227834eb0680e7c57e4297a89546ce7409757aaee0b1f819590 1.10 4 1 SHOW TimeZone
+973153ff768cd6cb7acdb356754cb9b773273572e5a6fbb24f5a10d12d4e0c24 1.11 2 0 SET allow_alter_system TO DEFAULT
+b58364ca5572b8865253566bc94eb850db664a9de87fabaca6e817144980ca58 1.12 3 0 SELECT pg_catalog.set_config('allow_alter_system', 'on', false)
+b81915b2310776ba4e0c221135e0c0eaca6a25486129680f03d761c56f46792f 1.13 4 1 SHOW allow_alter_system
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.14 2 0 SET allow_in_place_tablespaces TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.15 4 1 SELECT pg_catalog.set_config('allow_in_place_tablespaces', 'off', false)
+30c6c6ae417d1b94a798f4650af0415c419dc2820497fb16713da4022d1b9d75 1.16 4 1 SHOW allow_in_place_tablespaces
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.17 2 0 SET allow_system_table_mods TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.18 4 1 SELECT pg_catalog.set_config('allow_system_table_mods', 'off', false)
+803969c0e735da120f7494f0fcceb3479e980bdc17b9ee89f72b2c1bae0e1fbd 1.19 4 1 SHOW allow_system_table_mods
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.20 2 0 SET application_name TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.21 4 1 SELECT pg_catalog.set_config('application_name', '', false)
+68ab8b2b38ba1e044c4d6d17efbec4f8c2f0c4a29e89b63a0d3995bef0ec1f30 1.22 4 1 SHOW application_name
+3fc1ca9c8a9ad007fe1f0e6e4fa9b1226eae01da357077d81a344e1e19d2adb5 1.23 2 0 SET archive_cleanup_command TO DEFAULT
+eaf13e52fa814128bc97dbded075f355bd0ca91366e5c134d0c0124ecfb92bd3 1.24 3 0 SELECT pg_catalog.set_config('archive_cleanup_command', '', false)
+fb0d029e77e54977e50e3a4b306d419b792afd0215d711af76254bc1e7205dce 1.25 4 1 SHOW archive_cleanup_command
+47c407925cad7076611fe80648d0737189dcac409122f80985ed21992a63ee6b 1.26 2 0 SET archive_command TO DEFAULT
+1cd5dfdb74bebd34245b5a01fdb165de694dd1cb0feaa8d54a1c56643bdc8ff7 1.27 3 0 SELECT pg_catalog.set_config('archive_command', '(disabled)', false)
+60218debd58879a028d97a0fb8d594d728f4997c7be3c91d5f8439bdfb502c37 1.28 4 1 SHOW archive_command
+bb2bfa9c28c74eda030c44a7881c6e88d8f0f133c7719c4580fc7c52e5e00665 1.29 2 0 SET archive_library TO DEFAULT
+553345e40a9ceb6a2b671540850beacc1f98c6b54acf89aa35046822dfc67838 1.30 3 0 SELECT pg_catalog.set_config('archive_library', '', false)
+c3a7d5724b375123f46fa86d414ac87a10693c1f88c038b692133c46bbeaabb7 1.31 4 1 SHOW archive_library
+c70a567dc7cf512f5b1d6632dda3c604122a8398ffaf3b857e42f6640a268543 1.32 2 0 SET archive_mode TO DEFAULT
+0ed88af4e0564ed5e3134e502b153a4652f966f3bd3a42e4dfe9c7da770efb78 1.33 3 0 SELECT pg_catalog.set_config('archive_mode', 'off', false)
+7155ee0d2a253d0d9db11f0ccab6aef50d2aab88830f25e0e3334a118c572cc3 1.34 4 1 SHOW archive_mode
+11a1bcd65e39e13a87512737abd7be374dd3aff6d328370f77783cded73f30e6 1.35 2 0 SET archive_timeout TO DEFAULT
+b4d6d14a9e20d7787b2a32abdf99d2f802ffd8d2c7bbe4c473c4cebf7e7476eb 1.36 3 0 SELECT pg_catalog.set_config('archive_timeout', '0', false)
+302d9c1279e1fce2f33fd3c1477754754a609d16bbfe6badd9ef209ce3599985 1.37 4 1 SHOW archive_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.38 2 0 SET array_nulls TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.39 4 1 SELECT pg_catalog.set_config('array_nulls', 'on', false)
+67f2f8bfc6bf3efd4928ac5e79e670f459d0de36cf6eb3671a8659378566f82d 1.40 4 1 SHOW array_nulls
+f242d4e7481ba5153648370cfdee193979e68ee2299957594a55a14ccaec917e 1.41 2 0 SET authentication_timeout TO DEFAULT
+119c64a60073fedbee6e7ab6599e11a4f423416f3d2b0ff4a0214f067950252f 1.42 3 0 SELECT pg_catalog.set_config('authentication_timeout', '1min', false)
+aa304e5a9b2d7f126dedaf9fe3a98f586433341223865442f68c48451481b793 1.43 4 1 SHOW authentication_timeout
+d759b8921dfa10c78dc4c79ef06c6f2f55dbbd427f99cc756cdf4c2a3b9bf1d8 1.44 2 0 SET autovacuum TO DEFAULT
+85715adc4a2d584dce5b512eb59a067f5e0a055a9105d29d8568e06d55939459 1.45 3 0 SELECT pg_catalog.set_config('autovacuum', 'on', false)
+08805620ff9d2fa4e16fd89eb7dbe448e79bcd8fd0e5250be9d33ca816c0b642 1.46 4 1 SHOW autovacuum
+5b339ccad008f36417eae7332840d37122412ac497c3ec7cb99e0f1e23171fa1 1.47 2 0 SET autovacuum_analyze_scale_factor TO DEFAULT
+cfc72b97ea5dcc2d3988bc4020a8afce7c250dfbd60da1d093f50e42016b8350 1.48 3 0 SELECT pg_catalog.set_config('autovacuum_analyze_scale_factor', '0.1', false)
+3df5f254e77d474a4832000ea7ad11a2448faed55f416cfe95f1568d727465ee 1.49 4 1 SHOW autovacuum_analyze_scale_factor
+65bfc3e88435f85f7cdf3c053edf6161c99724fe8f836ad36b509231a1fbc085 1.50 2 0 SET autovacuum_analyze_threshold TO DEFAULT
+245cd751b8c6dba5c2cd787a2832ce3a1cfd291055c1d078101e6c961130fc44 1.51 3 0 SELECT pg_catalog.set_config('autovacuum_analyze_threshold', '50', false)
+482ca1ac3a200eec08077a7cffa6946f517ecba482a31b2e5292ab2275417f78 1.52 4 1 SHOW autovacuum_analyze_threshold
+c30d39f25a09863f478cab347f861b28ffa43a50b0a64d1d0fa48408f1403513 1.53 2 0 SET autovacuum_freeze_max_age TO DEFAULT
+8e1626452193af76067cba6eaed48716f30cca393cdfacb8c86e13f24bb7de75 1.54 3 0 SELECT pg_catalog.set_config('autovacuum_freeze_max_age', '200000000', false)
+8f4e4163ae90948516c0bc993948bc7c7516825cda685a54a0da963dbb363878 1.55 4 1 SHOW autovacuum_freeze_max_age
+5d58c6bde8e704a5d1fa56946febc548088169c1c1a384aad703c3c37fda2793 1.56 2 0 SET autovacuum_max_workers TO DEFAULT
+48b378e003e9b0f8ee77bd3bb661aab48e20d0696652719450e3bb9fa450aac4 1.57 3 0 SELECT pg_catalog.set_config('autovacuum_max_workers', '3', false)
+47105aeffbc183a5e92d0c2c0db063eafa69f22c534daa7a61cee59cfc94c37d 1.58 4 1 SHOW autovacuum_max_workers
+e404075b7acca9074d3fc4e19ea32354114742e9a35ea556d0b808ce952248ee 1.59 2 0 SET autovacuum_multixact_freeze_max_age TO DEFAULT
+011212dcddfa870fe1cf8e634d3ab316653c3a3d1e8aba6bf4d204c26d682270 1.60 3 0 SELECT pg_catalog.set_config('autovacuum_multixact_freeze_max_age', '400000000', false)
+0ea28fbb3fc44be74c72d5a34a2e9ef72f8d39f5f60a49d5a79c435a3fbbf5c8 1.61 4 1 SHOW autovacuum_multixact_freeze_max_age
+8d9b0d49cecffa61eb3a5ba2cacbc0a7d927a8c47f7645633efedce9fe1225cb 1.62 2 0 SET autovacuum_naptime TO DEFAULT
+a22709b7b8530d7d0b77e7cc4c5929235dbb1c32796cccae756d9d36f9ecfc04 1.63 3 0 SELECT pg_catalog.set_config('autovacuum_naptime', '1min', false)
+bbe034de77c344f145aeccefa0e9a59d053b39c670269bd32c89d768970cec4c 1.64 4 1 SHOW autovacuum_naptime
+9967bb5fd46635f4ac4161186b40eb3c7aac701e903f01c15a1aa6cbb98a1f1c 1.65 2 0 SET autovacuum_vacuum_cost_delay TO DEFAULT
+9bb21e5c7c2d280af1e0797de741bebd9e1de34ce025cc3259bf0dd7336bfd18 1.66 3 0 SELECT pg_catalog.set_config('autovacuum_vacuum_cost_delay', '2ms', false)
+c623a820bbd19327cfe6f664e3b68910f316b22a27bfad4243a2c46dad7a5a55 1.67 4 1 SHOW autovacuum_vacuum_cost_delay
+656aad7de2ad785aabc664042492e3b6983154562354ad898b926d67606b78e0 1.68 2 0 SET autovacuum_vacuum_cost_limit TO DEFAULT
+8cd9acdffb0798a694dd4d06090fc4cda76e2ecd553fe469939c32ca8cc3b549 1.69 3 0 SELECT pg_catalog.set_config('autovacuum_vacuum_cost_limit', '-1', false)
+28abd12c0cb41fd8906f7bf6afc5634cb442e5932f701b413ff66930936db72b 1.70 4 1 SHOW autovacuum_vacuum_cost_limit
+f7250a72b8d94f578cc3b4bd7d213b946eca452cc772c3de2d1dde2384bd85b1 1.71 2 0 SET autovacuum_vacuum_insert_scale_factor TO DEFAULT
+02870f9338145774076ab019d149093a897d7bb0850a3e3aea33b83b67d45067 1.72 3 0 SELECT pg_catalog.set_config('autovacuum_vacuum_insert_scale_factor', '0.2', false)
+b2be7dd7e88908f0ace203a8c2b35af1802b164c539f753a1495bdb0fa93cf24 1.73 4 1 SHOW autovacuum_vacuum_insert_scale_factor
+982abe691e6df8de941ac40cefe287da5aac7a4f973a6c7284f0ff5f22a3a260 1.74 2 0 SET autovacuum_vacuum_insert_threshold TO DEFAULT
+ae395f2132b9cc50bb5566fe9e4b229e5a919cb3cd5951efe8ca8e399b9091ff 1.75 3 0 SELECT pg_catalog.set_config('autovacuum_vacuum_insert_threshold', '1000', false)
+b0fe0fb29b3eebb2402f60e91fc0828d467a8307237d080fbdd2060df31174b9 1.76 4 1 SHOW autovacuum_vacuum_insert_threshold
+7233954f46aff50495acc405b8929b652bf10c8eb0749dfc18e5deb1a9aa63d2 1.77 2 0 SET autovacuum_vacuum_scale_factor TO DEFAULT
+896cbac59f6ca65df0cb3272ab21133f8e57dccc61a079a9286d250fa90b9693 1.78 3 0 SELECT pg_catalog.set_config('autovacuum_vacuum_scale_factor', '0.2', false)
+43f82f30b0298f86778f3bd663ed1e59d435cba947796790617f3e2636b6c74a 1.79 4 1 SHOW autovacuum_vacuum_scale_factor
+97f4fef6fa3148d68f5792813db9c71d0501fc38275679cded0274ec3c7db188 1.80 2 0 SET autovacuum_vacuum_threshold TO DEFAULT
+b4a6f0dbaa7aa555cf3b36433d4d565741e92a25c3c896dd331a6d73e1c2394d 1.81 3 0 SELECT pg_catalog.set_config('autovacuum_vacuum_threshold', '50', false)
+cc8320b2bfe7369a064ff7f59b32febb13e03c006040141fd89dc2ae0f4e05f3 1.82 4 1 SHOW autovacuum_vacuum_threshold
+b658d7385a31bbbc82d7430376900986e0811e14d5deba4cbf077c6334a389ab 1.83 2 0 SET autovacuum_work_mem TO DEFAULT
+6997a59e7b16d3d8598e8c3c7a78721dc5067183430efaa6defe070b32e56217 1.84 3 0 SELECT pg_catalog.set_config('autovacuum_work_mem', '-1', false)
+ee634cb0088d19439f977cf88291edcbe69c3c96a15d44028daaa62851cedf7c 1.85 4 1 SHOW autovacuum_work_mem
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.86 2 0 SET backend_flush_after TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.87 4 1 SELECT pg_catalog.set_config('backend_flush_after', '0', false)
+3ec0ad970cdad69c43ae5b5a69d136b3d836df9ea3728f73b99ec934650706a6 1.88 4 1 SHOW backend_flush_after
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.89 2 0 SET backslash_quote TO DEFAULT
+2158d3dda0a0cf75922f3d1cc99b69dfbe0fbf64345f6019d3d4107c8b1e3b9d 1.90 4 1 SELECT pg_catalog.set_config('backslash_quote', 'safe_encoding', false)
+973773234e35110f5cc3be9c2d5914814f5fab6c34777f0ba65a56f71ab96b93 1.91 4 1 SHOW backslash_quote
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.92 2 0 SET backtrace_functions TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.93 4 1 SELECT pg_catalog.set_config('backtrace_functions', '', false)
+143dc2176c4bd23d64035badd6dfc3c73046e20584db1f1b1a6cec63baa22a6c 1.94 4 1 SHOW backtrace_functions
+2c8110e4faa88effad3721b67ab7465644f6518f988205e38af5d4379372ca4e 1.95 2 0 SET bgwriter_delay TO DEFAULT
+1fc9d5bbd2886a4f0bfbfae7e7e0018d068b83f63619083c947ccaca40482f92 1.96 3 0 SELECT pg_catalog.set_config('bgwriter_delay', '200ms', false)
+cb580b5664b4f6a9ad91c329659f07de45f8092c4e03075bf647846e805fbfe5 1.97 4 1 SHOW bgwriter_delay
+3e791342538ef4a44bf32b849c76adbc9cf7dc13875b2158380ae81fa04057a3 1.98 2 0 SET bgwriter_flush_after TO DEFAULT
+206d0922ee4a3d698b522da9c9ac33e716f96b84cf60cd1d5a91d800c9756d1a 1.99 3 0 SELECT pg_catalog.set_config('bgwriter_flush_after', '512kB', false)
+e3d406eb33358457f65d604cc9d0d2f11e8fbcc2732d44b31a2802a75a17bca6 1.100 4 1 SHOW bgwriter_flush_after
+128cf8518e185e9bbcec835df4b4942116b2c8b7e4e078ae08857a0d9dff589c 1.101 2 0 SET bgwriter_lru_maxpages TO DEFAULT
+b98c63f8c25aaed91d12e5024dd6df45612db1b2d77d6c09722472f3dc19efdd 1.102 3 0 SELECT pg_catalog.set_config('bgwriter_lru_maxpages', '100', false)
+2b1b2e883ecb3618b23a99ec5dc69d67258006f1fbe90337b9af88fff85645bd 1.103 4 1 SHOW bgwriter_lru_maxpages
+9a310fdbfd7687541575a09beb89841d15deeac55164e372b60fc47442301611 1.104 2 0 SET bgwriter_lru_multiplier TO DEFAULT
+d5dd2c2a771bca3d8bd387041091b9fe2692f202fef16342b697f5af648d6f6d 1.105 3 0 SELECT pg_catalog.set_config('bgwriter_lru_multiplier', '2', false)
+89f7f052e8573683c286aea1a67ff7304164d29a06e6dfff7e50b223eaa1a6a6 1.106 4 1 SHOW bgwriter_lru_multiplier
+f106454b6ac3cca2f43f9828c8761fab97d6fc103a06b3cdc627420d974b01df 1.107 2 0 SET block_size TO DEFAULT
+1f419de5df40b24cad12718073cc8ee859513f61fd4abd1d8ceb36e13477e94a 1.108 3 0 SELECT pg_catalog.set_config('block_size', '8192', false)
+1ad6d0f094dcc026f34e10fec19b24272b39ddbb8519596322349f7ddb3bee1e 1.109 4 1 SHOW block_size
+2766a981a4362e676c52473df5aef324f32af5ea3ed5d4b09d54685cbac1950b 1.110 2 0 SET bonjour TO DEFAULT
+f2fca2548f130dcd189e8ca112e5966d7e79fa08177c7cf895e21f9aa2737fb3 1.111 3 0 SELECT pg_catalog.set_config('bonjour', 'off', false)
+aa474c3665501fe3f9c958364b7e3c849e9abe2129ef1c5349f7c729cf81729a 1.112 4 1 SHOW bonjour
+b78da2148e4268ab2f4258dcdd442e25c29ff37c3caaa7fae9bb972830cb34f4 1.113 2 0 SET bonjour_name TO DEFAULT
+43e7e4e137e7043b695bb0166dcf335391ab570df35ac570b4f39a4df9d71405 1.114 3 0 SELECT pg_catalog.set_config('bonjour_name', '', false)
+18d41c349c98f3be230d22a8cfe8a5425c9517c268b4b31552bfcb2fd99a569c 1.115 4 1 SHOW bonjour_name
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.116 2 0 SET bytea_output TO DEFAULT
+77a1b1f9360c21e9a174252375a542a3f64b5a8a9eebd3fbdbf689521723d674 1.117 4 1 SELECT pg_catalog.set_config('bytea_output', 'hex', false)
+8f19b3a3fe2c87e5ec98dbf12bc0394dbe2abd9d9c4cef1d54fbf1f4cbcd4d23 1.118 4 1 SHOW bytea_output
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.119 2 0 SET check_function_bodies TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.120 4 1 SELECT pg_catalog.set_config('check_function_bodies', 'on', false)
+c925bd461b36b949de32fcfc8f1585c55e2ce0e74bbc512c26bf4df401c78cb0 1.121 4 1 SHOW check_function_bodies
+05a43027243da7449dbcd03699a3b117e1c5c5cf1759106432862969c5211782 1.122 2 0 SET checkpoint_completion_target TO DEFAULT
+dba1e5d7bbb2e4b0dfabd716ed2b985d87f5fe803789bedc5c931cad9b583055 1.123 3 0 SELECT pg_catalog.set_config('checkpoint_completion_target', '0.9', false)
+e26fa1388d508dfd4c910b9730790f7e6fe315a0db1417a1b4378846d5fa83a5 1.124 4 1 SHOW checkpoint_completion_target
+95d6379a207c9bfccd624bc58860df147ede9dce9e62905ae9a42107b3550598 1.125 2 0 SET checkpoint_flush_after TO DEFAULT
+9800171a3aabaa5ff14c031a882f54f8314e562a6c7167029b01baed0c6aeabe 1.126 3 0 SELECT pg_catalog.set_config('checkpoint_flush_after', '256kB', false)
+8e7c4efcf8b9f6a7b6d5d1e5532500a8568679011c3126421a8137882b549eda 1.127 4 1 SHOW checkpoint_flush_after
+74d718a23595d042a5c74b1c6138cf15d50bad88d6032a8147bc7f2c63e16614 1.128 2 0 SET checkpoint_timeout TO DEFAULT
+bc012a119aafe879575a7b2b8ad1e700ecd0598a96e04718f4a2bf70c42a53cd 1.129 3 0 SELECT pg_catalog.set_config('checkpoint_timeout', '5min', false)
+f97fda05c0e4b01ec3544ae157038e2da94df45b5cb47410068c9fe30002ba49 1.130 4 1 SHOW checkpoint_timeout
+f4829fd54b6f3c66f3e531f6ddcee1eff9face30fc7d23b2368be19a62a759d1 1.131 2 0 SET checkpoint_warning TO DEFAULT
+0dc94c6f72276946e4dc17ef1bd78b10a642c99cb3eead498ad20ee6bc1123e7 1.132 3 0 SELECT pg_catalog.set_config('checkpoint_warning', '30s', false)
+1bfdf19456bebf90d03b4738a4d40b732f4469891d67000df27539b00faa7b12 1.133 4 1 SHOW checkpoint_warning
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.134 2 0 SET client_connection_check_interval TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.135 4 1 SELECT pg_catalog.set_config('client_connection_check_interval', '0', false)
+2d49505d7864037815c484dabdc15c0cd06d835c92ed91e2fe59dfa68fcb91b4 1.136 4 1 SHOW client_connection_check_interval
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.137 2 0 SET client_encoding TO DEFAULT
+32a1db12f1ece687af4f0dd4128ba04555d74a68b22c443a6b8ea42dfe2fed1e 1.138 4 1 SELECT pg_catalog.set_config('client_encoding', 'UTF8', false)
+b937a193c9a8d1226dae303cb7350a1dd436d1027c8acc6bb6351eb17a002689 1.139 4 1 SHOW client_encoding
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.140 2 0 SET client_min_messages TO DEFAULT
+2ddbbfc90719417359c1f29263bf2b66e02ac971b323458f31e2c47e4ab99e16 1.141 4 1 SELECT pg_catalog.set_config('client_min_messages', 'notice', false)
+0c4e5a952377d770798daee8552771b1e768c386bbc48a40ede4c0c29a98b782 1.142 4 1 SHOW client_min_messages
+bf3453bd44116a6dd8296667ed67ee9fd178cbb06d8141f596ff9928d14b8464 1.143 2 0 SET cluster_name TO DEFAULT
+fbd90b144b0b0ef2d61e0af2911be6485974b5ea6a0fafca8d7ef972e0afc934 1.144 3 0 SELECT pg_catalog.set_config('cluster_name', '', false)
+5dd893b611d1f56928cafabec961668772587986434f125f0f0062164e8e92cd 1.145 4 1 SHOW cluster_name
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.146 2 0 SET commit_delay TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.147 4 1 SELECT pg_catalog.set_config('commit_delay', '0', false)
+acf86c3fd7df1621e7c6d49fb294221ee52be0ffe57805eb5034c7db651904c1 1.148 4 1 SHOW commit_delay
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.149 2 0 SET commit_siblings TO DEFAULT
+7e6951402e8b3dd1404e0ede0b6f8e89ac991b953c07f05c981e6f4cc25e0848 1.150 4 1 SELECT pg_catalog.set_config('commit_siblings', '5', false)
+5fa1ec93204f834dcf36e7230168baa0ad6eb222ca789dede25aebdad2a0cdcd 1.151 4 1 SHOW commit_siblings
+797b1cea74b2801a9ce7d52edbf9132ecbcc95c8dafdb82a023cefcb821cc1c5 1.152 2 0 SET commit_timestamp_buffers TO DEFAULT
+9febb05dbd547d579dbb601c82b496d79d6524011817e28fb7932db9ca516aa5 1.153 3 0 SELECT pg_catalog.set_config('commit_timestamp_buffers', '256kB', false)
+f070545dbfafdf94341b3e7395f0ba05e2769a2e6e4a2684d1b041d6d7b5565c 1.154 4 1 SHOW commit_timestamp_buffers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.155 2 0 SET compute_query_id TO DEFAULT
+6b8cbf879460c2d5ffcd1cd715e6c7e6007d001dc24b556c83f4fe1ef4453c80 1.156 4 1 SELECT pg_catalog.set_config('compute_query_id', 'auto', false)
+2355d7f0fb040867993d21eb96677978f69ab1ff036e2bfce65c1afc7cc5073b 1.157 4 1 SHOW compute_query_id
+a1cf8a19e6d84649ccfc6b68b4e2129fe28b5e42e509e1bbceab7a728d7e98d2 1.158 2 0 SET config_file TO DEFAULT
+ce8f197da5c3824bf58f56a1dfb0ce44fa0a48d5c763e020be1cf26b1c05c288 1.159 3 0 SELECT pg_catalog.set_config('config_file', '/home/tam/work/rupg-compat-oracles/oracle/17/data/postgresql.conf', false)
+0e5af4035776cec14338420c8231e32d586830843b2270cae2f933c35c05d698 1.160 4 1 SHOW config_file
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.161 2 0 SET constraint_exclusion TO DEFAULT
+3a180282ef8f29ad2c7f1cec36474778dc8d8cc7b48536e4eaf21bf29a05cd0d 1.162 4 1 SELECT pg_catalog.set_config('constraint_exclusion', 'partition', false)
+ad56b34f8644b6945071f2a28183ae383dee0da79fbd8213e40d8c1a302d7bc4 1.163 4 1 SHOW constraint_exclusion
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.164 2 0 SET cpu_index_tuple_cost TO DEFAULT
+e754b4fa7d758d9797b85fd91a54a817d674deff6273a0ef7c22823a4c050cc3 1.165 4 1 SELECT pg_catalog.set_config('cpu_index_tuple_cost', '0.005', false)
+b0640771f4accdacbb56f6620f3876bece3f488285e347158901fc6dc91bf966 1.166 4 1 SHOW cpu_index_tuple_cost
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.167 2 0 SET cpu_operator_cost TO DEFAULT
+8f7d44e95123814dbf106f9dcfacd86a99976e65b2c03116db5b0c8304db9748 1.168 4 1 SELECT pg_catalog.set_config('cpu_operator_cost', '0.0025', false)
+f87ec829be011583fcd551670a121d46a7e1fa3568ee3a35ac399906b474c364 1.169 4 1 SHOW cpu_operator_cost
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.170 2 0 SET cpu_tuple_cost TO DEFAULT
+1eba70d36d6adbd70906b6cccae662ac25c73524021ad1b75d23d75067fbd615 1.171 4 1 SELECT pg_catalog.set_config('cpu_tuple_cost', '0.01', false)
+0ff7678ce91046d0d13ef23726d955b3c3abc446ea21be366b5742eef4850c4c 1.172 4 1 SHOW cpu_tuple_cost
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.173 2 0 SET createrole_self_grant TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.174 4 1 SELECT pg_catalog.set_config('createrole_self_grant', '', false)
+db55815d67d054175c06514618a70751ece810ddd893d44c131d3836ef70456c 1.175 4 1 SHOW createrole_self_grant
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.176 2 0 SET cursor_tuple_fraction TO DEFAULT
+1ba0e7aa5d1f84123755c87497c495552b67f1bdde760ce3242e7cc7f11bb402 1.177 4 1 SELECT pg_catalog.set_config('cursor_tuple_fraction', '0.1', false)
+c74a13de4fdf5cfcef38ff36d2407f3d03865a8e0a59c757e66175baf5ae6b43 1.178 4 1 SHOW cursor_tuple_fraction
+9154e431cfbb9e928c09a79f5c9921284309ad84c4e41426e71f606c0724a206 1.179 2 0 SET data_checksums TO DEFAULT
+5a4dece17ec30bea32b5b28fa47dedf3e22b7cc95d1dac7d4741ea51dbdb24a6 1.180 3 0 SELECT pg_catalog.set_config('data_checksums', 'off', false)
+ff2b2f8d72a9efc0ba0360a5aa1879a3533e10d90d717a6211145f1774f7276e 1.181 4 1 SHOW data_checksums
+6639652dba26928b6e15dcf42e200773849d2d1c348d8145d017cdf9c8d59368 1.182 2 0 SET data_directory TO DEFAULT
+41af88028f2b022a1faeeac5dfce461bcb5ee134ec7ce6f6eab171cd1010e655 1.183 3 0 SELECT pg_catalog.set_config('data_directory', '/home/tam/work/rupg-compat-oracles/oracle/17/data', false)
+1243f0a3fd759e924b8837ed207d3b759d90749c325a268873e1b6c6dc7fa93e 1.184 4 1 SHOW data_directory
+7b5fbebb0249d56d2e3ccd60b0710250410af984450e1a17ec81c38c3b43ebaa 1.185 2 0 SET data_directory_mode TO DEFAULT
+0fa114d70e24d996a09b8b0f7a738f88fbf788271f77149adbf2df0d229ad3fb 1.186 3 0 SELECT pg_catalog.set_config('data_directory_mode', '0700', false)
+7aad6f7add0411347766f19bc9ca74bcbab2472b53cbf9c8641e552bca1103bd 1.187 4 1 SHOW data_directory_mode
+577f38fe45d167c5133a91d4c9bd16714c39b41ad1d8570338584b1a7f801b01 1.188 2 0 SET data_sync_retry TO DEFAULT
+feb64d6df4b91010af27957d71dfe3dc6e34412eed245275b9bf78991d94a224 1.189 3 0 SELECT pg_catalog.set_config('data_sync_retry', 'off', false)
+b52fb7a3f4e0d6d28ddb3b08c0518a635f228c41094363322da66e701f2076d0 1.190 4 1 SHOW data_sync_retry
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.191 2 0 SET deadlock_timeout TO DEFAULT
+11232e62e9a6865c5c154046ada8fcd4920ea1f17d1817e9dbf830b94b0663ff 1.192 4 1 SELECT pg_catalog.set_config('deadlock_timeout', '1s', false)
+2a2d36775167f4bab8742212d4f3fc0a84b42bc25ccb658058d89cc13705bfcf 1.193 4 1 SHOW deadlock_timeout
+f440f40b8c1d22c1824799f222466147150d970d62425712d04eddff3cbe78ae 1.194 2 0 SET debug_assertions TO DEFAULT
+fdf165513c116deceba8a73db45d1b43d7c3f4681deb148ac20d9b6c4ee1150b 1.195 3 0 SELECT pg_catalog.set_config('debug_assertions', 'off', false)
+4aaf77013aef7162180b0d578f142e934e811e7bb19ca8ecb875c56d774f3890 1.196 4 1 SHOW debug_assertions
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.197 2 0 SET debug_discard_caches TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.198 4 1 SELECT pg_catalog.set_config('debug_discard_caches', '0', false)
+5b92c5ab3e689193775c891c8cc9cbbe1506b387c1102d642a5d7978d10c3ea3 1.199 4 1 SHOW debug_discard_caches
+2ea23060518857b90ea41968d8aac78a25229149b97b0141286dd4d869476ae0 1.200 2 0 SET debug_io_direct TO DEFAULT
+c5d136883daa1993f4218fc1539c43405432f2601dd60454583184f6ea170dc9 1.201 3 0 SELECT pg_catalog.set_config('debug_io_direct', '', false)
+311fb0b2ef9e84d7038932d00e9b96c6d53decf66cf77bfd2902f4e32a0b393a 1.202 4 1 SHOW debug_io_direct
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.203 2 0 SET debug_logical_replication_streaming TO DEFAULT
+903de401c8f844808a296398155b4e38f7b8abfa47975822fb08274d6e2bf96d 1.204 4 1 SELECT pg_catalog.set_config('debug_logical_replication_streaming', 'buffered', false)
+08dc912c6f0c7cc992e30911b365a12f7e3891cdeb589ccb6544bc88ae7b808d 1.205 4 1 SHOW debug_logical_replication_streaming
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.206 2 0 SET debug_parallel_query TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.207 4 1 SELECT pg_catalog.set_config('debug_parallel_query', 'off', false)
+f273cd45a28e089b9c8f9663331db16c37588c8839b90bfdd55ac472ad532f12 1.208 4 1 SHOW debug_parallel_query
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.209 2 0 SET debug_pretty_print TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.210 4 1 SELECT pg_catalog.set_config('debug_pretty_print', 'on', false)
+8eaa3684f4d2c33d30d56b78ae5a67e11d338e5d1c972883c027ad4982d2778b 1.211 4 1 SHOW debug_pretty_print
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.212 2 0 SET debug_print_parse TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.213 4 1 SELECT pg_catalog.set_config('debug_print_parse', 'off', false)
+acd7092331c2b6ee6305909a9ecbfa13a1fe463aade120c5e090bf078e58f0bc 1.214 4 1 SHOW debug_print_parse
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.215 2 0 SET debug_print_plan TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.216 4 1 SELECT pg_catalog.set_config('debug_print_plan', 'off', false)
+63795ad630f50493f02a4b2e1ad577bdbebd9377ad4a037009c7401ab1a26b26 1.217 4 1 SHOW debug_print_plan
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.218 2 0 SET debug_print_rewritten TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.219 4 1 SELECT pg_catalog.set_config('debug_print_rewritten', 'off', false)
+4604966f6b040e579af8ff2a2e667007c59180fdf0434d7aa25997c9e0ee87f2 1.220 4 1 SHOW debug_print_rewritten
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.221 2 0 SET default_statistics_target TO DEFAULT
+f8dbd79586a8d04f861e3a0153fb55de24af928c23931909b6749066cfb82771 1.222 4 1 SELECT pg_catalog.set_config('default_statistics_target', '100', false)
+1ff2890a727fb049ce28ce8031b96ae1fc0ea0100dd9b4059faf8c1a40d3220a 1.223 4 1 SHOW default_statistics_target
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.224 2 0 SET default_table_access_method TO DEFAULT
+ad94bf45265ead0fc9ef20f8696fafa3fcd029ef88a7c8a3c60eaeb35a9bd95c 1.225 4 1 SELECT pg_catalog.set_config('default_table_access_method', 'heap', false)
+d2c5f44ab2a63ce8ca370b24fd5a0dcb0ab501fa411e4d946e64e2987f0b7317 1.226 4 1 SHOW default_table_access_method
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.227 2 0 SET default_tablespace TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.228 4 1 SELECT pg_catalog.set_config('default_tablespace', '', false)
+40a30ea62d587f7a83bcaafec4bccde39a0fcf6beabe10b91cb77cb3b31d1831 1.229 4 1 SHOW default_tablespace
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.230 2 0 SET default_text_search_config TO DEFAULT
+d908ea51c53d14a7407b6106b1b60202c4146a7975fc34114653bc9bf6fb7be4 1.231 4 1 SELECT pg_catalog.set_config('default_text_search_config', 'pg_catalog.english', false)
+c133c4067752c8e1dbacd36d6bea641448d91c9c0b5201bcd23002a6ef074fc3 1.232 4 1 SHOW default_text_search_config
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.233 2 0 SET default_toast_compression TO DEFAULT
+5ebd64e4a72cd989fa576312c1ff3ad18a062be11e7eb3b6b5ebf5b4214e99de 1.234 4 1 SELECT pg_catalog.set_config('default_toast_compression', 'pglz', false)
+e493b24de8139e98901f774ffa123f490e0714e0a15b29a88825287ee53a57fc 1.235 4 1 SHOW default_toast_compression
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.236 2 0 SET default_transaction_deferrable TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.237 4 1 SELECT pg_catalog.set_config('default_transaction_deferrable', 'off', false)
+4276edb5f48a3ffdde3dba3119311aa85b4cc6034663d3732c4bb9c0f4a71018 1.238 4 1 SHOW default_transaction_deferrable
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.239 2 0 SET default_transaction_isolation TO DEFAULT
+dd8699832137b5515544c8aef0dbbbbcd17b67bf3e2346292c437ff8f8f7eadb 1.240 4 1 SELECT pg_catalog.set_config('default_transaction_isolation', 'read committed', false)
+e942ef3cb92182e01fe8c166b902084ca52534c7d81fdbd4f1c827138fe34daa 1.241 4 1 SHOW default_transaction_isolation
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.242 2 0 SET default_transaction_read_only TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.243 4 1 SELECT pg_catalog.set_config('default_transaction_read_only', 'off', false)
+8e24734d7dff4166ac741f6e7ac9870e37acbf2e643503b10dc7644b52e8ad23 1.244 4 1 SHOW default_transaction_read_only
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.245 2 0 SET dynamic_library_path TO DEFAULT
+0cb6cecf05dcb85426d3567536bd9072f81782e0461e118eb83bb948ad31bb62 1.246 4 1 SELECT pg_catalog.set_config('dynamic_library_path', '$libdir', false)
+74a40566598b6fc1bbdfcf69d9956a760b2b11b4e6dfda231a9ed6c2d1edbd74 1.247 4 1 SHOW dynamic_library_path
+c1eab4b31d03214c38f939898e06159060b4711f1407851496e5b78263f58357 1.248 2 0 SET dynamic_shared_memory_type TO DEFAULT
+ca66444d0f1a12ff9a3feede66468e1b49db5364f10d29436360d39907fb8303 1.249 3 0 SELECT pg_catalog.set_config('dynamic_shared_memory_type', 'posix', false)
+335ffedda1abcda5ba2b7aae0aae469c495a8695efe96a31b3af61fb4117583d 1.250 4 1 SHOW dynamic_shared_memory_type
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.251 2 0 SET effective_cache_size TO DEFAULT
+bf434c0d8c9d4e0c08f384a02a89c2d47c93e26d7fd24c09390115fbc05ebc07 1.252 4 1 SELECT pg_catalog.set_config('effective_cache_size', '4GB', false)
+4fc6626b304bd517792eef96eec71541ceb4c2ccdacf9dadb72971b61da21c3b 1.253 4 1 SHOW effective_cache_size
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.254 2 0 SET effective_io_concurrency TO DEFAULT
+447bb08f809dfc701e48c0c9bc216622e828c330321dd29b42a86371c8852d6f 1.255 4 1 SELECT pg_catalog.set_config('effective_io_concurrency', '1', false)
+6ed0850acbbb0ab0dc59d18b510e77a06380205d60021d15d3c5763d72597298 1.256 4 1 SHOW effective_io_concurrency
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.257 2 0 SET enable_async_append TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.258 4 1 SELECT pg_catalog.set_config('enable_async_append', 'on', false)
+f9e0e6ccd662bf28f65f345a9449a2555ec1b15688edd1a3b8f4a22abcba6586 1.259 4 1 SHOW enable_async_append
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.260 2 0 SET enable_bitmapscan TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.261 4 1 SELECT pg_catalog.set_config('enable_bitmapscan', 'on', false)
+974a1008810a6bb91b33c757f97276970a2c00916ae4f1f041da1758be01b365 1.262 4 1 SHOW enable_bitmapscan
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.263 2 0 SET enable_gathermerge TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.264 4 1 SELECT pg_catalog.set_config('enable_gathermerge', 'on', false)
+627ff5e6e6b17ea231a2f7b7829a52ec3920c229c59fd11a38fc6cd289ae3efc 1.265 4 1 SHOW enable_gathermerge
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.266 2 0 SET enable_group_by_reordering TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.267 4 1 SELECT pg_catalog.set_config('enable_group_by_reordering', 'on', false)
+7e3da10ebb2ff886145ee16febdd3930422c1c0504af1482c134a5dcd6826fd5 1.268 4 1 SHOW enable_group_by_reordering
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.269 2 0 SET enable_hashagg TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.270 4 1 SELECT pg_catalog.set_config('enable_hashagg', 'on', false)
+cfcd333525d9e6700d0df0465a63b8b37c631d5de3208ee7202ab16ad5d6a89f 1.271 4 1 SHOW enable_hashagg
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.272 2 0 SET enable_hashjoin TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.273 4 1 SELECT pg_catalog.set_config('enable_hashjoin', 'on', false)
+ef6a45e14478ccc76e0f88ef47707967c7b9191419698ecc502fae5ec6ad60f1 1.274 4 1 SHOW enable_hashjoin
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.275 2 0 SET enable_incremental_sort TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.276 4 1 SELECT pg_catalog.set_config('enable_incremental_sort', 'on', false)
+c5945d865bf3d63c2f404c37d0a931ea28789516ccfff110424d0182759921b1 1.277 4 1 SHOW enable_incremental_sort
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.278 2 0 SET enable_indexonlyscan TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.279 4 1 SELECT pg_catalog.set_config('enable_indexonlyscan', 'on', false)
+3da0a62349439a78b703ce714d5f8c7ed6f8533097d473532df16e381ebce57c 1.280 4 1 SHOW enable_indexonlyscan
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.281 2 0 SET enable_indexscan TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.282 4 1 SELECT pg_catalog.set_config('enable_indexscan', 'on', false)
+a5aa9b3ac31627a86efccc07bde50821cbf682fdff6afe79eb3e5f9a80c1b980 1.283 4 1 SHOW enable_indexscan
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.284 2 0 SET enable_material TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.285 4 1 SELECT pg_catalog.set_config('enable_material', 'on', false)
+fb61fbf52ddee6772797803108271118ca9ccc25b8e47e0e1d4a7c90bc16916c 1.286 4 1 SHOW enable_material
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.287 2 0 SET enable_memoize TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.288 4 1 SELECT pg_catalog.set_config('enable_memoize', 'on', false)
+9fee4323701bdce754c78db3037a60dd37af77d9bd5a91bb68dfad61604a461e 1.289 4 1 SHOW enable_memoize
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.290 2 0 SET enable_mergejoin TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.291 4 1 SELECT pg_catalog.set_config('enable_mergejoin', 'on', false)
+a6a2389ae45e37ce87bd747399406c3ef2eb2855aff245421d671efeff5e799c 1.292 4 1 SHOW enable_mergejoin
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.293 2 0 SET enable_nestloop TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.294 4 1 SELECT pg_catalog.set_config('enable_nestloop', 'on', false)
+a5119fe5c71ba36bcced1aa85bb24a6ef011562a2cc04fe8583d7cbe31ba5257 1.295 4 1 SHOW enable_nestloop
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.296 2 0 SET enable_parallel_append TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.297 4 1 SELECT pg_catalog.set_config('enable_parallel_append', 'on', false)
+e3409b00f053928e1548ea42446fad1b871d31d892b1c836252f2e5c873e65ed 1.298 4 1 SHOW enable_parallel_append
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.299 2 0 SET enable_parallel_hash TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.300 4 1 SELECT pg_catalog.set_config('enable_parallel_hash', 'on', false)
+a66066df34b68ed03d11ca2471f1244b7ef54c1755769349ff59d65221969cb5 1.301 4 1 SHOW enable_parallel_hash
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.302 2 0 SET enable_partition_pruning TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.303 4 1 SELECT pg_catalog.set_config('enable_partition_pruning', 'on', false)
+3953759dde8b1cb9a2f628d59f26702edc4a5b4363af0cc3ba4448de634a1f1b 1.304 4 1 SHOW enable_partition_pruning
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.305 2 0 SET enable_partitionwise_aggregate TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.306 4 1 SELECT pg_catalog.set_config('enable_partitionwise_aggregate', 'off', false)
+8841a171618268a9de84e25dfe5054c2e5ea94858b5b8f469c78fadc0875af2d 1.307 4 1 SHOW enable_partitionwise_aggregate
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.308 2 0 SET enable_partitionwise_join TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.309 4 1 SELECT pg_catalog.set_config('enable_partitionwise_join', 'off', false)
+0bb98863e83ceb194a6ad7e7320604e8c22f953493bc904bb07ad563da2ee870 1.310 4 1 SHOW enable_partitionwise_join
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.311 2 0 SET enable_presorted_aggregate TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.312 4 1 SELECT pg_catalog.set_config('enable_presorted_aggregate', 'on', false)
+172bf30504b42af5a4f2eb6d9e8c99e2e7ab87cf15aa699f977ec70a22d2021f 1.313 4 1 SHOW enable_presorted_aggregate
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.314 2 0 SET enable_seqscan TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.315 4 1 SELECT pg_catalog.set_config('enable_seqscan', 'on', false)
+882e0a11caf14997a07e39a7a8a1cba29854ff1010c5762d0a9733075cdc2a30 1.316 4 1 SHOW enable_seqscan
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.317 2 0 SET enable_sort TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.318 4 1 SELECT pg_catalog.set_config('enable_sort', 'on', false)
+5555270bc789a4012bae83dfbebc852823bf8cc37178bb06691ba25cb23932d0 1.319 4 1 SHOW enable_sort
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.320 2 0 SET enable_tidscan TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.321 4 1 SELECT pg_catalog.set_config('enable_tidscan', 'on', false)
+b1e0ec00cec5cf8a401f07e51a0debf85b1c0813c5525b4204ecc2b9ede90b49 1.322 4 1 SHOW enable_tidscan
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.323 2 0 SET escape_string_warning TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.324 4 1 SELECT pg_catalog.set_config('escape_string_warning', 'on', false)
+bf892b545002190bc01ad5949383155b946144e4c7af4e9019ad2fe49ca2cdc0 1.325 4 1 SHOW escape_string_warning
+7b5cd29afcea8d0408bd6ddaf6c03baebfdc168838f2405e018457831a28296e 1.326 2 0 SET event_source TO DEFAULT
+362d7efdd51cc78d07b47c5bff84127eb9407cee1e1906e8b66f17135afe5783 1.327 3 0 SELECT pg_catalog.set_config('event_source', 'PostgreSQL', false)
+d47f976e6353893f08d3d10a40195d18ef6a6fa726af4ea8af36a338ab4dbfb5 1.328 4 1 SHOW event_source
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.329 2 0 SET event_triggers TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.330 4 1 SELECT pg_catalog.set_config('event_triggers', 'on', false)
+5e88028fc5e51c2e4f7d1dda189e08ef0a0ebfaba33760d6d6a44c33d383fd0b 1.331 4 1 SHOW event_triggers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.332 2 0 SET exit_on_error TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.333 4 1 SELECT pg_catalog.set_config('exit_on_error', 'off', false)
+47075731d886db315b95abc549bc8e9fb4176cb00a7eb86af128377af858e98e 1.334 4 1 SHOW exit_on_error
+a359914239164f8443d9c33009308f8d35411f44f65eb0ca37996117c4daae1f 1.335 2 0 SET external_pid_file TO DEFAULT
+a1c76342eedcf657f0245b1b7c3e3121a2ada5a1e42a74257ced412826f57123 1.336 3 0 SELECT pg_catalog.set_config('external_pid_file', '', false)
+1a5c9f9ed561bdf031658884e55b1500b9fb1a515645bb3cd5af4f747b6489b7 1.337 4 1 SHOW external_pid_file
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.338 2 0 SET extra_float_digits TO DEFAULT
+447bb08f809dfc701e48c0c9bc216622e828c330321dd29b42a86371c8852d6f 1.339 4 1 SELECT pg_catalog.set_config('extra_float_digits', '1', false)
+e4ee96c12ff7cb5fb0134cf0ed73715dc95ee75d7cbda22fe657e47816fbf49b 1.340 4 1 SHOW extra_float_digits
+42dcbe1553a4b39fe2c8fd133b5345b09d3d032e6c33f1c66cce536dc30bfab2 1.341 2 0 SET file_extend_method TO DEFAULT
+57f3191f0521713f9e4747a0360439181670a605a2b2fe388401c0a7bc199b6f 1.342 3 0 SELECT pg_catalog.set_config('file_extend_method', 'posix_fallocate', false)
+59e03807765263ce8ac643fd5ff5e8fc801b37400a9528d51924e623a3dfac7c 1.343 4 1 SHOW file_extend_method
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.344 2 0 SET from_collapse_limit TO DEFAULT
+7c870201998eb84d78de5e2fb2439bf3f76275354af9046e14671cf9392300bd 1.345 4 1 SELECT pg_catalog.set_config('from_collapse_limit', '8', false)
+3094f94f215b1bf20e9eeaa039ae9e26d26628089ccfed0226e0e70a6ab02bcf 1.346 4 1 SHOW from_collapse_limit
+de469aeff26f2f531871910f56f922c9871ba8326dce276e4d23aa443642c693 1.347 2 0 SET fsync TO DEFAULT
+927cc1173cf2a60099d2af039e7133ad3434f41dea79bf1c3c27fe176a2e418b 1.348 3 0 SELECT pg_catalog.set_config('fsync', 'on', false)
+32054075759fd57620aa1b81f09641a0ced54a839a4e332bf869b096fdfc766d 1.349 4 1 SHOW fsync
+ce3a7d4e82d1eb24e24662c06eb36441ab6fd11f7cb9b03a6696bddea051e817 1.350 2 0 SET full_page_writes TO DEFAULT
+5b8951daf3d9f85a53bdae90f0a381ec961e787d1aa486b0d4a3cbb784ed9a25 1.351 3 0 SELECT pg_catalog.set_config('full_page_writes', 'on', false)
+d9b2276ab5453ec9a58bfd46322c764dc9f587b7b58248853e0eb8736c4c141c 1.352 4 1 SHOW full_page_writes
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.353 2 0 SET geqo TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.354 4 1 SELECT pg_catalog.set_config('geqo', 'on', false)
+f2b62622c9c92d4f2970ac9b85fb7a03c391f5a4340e31a5f6d3c2ff3d9d7b07 1.355 4 1 SHOW geqo
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.356 2 0 SET geqo_effort TO DEFAULT
+7e6951402e8b3dd1404e0ede0b6f8e89ac991b953c07f05c981e6f4cc25e0848 1.357 4 1 SELECT pg_catalog.set_config('geqo_effort', '5', false)
+71c23d36b87dac615d2f8b59377b940e6084f90825b80d2bea6febf4d3215a75 1.358 4 1 SHOW geqo_effort
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.359 2 0 SET geqo_generations TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.360 4 1 SELECT pg_catalog.set_config('geqo_generations', '0', false)
+566ea29049b58e35aa6c80fce03b4b8c241079378a9299de2a8dff7347c47fb2 1.361 4 1 SHOW geqo_generations
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.362 2 0 SET geqo_pool_size TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.363 4 1 SELECT pg_catalog.set_config('geqo_pool_size', '0', false)
+c11436fd3c4b1e94e7e642a0e801a259858f72d88684905c8d4fcf7cc4bbb9bd 1.364 4 1 SHOW geqo_pool_size
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.365 2 0 SET geqo_seed TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.366 4 1 SELECT pg_catalog.set_config('geqo_seed', '0', false)
+7062eae132ed07597fdea7a6bbade29198b0224c2434fe107969e9e2e153893e 1.367 4 1 SHOW geqo_seed
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.368 2 0 SET geqo_selection_bias TO DEFAULT
+9224eab958045547b1a66ecdde117537449ee12448b971d21bfb33c6e84fe69b 1.369 4 1 SELECT pg_catalog.set_config('geqo_selection_bias', '2', false)
+581e986ad84ae0fbe9191e38fd7d166c961b645641c49c703476b88647093bea 1.370 4 1 SHOW geqo_selection_bias
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.371 2 0 SET geqo_threshold TO DEFAULT
+f94830bbdea5e496639e650030b9e668efb9aa675dbb7149593e957a8afd8a6e 1.372 4 1 SELECT pg_catalog.set_config('geqo_threshold', '12', false)
+a5fafab9c2fc7d5f1232dd4d2fea464b15e407fadcf881f5ea1134529385fd8d 1.373 4 1 SHOW geqo_threshold
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.374 2 0 SET gin_fuzzy_search_limit TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.375 4 1 SELECT pg_catalog.set_config('gin_fuzzy_search_limit', '0', false)
+a19800bb32dd1627a15e16346b5dff71a45ca4b8df9b769b9c83962a90a252a9 1.376 4 1 SHOW gin_fuzzy_search_limit
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.377 2 0 SET gin_pending_list_limit TO DEFAULT
+6fa34f10185f8c539f73056602d5cd25006b452003106288ea3f4a610f0a287c 1.378 4 1 SELECT pg_catalog.set_config('gin_pending_list_limit', '4MB', false)
+864ad52aeef1953fedd2cbddee6fa1d0153bb293842192c0d311f45012e64c66 1.379 4 1 SHOW gin_pending_list_limit
+983f1b5b4ad37b9127f92c0cb1b24b8d62aec1ce43704a8a2a133331297c6c48 1.380 2 0 SET gss_accept_delegation TO DEFAULT
+80ebb9a89e844c434c10d7c91fe8f9e8872fe72b2060b362f54b1250dabe263d 1.381 3 0 SELECT pg_catalog.set_config('gss_accept_delegation', 'off', false)
+47837d0756312eb1884201d8c3e079fab8164d9eb7084137264c166844db16e4 1.382 4 1 SHOW gss_accept_delegation
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.383 2 0 SET hash_mem_multiplier TO DEFAULT
+9224eab958045547b1a66ecdde117537449ee12448b971d21bfb33c6e84fe69b 1.384 4 1 SELECT pg_catalog.set_config('hash_mem_multiplier', '2', false)
+da34061d748595bee47fb5b962ab9abd62eac9ac61382d203c09d764ae25ff2a 1.385 4 1 SHOW hash_mem_multiplier
+20faa59662bb53b20063cb9a232688f2bdbaa8e510535bcdab19c10434d97d2e 1.386 2 0 SET hba_file TO DEFAULT
+1490b5662562a356812c64fa7a647580efc0c3b64948b2b22a09917ee13f6121 1.387 3 0 SELECT pg_catalog.set_config('hba_file', '/home/tam/work/rupg-compat-oracles/oracle/17/data/pg_hba.conf', false)
+f50368a92b4c03f1aaab09ead28a20f1e53071c5345deb18ce4b2c720e9976d1 1.388 4 1 SHOW hba_file
+60e5014205b9947707d7978f0a9d445c8a1854b66d129d18359074c792599a16 1.389 2 0 SET hot_standby TO DEFAULT
+95ecdabdd3475ee73965bb0a9c1c3bd7f9e647c13d535c86b35a47bbd7e878e8 1.390 3 0 SELECT pg_catalog.set_config('hot_standby', 'on', false)
+cd6e4c002c6fb0b15237149863cd423957ffa9eeba414602be0723ea8179cfbd 1.391 4 1 SHOW hot_standby
+2acfe3cf5830d837c3fb848ccaa7c3746d6f00085766aee4b246579d7d4d7700 1.392 2 0 SET hot_standby_feedback TO DEFAULT
+956555250a374b60a31097e45d9180658643cbcde7086673cbc77006781557fe 1.393 3 0 SELECT pg_catalog.set_config('hot_standby_feedback', 'off', false)
+3374a806d08ae33edfcbd60150cf5697ac16edc99691107b0b062793f396be54 1.394 4 1 SHOW hot_standby_feedback
+8a82385c4973a9f67f46c772e9b7d6de6dfd1746aad74b579db4deefd4c8e110 1.395 2 0 SET huge_page_size TO DEFAULT
+5ad9a16fcf080e98e40ed42b93dd368f00b92e3c9bdae0a3009c30117d2a312f 1.396 3 0 SELECT pg_catalog.set_config('huge_page_size', '0', false)
+17aa4499192fd1ffdb3a0185eceaf97fe9025610f48047a572aef8dc99e30546 1.397 4 1 SHOW huge_page_size
+8a643e780ad204c7d6a03e43acea71b2b7ffa395361226387c41c9f7a1a1ec7f 1.398 2 0 SET huge_pages TO DEFAULT
+e82248dc3449ed9963a057492442d4d5a45689f0587a2c4b22606e27af272496 1.399 3 0 SELECT pg_catalog.set_config('huge_pages', 'try', false)
+44b508be53047230f13b5433db4bf500620cc294470c793cbd5456aadd6d9494 1.400 4 1 SHOW huge_pages
+e397722174ad423eba023a3b0e3ee6031a9d505c041c0ed711fc28dce583d711 1.401 2 0 SET huge_pages_status TO DEFAULT
+7d5e97eb04ba2897703437716a31dc83debb6354f23f9989a336c7150e79181b 1.402 3 0 SELECT pg_catalog.set_config('huge_pages_status', 'off', false)
+af24b3ebf8fdbb0194fe4129c84d68036b35fc9d2367cf0d9a5b32e193a8b375 1.403 4 1 SHOW huge_pages_status
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.404 2 0 SET icu_validation_level TO DEFAULT
+4fc0c6092215976bbfb31000fc8eb51d353d3c1eec54e4a5ef4817604720faea 1.405 4 1 SELECT pg_catalog.set_config('icu_validation_level', 'warning', false)
+f7a43b2831806196d32c2f9515523e4854884c38a6a0197ac178ac5e822fcc4f 1.406 4 1 SHOW icu_validation_level
+ae1c91b8c19cf480de1785352d27418677ce8ad95b00610596e0b1882fd40085 1.407 2 0 SET ident_file TO DEFAULT
+4059f52c27e888f0de0db4536d5b7871fa2b8136d2b7deed71ae523a96d15bbc 1.408 3 0 SELECT pg_catalog.set_config('ident_file', '/home/tam/work/rupg-compat-oracles/oracle/17/data/pg_ident.conf', false)
+843f66da0b218d487d554adaf3895d180ebca716f759e57efab657da3c99724e 1.409 4 1 SHOW ident_file
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.410 2 0 SET idle_in_transaction_session_timeout TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.411 4 1 SELECT pg_catalog.set_config('idle_in_transaction_session_timeout', '0', false)
+04ff73a02239d5d766ced6cba15a8b8163568c1b0a7fd35b8cf208b9c55b637e 1.412 4 1 SHOW idle_in_transaction_session_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.413 2 0 SET idle_session_timeout TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.414 4 1 SELECT pg_catalog.set_config('idle_session_timeout', '0', false)
+8f673e308a44d06896709aea10a6487450bb875b24c02520c15da37e072b4055 1.415 4 1 SHOW idle_session_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.416 2 0 SET ignore_checksum_failure TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.417 4 1 SELECT pg_catalog.set_config('ignore_checksum_failure', 'off', false)
+78975718e1509848634cb5b50dafb273875b47a31bef4e04dba901d2142c1140 1.418 4 1 SHOW ignore_checksum_failure
+bb65541ab90c9743dc3ae34ee9d943bb0f0ce031f523a2f654b2408ed9dd3601 1.419 2 0 SET ignore_invalid_pages TO DEFAULT
+e415e646b66d249fa175c81534b5c3664dd4898eb4e1fa6a6507571b95f99337 1.420 3 0 SELECT pg_catalog.set_config('ignore_invalid_pages', 'off', false)
+77bb4bbd33478e08fc2b99ddf27f96d51fdc1ea8e319812fdafe378530c19f04 1.421 4 1 SHOW ignore_invalid_pages
+99fe88d39602d57c99a59773357f6f7f18b1d854925f130db1e062ab5440d557 1.422 2 0 SET ignore_system_indexes TO DEFAULT
+35f3b6600bfc0c95200f795ed5935115cdec12c7a477517ae7d485409043e519 1.423 3 0 SELECT pg_catalog.set_config('ignore_system_indexes', 'off', false)
+6a421d0375f762c822d614fc91d2ef4b9a36fb3c001ac20ab7e5f2f0223ffc4e 1.424 4 1 SHOW ignore_system_indexes
+0216c0171575f4904bccc107193fdad3230da6e42d833b8f960396a2d2525fab 1.425 2 0 SET in_hot_standby TO DEFAULT
+b3a31e95c77ef4899308a251aab1dff5d1a032573407c3042c1540ff57b71aa8 1.426 3 0 SELECT pg_catalog.set_config('in_hot_standby', 'off', false)
+539aff2e3b444bbf42817a8f541a73d9f7d2e147720412c31e9f7fbf18d8fe35 1.427 4 1 SHOW in_hot_standby
+437eb771684c8244cb2d389d8afc793cdf7545ce617b6af8bf874187b1082e1d 1.428 2 0 SET integer_datetimes TO DEFAULT
+d0b35cabe2a036f6d8ebc2f4269585ff660e1e95b9d16f5b0f25a7582b90691c 1.429 3 0 SELECT pg_catalog.set_config('integer_datetimes', 'on', false)
+ed2faeab53c2c1d70998508e9f6d65efcfc94a2306cbefbd7863fd1e00b1fc7d 1.430 4 1 SHOW integer_datetimes
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.431 2 0 SET io_combine_limit TO DEFAULT
+d16c3df493bb40f0e6cb362532296ada2d4267dc40a1ed0e6d9a4932cbd038e0 1.432 4 1 SELECT pg_catalog.set_config('io_combine_limit', '128kB', false)
+09ff1e6a11fdea94ad63479864aa579c2cbaeb542c2198beb059ce44029b2395 1.433 4 1 SHOW io_combine_limit
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.434 2 0 SET jit TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.435 4 1 SELECT pg_catalog.set_config('jit', 'on', false)
+a57fa6976d358a2480e4558e1a7f47ba43e0e6d87d4608de4573b2c8dc4b2b4d 1.436 4 1 SHOW jit
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.437 2 0 SET jit_above_cost TO DEFAULT
+65b95993c7d6e961253e311e0bc1491912ae296d27d1ed7a1749ca42f108f5af 1.438 4 1 SELECT pg_catalog.set_config('jit_above_cost', '100000', false)
+1c340fbf3dcae9930f6a0da57024c646d4a5943681ff4e9d345942010c431d8c 1.439 4 1 SHOW jit_above_cost
+4997551a6b66799f6ec9661f3f9ed89a674df41a6f1e31237b0fa3f97ed236c5 1.440 2 0 SET jit_debugging_support TO DEFAULT
+204bc892c330db3b8d2a204d83d036fc0cc313a4da4da044f599f49e810cf38b 1.441 3 0 SELECT pg_catalog.set_config('jit_debugging_support', 'off', false)
+0ca96ea90042b5a9bbae89d74d6379e8ee17a2b24801ed6e51385fb81a0975e7 1.442 4 1 SHOW jit_debugging_support
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.443 2 0 SET jit_dump_bitcode TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.444 4 1 SELECT pg_catalog.set_config('jit_dump_bitcode', 'off', false)
+66ffc5828aa04a9b66b460b5a0155a51358b551b4fac540fb33b5c8ec82ff6e4 1.445 4 1 SHOW jit_dump_bitcode
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.446 2 0 SET jit_expressions TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.447 4 1 SELECT pg_catalog.set_config('jit_expressions', 'on', false)
+b5bcafcb5bbfd3e9e26298e5f0c42be64c86396c307327b277b9fc585f5e869a 1.448 4 1 SHOW jit_expressions
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.449 2 0 SET jit_inline_above_cost TO DEFAULT
+ad9396d59ba3370e0660d351c18295487df51b2d928e58215316c72fb650ea1f 1.450 4 1 SELECT pg_catalog.set_config('jit_inline_above_cost', '500000', false)
+2329be24133aefb03cc8bc813eb96fc51ae23ff098b9377b0d3c00acc8699d75 1.451 4 1 SHOW jit_inline_above_cost
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.452 2 0 SET jit_optimize_above_cost TO DEFAULT
+ad9396d59ba3370e0660d351c18295487df51b2d928e58215316c72fb650ea1f 1.453 4 1 SELECT pg_catalog.set_config('jit_optimize_above_cost', '500000', false)
+8cb9159cc113e722fc3b086020dba0f26e1e2d17a1688a8372f73f1dca0fc8d0 1.454 4 1 SHOW jit_optimize_above_cost
+4825287725dd55104f1b1a48fa43df9dd51dd628795c85174ef0a57eb7070756 1.455 2 0 SET jit_profiling_support TO DEFAULT
+d085683043036b9e8b1c9bf52d2b3eb94fb3e7064e70be9d2acdc600dff13576 1.456 3 0 SELECT pg_catalog.set_config('jit_profiling_support', 'off', false)
+72a05a3ee5efb602dcf0708057ed86817cf1fba65fd443a7251477cb8c5a5678 1.457 4 1 SHOW jit_profiling_support
+48d7a7c388c95eb82935e08fe4b8ab513bc998cc027acfcfa58f1560516ac275 1.458 2 0 SET jit_provider TO DEFAULT
+f8773a18be255a1c234c51713d76c3f934774dfdf402598bbee7cb6cad5c34f3 1.459 3 0 SELECT pg_catalog.set_config('jit_provider', 'llvmjit', false)
+f1f784283da1bbde4223674b270f12968abc75183dab057e5c6adf32f9d738e6 1.460 4 1 SHOW jit_provider
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.461 2 0 SET jit_tuple_deforming TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.462 4 1 SELECT pg_catalog.set_config('jit_tuple_deforming', 'on', false)
+97ec41ad06e2aeb6bcff0afbdb47b2a5057022991209ea3f14d8600f05736bac 1.463 4 1 SHOW jit_tuple_deforming
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.464 2 0 SET join_collapse_limit TO DEFAULT
+7c870201998eb84d78de5e2fb2439bf3f76275354af9046e14671cf9392300bd 1.465 4 1 SELECT pg_catalog.set_config('join_collapse_limit', '8', false)
+ad6660ce1e910a27d0b19ac2aa64a6bcff3a5679129ed1e384fbcd9bfa647b2c 1.466 4 1 SHOW join_collapse_limit
+e190757998271e27ce3e251f0c680f68de0a91d12ccc53301a4f64c38d7f7f95 1.467 2 0 SET krb_caseins_users TO DEFAULT
+700dd162a1a1c20c861840b0e062317ce077d736015f0a31c36d19d86ef636db 1.468 3 0 SELECT pg_catalog.set_config('krb_caseins_users', 'off', false)
+cb652c43a11563faa6f0cde70027424074e6bf799029697f05511ae13e069503 1.469 4 1 SHOW krb_caseins_users
+6d2015606b4ce827ac1e532c89ffcec54037c6ae7298ee90fe511139ef9bfb20 1.470 2 0 SET krb_server_keyfile TO DEFAULT
+109fcd9f540ebad0c5d3c779269c89d5fd548641b46b5dea76f21fbe9aeccc8e 1.471 3 0 SELECT pg_catalog.set_config('krb_server_keyfile', '', false)
+c006590df3f1cb17979a33c146f267aded00e286947360b97b0cec06882b2da9 1.472 4 1 SHOW krb_server_keyfile
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.473 2 0 SET lc_messages TO DEFAULT
+7bd7371c604cdf2a6887c2ce084735d7c50c8ddd522031079c17e4145ca4d280 1.474 4 1 SELECT pg_catalog.set_config('lc_messages', 'C', false)
+4ec5ea13bc79a0c6064e78222c103a975fd5635690fc7d79aef79aa75b1e08b0 1.475 4 1 SHOW lc_messages
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.476 2 0 SET lc_monetary TO DEFAULT
+7bd7371c604cdf2a6887c2ce084735d7c50c8ddd522031079c17e4145ca4d280 1.477 4 1 SELECT pg_catalog.set_config('lc_monetary', 'C', false)
+126c9be10b42bfa09dc6d58ab2590495c5ded86d7b61f760c0ca754fbc32e2d9 1.478 4 1 SHOW lc_monetary
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.479 2 0 SET lc_numeric TO DEFAULT
+7bd7371c604cdf2a6887c2ce084735d7c50c8ddd522031079c17e4145ca4d280 1.480 4 1 SELECT pg_catalog.set_config('lc_numeric', 'C', false)
+ab08701dc1234ab302843d4623f09f2ab122b81bfaacf04bed7e0739d87f512c 1.481 4 1 SHOW lc_numeric
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.482 2 0 SET lc_time TO DEFAULT
+7bd7371c604cdf2a6887c2ce084735d7c50c8ddd522031079c17e4145ca4d280 1.483 4 1 SELECT pg_catalog.set_config('lc_time', 'C', false)
+96c566395e699af1d8c6dcfaaca14a388d27d5ab0187346759962ddce8f85187 1.484 4 1 SHOW lc_time
+20b969edd2b841a1168f7d7d279b6050de9813c3a33cc9180972ece11f05b55e 1.485 2 0 SET listen_addresses TO DEFAULT
+f7f78477353124ea573cd91c6617861d49804a56a89ba8574c8293604f7d9cc6 1.486 3 0 SELECT pg_catalog.set_config('listen_addresses', '127.0.0.1', false)
+35515dce5bbf45e5b5729f769c1f0e5123322d90fdea6224593587a3b9bc4c3b 1.487 4 1 SHOW listen_addresses
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.488 2 0 SET lo_compat_privileges TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.489 4 1 SELECT pg_catalog.set_config('lo_compat_privileges', 'off', false)
+592d2202bbdd3b85015dd5aa6adfc6dae8dc3c53862130edc538797040225b3c 1.490 4 1 SHOW lo_compat_privileges
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.491 2 0 SET local_preload_libraries TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.492 4 1 SELECT pg_catalog.set_config('local_preload_libraries', '', false)
+14571f305c5d6f744e8f94fe7e57a6060b116375041308b7346a988b586fa159 1.493 4 1 SHOW local_preload_libraries
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.494 2 0 SET lock_timeout TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.495 4 1 SELECT pg_catalog.set_config('lock_timeout', '0', false)
+ceea6ec3dc130a0db93b0b42618d0d775dc6375a36e8ab532f24d769e413b174 1.496 4 1 SHOW lock_timeout
+8af4938f5bef2fbf6ea10d80d1414f00b12c03cda79a18350c8eedfea1090e55 1.497 2 0 SET log_autovacuum_min_duration TO DEFAULT
+3028880191dfad48ad06787c11492f5b33f9be92ad2924aa77a63864f9cc4544 1.498 3 0 SELECT pg_catalog.set_config('log_autovacuum_min_duration', '10min', false)
+33f583ab52f30df0ff59f6e6691a6af6c4874fcfe7b6781e1b9fe340051ea3ca 1.499 4 1 SHOW log_autovacuum_min_duration
+da3b2d8c64bf6063f3a51cf157fbc8e3a83a23f656c2491977a3376e81142ff5 1.500 2 0 SET log_checkpoints TO DEFAULT
+546ea36cfca33f5f08d6c2888bf164818d1e043b846d0664d80e81386d8a95e0 1.501 3 0 SELECT pg_catalog.set_config('log_checkpoints', 'on', false)
+bbaa37d17c49507a1e87c963fa2ed69509182f80af26274a17c4ec5ef56b9f89 1.502 4 1 SHOW log_checkpoints
+bc2678e28069d01c99decff48798e129d99e6f6d14f7bee2f7b559a399acb8cf 1.503 2 0 SET log_connections TO DEFAULT
+d01f69ba101b6385d9d9a215f7b373620b8602f80f2cad68d35c91aae7a671a8 1.504 3 0 SELECT pg_catalog.set_config('log_connections', 'off', false)
+d299047fcf9eb0ef6f6ba10b90df14b1bccdf7e606a1fa9b2e47ac48affc567c 1.505 4 1 SHOW log_connections
+d6c60a8e0484c3ab0c832a36cdcbddde04b411b7ea04159113c40fb5c4a8f634 1.506 2 0 SET log_destination TO DEFAULT
+0d1e5940436eee1266b53f61f898e132eb77743f31c28d94a673c8ee314afc8a 1.507 3 0 SELECT pg_catalog.set_config('log_destination', 'stderr', false)
+46de246f52c5d270344ae12f53ec0897daf235e5fccede767714b706f84f4316 1.508 4 1 SHOW log_destination
+a638c90529063deaec0081c7eb84a957339fcf93706e2ce6b9897e3b02eb0993 1.509 2 0 SET log_directory TO DEFAULT
+699b6fa1f1e6dd7f8ea3fb3e3bfae912be2b7912fc9c0189492bf5c75300f7a6 1.510 3 0 SELECT pg_catalog.set_config('log_directory', 'log', false)
+6cb55943e697bc47f254a6bd4c60ef8420462d0216bfe81059c5972d8331af29 1.511 4 1 SHOW log_directory
+7d02d358b5aa9fe358a56c16a60147e0dcee03eec846662e2c7638bc51fb9fdf 1.512 2 0 SET log_disconnections TO DEFAULT
+736ee74e362f0aa7897a1ebaf4e7362d39d5f2f1cf4bf050ed83f71a97584c8c 1.513 3 0 SELECT pg_catalog.set_config('log_disconnections', 'off', false)
+a51194c168bc83de2db3fa5d666c362572b8d8720cfa2fb8792cf884b4c7da23 1.514 4 1 SHOW log_disconnections
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.515 2 0 SET log_duration TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.516 4 1 SELECT pg_catalog.set_config('log_duration', 'off', false)
+9cdd2b5c25e449b5b5f4dd67826c25ad5cf6ec28aa26453dd890834cd5c62c25 1.517 4 1 SHOW log_duration
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.518 2 0 SET log_error_verbosity TO DEFAULT
+7593daaa2869707d795c85535e21b614dedd97a42c8b04699db133c5246d08e7 1.519 4 1 SELECT pg_catalog.set_config('log_error_verbosity', 'default', false)
+5c239081f2cca8aa5f4fa2d5ec94809887a22dbd2da2aee711958ea9b474124c 1.520 4 1 SHOW log_error_verbosity
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.521 2 0 SET log_executor_stats TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.522 4 1 SELECT pg_catalog.set_config('log_executor_stats', 'off', false)
+ed669b4c6ae208576b4f02a845d92cc6c39be65b9d0f13a63a438707de99f86b 1.523 4 1 SHOW log_executor_stats
+a81a12c43055ccd0710d8cc3248fcb56437809c7d33586f2cb3a2c45e599b39c 1.524 2 0 SET log_file_mode TO DEFAULT
+e4b63bdc4499540d666a8903a3e450f12b7bcfe4c4b43fd373b5973b01fdfe9e 1.525 3 0 SELECT pg_catalog.set_config('log_file_mode', '0600', false)
+2c346386ce3867bd6bf41c91181b5cfdf57ab93c91695e347edff5b181ad4106 1.526 4 1 SHOW log_file_mode
+0c7f1ec9167e57ba1c9544303aaca7b8355ed64f78b68c75c8edd33df57d06a0 1.527 2 0 SET log_filename TO DEFAULT
+373271aacc06b06a45acaf632f7f74373520f2fafdab98704facf8a95b7b187f 1.528 3 0 SELECT pg_catalog.set_config('log_filename', 'postgresql-%Y-%m-%d_%H%M%S.log', false)
+5eeeb97a8a3f76a96b9631a30819bfd2903d39bce538c7216c0e8ecd09d27e52 1.529 4 1 SHOW log_filename
+ba581bf1fa7e621115c625800f4721ed6c1a910d25ec02f2470b35f519686c1a 1.530 2 0 SET log_hostname TO DEFAULT
+85fe5377101c8e3fbe3e2ead7911d9c5a642c515fbe3ff59814ff79857589219 1.531 3 0 SELECT pg_catalog.set_config('log_hostname', 'off', false)
+29cd0fb442d64657cbfa1c171a251956920b8e63e8b077ab371e516f974574d0 1.532 4 1 SHOW log_hostname
+4def46b678fa466088414de58e14bc6baf1f493e16f006d8c40e927c40a7c77b 1.533 2 0 SET log_line_prefix TO DEFAULT
+dcc6b88fa1b9baf52fb2c4fc683d185984cb550c8d6b7742bf8e2b0ce7293080 1.534 3 0 SELECT pg_catalog.set_config('log_line_prefix', '%m [%p] ', false)
+2acc811bf8e5fec5d1bdb98b8f7fd2a0565da58b41cc92fb150d56032bbb009d 1.535 4 1 SHOW log_line_prefix
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.536 2 0 SET log_lock_waits TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.537 4 1 SELECT pg_catalog.set_config('log_lock_waits', 'off', false)
+eccc4a77fcf189234541adc9341f2f95f8d6434164c175f842ae12670eab3d2a 1.538 4 1 SHOW log_lock_waits
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.539 2 0 SET log_min_duration_sample TO DEFAULT
+3f27246ab439fad9680ea44a91900a804ee7233deb0487ed8ceb9f5182405fbb 1.540 4 1 SELECT pg_catalog.set_config('log_min_duration_sample', '-1', false)
+ac0bfb119b6b01e26852ea18dcdb3251664e3517b28bbd11f8184e4b4f9ecff1 1.541 4 1 SHOW log_min_duration_sample
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.542 2 0 SET log_min_duration_statement TO DEFAULT
+3f27246ab439fad9680ea44a91900a804ee7233deb0487ed8ceb9f5182405fbb 1.543 4 1 SELECT pg_catalog.set_config('log_min_duration_statement', '-1', false)
+068b8388665696f67cc23a9bcc5ab4b84964cec38a5322255327461b002a5fce 1.544 4 1 SHOW log_min_duration_statement
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.545 2 0 SET log_min_error_statement TO DEFAULT
+dee93ae399c363108303d8e634b7c81f4227a716e73d566aaf1223951baf37d0 1.546 4 1 SELECT pg_catalog.set_config('log_min_error_statement', 'error', false)
+23a1022d1c5f11cc51f1ea45a5123917763a31aeb03457bc8555f79d7e224637 1.547 4 1 SHOW log_min_error_statement
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.548 2 0 SET log_min_messages TO DEFAULT
+4fc0c6092215976bbfb31000fc8eb51d353d3c1eec54e4a5ef4817604720faea 1.549 4 1 SELECT pg_catalog.set_config('log_min_messages', 'warning', false)
+c8592eaf7678928287f38b868057edde4dd1dbf025ba051d2d14d1fb39215584 1.550 4 1 SHOW log_min_messages
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.551 2 0 SET log_parameter_max_length TO DEFAULT
+3f27246ab439fad9680ea44a91900a804ee7233deb0487ed8ceb9f5182405fbb 1.552 4 1 SELECT pg_catalog.set_config('log_parameter_max_length', '-1', false)
+4af5e6edb5181f7273ab26e91882a97b3a30f2a69983cf39d5d53d80aff79f81 1.553 4 1 SHOW log_parameter_max_length
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.554 2 0 SET log_parameter_max_length_on_error TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.555 4 1 SELECT pg_catalog.set_config('log_parameter_max_length_on_error', '0', false)
+d4a390ea4fa4f0f0cd677f50d7205facde3c68c42fc483e7587fc179d827ad82 1.556 4 1 SHOW log_parameter_max_length_on_error
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.557 2 0 SET log_parser_stats TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.558 4 1 SELECT pg_catalog.set_config('log_parser_stats', 'off', false)
+d0927fb878ceabd5eef601a54ba7262fd77da59b9de0995fe18a74865310e5ea 1.559 4 1 SHOW log_parser_stats
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.560 2 0 SET log_planner_stats TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.561 4 1 SELECT pg_catalog.set_config('log_planner_stats', 'off', false)
+ef4e9045aec139990d228a88d05eac1589cf96d6c55daf9dd82be9caf9a56596 1.562 4 1 SHOW log_planner_stats
+3061f283ad633bd5d1eb50c68abc452bee35e9fad667e7ebc921827ea93a45d9 1.563 2 0 SET log_recovery_conflict_waits TO DEFAULT
+8b98d4f9bfcd2e1f0990730d2eb7e5ec8b0ac9e45035a8c10b0a2a748ea30792 1.564 3 0 SELECT pg_catalog.set_config('log_recovery_conflict_waits', 'off', false)
+823e7d6bda8fa8c5aee03b69fbc7bffe508eb1e8a78c797b865c3bf8a18a13bf 1.565 4 1 SHOW log_recovery_conflict_waits
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.566 2 0 SET log_replication_commands TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.567 4 1 SELECT pg_catalog.set_config('log_replication_commands', 'off', false)
+614b5688eaa81d6d28b8c9f38d6e7ff3c1fecf1a76c08dba50e3c0eee55485d6 1.568 4 1 SHOW log_replication_commands
+d65983435783624f3bd8b020e34facc129dd72f60c3b21868cdb1d07e9692e85 1.569 2 0 SET log_rotation_age TO DEFAULT
+f5cc5dd775e686f4dad7180a83847167c9fa7c00d0e1285933fec073ba93982d 1.570 3 0 SELECT pg_catalog.set_config('log_rotation_age', '1d', false)
+5a8e6445b57ff436782df3c8fe533312de5f946c4925a59c8ec36689869d7051 1.571 4 1 SHOW log_rotation_age
+d2437bb436c490dd7a2923c683e0152f61d28d393cca5500fb16a7ddeb7402b1 1.572 2 0 SET log_rotation_size TO DEFAULT
+ed863e1d156ec4af0c54f955ae841593308fffd8ae186e671e8094c5b70008d2 1.573 3 0 SELECT pg_catalog.set_config('log_rotation_size', '10MB', false)
+2301940b9a8997bd63f0f6b06e36ee6954cd415fa07887211b49c8e74a1d9aaf 1.574 4 1 SHOW log_rotation_size
+aa166abcc66b5f56b37f858d66c742052d508ea3acf4bb4d05e3aa370415b487 1.575 2 0 SET log_startup_progress_interval TO DEFAULT
+88c9ecabd493b4fd90a1869259d58a7368aabc0af50af9d00843b221b1061524 1.576 3 0 SELECT pg_catalog.set_config('log_startup_progress_interval', '10s', false)
+a74ce5f8e4b80689b297a1853b654fb2c3892c4a40ac19812b823f421178e313 1.577 4 1 SHOW log_startup_progress_interval
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.578 2 0 SET log_statement TO DEFAULT
+ee935a8cc141b35463d58b61d02d168d5f2a8fcaf54efecd1cd20624e22e73a7 1.579 4 1 SELECT pg_catalog.set_config('log_statement', 'none', false)
+a3d20abcdab42acb7b1b264a46bd4e3eedea79f1b123e69e3e0ecb614506d258 1.580 4 1 SHOW log_statement
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.581 2 0 SET log_statement_sample_rate TO DEFAULT
+447bb08f809dfc701e48c0c9bc216622e828c330321dd29b42a86371c8852d6f 1.582 4 1 SELECT pg_catalog.set_config('log_statement_sample_rate', '1', false)
+7f2cc84e5bc29811141400bf1d43a677b6507c2953dea1b5b0f7845e404f79b1 1.583 4 1 SHOW log_statement_sample_rate
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.584 2 0 SET log_statement_stats TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.585 4 1 SELECT pg_catalog.set_config('log_statement_stats', 'off', false)
+fa98fa39bb68386bcf684d7df8ee53ed9eea2148e0f5e091a01c72284f8bb3f1 1.586 4 1 SHOW log_statement_stats
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.587 2 0 SET log_temp_files TO DEFAULT
+3f27246ab439fad9680ea44a91900a804ee7233deb0487ed8ceb9f5182405fbb 1.588 4 1 SELECT pg_catalog.set_config('log_temp_files', '-1', false)
+c8d74ddb459e505404f2e2c1a604e3375512873300dcdfb5a3396820c3dd011e 1.589 4 1 SHOW log_temp_files
+458205a0c2ba4a2ad2e16dad4196eafa61ac08f9e25629fc07f938215b5d6704 1.590 2 0 SET log_timezone TO DEFAULT
+41946906faef7c7536582a5a69898ad0bc208c5cfd78141ba623365338c94f8e 1.591 3 0 SELECT pg_catalog.set_config('log_timezone', 'UTC', false)
+2a0353d85cc25a1972a461fc5e63c6e78c95f4b71f180836951131f75c8d9bad 1.592 4 1 SHOW log_timezone
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.593 2 0 SET log_transaction_sample_rate TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.594 4 1 SELECT pg_catalog.set_config('log_transaction_sample_rate', '0', false)
+a1f53c9453039a835ef530c3f33a9d312adc338eaafb57d9c6b634e34bb70bae 1.595 4 1 SHOW log_transaction_sample_rate
+87d4a1cec0fba15c6b756999504c2963e982ebda839781bf976d1003795b5619 1.596 2 0 SET log_truncate_on_rotation TO DEFAULT
+30abfd3b476d617bcd08d3d01111807411417a22d77c94ec63097b83ea994bea 1.597 3 0 SELECT pg_catalog.set_config('log_truncate_on_rotation', 'off', false)
+5d96d5979ff4817a33872f1d89b78c3f7006fc823d50e35b036ac6d17adf54fa 1.598 4 1 SHOW log_truncate_on_rotation
+3aa2e4063c0c17f6a8849e8afbb9afc0fb4e387fb16d9f1853ed5db5b737d48a 1.599 2 0 SET logging_collector TO DEFAULT
+48e6afc888fcb7f53d9cccc70d1cd32b23ceee97641d1835adb6c119f201062d 1.600 3 0 SELECT pg_catalog.set_config('logging_collector', 'off', false)
+b380b49af81bb193a80bf05ac09a6d6db40777a5f197497df7a054f1cc778303 1.601 4 1 SHOW logging_collector
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.602 2 0 SET logical_decoding_work_mem TO DEFAULT
+804743472503ca4cfdcace9ed3845f6bba7d132c18cf5b024b3f2cafe1e8ffa9 1.603 4 1 SELECT pg_catalog.set_config('logical_decoding_work_mem', '64MB', false)
+ec7796a8685b7ad6ebaf1c133cb6aaa7aed1c5f3eeb8b202528064ad735c2011 1.604 4 1 SHOW logical_decoding_work_mem
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.605 2 0 SET maintenance_io_concurrency TO DEFAULT
+1d76f5e7934e21f2ebef0657e39bdf1521b403e9996cd930c0b64b2653ce7041 1.606 4 1 SELECT pg_catalog.set_config('maintenance_io_concurrency', '10', false)
+1b50e76ee1f366fe2c90f3d2b6d27baa9df0413af538bf9fa8002e6f3071d5b4 1.607 4 1 SHOW maintenance_io_concurrency
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.608 2 0 SET maintenance_work_mem TO DEFAULT
+804743472503ca4cfdcace9ed3845f6bba7d132c18cf5b024b3f2cafe1e8ffa9 1.609 4 1 SELECT pg_catalog.set_config('maintenance_work_mem', '64MB', false)
+beb246ecff84d12681263491428d41a430dd03b7ee0d9d39546c45bc3cff84e1 1.610 4 1 SHOW maintenance_work_mem
+1dfd7c846d84a7a19268baa48a578a0b3c1ad98be241cd76aa28138b1a1b0d61 1.611 2 0 SET max_connections TO DEFAULT
+6587d994d0a5c4ee950b65d1af501cdf84f7db88a055789c40a348629e100f02 1.612 3 0 SELECT pg_catalog.set_config('max_connections', '100', false)
+f081f6744f935171219e171e9f6b1ae7843488dd9da925c7c08dd8c910d878fe 1.613 4 1 SHOW max_connections
+afd672903ec2c5a2993763b02cfb6b552b5e22ee8b6c16410a544a22a4fd9cf1 1.614 2 0 SET max_files_per_process TO DEFAULT
+a1b2a8a559ffca3c8349e86e80a701a15ece921c94a12bcfcfd040b177519527 1.615 3 0 SELECT pg_catalog.set_config('max_files_per_process', '1000', false)
+5cc7cd067908235c990ece2758b5181f9eb50a672391bdb838641b11c53aaea8 1.616 4 1 SHOW max_files_per_process
+c7970acb794f34e12471249845a328370f2d11d87d47ac89dfb2fa4444aa93ec 1.617 2 0 SET max_function_args TO DEFAULT
+019a94e73944629a4b2a8307b1022a8d28d831e0dca5de3b5873d6ad53d6c6dd 1.618 3 0 SELECT pg_catalog.set_config('max_function_args', '100', false)
+d3a4b2d3381d779835ecf68c8e985e19a9e9cec1fdd41b61d99507b9c3febc68 1.619 4 1 SHOW max_function_args
+c0bdbc5fb1b2a67e01e15d425d01603ec64fee18a93db3b8e5a2c50682b7bdd4 1.620 2 0 SET max_identifier_length TO DEFAULT
+962c1473593d02cea6af878451ad3da3aef0eb33104c3b696738fccc58eea7dd 1.621 3 0 SELECT pg_catalog.set_config('max_identifier_length', '63', false)
+a8799edafa582ba6a5ae0dde14356a8be413347932b4fbff63b55a85a1ca2a8a 1.622 4 1 SHOW max_identifier_length
+6812d22751f74b9abb207598068e834101584053cdf0fefebdbb3a9cbae70890 1.623 2 0 SET max_index_keys TO DEFAULT
+2d42cf8946802099914edcaed2c3838cea9bc36021b35e34a73c16752bde8909 1.624 3 0 SELECT pg_catalog.set_config('max_index_keys', '32', false)
+c41b21e2d86bb997babbcab5e632f3a741605ef7572430f084c241af1f9866ef 1.625 4 1 SHOW max_index_keys
+1e96abeef50baae618ba4a75410e7dbb8f8e8df89f00f5f1a3d01b7135964f29 1.626 2 0 SET max_locks_per_transaction TO DEFAULT
+46e61703ca37c59669de84957d408defba98dda8c90a0634ed8c18c849e897d4 1.627 3 0 SELECT pg_catalog.set_config('max_locks_per_transaction', '64', false)
+e29183de5c7e0fab7e36206fe66ff885abc7fe40ab40ae76aa1ccdab00aca7c1 1.628 4 1 SHOW max_locks_per_transaction
+a48d4efa7b39045d66e42f827215f267a6f6619fd12db9ead53e803c4f3e8ea8 1.629 2 0 SET max_logical_replication_workers TO DEFAULT
+89600b6e382ae51bcb9a5162c037bf08d9c86637e0e43e0d762efb482aa6ee49 1.630 3 0 SELECT pg_catalog.set_config('max_logical_replication_workers', '4', false)
+fe1e2262da978a70aa1e597e28e8cc9420f8fc18d31751eeb8baec3571497117 1.631 4 1 SHOW max_logical_replication_workers
+183225b182c40616e20ee1a552cf26de73c75aa10e05f0c428baee3ae3190429 1.632 2 0 SET max_notify_queue_pages TO DEFAULT
+f5b8dcfa382a96873ca19ed3219d29a4d848899ec83ffbcfe7f96ae943db27c9 1.633 3 0 SELECT pg_catalog.set_config('max_notify_queue_pages', '1048576', false)
+c44153be68b1b68e3558a2ae3e592145af60106547fe3b0e9a3fd4e958968ff2 1.634 4 1 SHOW max_notify_queue_pages
+aa00fea6867a7c97a64b6a8f3064fca30d8ce4277773ff325f2dc7bd21252456 1.635 2 0 SET max_parallel_apply_workers_per_subscription TO DEFAULT
+177b1dde01053c3d5cd4f06eabbec74cd7b0044d25595d27348d8fc8b31063fa 1.636 3 0 SELECT pg_catalog.set_config('max_parallel_apply_workers_per_subscription', '2', false)
+e82b4c49b0df33b0f83d94ef884d88e2c35292da35527c17effdc2a0c41af57c 1.637 4 1 SHOW max_parallel_apply_workers_per_subscription
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.638 2 0 SET max_parallel_maintenance_workers TO DEFAULT
+9224eab958045547b1a66ecdde117537449ee12448b971d21bfb33c6e84fe69b 1.639 4 1 SELECT pg_catalog.set_config('max_parallel_maintenance_workers', '2', false)
+fafa069afcfbd334f577b98a705a834ca6eead8b6e962b8b2962f5435ef9efd6 1.640 4 1 SHOW max_parallel_maintenance_workers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.641 2 0 SET max_parallel_workers TO DEFAULT
+7c870201998eb84d78de5e2fb2439bf3f76275354af9046e14671cf9392300bd 1.642 4 1 SELECT pg_catalog.set_config('max_parallel_workers', '8', false)
+f416f8461909a66ff6df6baf0aace276e65827352c4e0aed1feec7f7d674eec4 1.643 4 1 SHOW max_parallel_workers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.644 2 0 SET max_parallel_workers_per_gather TO DEFAULT
+9224eab958045547b1a66ecdde117537449ee12448b971d21bfb33c6e84fe69b 1.645 4 1 SELECT pg_catalog.set_config('max_parallel_workers_per_gather', '2', false)
+89e3ea90514001b262c0bc0216abad5229eae47e24d81e64975f7f4c1e43a910 1.646 4 1 SHOW max_parallel_workers_per_gather
+9118a3b6c252df97c9dc446ed66df1920d3b5044b64b0a5965c196870c04546d 1.647 2 0 SET max_pred_locks_per_page TO DEFAULT
+d94c8722141fb308c80d92b2263919b885ca92518fa6144bd02c719f92317910 1.648 3 0 SELECT pg_catalog.set_config('max_pred_locks_per_page', '2', false)
+b313e1e2950dffacb159597bb623aec7d5dff2a77d0e337eb49c0a6aab8df49e 1.649 4 1 SHOW max_pred_locks_per_page
+ac8966ec522049af091ab9bfc4d0efac1bc9d67b58ad7562d149ef0a0035e1b3 1.650 2 0 SET max_pred_locks_per_relation TO DEFAULT
+6de8e93323f87902a113033b17600dd9e153e376c1223b36f6b2893e936dd704 1.651 3 0 SELECT pg_catalog.set_config('max_pred_locks_per_relation', '-2', false)
+92b135e4962aea1394dddfa8a367cc571ff317526e426d276c08fdc4766e4c33 1.652 4 1 SHOW max_pred_locks_per_relation
+1d3e5620543e140647e13b99153e803c32850ff6bd46dbacc3d83909438311eb 1.653 2 0 SET max_pred_locks_per_transaction TO DEFAULT
+4fab67250375caa252256f9a2e3bbcb9d1277119cfa5dbc2186b94b61d6259cb 1.654 3 0 SELECT pg_catalog.set_config('max_pred_locks_per_transaction', '64', false)
+f1ce81d201934535e35e1ab1780bb1106c26033cabbbb517b88c0b4ee7fa5dd6 1.655 4 1 SHOW max_pred_locks_per_transaction
+9271c184b915d10157fcb914f1b22b9d0c9d5de34a57c56ada238069300c97f9 1.656 2 0 SET max_prepared_transactions TO DEFAULT
+9c72269d0d1695fe7196999114be17a6a871964e1959faf22a1b244276d86c7c 1.657 3 0 SELECT pg_catalog.set_config('max_prepared_transactions', '10', false)
+fcd0bc5e69128e48c044c09801a7e6d7c9b9726bebeb83ac8b1267579848943f 1.658 4 1 SHOW max_prepared_transactions
+41650a35575c3bf545b6c588082ea315456511ede7ebdf75fd6c1a3a54bea64c 1.659 2 0 SET max_replication_slots TO DEFAULT
+c61c9922174cf4d5766cd2b3b56af07109dff752e6d3c813d46bf5411775e155 1.660 3 0 SELECT pg_catalog.set_config('max_replication_slots', '10', false)
+e928424bfa48f4b3288a28a47866721cbd6e522e1c7b4cd1cd05cc4e35870788 1.661 4 1 SHOW max_replication_slots
+676ba7eb84172b0e0e77b1be72b0d9cffb2bd67eda20ff032f9563bf8877d232 1.662 2 0 SET max_slot_wal_keep_size TO DEFAULT
+db4575eb9cbd783dc10ab010f01d4a299e1f2ac8037e3615b12da6b79f2313a2 1.663 3 0 SELECT pg_catalog.set_config('max_slot_wal_keep_size', '-1', false)
+a44da7bb227cdbb8a6faf6114190ed22ab1b277f8464d937f84097eff5b306d6 1.664 4 1 SHOW max_slot_wal_keep_size
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.665 2 0 SET max_stack_depth TO DEFAULT
+b1319ea99b1c8c4bdaa08b6e2b952911db53fca3ecf54071c0ab6eb075ae5cf8 1.666 4 1 SELECT pg_catalog.set_config('max_stack_depth', '2MB', false)
+fdcf94d923ac452b8b7c7f198021926d6c9ba8709ae57910deb982a48ca0fddc 1.667 4 1 SHOW max_stack_depth
+ee0c625c180f552d1881f87f715c6049527208a978843419a3f6dd0bfd1f289a 1.668 2 0 SET max_standby_archive_delay TO DEFAULT
+30213a6c2cbd2f0d3ea5413c1f500a26b280c6998827401d191fd56be69bed56 1.669 3 0 SELECT pg_catalog.set_config('max_standby_archive_delay', '30s', false)
+a6e3f98bd4a4683f42998d5a07642023604525f7e895c5771a1db3b4aea7b1df 1.670 4 1 SHOW max_standby_archive_delay
+f7e0a378713d03fd992440657c1207ba4252c9991901e8022b27755225ed4c68 1.671 2 0 SET max_standby_streaming_delay TO DEFAULT
+fc4c34b0f8037c70c9a4d411c636077ce896aa0155310a297f242a21f6422a13 1.672 3 0 SELECT pg_catalog.set_config('max_standby_streaming_delay', '30s', false)
+8a73d8d4a485e8a315c46362ba7b83fd530ee49c9a053c66067a6b908b5f72e6 1.673 4 1 SHOW max_standby_streaming_delay
+d082cb3169b52f20b1b4f8ba690ef52cc9cd292985bec7d3cd6600c094bb37e8 1.674 2 0 SET max_sync_workers_per_subscription TO DEFAULT
+23e3c54d0665df1b4a9fe2c828fa35944deac5fd11afcb8955a43b36524239f3 1.675 3 0 SELECT pg_catalog.set_config('max_sync_workers_per_subscription', '2', false)
+0bbb00114e7d5d477dd737a97278e8a0a698f169440db3426dfe4a2de3f31477 1.676 4 1 SHOW max_sync_workers_per_subscription
+17baa4d356ea7f7656651054acfa013c8c454a2f8b5c519873a58ea6175a3bda 1.677 2 0 SET max_wal_senders TO DEFAULT
+eb44625ea6bb3caa48badaf0f1edf8380dfcdedc2e9202152a55556b334002af 1.678 3 0 SELECT pg_catalog.set_config('max_wal_senders', '10', false)
+acbe9b415448e1a343d5fb3800995bf60ec15f4f32c29c0574d8562d3dc99201 1.679 4 1 SHOW max_wal_senders
+ca3f9038053bd4997b6578a3a33592bb8880905a5c6eaad7da358ad332b32f90 1.680 2 0 SET max_wal_size TO DEFAULT
+d37dd252109b0c718d3d7ae399ba56bca7b0161b2ba20114c70d5b92ad49dd43 1.681 3 0 SELECT pg_catalog.set_config('max_wal_size', '1GB', false)
+cc6f713917596f7ce2783b0d2a1992ee425b1b8403f3c383ec01f35e27acc34d 1.682 4 1 SHOW max_wal_size
+0ee2732faa109297390ad35040def4bbbdcea07294a0ff8e74a64925c297e98f 1.683 2 0 SET max_worker_processes TO DEFAULT
+22b6e8d1a1fddc3a333c849d6e74c8a1ed0d9c109a87194a8cc97d33758371c5 1.684 3 0 SELECT pg_catalog.set_config('max_worker_processes', '8', false)
+04b7717f4b6b8cac6488675b7632ddfdec5aba486a42c88073b77d48d72f00a8 1.685 4 1 SHOW max_worker_processes
+e168ac6f9a35f6af911beb8362ec89e170f0f3d594d2a616d2d2047b30ff014e 1.686 2 0 SET min_dynamic_shared_memory TO DEFAULT
+550bb7a342240d43c6ee93f4a29388a9d0c7ac2e0ce83a50254b6107af74b772 1.687 3 0 SELECT pg_catalog.set_config('min_dynamic_shared_memory', '0', false)
+3917c4a0b277dbae97b76c844d4642137a90cfae27115cce46095b5d6c10afd3 1.688 4 1 SHOW min_dynamic_shared_memory
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.689 2 0 SET min_parallel_index_scan_size TO DEFAULT
+2a8174ed2fb555b864c14262a216b23e62d6a8f1c60eace11daf4e23988177f4 1.690 4 1 SELECT pg_catalog.set_config('min_parallel_index_scan_size', '512kB', false)
+0aa46d182cfa4312fb275f35b6c6bd44afab0ea5e125ff9dc2130b5c8da80e4f 1.691 4 1 SHOW min_parallel_index_scan_size
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.692 2 0 SET min_parallel_table_scan_size TO DEFAULT
+09f4368db95837469f5d5fa5e9a3b5618669a9535e9d6638d3974a6175b87289 1.693 4 1 SELECT pg_catalog.set_config('min_parallel_table_scan_size', '8MB', false)
+3a5fda87b65a7c74accc147dc5b61189b2ebb1bed864f53ab52b8fd0c4265119 1.694 4 1 SHOW min_parallel_table_scan_size
+4f3a819e1b7af439e46aa2c245006d295046ff4fbe31c5f24a87f040d4354d1e 1.695 2 0 SET min_wal_size TO DEFAULT
+bec1f41ddf3cf2e5c84b01172212b0a7f16587cafc7b0059aad17ae6c70b92c9 1.696 3 0 SELECT pg_catalog.set_config('min_wal_size', '80MB', false)
+dc835c3ebc8cb3950e2a9854d0edf581a6e48cc6fc1239210a5f15f9a1431a77 1.697 4 1 SHOW min_wal_size
+d82a4cac03bbeaf0fb8a13b598d3e6ba2f68dc56dc5887e6b9671deb3fa8c0c4 1.698 2 0 SET multixact_member_buffers TO DEFAULT
+33705b90b36cc5fbcd2299749dd0c333975004ac30e32e6b8335d3aa5d7ddee2 1.699 3 0 SELECT pg_catalog.set_config('multixact_member_buffers', '256kB', false)
+29bdc76ca886406ad2253d325066cd6bc68985a28062a62df7d7f5302ce2d703 1.700 4 1 SHOW multixact_member_buffers
+93dedd29716bd094de8e0a8696d5e3b407570d2ab43925e7be06a2ba2af8f77d 1.701 2 0 SET multixact_offset_buffers TO DEFAULT
+9f802ff7f516b52be681c8b8cf4e4d0fb0842195351198bb687a9dae2c778878 1.702 3 0 SELECT pg_catalog.set_config('multixact_offset_buffers', '128kB', false)
+5332c61da5f93243d835eb188319464557e87ed8e649602ddc612fbe3ea855ad 1.703 4 1 SHOW multixact_offset_buffers
+a522dea3432afd0979d581ee603fee773fc1ed8a4cfc10c96cacd40189f17ef3 1.704 2 0 SET notify_buffers TO DEFAULT
+a9f4bc519dcaa0d86dc6e5aadf62b4178697a6f7e19fb8fe4ca06ff5c37ebf1a 1.705 3 0 SELECT pg_catalog.set_config('notify_buffers', '128kB', false)
+b462c7262d046e81bdbc0f4005ffa993fe70dab82f8b5369cfc0461268dd5df8 1.706 4 1 SHOW notify_buffers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.707 2 0 SET output_plugin_libraries TO DEFAULT
+91105f9b1cb5e096fa74ac96bcad6d2867c0eb7f176314e7014f05b63c614b59 1.708 4 1 SELECT pg_catalog.set_config('output_plugin_libraries', 'pgoutput, test_decoding', false)
+6852f99350c68084c7e180561c098b8f5b86b1b8d513f22d29191e8968e2908e 1.709 4 1 SHOW output_plugin_libraries
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.710 2 0 SET parallel_leader_participation TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.711 4 1 SELECT pg_catalog.set_config('parallel_leader_participation', 'on', false)
+7e5972a08b9eaa764161e7ec571e02cab6e904840db241041a79e5197a00337a 1.712 4 1 SHOW parallel_leader_participation
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.713 2 0 SET parallel_setup_cost TO DEFAULT
+18b690798c1e60fd20d924065af9f5a2c27247890b02efb6ac3ccec5c28433d6 1.714 4 1 SELECT pg_catalog.set_config('parallel_setup_cost', '1000', false)
+40022354eafcb820c683fb675c135ae4d1f90deb8ad2fc0547b07bffd130713c 1.715 4 1 SHOW parallel_setup_cost
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.716 2 0 SET parallel_tuple_cost TO DEFAULT
+1ba0e7aa5d1f84123755c87497c495552b67f1bdde760ce3242e7cc7f11bb402 1.717 4 1 SELECT pg_catalog.set_config('parallel_tuple_cost', '0.1', false)
+85125c46dec8e522afd8a85de64a0329dd0b752ca45e54a4df45e94c76cb1b73 1.718 4 1 SHOW parallel_tuple_cost
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.719 2 0 SET password_encryption TO DEFAULT
+f863ab3fd3bac02a57287f81ea1875314cd26e9334c91726f09c1558e8909abf 1.720 4 1 SELECT pg_catalog.set_config('password_encryption', 'scram-sha-256', false)
+f05d1e6b006cb44530afed1457b92ef06e11c28e46ae17bc5a9cb962d9257011 1.721 4 1 SHOW password_encryption
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.722 2 0 SET plan_cache_mode TO DEFAULT
+6b8cbf879460c2d5ffcd1cd715e6c7e6007d001dc24b556c83f4fe1ef4453c80 1.723 4 1 SELECT pg_catalog.set_config('plan_cache_mode', 'auto', false)
+50d6696652465340a5b1d30ff423bd3d1b1c3c5d233a68894e3c42b32b8675c9 1.724 4 1 SHOW plan_cache_mode
+624c85143fce29e2454310531c06e27e137eb389b3a8504ee057c21afe77d8d4 1.725 2 0 SET port TO DEFAULT
+7427c05838b3fdc902924c61365fc0cac80bf5d09b52e8ee2fb10e8f343f3e6a 1.726 3 0 SELECT pg_catalog.set_config('port', '54317', false)
+d8ca62a3f4f1a83e62d6c7c2eda4e817ce0a0cdcd4b535a294f8e117832d646f 1.727 4 1 SHOW port
+4084099c7910584b024be291e41c6c33f3fcbfc9c89810f380d2fd5a8ea2a195 1.728 2 0 SET post_auth_delay TO DEFAULT
+bae3a2db29465c6681de302d9e71e82042dd6bdf55df16cea70fd4b8b3b0b016 1.729 3 0 SELECT pg_catalog.set_config('post_auth_delay', '0', false)
+812b5ebad00c4e5090cd7dd765544769aac42438e21d945d2ab9dc3d1b3883ca 1.730 4 1 SHOW post_auth_delay
+fd4946fad9726f984fcecb1685c54db875b867d432a4bbcbc338d1123431aac7 1.731 2 0 SET pre_auth_delay TO DEFAULT
+a8b41b6c861d2bb86fbae1aa72bffd678bd009e899569aa443cf31f917f3c897 1.732 3 0 SELECT pg_catalog.set_config('pre_auth_delay', '0', false)
+e18b131a09db4fa4aaba550ca7c6a22b43c9cd4e7697f4cb7439a244ee47425c 1.733 4 1 SHOW pre_auth_delay
+071730c2010e4b0bd7fed5a6a1c223fc69d3933537e1a2ced5bb15e8de067631 1.734 2 0 SET primary_conninfo TO DEFAULT
+ede7650364877333290c16b2e6d0d4a0d179ca186362197862a052d52eb49d28 1.735 3 0 SELECT pg_catalog.set_config('primary_conninfo', '', false)
+9a0fab4b977481bb04f68196c8de14b037b480be4c4e99d2af602069b15a48b0 1.736 4 1 SHOW primary_conninfo
+b58946e79450fde1ea409e0e038e2ad961476a61ee26615bb8d3983ebaf60376 1.737 2 0 SET primary_slot_name TO DEFAULT
+1c49d69967b85da878c8aa6c7849da391d4095cc27c4ad6595eeb49c76010d8d 1.738 3 0 SELECT pg_catalog.set_config('primary_slot_name', '', false)
+fac955c8baf8ab7a432b79811d06ca5ed213d521cdc77ec0415fdf08c5c7e9c7 1.739 4 1 SHOW primary_slot_name
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.740 2 0 SET quote_all_identifiers TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.741 4 1 SELECT pg_catalog.set_config('quote_all_identifiers', 'off', false)
+f32ea97699e4413ae41dec97046fb5371946ec363f3a718f37915340cf60d981 1.742 4 1 SHOW quote_all_identifiers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.743 2 0 SET random_page_cost TO DEFAULT
+fb2209f9d0ad29101368caa654d09d0071893d385b82a35f5c35a94767c4103d 1.744 4 1 SELECT pg_catalog.set_config('random_page_cost', '4', false)
+e2d6aec7ad0abfc9287022990067d30fa16125a3eea9cc617a037c5d5cebec30 1.745 4 1 SHOW random_page_cost
+cc59ec142c146c274507421c338033059acc3acc2ea080ff0553bee42537683a 1.746 2 0 SET recovery_end_command TO DEFAULT
+2cd8aea5c0438ae597e3a8fd256ac9d03b160d07b0b20eb649856c657665eb61 1.747 3 0 SELECT pg_catalog.set_config('recovery_end_command', '', false)
+65607dec5c9b44d57253bcd7ea344b9ada10ecc6fd77fe0218e82d48d3b60d53 1.748 4 1 SHOW recovery_end_command
+59d21208222f1644b17d42687155c7c4594f210bfb958893c9f455a42f4e207d 1.749 2 0 SET recovery_init_sync_method TO DEFAULT
+b667a60a52d57e0d42d2571f679918306d9bbc83182333049c9054a4bef7d4be 1.750 3 0 SELECT pg_catalog.set_config('recovery_init_sync_method', 'fsync', false)
+abce3b1871cd5a8d86fe7274de3c61c704f7407274f2efc3b55efcd58c234aee 1.751 4 1 SHOW recovery_init_sync_method
+2148cb5aa93dfc1b6c448fc481d6c4ac1bd3647599c5b8882b64d09a24cd8665 1.752 2 0 SET recovery_min_apply_delay TO DEFAULT
+d10c4fe4fde32122e6208b06362039c3e4ef45ac2b667b102e277d926d2a0ca5 1.753 3 0 SELECT pg_catalog.set_config('recovery_min_apply_delay', '0', false)
+3f8fd73a868d9e852ffe411e3e90beb8027333f84636c3d3488ede133cdea46f 1.754 4 1 SHOW recovery_min_apply_delay
+4ab763031a4f66477d786b90fb28bd6bad0a9123f3b048ce82c5f9c227bb552f 1.755 2 0 SET recovery_prefetch TO DEFAULT
+c956494962c959064a69cd13d8c65614ee2bf6b39877e08beebf0cd89dba9b72 1.756 3 0 SELECT pg_catalog.set_config('recovery_prefetch', 'try', false)
+7a2dd13a4e2f0d4356284d9f8329c72cea3aef4452c5d41d70f143e7dcd2b1d6 1.757 4 1 SHOW recovery_prefetch
+add52b5cdcc7aef4da463b5274d0a77caa08b0b1f0e2390d68b268433e595cdc 1.758 2 0 SET recovery_target TO DEFAULT
+81afc4eb1e87f6634fb536a580e48ac3a50d923a80bc6dbc1b95eef7c0c836c7 1.759 3 0 SELECT pg_catalog.set_config('recovery_target', '', false)
+54b9effe96cd07541d2d3fec6c0e70b42b05d12c4efd4b864b0c1d2229ccaaca 1.760 4 1 SHOW recovery_target
+b4685bd9eb9bc100485ea9c5c09e03b01b5b173ca22e439bb4672d6bee67ac0e 1.761 2 0 SET recovery_target_action TO DEFAULT
+036a8d5c46ee0c9c1d01c509ff2f80a5c082ff4b831dbc253a31a0e20db3a3e6 1.762 3 0 SELECT pg_catalog.set_config('recovery_target_action', 'pause', false)
+085a86143e12a6ec6dd6bd12226561861960c15a2ff873d6a2ebfbe9a8e68e1e 1.763 4 1 SHOW recovery_target_action
+98eff53b1b044ce2762f58fd7f19e0e5d446690fa633909911f9c0b5ce449dd4 1.764 2 0 SET recovery_target_inclusive TO DEFAULT
+f8c2e4e5eeed9f3ec137e5279033b1eb88950b4d98a271602dde8e50b94e5e43 1.765 3 0 SELECT pg_catalog.set_config('recovery_target_inclusive', 'on', false)
+22850cb478cfe0228ce710a71701bf2ca297865785dfcede8cc09931e0efb012 1.766 4 1 SHOW recovery_target_inclusive
+06dd0b954935849fc07340dc44fc30c12972b5d49c98cca36d44098b29c9951d 1.767 2 0 SET recovery_target_lsn TO DEFAULT
+c5bc163e2696bb1689271b1f3bf49e8b5bba3b4e76b521f21b0efb54f4e601e5 1.768 3 0 SELECT pg_catalog.set_config('recovery_target_lsn', '', false)
+d814d9c7ef6fa23bd675a458f97dc067f1bc334578c34f02b60d68643b9b5254 1.769 4 1 SHOW recovery_target_lsn
+cf896853d2e4a556cbcab11f26584e0677a3d2dfbc9799e8a2ca602165614aa3 1.770 2 0 SET recovery_target_name TO DEFAULT
+0578b7edd551e2ec744b90f287831eed0d1043e26c34b42bcb866f0eebacfddf 1.771 3 0 SELECT pg_catalog.set_config('recovery_target_name', '', false)
+11512ee996ee5f8e273b2833147598c764c6bc79f12c9c3ffd1e614011be6202 1.772 4 1 SHOW recovery_target_name
+3fbdad1bf84491d1eabf51c660606a12b4e7c9bfe87b274fbd29426f98adabfd 1.773 2 0 SET recovery_target_time TO DEFAULT
+b833352ebc2fc339cfa9270c3525e447e2f7f6cb1b91b1b03bc965ec2d716a41 1.774 3 0 SELECT pg_catalog.set_config('recovery_target_time', '', false)
+c3849dbb4039199d7a52267baf77e169498d0a94efe58ec835641855da6f51f3 1.775 4 1 SHOW recovery_target_time
+e901b9c61664293b74485cbd6651f776618d0776dbe7c0190d380b123724205b 1.776 2 0 SET recovery_target_timeline TO DEFAULT
+d42c6533a7f7082a98bc3de8d92432b07c026da95581a0ae5230a0c451929567 1.777 3 0 SELECT pg_catalog.set_config('recovery_target_timeline', 'latest', false)
+e8146a0524a345ac879021ef5515fffc251a191700e406aa55bcd9748ac69449 1.778 4 1 SHOW recovery_target_timeline
+78a87b111535b203b2758e2bcbc4ad3b195dbf75635983804be723e6ca1f661f 1.779 2 0 SET recovery_target_xid TO DEFAULT
+c4c272d039a78d5c2b98131d0bf8f4daef3f893003ca916ba2b70378fbab3967 1.780 3 0 SELECT pg_catalog.set_config('recovery_target_xid', '', false)
+ead41566a7fe507da40580303aca8e0dfda1303fca7c4e4d15ef05d7c597cb39 1.781 4 1 SHOW recovery_target_xid
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.782 2 0 SET recursive_worktable_factor TO DEFAULT
+1d76f5e7934e21f2ebef0657e39bdf1521b403e9996cd930c0b64b2653ce7041 1.783 4 1 SELECT pg_catalog.set_config('recursive_worktable_factor', '10', false)
+cd99f02389fd199e6e791efe914d0903b6bc0562f23bcddcd80347424e1a2c9c 1.784 4 1 SHOW recursive_worktable_factor
+bef15d061a389ea6e012e878925483ee2921fcf9317c2df78547f6ae801af4c3 1.785 2 0 SET remove_temp_files_after_crash TO DEFAULT
+f04111fbeef1689ba42de6d811c8881758448817d04e343cc0cb4570773e5ea7 1.786 3 0 SELECT pg_catalog.set_config('remove_temp_files_after_crash', 'on', false)
+0b414d336e956d002b33daafdefba54b81ab435b785669a0485635ba1e2698c9 1.787 4 1 SHOW remove_temp_files_after_crash
+2fc1c76dcdeef19376981a2c47a5483ca953883f1ffb3ea42f1d5e2fa7ba94e9 1.788 2 0 SET reserved_connections TO DEFAULT
+ae07a1af7445e8df7b47718debf7e8f1cf0694371c881e49353733ac996b46fb 1.789 3 0 SELECT pg_catalog.set_config('reserved_connections', '0', false)
+fc2bd07fcdc70aafdaa992bad151cda3584c086bcda362071d73c319f059d7b2 1.790 4 1 SHOW reserved_connections
+069d5b1c392deee27479c0454ab561b668c7c3f66d957b80d344808ab3641ace 1.791 2 0 SET restart_after_crash TO DEFAULT
+2557b8598ca485d4754926383254cf23dbe0915f848fe41e191a490ec5368342 1.792 3 0 SELECT pg_catalog.set_config('restart_after_crash', 'on', false)
+57aa0b487556420475876d587ca8eba4f7a47be7fb1d6949f06246fab764a3e5 1.793 4 1 SHOW restart_after_crash
+5906cd2aa062f1ccae35f5a29d1607355c6680a7c441fba59958eba1daea9f58 1.794 2 0 SET restore_command TO DEFAULT
+e691727cd62696a154c09bb9832e79946d604469a82b5daa1fb5b7ce331347d9 1.795 3 0 SELECT pg_catalog.set_config('restore_command', '', false)
+127ddb296225ca136af19a5fdeae96eb2df70966670064e340cb8389f45f758f 1.796 4 1 SHOW restore_command
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.797 2 0 SET restrict_nonsystem_relation_kind TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.798 4 1 SELECT pg_catalog.set_config('restrict_nonsystem_relation_kind', '', false)
+989f3112c79d37ca3673f76c36cfc887c572142b4fb829af0df5f1fd60b3c7e1 1.799 4 1 SHOW restrict_nonsystem_relation_kind
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.800 2 0 SET row_security TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.801 4 1 SELECT pg_catalog.set_config('row_security', 'on', false)
+b7b18940c2406f3d3f438b8c7451a49eb8c6d2bae55741fc8ecd51ae02e9fe75 1.802 4 1 SHOW row_security
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.803 2 0 SET scram_iterations TO DEFAULT
+151d081fdcac3079829fcdaed7d61a5c41e0fd280a9d4fd802447e2d79a62307 1.804 4 1 SELECT pg_catalog.set_config('scram_iterations', '4096', false)
+cdf8a6b4f53b85c6414bee894e453e65edfebe28392f2e3a0fc8ac8a82aea0f3 1.805 4 1 SHOW scram_iterations
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.806 2 0 SET search_path TO DEFAULT
+362ac2972fdf820cc8746d37d268e16592fe3b070dbf6b856b8f43e334304cc1 1.807 4 1 SELECT pg_catalog.set_config('search_path', '"$user", public', false)
+4f38e6eea603127763607875f54c17467d5b7687d497e1194aaac483face89fc 1.808 4 1 SHOW search_path
+394c442b7a85fd279a40b832cc37cffa1821f61382ae7311fdd6c9f3107340f1 1.809 2 0 SET segment_size TO DEFAULT
+626f18d879c4aff42f8e85ba65abe8e161669e86087748ebc76d35f9a527aa96 1.810 3 0 SELECT pg_catalog.set_config('segment_size', '1GB', false)
+62ee5d88490b35f1a7fd938e86415b677d135e53548e7f67ae2a92034ba27dbf 1.811 4 1 SHOW segment_size
+e9e47d73ae805d328858d53b805b0e9f83476c28face8ac4e959b8571c5b5073 1.812 2 0 SET send_abort_for_crash TO DEFAULT
+fea3f9f7e44dce8ed678bf4e2462cdb1fccafff4e974240fbaaccd20e87d5985 1.813 3 0 SELECT pg_catalog.set_config('send_abort_for_crash', 'off', false)
+53f61b3bc28cede00d5eae51d5f439281ceaa9911f32f90b10c131e8d8530f11 1.814 4 1 SHOW send_abort_for_crash
+78710f0eebd4527b12e38e46d10385afaba6f7b9020babcde9c9f287f52e7a5d 1.815 2 0 SET send_abort_for_kill TO DEFAULT
+dd44f8b97c045b585ea2596ab1abc73d08852901f31053c47d1d60ab2298c8a1 1.816 3 0 SELECT pg_catalog.set_config('send_abort_for_kill', 'off', false)
+a8f36372d4341f5c066884c239fedbeaec0d46176f128d40ca7f9a8ea97659f8 1.817 4 1 SHOW send_abort_for_kill
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.818 2 0 SET seq_page_cost TO DEFAULT
+447bb08f809dfc701e48c0c9bc216622e828c330321dd29b42a86371c8852d6f 1.819 4 1 SELECT pg_catalog.set_config('seq_page_cost', '1', false)
+ef51834a37a0d66330cd3dae79938ade655cf46c00b75a985d3db251bbc2763b 1.820 4 1 SHOW seq_page_cost
+557f348a11b04d348115a8280825d435cc73e117235a6fcbe5d24350505fd08c 1.821 2 0 SET serializable_buffers TO DEFAULT
+df1eee4825443390063e2b218bcc6c51b21ae4e60900f90d5b7b6fb97731ea1c 1.822 3 0 SELECT pg_catalog.set_config('serializable_buffers', '256kB', false)
+81bf34e0c316d52d322d75bc9591cd0a20f2c8e1c525f4026764082c6939318c 1.823 4 1 SHOW serializable_buffers
+4671f6aeb7befb158992dfa1a58b98af449dca60a862c55cd697441ab3c41766 1.824 2 0 SET server_encoding TO DEFAULT
+fc5771c7f3e6f05fe917866b0135e538cdaabb0c39a766df4a023405b07f185e 1.825 3 0 SELECT pg_catalog.set_config('server_encoding', 'UTF8', false)
+29a6e0f3b5a2f39cb068ef04fb2885cfb6c71172dbdf61bfe06ab78d3abae92f 1.826 4 1 SHOW server_encoding
+d01f9c699553b44ed8fb8acc861bf0207beaf94d138308016f783da47ba226ea 1.827 2 0 SET server_version TO DEFAULT
+3efed410c43052ba6f6e697b2cdbc065cab413962c83a17499a57cfd5f69a49f 1.828 3 0 SELECT pg_catalog.set_config('server_version', '17.11', false)
+a804bbf903e6f044c40197d61b39c25bbd32fee97714b460a675cfe81cc8f196 1.829 4 1 SHOW server_version
+d9af1668444303b722986bcbf596ea6e2aa08c1d9859df9c7cd234884eb9ca6d 1.830 2 0 SET server_version_num TO DEFAULT
+64a0cfd7225eded41d139514ddf1d111e6b22ab12f93a335ff1a87e5c8a4e4d2 1.831 3 0 SELECT pg_catalog.set_config('server_version_num', '170011', false)
+df80b0d9e17cb42cf78e5aa6d49e49f2a66e95874a6f208a1ace0ed6eb7af201 1.832 4 1 SHOW server_version_num
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.833 2 0 SET session_preload_libraries TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.834 4 1 SELECT pg_catalog.set_config('session_preload_libraries', '', false)
+d4aee481754762ea424f6028dfe4c8c2113888d5f742d67d35ed0fff0e2a3be6 1.835 4 1 SHOW session_preload_libraries
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.836 2 0 SET session_replication_role TO DEFAULT
+dc7e8495c81391d9049efe402c439b6d7802b4e26eb272e1c1e99453839c227d 1.837 4 1 SELECT pg_catalog.set_config('session_replication_role', 'origin', false)
+de74686ca693ba1b056bc0e0c6fccad233c632108becd2c15219f99c8c0977a4 1.838 4 1 SHOW session_replication_role
+5365751a2262fbbc6f7720a8f96a0faa87bfcc9d018d458ea1b13a53fc3ee36b 1.839 2 0 SET shared_buffers TO DEFAULT
+7ec263306bf6b9f8c813ae9c8dcc1e5635107b60c6c2e92bce16bb8b5aec26e6 1.840 3 0 SELECT pg_catalog.set_config('shared_buffers', '128MB', false)
+cf26f088eb768b738f1c580b54195f1afc570ff0eb4a09a08f89f81c3d7cc9b9 1.841 4 1 SHOW shared_buffers
+647096d403d86befbb9b1b8a3ff62f61886cad9425cc9452ed0efba47d023dd3 1.842 2 0 SET shared_memory_size TO DEFAULT
+5c7dc3f549bab8113031b2640778febbf186e14b4ecfc3d012069c4351b40fae 1.843 3 0 SELECT pg_catalog.set_config('shared_memory_size', '144MB', false)
+84db7ca63e1115dedea95b5b003ed2e61f1eb20563ac6236781f32c0982faa8b 1.844 4 1 SHOW shared_memory_size
+3e056f3c97bf5bdc862bbec15cf8c85e232ee5d599e48fbbe5584f36ab52ad2e 1.845 2 0 SET shared_memory_size_in_huge_pages TO DEFAULT
+23ec884f03c6caf33f12a4dc7bebc9a1c497bf3a8572346cd66ccbc177a3bc26 1.846 3 0 SELECT pg_catalog.set_config('shared_memory_size_in_huge_pages', '72', false)
+e3f0a17b5b9f433ee69ee764f64653c42ac2f50f1ec47089943ec86899dd6596 1.847 4 1 SHOW shared_memory_size_in_huge_pages
+2643682a9327c5db8d189d28bcc0fae830c6f872cbd0b83e99ec872d00472f9b 1.848 2 0 SET shared_memory_type TO DEFAULT
+30bd132bd6f81b0f69728739ba2460b8f5457dd9916039064d77007535d01465 1.849 3 0 SELECT pg_catalog.set_config('shared_memory_type', 'mmap', false)
+1b148614d158e1e8f67e1d3e357f8104b0627b75f34bece47c820f642df0ffc1 1.850 4 1 SHOW shared_memory_type
+0f08f3fe38566f08a3455783ab79b3f08d4734abfdc9ccf3fe3d7ba086ae77c1 1.851 2 0 SET shared_preload_libraries TO DEFAULT
+83d936aabe546c934707ccf58bb419db670407ef6b769588f65a13fb58b7bbb4 1.852 3 0 SELECT pg_catalog.set_config('shared_preload_libraries', '', false)
+ace4522a5794960fb0c724fd1dcebc05c0444eb08ff20d38ef62e4df46c0cc8f 1.853 4 1 SHOW shared_preload_libraries
+69381189db0a4f3301b2c698c605e83b76b77a924f13bacc4a15167cbddb976c 1.854 2 0 SET ssl TO DEFAULT
+3c30d4c8a28b6f2ceaf78db8fb0df6ddca525d2ef700f06f874e592a91ebbaf0 1.855 3 0 SELECT pg_catalog.set_config('ssl', 'on', false)
+64a7290abbe568087bc3e6f246a901769f348b44abb433bc28725871d7da27cb 1.856 4 1 SHOW ssl
+54b4b2f21710929c707a97308a4d5a01a172a64bd10ef5ffb1f0c767445bce71 1.857 2 0 SET ssl_ca_file TO DEFAULT
+486ff152a71bedcfddbd8a13098ce8df3cbc28cf4368dbed96988d08751526d4 1.858 3 0 SELECT pg_catalog.set_config('ssl_ca_file', '', false)
+e5653b920993fd02e28f697b6122d178423894d49db87b1fb20c375f73e5c11a 1.859 4 1 SHOW ssl_ca_file
+b7807cd091482eb69f632e60f855d95f7c05f9a13897718c4434a1610f4f387f 1.860 2 0 SET ssl_cert_file TO DEFAULT
+21c3c3c4ca4fc66d0123937f17d3d00589ec5089ca503de8c61b6aaa0fa89bf0 1.861 3 0 SELECT pg_catalog.set_config('ssl_cert_file', 'server.crt', false)
+5bd77ed0d103b3f2154f20bc34febc3f347c721964c0caa9f5c7e50e61c47da7 1.862 4 1 SHOW ssl_cert_file
+632b2a9f907082f8a4adef81ae3748e699a145ea92d106abadd8f72b3e4f486d 1.863 2 0 SET ssl_ciphers TO DEFAULT
+8e5cfb026715be1ca9103971300d8c575dcb2bfca55d054654effd4ddfac0bc3 1.864 3 0 SELECT pg_catalog.set_config('ssl_ciphers', 'HIGH:MEDIUM:+3DES:!aNULL', false)
+253eabe2524ede1d1a30215ccf9eaaaba7be86d7bc8b3b6da42fd690a78111d4 1.865 4 1 SHOW ssl_ciphers
+23fcf75a0c0b348abd823727916b4338dabe15da13cbd1b4bec40e7e5d0a4a98 1.866 2 0 SET ssl_crl_dir TO DEFAULT
+33ad431e243fc123e1423ec820d4edf71a10323b348de6b62157fe35a21cde4e 1.867 3 0 SELECT pg_catalog.set_config('ssl_crl_dir', '', false)
+b22988c5ae13d16aeff084af739ade66e8882aaee2fe067d2d85aaf03086e1f1 1.868 4 1 SHOW ssl_crl_dir
+086e511d86f7d42078e06190f5d688516c35784f63d91b63cc46ee50304ccddd 1.869 2 0 SET ssl_crl_file TO DEFAULT
+eb85f150a8173fd6219acf2a2fe6f9c2deba63e230c39241114200c5d7624204 1.870 3 0 SELECT pg_catalog.set_config('ssl_crl_file', '', false)
+d11275b1b4e147a24a72239cb44d4380ef2e727ff3fe7e44a9dcc6f16cf945ae 1.871 4 1 SHOW ssl_crl_file
+c4d1c7ed994e6d3893cef498ac3d871654fbb8bafa1f731f8fa7f0f312cf0d07 1.872 2 0 SET ssl_dh_params_file TO DEFAULT
+3859e199267882ad03f1c17563c05d032ac53282ec83beefc1677054946ba66b 1.873 3 0 SELECT pg_catalog.set_config('ssl_dh_params_file', '', false)
+b297e8deee745915938d7a5945d7d83f9d66175bb4f0e1d3f64c0c2a03128878 1.874 4 1 SHOW ssl_dh_params_file
+a7260cd552916a5fdfa57a6821aea369851cb53ef1bbf48cc709c5f7d4e4ac12 1.875 2 0 SET ssl_ecdh_curve TO DEFAULT
+1aeff78453af5f5c54e922bbe3b668cbd6f7b66edbe97a49ea09ca3e334e2436 1.876 3 0 SELECT pg_catalog.set_config('ssl_ecdh_curve', 'prime256v1', false)
+8f2f0d14fca24ced1161850cfaf9724b8b5ad618a70cef44b6ec3efa7b6729d2 1.877 4 1 SHOW ssl_ecdh_curve
+8ca41d8a87d490f2591f6deff1924fedd4c4b9904aec54aad43d7fdd555d1eb2 1.878 2 0 SET ssl_key_file TO DEFAULT
+90cabe66accf521db1a69626a032be6fabf662f9b4242d3f754b8eeda66bb1c8 1.879 3 0 SELECT pg_catalog.set_config('ssl_key_file', 'server.key', false)
+afa5074c8eb0119b74f5f694c1f149cf9d83f560150773dcb817cfa5f2edac93 1.880 4 1 SHOW ssl_key_file
+b3300f6abb71b219e58a445e146f04e429351bd865542304e606200335e41e1f 1.881 2 0 SET ssl_library TO DEFAULT
+c1ad51d604ca2dc7547ecba7d7c88456919d1348f3623cf5449b7f9c8345a4ab 1.882 3 0 SELECT pg_catalog.set_config('ssl_library', 'OpenSSL', false)
+53a9d9b0253760cbcd0e79f040ecf6d16dd95ea9ccff4cf06677c8a0eb740b08 1.883 4 1 SHOW ssl_library
+e9b99aded9e3e290d9cb43e0231b60486d035df621b8162ea36ba3941bec60bb 1.884 2 0 SET ssl_max_protocol_version TO DEFAULT
+9a63b7a7621a51160287f9b6a08f702e0e5707bfd2f7a11b879a5c495c47e223 1.885 3 0 SELECT pg_catalog.set_config('ssl_max_protocol_version', '', false)
+80c750bf8cdd36abf6070724726bde4298b99f7fa4b55134322766c83bf8164f 1.886 4 1 SHOW ssl_max_protocol_version
+ecb25c135dd78a7fe54b78ef3159721fa8b29f00041179f01e713ff54368f4a0 1.887 2 0 SET ssl_min_protocol_version TO DEFAULT
+1f10e48cc9c67c258a1a7e852b40f3819d29292f8d3e486163734bb9bb3cce71 1.888 3 0 SELECT pg_catalog.set_config('ssl_min_protocol_version', 'TLSv1.2', false)
+13daeda75fdd38d09c2b91f9ce910759ab40a43a45fbcba40eee8b9d98b41d78 1.889 4 1 SHOW ssl_min_protocol_version
+50568c0984ab404002892c96ef0ffe0edf0ecf79fed246a1b775f40124655482 1.890 2 0 SET ssl_passphrase_command TO DEFAULT
+3c568ef735725b3c20b209d521e029a8f13be5c64186e5ff9ff4f82f1e9c0aa0 1.891 3 0 SELECT pg_catalog.set_config('ssl_passphrase_command', '', false)
+7cc5714fb7ad65f3b77afaeb959ce7bac79357714282f8e331e3080cf906ad75 1.892 4 1 SHOW ssl_passphrase_command
+c701150d67d9642ac981ccb64ec59be80be717d910a39e4d954b719213ea705b 1.893 2 0 SET ssl_passphrase_command_supports_reload TO DEFAULT
+83836c40e0aabac8b0217aaa628204801b973da324502fe59bcc07a2c704fbf1 1.894 3 0 SELECT pg_catalog.set_config('ssl_passphrase_command_supports_reload', 'off', false)
+77bb76b765fb313d8fd3700b0ea257ed91ff799a2fef4412b7eb3ef0937873e1 1.895 4 1 SHOW ssl_passphrase_command_supports_reload
+225b13f5b9d5d49b1b79232f54a213bb25272c6989d1c0ba22c1c5b0c9753dbf 1.896 2 0 SET ssl_prefer_server_ciphers TO DEFAULT
+432460cd01eb9b6331a628375ae0df47fc3e57c2db58633113f2327d87df8cd0 1.897 3 0 SELECT pg_catalog.set_config('ssl_prefer_server_ciphers', 'on', false)
+4c2aa033a549cc93d6eead7128d13d8efb4e6508111e9c070e47997b51252ad7 1.898 4 1 SHOW ssl_prefer_server_ciphers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.899 2 0 SET standard_conforming_strings TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.900 4 1 SELECT pg_catalog.set_config('standard_conforming_strings', 'on', false)
+0f1f53af8d7af3a003c116c9469f8f778c1b860aff2e95cc5c727107a552179f 1.901 4 1 SHOW standard_conforming_strings
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.902 2 0 SET statement_timeout TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.903 4 1 SELECT pg_catalog.set_config('statement_timeout', '0', false)
+57de63911dd3b4e358b89786c470ed66f6bec2381bdcf25f8d88703e558ac8b1 1.904 4 1 SHOW statement_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.905 2 0 SET stats_fetch_consistency TO DEFAULT
+6175f771ec103aa3119d397b4ed213e1943275d32dcc187cd41d1ad6f76870af 1.906 4 1 SELECT pg_catalog.set_config('stats_fetch_consistency', 'cache', false)
+706de7522f5753868f613e0554935fd31cff34f99d113d971f74ff54f72d2ca7 1.907 4 1 SHOW stats_fetch_consistency
+8f09ec7910ceebff34f656664cd9409fb4d35634ebd17c351e64bd4d57b3e9e2 1.908 2 0 SET subtransaction_buffers TO DEFAULT
+5ad662f930cb4776f7649d40522c080b831326c876b722adb2f1937de669e957 1.909 3 0 SELECT pg_catalog.set_config('subtransaction_buffers', '256kB', false)
+618c388faba8af0d273c56ac9c46b5e375e902024f64abbd426f03b3437c82be 1.910 4 1 SHOW subtransaction_buffers
+52e9af767797bb73db02337efc8f5ffe0c48e9a5463b9312e484abca25cef498 1.911 2 0 SET summarize_wal TO DEFAULT
+cfeef539a4ad25c0dfab9ff3320caf32d26af93e3106c25f6cc1c53625e3c43d 1.912 3 0 SELECT pg_catalog.set_config('summarize_wal', 'off', false)
+877eb79bd3006727c755c62ba6a4eae3f3a0a22ecb09000a44df099ce19d71a7 1.913 4 1 SHOW summarize_wal
+096f5a1d196dee9b35abad73cdebece53f285f896171781a16087ba393aacbf6 1.914 2 0 SET superuser_reserved_connections TO DEFAULT
+7f29786e906af2f533d9ca9cb4b66095caa7436788a296a9d93d3705a3515915 1.915 3 0 SELECT pg_catalog.set_config('superuser_reserved_connections', '3', false)
+badadca4ea7c2eaa18e0d423d794638ea784751854965574eead1de7bb459973 1.916 4 1 SHOW superuser_reserved_connections
+4cdd34190316d4b2c8d8e3ac5e527ce28e1d6c1533c382c6c104f71f4f6b020c 1.917 2 0 SET sync_replication_slots TO DEFAULT
+b0ef0582b1acf02ea6d0af8b5eff58e6cde31f42423a2430e996ef6be58a312a 1.918 3 0 SELECT pg_catalog.set_config('sync_replication_slots', 'off', false)
+b906f96b3c024e4262127ecc8293da0b19d52a205443eee15cadcb1bc699a355 1.919 4 1 SHOW sync_replication_slots
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.920 2 0 SET synchronize_seqscans TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.921 4 1 SELECT pg_catalog.set_config('synchronize_seqscans', 'on', false)
+a633b528857cd6ae48dd2b1be6038f2a3f8ef9f748c5e619b0ddb72e755162ea 1.922 4 1 SHOW synchronize_seqscans
+deaccc8b4796218cd6afd16c21ec1e834013fb113f453d602449bed7a85dd88a 1.923 2 0 SET synchronized_standby_slots TO DEFAULT
+d5f9b06275be15015be9425a0d5c7b4a5f6360e5796b740bacc9e80956d04706 1.924 3 0 SELECT pg_catalog.set_config('synchronized_standby_slots', '', false)
+ba94adfa1bfc71a1eebef7a7ee83b63f90ee88ee2b834eb6f2cc14f7713fffe8 1.925 4 1 SHOW synchronized_standby_slots
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.926 2 0 SET synchronous_commit TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.927 4 1 SELECT pg_catalog.set_config('synchronous_commit', 'on', false)
+feb65794c01f4eb059083455962f268b658a2ef2ef47c3fa7c285ba3ccf92b8c 1.928 4 1 SHOW synchronous_commit
+753027391b2965291fc0db85c90acc9d20ac5d2697cf101aa7007a2b355268fe 1.929 2 0 SET synchronous_standby_names TO DEFAULT
+2c6783e052c5e28b02d5285ed46e28a0de6f20800a6340de462fc1b4283ab527 1.930 3 0 SELECT pg_catalog.set_config('synchronous_standby_names', '', false)
+37dac07dee1bae083b0e9e618d00435484e32b94ce4b3ffdce7ccaca588298f2 1.931 4 1 SHOW synchronous_standby_names
+430727a5bc957b3232a40445b624c8e8dd7b34f56762d7f056a7849f0298d62f 1.932 2 0 SET syslog_facility TO DEFAULT
+bd72020cef6de706d7a01e806530d9826d99196595c1c119a12ea3250389b076 1.933 3 0 SELECT pg_catalog.set_config('syslog_facility', 'local0', false)
+5a6890d18606a3c42b304b46c540d985316f3c5c24ff2a4024bbf135cf7c1109 1.934 4 1 SHOW syslog_facility
+d4956d828976250e7659be4c6a39f211cfbf2350674f1d3da61517f98a4acb5a 1.935 2 0 SET syslog_ident TO DEFAULT
+546f8cfc9ee2b6bdb05dea6c2f4f815211b20e672f98a4b0492bc6af2184db55 1.936 3 0 SELECT pg_catalog.set_config('syslog_ident', 'postgres', false)
+26fa201b246de6959cb186dbc69f022d03dee7cd4592e98ab37bf3854f48acb8 1.937 4 1 SHOW syslog_ident
+95e49809b1510b3dc8424f7426844045102779441bdc41f070612878c9487e37 1.938 2 0 SET syslog_sequence_numbers TO DEFAULT
+e4a27a8669dbe51d8a1a582552635f77ba9faf79bc9e026d7bfe3db64428dd90 1.939 3 0 SELECT pg_catalog.set_config('syslog_sequence_numbers', 'on', false)
+757dfdd7d3463568c9775921ee7b0917e710f173752623ee7e6093d7c9357d50 1.940 4 1 SHOW syslog_sequence_numbers
+6b2ac9878d3459baede80d392f80319b9f04ae051696d7c7197310d841a95636 1.941 2 0 SET syslog_split_messages TO DEFAULT
+a8ab2f4ae63d27a6e6b917f5266ed0509f792306c7c98ca21e993278135a11b2 1.942 3 0 SELECT pg_catalog.set_config('syslog_split_messages', 'on', false)
+2c91150f970c3407a717e758f1f42fd8807cf79c0edba113dab98833f15b9cbe 1.943 4 1 SHOW syslog_split_messages
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.944 2 0 SET tcp_keepalives_count TO DEFAULT
+eb5275b482f6fb67acd31d8943f43028bf23d8c5767f2163c869a15c2dd305cd 1.945 4 1 SELECT pg_catalog.set_config('tcp_keepalives_count', '9', false)
+61b3d43def530b23cbda1eb0e2e4e45a70540aea975c7787d67a146d76644cb3 1.946 4 1 SHOW tcp_keepalives_count
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.947 2 0 SET tcp_keepalives_idle TO DEFAULT
+76e28d00627fcdc0669aa41e21f52c126ae71ce9af808e9f2e4144b99591fa02 1.948 4 1 SELECT pg_catalog.set_config('tcp_keepalives_idle', '7200', false)
+72385772438408d3495d3efc0c974d0fb5d36675250dfd082666ed86413080ad 1.949 4 1 SHOW tcp_keepalives_idle
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.950 2 0 SET tcp_keepalives_interval TO DEFAULT
+3c31fabf5ff12c935be90dd0f834dcebaeb81af852eaff660f35cc4a25fc74fb 1.951 4 1 SELECT pg_catalog.set_config('tcp_keepalives_interval', '75', false)
+b7b511324317ddf19d004c9056bb59d2f32db9278df6211aecc2ce0fe4e0f667 1.952 4 1 SHOW tcp_keepalives_interval
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.953 2 0 SET tcp_user_timeout TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.954 4 1 SELECT pg_catalog.set_config('tcp_user_timeout', '0', false)
+47fb86b5b643a93e8dc252d710272f02b0f6f5dfbcb1132aae1a39b53aeb68e0 1.955 4 1 SHOW tcp_user_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.956 2 0 SET temp_buffers TO DEFAULT
+09f4368db95837469f5d5fa5e9a3b5618669a9535e9d6638d3974a6175b87289 1.957 4 1 SELECT pg_catalog.set_config('temp_buffers', '8MB', false)
+bef92d5698f79783b96838f18d5aa9dd2a0a76191c151b38f20ede21f109f7e2 1.958 4 1 SHOW temp_buffers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.959 2 0 SET temp_file_limit TO DEFAULT
+3f27246ab439fad9680ea44a91900a804ee7233deb0487ed8ceb9f5182405fbb 1.960 4 1 SELECT pg_catalog.set_config('temp_file_limit', '-1', false)
+9cab033e94a03a21e60bc2e986cb7c55600ffc4a4ff3dd122f0f7b22ea9707c1 1.961 4 1 SHOW temp_file_limit
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.962 2 0 SET temp_tablespaces TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.963 4 1 SELECT pg_catalog.set_config('temp_tablespaces', '', false)
+7ec46681e4625656bdd46c59cec677f6ae1954ef5332b98ac7fe21d6d2a10163 1.964 4 1 SHOW temp_tablespaces
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.965 2 0 SET timezone_abbreviations TO DEFAULT
+e1f3cbe3a29c7c7bb80b08c7ed0d204535710c96aa956875c0f4a3f2dce0b046 1.966 4 1 SELECT pg_catalog.set_config('timezone_abbreviations', 'Default', false)
+f19b5664dc8eaa44efaa7113b659071169fd80d3ad7cea27c6edd9f0fdd7047e 1.967 4 1 SHOW timezone_abbreviations
+ba53afc8a5c154623d67297a58a4d40206ce715fea464c5e75345cecc1bc8f19 1.968 2 0 SET trace_connection_negotiation TO DEFAULT
+b0d284cf68de00aeae96a3741fa4104af75e20e0c7bcd41a26c02c7dcf2e5e6a 1.969 3 0 SELECT pg_catalog.set_config('trace_connection_negotiation', 'off', false)
+4bd011febc2c7f02d489bd0edbd35ede2dbf1819bcb59be727d03f09925a6fc1 1.970 4 1 SHOW trace_connection_negotiation
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.971 2 0 SET trace_notify TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.972 4 1 SELECT pg_catalog.set_config('trace_notify', 'off', false)
+f9b25d074b8488a15d4710ab7103855fb78e4553a794c4f82f7edb265a0e3f38 1.973 4 1 SHOW trace_notify
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.974 2 0 SET trace_sort TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.975 4 1 SELECT pg_catalog.set_config('trace_sort', 'off', false)
+cbeb8c76146e58b010c20b887c228f63a14235c58fab95a68cf3572199d43822 1.976 4 1 SHOW trace_sort
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.977 2 0 SET track_activities TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.978 4 1 SELECT pg_catalog.set_config('track_activities', 'on', false)
+862b0b6f355f3b09f7589db81eed7fb14d8d351ad4ec5e6b8eee03e24058cd87 1.979 4 1 SHOW track_activities
+ecaef42abca338f2eeabd58ac221f98a4f597ce79686cc06b5123da3be43ae57 1.980 2 0 SET track_activity_query_size TO DEFAULT
+f60e1f20b2f5d067f944f93fa9443ad822ab1661d8a98a6d443c68e0800cc903 1.981 3 0 SELECT pg_catalog.set_config('track_activity_query_size', '1kB', false)
+7b59ca8c9eb32b860ae64f5eccc58a0492780265c2219357ec81765442e82137 1.982 4 1 SHOW track_activity_query_size
+bc701c65b33f8b513cd20362a313d6e6a6f86271164fafd62f41e272d7fd3dbb 1.983 2 0 SET track_commit_timestamp TO DEFAULT
+1239ba78143683c5c48f6652e44d8c37dc0c1907cdc97cedd94462cd68b25e6e 1.984 3 0 SELECT pg_catalog.set_config('track_commit_timestamp', 'off', false)
+282a83cecd60aed888a496acb65da05d8df68a45825e2e245d38d89470984c2d 1.985 4 1 SHOW track_commit_timestamp
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.986 2 0 SET track_counts TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.987 4 1 SELECT pg_catalog.set_config('track_counts', 'on', false)
+87460d71c4f0a87bf67efb316f0ea1ad615ca3fe9737fc932a7b9cdf6bf0d682 1.988 4 1 SHOW track_counts
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.989 2 0 SET track_functions TO DEFAULT
+ee935a8cc141b35463d58b61d02d168d5f2a8fcaf54efecd1cd20624e22e73a7 1.990 4 1 SELECT pg_catalog.set_config('track_functions', 'none', false)
+4aa3ccbc3824f943abdc3e6ac9eceedab7835c40d1e1a042aa77abfbd237b5d9 1.991 4 1 SHOW track_functions
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.992 2 0 SET track_io_timing TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.993 4 1 SELECT pg_catalog.set_config('track_io_timing', 'off', false)
+a24fadd57fcd33bf72a3c7d2428f18e63994e677ab31b6f0f34ee0bf77f35d9c 1.994 4 1 SHOW track_io_timing
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.995 2 0 SET track_wal_io_timing TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.996 4 1 SELECT pg_catalog.set_config('track_wal_io_timing', 'off', false)
+e0ba8f6c03b7f3f379f6d97da2882aae764d0f702a6145d8024d20f443cdcf65 1.997 4 1 SHOW track_wal_io_timing
+5f7a8dc330bcb2795f71adf4f39c4e70eb0a01e556cadfa15922ead8f0b6c631 1.998 2 0 SET transaction_buffers TO DEFAULT
+34b46087eef619c64fccafbf9c039ed5bd4000b37bc101b8ab53fe089baf86a1 1.999 3 0 SELECT pg_catalog.set_config('transaction_buffers', '256kB', false)
+d4276304a0cdf2f49b660b413dff0acb277a1b18547532dea3d9713820598778 1.1000 4 1 SHOW transaction_buffers
+0ae91a7bc79d7f4f56abfcbbd31f0202476f63263e5cea1795fe7a20b47fb0ae 1.1001 2 0 SET transaction_deferrable TO DEFAULT
+a7b00454463ef0dda1f7b5ef8fc46083df73103c982be651349b27463dfc6282 1.1002 3 0 SELECT pg_catalog.set_config('transaction_deferrable', 'off', false)
+51b7b2c65abaa9e6301886fe4cbcd45ead0cea2233dc98b4e871da205505de19 1.1003 4 1 SHOW transaction_deferrable
+dbc02b4f8009267353b2be0fbbf34004962c65c6a9cfd99350e1c1b1547d5a7c 1.1004 2 0 SET transaction_isolation TO DEFAULT
+dd8699832137b5515544c8aef0dbbbbcd17b67bf3e2346292c437ff8f8f7eadb 1.1005 4 1 SELECT pg_catalog.set_config('transaction_isolation', 'read committed', false)
+8d7fa6a41840788c9db908b6bbfaa76cf287958e6bf7de625c39dcb82dd79c37 1.1006 4 1 SHOW transaction_isolation
+5b14f0bfd5b72518346a2d73fa5abacae076f167f4d7d9ff2e9d89df1da9829d 1.1007 2 0 SET transaction_read_only TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.1008 4 1 SELECT pg_catalog.set_config('transaction_read_only', 'off', false)
+e4edb3d2432a9cddf656e6f2aed8be8e6ab444a9d3f7522d2306e8388fdda2a0 1.1009 4 1 SHOW transaction_read_only
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1010 2 0 SET transaction_timeout TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.1011 4 1 SELECT pg_catalog.set_config('transaction_timeout', '0', false)
+5ae4fa3733fab0192eac8bba57b53980e9e999571383011b02be7a4948e464db 1.1012 4 1 SHOW transaction_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1013 2 0 SET transform_null_equals TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.1014 4 1 SELECT pg_catalog.set_config('transform_null_equals', 'off', false)
+caf4ec6057568b3cf696844dc42b05a29e45798b394f1c217397347091247fa4 1.1015 4 1 SHOW transform_null_equals
+463524f626f4b6c3d2d9242e6ec82814b54e37f47b78d3a0c35b8647569c1c26 1.1016 2 0 SET unix_socket_directories TO DEFAULT
+bca5cdc818d7b5b0f6c68b218859b137b2bf872ab4c54da7a642484c9536e742 1.1017 3 0 SELECT pg_catalog.set_config('unix_socket_directories', '/tmp', false)
+e13cf7154d97f1e25e0b906f90dc7650162b36bb5a21ccbc4cab1362a94cd42f 1.1018 4 1 SHOW unix_socket_directories
+054aa4488d80c2c49ef6e4534d4fdbdfc14c3ab0046719ea957ebf7b0d058883 1.1019 2 0 SET unix_socket_group TO DEFAULT
+d00014766cacc2c7697fd2b272bdc4ada3a60c85fbe98fa4f4bb73c3918d2d4f 1.1020 3 0 SELECT pg_catalog.set_config('unix_socket_group', '', false)
+8ad87d32cc2e58585b24b78d532938ef73fa3b78925dc07847a8d0538307b142 1.1021 4 1 SHOW unix_socket_group
+6ee956cc1e10d44d20de54bd5f6b2211a704a3563655b333640f8c3cb807ae39 1.1022 2 0 SET unix_socket_permissions TO DEFAULT
+6c9cf7ffa035b46df09d524e5327fa25c619d8aa1fd3b20108d1173317effd16 1.1023 3 0 SELECT pg_catalog.set_config('unix_socket_permissions', '0777', false)
+d62f305ae6e552467a0fa6d9cea4f6fe96b03a62b9ce0308dc9e117b2a2b5fb5 1.1024 4 1 SHOW unix_socket_permissions
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1025 2 0 SET update_process_title TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.1026 4 1 SELECT pg_catalog.set_config('update_process_title', 'on', false)
+eff21d3c09c9d13c9a785c637132464a40ecbd10d3423f31113d3a95e0c36b31 1.1027 4 1 SHOW update_process_title
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1028 2 0 SET vacuum_buffer_usage_limit TO DEFAULT
+b1319ea99b1c8c4bdaa08b6e2b952911db53fca3ecf54071c0ab6eb075ae5cf8 1.1029 4 1 SELECT pg_catalog.set_config('vacuum_buffer_usage_limit', '2MB', false)
+a911b67932802772f8ec3a08d6b2b15912a1729620686854ec5da15de26fc51d 1.1030 4 1 SHOW vacuum_buffer_usage_limit
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1031 2 0 SET vacuum_cost_delay TO DEFAULT
+c8b417395813198172038a8a9aaedd2e79e32400ca517dee7cddccb121c4a239 1.1032 4 1 SELECT pg_catalog.set_config('vacuum_cost_delay', '0', false)
+6633c700eff1e46a463b5e8bba90c3970f28597097d8a9b48dd76689cb4ed277 1.1033 4 1 SHOW vacuum_cost_delay
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1034 2 0 SET vacuum_cost_limit TO DEFAULT
+457e575f44169e3320a6e1d9022e9e5e5b1f133beeb4938d3cbc420626938140 1.1035 4 1 SELECT pg_catalog.set_config('vacuum_cost_limit', '200', false)
+649b576d25f5f31106c20ec53b0219bac99db51b8313eaf9782f8c4a59fd8d76 1.1036 4 1 SHOW vacuum_cost_limit
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1037 2 0 SET vacuum_cost_page_dirty TO DEFAULT
+0a261e035abc7e6bc2b4838c61921b45ed8111297d8f23bb54ad62b5ee14545a 1.1038 4 1 SELECT pg_catalog.set_config('vacuum_cost_page_dirty', '20', false)
+16b0a996239f97daf7caef47e78840b82bef19884e77e194e160bd17b7ec880c 1.1039 4 1 SHOW vacuum_cost_page_dirty
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1040 2 0 SET vacuum_cost_page_hit TO DEFAULT
+447bb08f809dfc701e48c0c9bc216622e828c330321dd29b42a86371c8852d6f 1.1041 4 1 SELECT pg_catalog.set_config('vacuum_cost_page_hit', '1', false)
+13cef866be4764046c37b294e3f73f7d8aaa35b909141f9c0bc3c361f3a76dad 1.1042 4 1 SHOW vacuum_cost_page_hit
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1043 2 0 SET vacuum_cost_page_miss TO DEFAULT
+9224eab958045547b1a66ecdde117537449ee12448b971d21bfb33c6e84fe69b 1.1044 4 1 SELECT pg_catalog.set_config('vacuum_cost_page_miss', '2', false)
+7ac8073078add626298d50bc5700b89bccd695e6cbc0ee5664a8479b4816bbfd 1.1045 4 1 SHOW vacuum_cost_page_miss
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1046 2 0 SET vacuum_failsafe_age TO DEFAULT
+a25446b62556ce152aa5bba0e54ccad59bb442a08b1d1e3fcedbe59a4013489d 1.1047 4 1 SELECT pg_catalog.set_config('vacuum_failsafe_age', '1600000000', false)
+fce198f49fe32de8df9a62342001df3e4c1a1ae8cbbe98adb1c2b8b5b8a301f9 1.1048 4 1 SHOW vacuum_failsafe_age
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1049 2 0 SET vacuum_freeze_min_age TO DEFAULT
+b8eece56dbf418864886e7343cf58155bc92e87482be42345432730d5bc273f4 1.1050 4 1 SELECT pg_catalog.set_config('vacuum_freeze_min_age', '50000000', false)
+d11e4d9266b158bcb4cf0b09e2ab11a08143e67ca16eb295cd4e4aff4a66608b 1.1051 4 1 SHOW vacuum_freeze_min_age
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1052 2 0 SET vacuum_freeze_table_age TO DEFAULT
+4895fc93db551d5572d099d574eea7d4c35dd485887be4e53c2e2143cea128d6 1.1053 4 1 SELECT pg_catalog.set_config('vacuum_freeze_table_age', '150000000', false)
+b4cb6b7c477572a42d71e5b06e54df1f2be1291a11cb90502a9190247ff675fc 1.1054 4 1 SHOW vacuum_freeze_table_age
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1055 2 0 SET vacuum_multixact_failsafe_age TO DEFAULT
+a25446b62556ce152aa5bba0e54ccad59bb442a08b1d1e3fcedbe59a4013489d 1.1056 4 1 SELECT pg_catalog.set_config('vacuum_multixact_failsafe_age', '1600000000', false)
+ee5371fd5000f42244c2aa97fe9f64e6bd97637f7e4cd12358c7e71a710dacdc 1.1057 4 1 SHOW vacuum_multixact_failsafe_age
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1058 2 0 SET vacuum_multixact_freeze_min_age TO DEFAULT
+747f495a8b1be9c2b3a5ee931cd34a168167384a2e6f78605c60391241d6c237 1.1059 4 1 SELECT pg_catalog.set_config('vacuum_multixact_freeze_min_age', '5000000', false)
+9ef48c63e93b2721a28535086e6599089aff53b4786fa17fa04008ba2c2e8516 1.1060 4 1 SHOW vacuum_multixact_freeze_min_age
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1061 2 0 SET vacuum_multixact_freeze_table_age TO DEFAULT
+4895fc93db551d5572d099d574eea7d4c35dd485887be4e53c2e2143cea128d6 1.1062 4 1 SELECT pg_catalog.set_config('vacuum_multixact_freeze_table_age', '150000000', false)
+8c7d09ec65c6f53867b95a82bf7212ccefba89c09c6a56ea2bb002c167a0bf2b 1.1063 4 1 SHOW vacuum_multixact_freeze_table_age
+b365c5e2b63e2af83316387755580c7120f2b2648bb14fcfcfa3c83e67757b71 1.1064 2 0 SET wal_block_size TO DEFAULT
+89ad69234fd8f336f08a4f6a2a457f1463a2b2aa2e4f122af05fd2c00cdf4de8 1.1065 3 0 SELECT pg_catalog.set_config('wal_block_size', '8192', false)
+23f812b7e2a506c6353440a67f7556dedea0e6db4b50f4ea6a38990cdf42d44c 1.1066 4 1 SHOW wal_block_size
+4b5bac2646a7a08dba785eb172a4d9c6404c6d2c06b3b95834e54639034ddddf 1.1067 2 0 SET wal_buffers TO DEFAULT
+9a47aaba82f05dc0b8f843d37f1755aa9320caf46690701abbbc2aa89a3d8186 1.1068 3 0 SELECT pg_catalog.set_config('wal_buffers', '4MB', false)
+bfa957199aaeb3a39e81379ed9a8508ab41a5bccef2d50c87b4a4727c77791b0 1.1069 4 1 SHOW wal_buffers
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1070 2 0 SET wal_compression TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.1071 4 1 SELECT pg_catalog.set_config('wal_compression', 'off', false)
+edf0429b48d9169c6d94842cd9967ea563bdd512ecf6f2f149bf4f91d4c6fa05 1.1072 4 1 SHOW wal_compression
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1073 2 0 SET wal_consistency_checking TO DEFAULT
+f359aa77911af81868f84a8cf302055de7025e90e3a2618724c2b4eaf5f897df 1.1074 4 1 SELECT pg_catalog.set_config('wal_consistency_checking', '', false)
+655b3d4eef4bb91588e9cabf7abbe08c1b35a92365cebfaf43189dfb0c3bc57f 1.1075 4 1 SHOW wal_consistency_checking
+675daafe7b60be39aac248f01a9a1ced6ce0f3f279da699ddb2bc645e2cdd636 1.1076 2 0 SET wal_decode_buffer_size TO DEFAULT
+009e7d5443533177acc4c675e8ff8083c6bcdd8b60a11446e7b0142c2c94e7a6 1.1077 3 0 SELECT pg_catalog.set_config('wal_decode_buffer_size', '512kB', false)
+b39f63b6f49143df397501ba0e8b428108d3c285c5b968c887a06a9d6c06d50d 1.1078 4 1 SHOW wal_decode_buffer_size
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1079 2 0 SET wal_init_zero TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.1080 4 1 SELECT pg_catalog.set_config('wal_init_zero', 'on', false)
+af286215d61430c78b5a45217bd630f20cc385de79a2b6543f219d55a8d54837 1.1081 4 1 SHOW wal_init_zero
+7328f63affa33d41ba657f558e451712eead25304dad721819ab7e379d5230d9 1.1082 2 0 SET wal_keep_size TO DEFAULT
+19cc4f60bf178e77e5ae1b63031c599dc7955a71a967c36b0fcb378453a4b88c 1.1083 3 0 SELECT pg_catalog.set_config('wal_keep_size', '0', false)
+4e5d78d7ff2c57e088002f33a4cb00c7af5bc9e641ce4226978582a13a36812c 1.1084 4 1 SHOW wal_keep_size
+584e070c82756b15d0612b1e7c984b80feb06feb48f1cf275632319747381d57 1.1085 2 0 SET wal_level TO DEFAULT
+420546fb7eb17ff8124c71a59f673cedd11e4d0ae99b6abc3c174b5df5b0cbfa 1.1086 3 0 SELECT pg_catalog.set_config('wal_level', 'replica', false)
+25ddb5b0ddfbd22a1e9a8659ea90af634ddc5f57d557900cf429031c51fd1dc7 1.1087 4 1 SHOW wal_level
+aea16f6a053246c4be7d30d36100f4f07ac2b18f98287159d73c807f7f2df67e 1.1088 2 0 SET wal_log_hints TO DEFAULT
+5360aacbab0675d2e6a226cfc427cad8be409f856f566dae02915422921e7b81 1.1089 3 0 SELECT pg_catalog.set_config('wal_log_hints', 'off', false)
+47400997632c29ca6264464cfe3ce1cc144d1763e2752ad1a023b2e8e7a966b0 1.1090 4 1 SHOW wal_log_hints
+799b9832ab8000af2011c174fe13dec28df9db9bb0aabf8d601e6d7a1dd8f104 1.1091 2 0 SET wal_receiver_create_temp_slot TO DEFAULT
+3b4fb9f9fd1e5fa2c7cfbe25f5d6fca94e62291beaff6eed40fc21a8e49afcca 1.1092 3 0 SELECT pg_catalog.set_config('wal_receiver_create_temp_slot', 'off', false)
+241eb050dd36bfcbe87a6f08deadfb054e760158542f09624716808958e34c43 1.1093 4 1 SHOW wal_receiver_create_temp_slot
+4b157c324a87739205d1e540043332c5c50552c5aba948124d9a6efcba36b012 1.1094 2 0 SET wal_receiver_status_interval TO DEFAULT
+36885455156f13497814b91b14fa80285be1de8ecacf0da0d0534edc49bebddb 1.1095 3 0 SELECT pg_catalog.set_config('wal_receiver_status_interval', '10s', false)
+e4c205a4309ff1ae93551d9c3d5545b55181297dd5ce2dcd97964ef229547c77 1.1096 4 1 SHOW wal_receiver_status_interval
+469bb6b4398727a5fdcc60afb4a42ba3b0267119f477e092edae9859918dafb3 1.1097 2 0 SET wal_receiver_timeout TO DEFAULT
+28dbb718e00990f75979baad9bad11835e60b1517c75bbddb8a7634f63d54c63 1.1098 3 0 SELECT pg_catalog.set_config('wal_receiver_timeout', '1min', false)
+2d5bfe38b7d230bedc9e7891b64aa8bca3716f9a8cf8c1799942096503f7eb91 1.1099 4 1 SHOW wal_receiver_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1100 2 0 SET wal_recycle TO DEFAULT
+c98c4ff16af4bcb57c8f84fcc493d7e8ccd04cdfea2521587bca17a2cf2dc393 1.1101 4 1 SELECT pg_catalog.set_config('wal_recycle', 'on', false)
+fa39d4d56b24caa905d7437c043d2b86e9bdb3b76bee2d91847c9a1b26085492 1.1102 4 1 SHOW wal_recycle
+d0e05882defe138c91b476192e73158bdaf0767c01681ea9ce62d6a9c43bc0b8 1.1103 2 0 SET wal_retrieve_retry_interval TO DEFAULT
+2bdee06092eb1a7d2a90be5e5cd2c25bf3432dd99a954f8bd190792eee7acf08 1.1104 3 0 SELECT pg_catalog.set_config('wal_retrieve_retry_interval', '5s', false)
+6e38b0d8b496480a5b842d17432d67d7766dabf21da21a1ce9dd362bc22f78d3 1.1105 4 1 SHOW wal_retrieve_retry_interval
+81e3313a6643fdcfd08d00c1ee91b19bacae71ef85fcfbd61ceab1395452b055 1.1106 2 0 SET wal_segment_size TO DEFAULT
+0ade90ac80e5a7ab8aa16975bf22cf8ad46dc3fdfbc49bf2b6c8baeeb2c03b3f 1.1107 3 0 SELECT pg_catalog.set_config('wal_segment_size', '16MB', false)
+4750834f19889fb1a32d465d10eabf909b5f2c55ae4d3a3d6dc605d48b6dd519 1.1108 4 1 SHOW wal_segment_size
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1109 2 0 SET wal_sender_timeout TO DEFAULT
+8386dd9915201bfb4510f41d22bdb9dc1787e87027b50d94b9726a7de2f427f9 1.1110 4 1 SELECT pg_catalog.set_config('wal_sender_timeout', '1min', false)
+0303d3fc056177fef5eb06949e47ce36cbce185a7e3a835c4474dcfbafa7cfe3 1.1111 4 1 SHOW wal_sender_timeout
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1112 2 0 SET wal_skip_threshold TO DEFAULT
+b1319ea99b1c8c4bdaa08b6e2b952911db53fca3ecf54071c0ab6eb075ae5cf8 1.1113 4 1 SELECT pg_catalog.set_config('wal_skip_threshold', '2MB', false)
+07b1e3e8e3bbc5f749d0c4cfb3d44bf8f9dcfce5aaa9f77580bf75c4d48cfba3 1.1114 4 1 SHOW wal_skip_threshold
+d3e6568295384c4b99031c95aadb50fa7714b3b8d48a13b86311434996d50c7b 1.1115 2 0 SET wal_summary_keep_time TO DEFAULT
+d9e33b47ba2f527f85c0f75194a60d145608b186521c88b6d869bb1210734b4f 1.1116 3 0 SELECT pg_catalog.set_config('wal_summary_keep_time', '10d', false)
+b396357a405a1a103e6d21cc7c61640ea8728de64688fafc273fd85fbce2752b 1.1117 4 1 SHOW wal_summary_keep_time
+b5984a216528cb76751fb47b2c8d6ad370b2b97a78405eec004dcc401ed78db5 1.1118 2 0 SET wal_sync_method TO DEFAULT
+c51085774592ca2b22b314bc44b4fb75f992c59f7bc6a82bed960495270bb4e7 1.1119 3 0 SELECT pg_catalog.set_config('wal_sync_method', 'fdatasync', false)
+9fb429c7450ec4aeeb3d4853c756cc7fa96f4050f0ab61abd498ddf49d467994 1.1120 4 1 SHOW wal_sync_method
+c5fe69a41858a3b07c8352dc1127c7026ef979476b45cec56c7df9cef79f4279 1.1121 2 0 SET wal_writer_delay TO DEFAULT
+63c57dd566f8942a32262aab1e3af997d8967ef314be52f56c83059d01fd853e 1.1122 3 0 SELECT pg_catalog.set_config('wal_writer_delay', '200ms', false)
+9ecaedba8f82479935de5135daee6668f8f730381f2f0ae97be835e6d935603a 1.1123 4 1 SHOW wal_writer_delay
+1751c87b6dfb46b1b0326ed061cad69b09fb1e33b6d86fc2fbffa61dc2115ff0 1.1124 2 0 SET wal_writer_flush_after TO DEFAULT
+55af91f7c82b83de937b1f56c04f2f1749f7672c91f0496425d22dcb14ceef0d 1.1125 3 0 SELECT pg_catalog.set_config('wal_writer_flush_after', '1MB', false)
+fa9cecd7730eebaff2bf0f5a25f5c515e8253d9cf98e860afc6055d98dc26ab1 1.1126 4 1 SHOW wal_writer_flush_after
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1127 2 0 SET work_mem TO DEFAULT
+6fa34f10185f8c539f73056602d5cd25006b452003106288ea3f4a610f0a287c 1.1128 4 1 SELECT pg_catalog.set_config('work_mem', '4MB', false)
+d542be8b333303c8c779dbccff6c773c446878796ca56444b3555539a3932223 1.1129 4 1 SHOW work_mem
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1130 2 0 SET xmlbinary TO DEFAULT
+a6d51f5994b6eb8c09e9386e0f888998dc1faae9591f9df9d6ed9ae201e4f1b4 1.1131 4 1 SELECT pg_catalog.set_config('xmlbinary', 'base64', false)
+b5992df11b36433856081cb694c28c1cdf71d0ae05973a4b1584602bd5bef39b 1.1132 4 1 SHOW xmlbinary
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1133 2 0 SET xmloption TO DEFAULT
+1b92e1188d72b1d30ebe57f0182a4c3ab16c49f368f6f7472b76deecbf7d16da 1.1134 4 1 SELECT pg_catalog.set_config('xmloption', 'content', false)
+99df78202b8dc9ac12966dbab97b6c31bd4d8529688408168f2b013e7c80504d 1.1135 4 1 SHOW xmloption
+47e0bc71c30c21ca83c09517a40958fc8597f5d32ec7e638016c2403d997e3aa 1.1136 2 0 SET zero_damaged_pages TO DEFAULT
+a3a025e7436e61f879bac322b26af479e36deedfe78df698c8b1fa97b3cdf705 1.1137 4 1 SELECT pg_catalog.set_config('zero_damaged_pages', 'off', false)
+5232f59cfeb94e905e689721d82d79b07e1365c0907decdc08762d823eb006e3 1.1138 4 1 SHOW zero_damaged_pages
