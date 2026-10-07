@@ -22,6 +22,7 @@ mod compare;
 mod diff;
 mod frame;
 mod import;
+mod introspect;
 mod levels;
 mod message;
 mod oracle;
@@ -63,6 +64,11 @@ commands:
   pipeline                  run each test of libpq_pipeline and compare the 9 libpq traces
                             (each suite: --server ADDR for the server under test, else the oracle; --corpus DIR;
                             it writes results/N/<suite>-<oracle|server>.toml in the work directory)
+  catalog                   SELECT * on each catalog, system view and information_schema view of the import,
+                            in a new database
+  parameters                SHOW ALL, pg_settings, and SET TO DEFAULT, set_config and SHOW of each parameter
+                            (both: two runs on the oracle find the unstable cases, then --server ADDR, else
+                            the first oracle run, is compared with the rules and the exclusions of spec/05)
 
 options:
   --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
@@ -111,6 +117,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("replay") => return replay_command(args, &pins),
         Some("diff") => return diff_command(args, &pins),
         Some("import") => return import_command(args, &pins),
+        Some(suite @ ("catalog" | "parameters")) => return introspect_command(args, &pins, suite),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -550,6 +557,37 @@ fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, Stri
         _ => suites::pipeline(&o, &corpus, &server, &work)?,
     };
     suites::report_run(&run, &o, &server, &work, &started)?;
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the catalog suite or the parameter suite (spec/05 section 5.6.5).
+fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, String> {
+    args.only(&["compat-version", "server", "corpus", "show"])?;
+    let work = args.work_dir();
+    let corpus = PathBuf::from(args.get("corpus").unwrap_or("corpus"));
+    let o = running_oracle(args, pins)?;
+    let dir = import::corpus_dir(&corpus, o.pin.major);
+    let oracle = oracle_target(&o);
+    let target = server_target(args, &o)?;
+    let server = suites::Server { addr: target.addr, oracle: args.get("server").is_none() };
+    let sides =
+        introspect::Sides { oracle: oracle.clone(), server: (!server.oracle).then_some(target) };
+    let started = suites::utc_now();
+    let (cases, database) = if suite == "catalog" {
+        (introspect::catalog_cases(&dir)?, introspect::CATALOG_DATABASE)
+    } else {
+        let (names, source) = introspect::parameter_names(&dir, &oracle)?;
+        out!("parameters {}: {} parameters from {source}", o.pin.major, names.len());
+        (introspect::parameter_cases(&introspect::show_values(&oracle, &names)?), "postgres")
+    };
+    let out = suites::run_dir(&work, o.pin.major, suite, &server);
+    let header = trace_header(&o, suite);
+    let (run, outcome) = introspect::run_suite(suite, &cases, &sides, database, &out, &header)?;
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    for ((_, group), d) in outcome.diffs.iter().take(args.number("show")?.unwrap_or(5)) {
+        out!("  {}: {d}", cases[*group].name);
+    }
+    print_exclusions(&outcome);
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 

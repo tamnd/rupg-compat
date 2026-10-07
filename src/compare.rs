@@ -136,7 +136,8 @@ const TIME_FUNCTIONS: [&str; 10] = [
     "current_date",
 ];
 
-const FILE_FUNCTIONS: [&str; 10] = [
+/// The functions whose answers are files of the data directory or WAL positions (item 8). A `pg_lsn` value is out by its type. `pg_wal_lsn_diff` gives a number, so it is in the list. The list names functions, not the text `wal`, because many parameters, such as `max_wal_size`, have it in their names.
+const FILE_FUNCTIONS: [&str; 11] = [
     "pg_ls_dir",
     "pg_read_file",
     "pg_read_binary_file",
@@ -146,7 +147,8 @@ const FILE_FUNCTIONS: [&str; 10] = [
     "pg_ls_tmpdir",
     "pg_ls_archive_statusdir",
     "pg_walfile_name",
-    "_wal_",
+    "pg_split_walfile_name",
+    "pg_wal_lsn_diff",
 ];
 
 const PATH_SETTINGS: [&str; 4] = ["data_directory", "config_file", "hba_file", "ident_file"];
@@ -290,6 +292,16 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     if ty == 194 || name == "reltoastrelid" {
         return Some(11);
     }
+    // Item 2: an OID at or above FirstNormalObjectId (16384) names a user object.
+    if ty == 26
+        && row
+            .get(c)
+            .and_then(Val::bytes)
+            .and_then(|b| std::str::from_utf8(b).ok()?.parse::<u64>().ok())
+            .is_some_and(|oid| oid >= 16_384)
+    {
+        return Some(2);
+    }
     if ty == 3220 || ctx.files {
         return Some(8);
     }
@@ -315,8 +327,12 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     {
         return Some(5);
     }
+    // Item 3: the wait event of a process is a sample of its state, like a counter.
     if name == "reltuples"
-        || ctx.statistics && (NUMERIC_TYPES.contains(&ty) || TIME_TYPES.contains(&ty))
+        || ctx.statistics
+            && (NUMERIC_TYPES.contains(&ty)
+                || TIME_TYPES.contains(&ty)
+                || ["wait_event_type", "wait_event"].contains(&name))
     {
         return Some(3);
     }
@@ -324,6 +340,16 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
         return Some(9);
     }
     None
+}
+
+/// True when column `c` of a row is the value of `server_version`: the column of `SHOW server_version`, or a value column of the `server_version` row of `SHOW ALL` or `pg_settings`.
+fn server_version_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
+    let name = cols.names.get(c).map(String::as_str).unwrap_or("");
+    if name == "server_version" {
+        return true;
+    }
+    let row_name = cols.names.iter().position(|n| n == "name").and_then(|i| row.get(i)?.bytes());
+    row_name == Some(b"server_version") && ["setting", "reset_val", "boot_val"].contains(&name)
 }
 
 /// Applies the rules to the backend messages of one group.
@@ -381,6 +407,16 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                             }
                             continue;
                         }
+                        if server_version_value(cols, c, &row) {
+                            // Item 12: the text after the version number names the server.
+                            // The tail is empty on PostgreSQL, so the rule counts each value.
+                            if let Val::Str(text) = v {
+                                let at = text.iter().position(|&b| b == b' ').unwrap_or(text.len());
+                                let mut tail = Val::Str(text.split_off(at));
+                                s.mask(c, Rule::Item(12), &mut tail);
+                            }
+                            continue;
+                        }
                         if let Some(item) = column_rule(ctx, cols, c, &row) {
                             s.mask(c, Rule::Item(item), v);
                         }
@@ -404,8 +440,8 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
             "ParameterStatus" => {
                 if vals[0].bytes() == Some(b"server_version")
                     && let Val::Str(text) = &mut vals[1]
-                    && let Some(at) = text.iter().position(|&b| b == b' ')
                 {
+                    let at = text.iter().position(|&b| b == b' ').unwrap_or(text.len());
                     let mut tail = Val::Str(text.split_off(at));
                     s.mask(1, Rule::Item(12), &mut tail);
                 }
@@ -694,6 +730,53 @@ mod tests {
         );
         assert!(o.diffs.is_empty());
         assert_eq!(o.items[2].differed, 1);
+    }
+
+    #[test]
+    fn user_oids_and_wait_events_are_out() {
+        let q = |sql: &str, desc: &str, row: &str| {
+            format!(
+                "1 F Query \"{sql}\"\n1 B RowDescription [{desc}]\n1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let col = |name: &str, ty: i64| format!("(\"{name}\" 0 0 {ty} 4 -1 0)");
+        let d = format!("{} {}", col("oid", 26), col("datname", 19));
+        let sql = "SELECT oid, datname FROM pg_database";
+        let o = run(&q(sql, &d, "\"16390\" \"a\""), &q(sql, &d, "\"16391\" \"a\""));
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[1], Count { applied: 1, differed: 1 });
+        let o = run(&q(sql, &d, "\"5\" \"a\""), &q(sql, &d, "\"6\" \"a\""));
+        assert_eq!(o.diffs.len(), 1);
+        let d = format!("{} {}", col("backend_type", 25), col("wait_event", 25));
+        let sql = "SELECT backend_type, wait_event FROM pg_stat_activity";
+        let o = run(
+            &q(sql, &d, "\"background writer\" \"BgwriterMain\""),
+            &q(sql, &d, "\"background writer\" \"BgwriterHibernate\""),
+        );
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[2], Count { applied: 1, differed: 1 });
+    }
+
+    #[test]
+    fn the_suffix_of_server_version_in_rows_is_out() {
+        let q = |sql: &str, desc: &str, row: &str| {
+            format!(
+                "1 F Query \"{sql}\"\n1 B RowDescription [{desc}]\n1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let col = |name: &str| format!("(\"{name}\" 0 0 25 -1 -1 0)");
+        let o = run(
+            &q("SHOW server_version", &col("server_version"), "\"19.0\""),
+            &q("SHOW server_version", &col("server_version"), "\"19.0 (rupg 0.1.0)\""),
+        );
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[11], Count { applied: 1, differed: 1 });
+        let d = format!("{} {}", col("name"), col("setting"));
+        let o = run(
+            &q("SHOW ALL", &d, "\"server_version\" \"19.0\""),
+            &q("SHOW ALL", &d, "\"server_version\" \"18.0\""),
+        );
+        assert_eq!(o.diffs.len(), 1);
     }
 
     #[test]

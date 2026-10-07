@@ -77,6 +77,8 @@ impl Server {
 pub(crate) struct Run {
     pub(crate) suite: String,
     pub(crate) tests: Vec<(String, bool)>,
+    /// The cases that the unstable filter took out. They are in neither list.
+    pub(crate) unstable: Vec<String>,
     pub(crate) seconds: u64,
 }
 
@@ -91,15 +93,14 @@ impl Run {
 
     /// The result file, in the subset of TOML that `src/toml.rs` reads.
     pub(crate) fn to_toml(&self, o: &Oracle, server: &Server, started: &str) -> String {
+        let quote =
+            |name: &str| format!("  \"{}\",\n", name.replace('\\', "\\\\").replace('"', "\\\""));
         let list = |pass: bool| {
-            self.tests
-                .iter()
-                .filter(|t| t.1 == pass)
-                .map(|t| format!("  \"{}\",\n", t.0))
-                .collect::<String>()
+            self.tests.iter().filter(|t| t.1 == pass).map(|t| quote(&t.0)).collect::<String>()
         };
+        let unstable = self.unstable.iter().map(|n| quote(n)).collect::<String>();
         format!(
-            "# Written by rupg-compat {suite}.\nsuite = \"{suite}\"\nversion = {}\ncommit = \"{}\"\nserver = \"{}\"\nside = \"{}\"\nstarted = \"{started}\"\nseconds = {}\ntotal = {}\npassed = {}\npass = [\n{}]\nfail = [\n{}]\n",
+            "# Written by rupg-compat {suite}.\nsuite = \"{suite}\"\nversion = {}\ncommit = \"{}\"\nserver = \"{}\"\nside = \"{}\"\nstarted = \"{started}\"\nseconds = {}\ntotal = {}\npassed = {}\npass = [\n{}]\nfail = [\n{}]\nunstable = [\n{unstable}]\n",
             o.pin.major,
             o.pin.commit,
             server.addr,
@@ -277,6 +278,7 @@ fn run_suite(
         suite: s.name.into(),
         tests: pass_set(&scheduled, &results),
         seconds: started.elapsed().as_secs(),
+        ..Run::default()
     };
     if run.passed() == run.tests.len() && !all_ok {
         return Err(format!(
@@ -417,6 +419,13 @@ pub(crate) fn report_run(
         run.seconds,
         path.display()
     );
+    if !run.unstable.is_empty() {
+        out!(
+            "  {} unstable on the oracle, not counted: {}",
+            run.unstable.len(),
+            run.unstable.join(", ")
+        );
+    }
     for f in run.failed() {
         out!("  fail: {f}");
     }
@@ -470,7 +479,8 @@ mod tests {
     fn the_result_file_is_toml() {
         let run = Run {
             suite: "regress".into(),
-            tests: vec![("a".into(), true), ("b".into(), false)],
+            tests: vec![("a".into(), true), ("b\"".into(), false)],
+            unstable: vec!["c".into()],
             seconds: 3,
         };
         let pins = crate::pins::Pins::builtin();
@@ -479,6 +489,8 @@ mod tests {
         let t = crate::toml::parse(&run.to_toml(&o, &server, "2026-10-07T00:00:00Z")).unwrap();
         assert_eq!(t["passed"].as_int(), Some(1));
         assert_eq!(t["side"].as_str(), Some("oracle"));
-        assert_eq!(t["fail"], crate::toml::Value::Array(vec![crate::toml::Value::Str("b".into())]));
+        let one = |s: &str| crate::toml::Value::Array(vec![crate::toml::Value::Str(s.into())]);
+        assert_eq!(t["fail"], one("b\""));
+        assert_eq!(t["unstable"], one("c"));
     }
 }
