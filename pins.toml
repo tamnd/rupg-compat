@@ -114,6 +114,10 @@ version = "10.0.3"
 # pg_dump and pg_restore of the oracle build of the reference version.
 version = "19beta4"
 
+[clients.pgadmin4]
+# With the pins of clients/pgadmin4/constraints.txt: psycopg 3.3.4 with the binary package and its libpq 18.0.
+version = "9.18"
+
 [clients.pgbouncer]
 # Built with libevent 2.1.13-stable and without TLS.
 version = "1.26.0"
