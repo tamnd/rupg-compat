@@ -29,7 +29,7 @@ pub(crate) struct Count {
     pub(crate) table: &'static str,
     pub(crate) key: &'static str,
     pub(crate) value: usize,
-    pub(crate) rule: &'static str,
+    pub(crate) rule: String,
 }
 
 fn read(src: &Path, rel: &str) -> Result<Vec<u8>, String> {
@@ -184,7 +184,9 @@ pub(crate) fn import(src: &Path, major: u32, commit: &str) -> Result<Import, Str
     }
 
     let mut counts = Vec::new();
-    let mut count = |table, key, value, rule| counts.push(Count { table, key, value, rule });
+    let mut count = |table, key, value, rule| {
+        counts.push(Count { table, key, value, rule: String::from(rule) })
+    };
 
     // The regression suite.
     let scheduled = schedule_tests(&text(src, &format!("{REGRESS}/parallel_schedule"))?);
@@ -343,12 +345,12 @@ pub(crate) fn import(src: &Path, major: u32, commit: &str) -> Result<Import, Str
             ("enum", "enum"),
             ("real", "real"),
         ] {
-            count(
-                "parameters",
+            counts.push(Count {
+                table: "parameters",
                 key,
-                by_type.get(ty).copied().unwrap_or(0),
-                "the records of guc_parameters.dat with this type",
-            );
+                value: by_type.get(ty).copied().unwrap_or(0),
+                rule: format!("the records of guc_parameters.dat with type => '{ty}'"),
+            });
         }
         outputs.push((
             "parameters.txt",
