@@ -50,18 +50,37 @@ commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
 [clients.asyncpg]
 version = "0.32.0"
 
+[clients.diesel]
+# Diesel CLI, with the libpq of the oracle build.
+version = "2.3.13"
+
 [clients.django]
 version = "6.1.2"
 
 [clients.golang-migrate]
 version = "4.20.1"
 
+[clients.grafana]
+# The PostgreSQL data source that comes with it is version 13.0.3.
+version = "13.2.3"
+
 [clients.lib-pq]
 version = "1.12.3"
+
+[clients.libpq]
+# The libpq of the oracle build of the reference version.
+version = "19beta4"
 
 [clients.pg_dump]
 # pg_dump and pg_restore of the oracle build of the reference version.
 version = "19beta4"
+
+[clients.pgbouncer]
+# Built with libevent 2.1.13-stable and without TLS.
+version = "1.26.0"
+
+[clients.pgcat]
+version = "1.2.0"
 
 [clients.pgx]
 version = "5.11.0"
@@ -82,6 +101,10 @@ version = "2.1.3"
 
 [clients.sqlx]
 version = "0.9.0"
+
+[clients.superset]
+# With the pins of clients/superset/constraints.txt and psycopg2 2.9.13.
+version = "6.1.0"
 
 [clients.tokio-postgres]
 version = "0.7.18"

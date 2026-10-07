@@ -1,0 +1,2628 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/pgcat/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "application_name" "pgcat" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=C.EB\\_=!n&WvIwgs'U9xxZby"
+1 B AuthenticationSASLContinue "r=C.EB\\_=!n&WvIwgs'U9xxZbyBux7i24ylGSMOEu10pkS9zrK,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=C.EB\\_=!n&WvIwgs'U9xxZbyBux7i24ylGSMOEu10pkS9zrK,p=SKjWq4w7vGsQ9fFF2NDdYB9eHOD/2B6bAQAU0WMjZb0="
+1 B AuthenticationSASLFinal "v=su+lAkbnsMPi3nRHjJeWPiP5ALlVyjtMffk+/DIN4ok="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "pgcat"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 785756 "\xcdr\xff\xe1"
+1 B ReadyForQuery I
+1 F Query "SET application_name TO 'psql';"
+1 B CommandComplete "SET"
+1 B ParameterStatus "application_name" "psql"
+1 B ReadyForQuery I
+1 F Query "SELECT 1;"
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "PGCAT_0" "SELECT $1::int4 + 1, $2::text " []
+1 F Bind "" "PGCAT_0" [] ["41" "abc"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("?column?" 0 0 23 4 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B DataRow ["42" "abc"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text;"
+1 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B DataRow ["42" "42" "9007199254740993" "1.5" "12.345" "t" "x" "\\x0102" "2026-01-02 03:04:05+00" "2026-01-02" "{1,2,3}" "{\"a\": 1}" "7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2));"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "PGCAT_1" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+1 F Bind "" "PGCAT_1" [] ["1" "one" "1.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_1" [] ["2" "two" "2.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_1" [] ["3" "three" "3.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT;"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_1" [] ["4" "four" "4.50"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK;"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "PGCAT_2" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id " []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_2" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255837 1 23 4 -1 0) ("name" 255837 2 25 -1 -1 0) ("price" 255837 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_2" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255837 1 23 4 -1 0) ("name" 255837 2 25 -1 -1 0) ("price" 255837 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_2" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255837 1 23 4 -1 0) ("name" 255837 2 25 -1 -1 0) ("price" 255837 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_2" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255837 1 23 4 -1 0) ("name" 255837 2 25 -1 -1 0) ("price" 255837 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_2" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255837 1 23 4 -1 0) ("name" 255837 2 25 -1 -1 0) ("price" 255837 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_2" [] ["1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 255837 1 23 4 -1 0) ("name" 255837 2 25 -1 -1 0) ("price" 255837 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Parse "PGCAT_3" "UPDATE compat_items SET price = price * 2 WHERE id = $1 " []
+1 F Bind "" "PGCAT_3" [] ["2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+1 F Query "SELECT 1 / 0;"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT 1 / 0;"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Query "ROLLBACK;"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE compat_items;"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Query "SET application_name TO 'pgbench';"
+1 B CommandComplete "SET"
+1 B ParameterStatus "application_name" "pgbench"
+1 B ReadyForQuery I
+1 F Query "drop table if exists pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_accounts\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_branches\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_history\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_tellers\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_history(tid int,bid int,aid    int,delta int,mtime timestamp,filler char(22))"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_tellers(tid int not null,bid int,tbalance int,filler char(84)) with (fillfactor=100)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_accounts(aid    int not null,bid int,abalance int,filler char(84)) with (fillfactor=100)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "create table pgbench_branches(bid int not null,bbalance int,filler char(88)) with (fillfactor=100)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "truncate table pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Query "insert into pgbench_branches(bid,bbalance) select bid, 0 from generate_series(1, 1) as bid"
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "insert into pgbench_tellers(tid,bid,tbalance) select tid, (tid - 1) / 10 + 1, 0 from generate_series(1, 10) as tid"
+1 B CommandComplete "INSERT 0 10"
+1 B ReadyForQuery T
+1 F Query "insert into pgbench_accounts(aid,bid,abalance,filler) select aid, (aid - 1) / 100000 + 1, 0, '' from generate_series(1, 100000) as aid"
+1 B CommandComplete "INSERT 0 100000"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "alter table pgbench_branches add primary key (bid)"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery I
+1 F Query "alter table pgbench_tellers add primary key (tid)"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery I
+1 F Query "alter table pgbench_accounts add primary key (aid)"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery I
+1 F Query "select count(*) from pgbench_branches"
+1 B RowDescription [("count" 0 0 20 8 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "select o.n, p.partstrat, pg_catalog.count(i.inhparent) from pg_catalog.pg_class as c join pg_catalog.pg_namespace as n on (n.oid = c.relnamespace) cross join lateral (select pg_catalog.array_position(pg_catalog.current_schemas(true), n.nspname)) as o(n) left join pg_catalog.pg_partitioned_table as p on (p.partrelid = c.oid) left join pg_catalog.pg_inherits as i on (c.oid = i.inhparent) where c.relname = 'pgbench_accounts' and o.n is not null group by 1, 2 order by 1 asc limit 1"
+1 B RowDescription [("n" 0 0 23 4 -1 0) ("partstrat" 3350 2 18 1 -1 0) ("count" 0 0 20 8 -1 0)]
+1 B DataRow ["2" NULL "0"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "PGCAT_4" "BEGIN;" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F StartupMessage 3.0 "user" "postgres" "application_name" "pgcat" "database" "compat"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=nA{\\$V2fZji!YaT*yIB@1Aem"
+2 B AuthenticationSASLContinue "r=nA{\\$V2fZji!YaT*yIB@1AemSFIDSoklaQrXm216DNCfNYx8,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=nA{\\$V2fZji!YaT*yIB@1AemSFIDSoklaQrXm216DNCfNYx8,p=qQvg5MMOUdNXvw6+7RKG4GkQenYoQcxg+6QeO9/Xx4s="
+2 B AuthenticationSASLFinal "v=fFG5McmiY+GL3YFLUYQJ1Ls5QUlIR81vlJV5OOzrfq4="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" "pgcat"
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 785768 "{\xf5o\xab"
+2 B ReadyForQuery I
+2 F Query "SET application_name TO 'pgbench';"
+2 B CommandComplete "SET"
+2 B ParameterStatus "application_name" "pgbench"
+2 B ReadyForQuery I
+2 F Parse "PGCAT_4" "BEGIN;" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery I
+2 F Bind "" "PGCAT_4" [] [] [0]
+1 F Parse "PGCAT_5" "UPDATE pgbench_accounts SET abalance = abalance + $1 WHERE aid = $2;" []
+2 F Describe P ""
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B ParseComplete
+1 B ReadyForQuery T
+2 F Parse "PGCAT_5" "UPDATE pgbench_accounts SET abalance = abalance + $1 WHERE aid = $2;" []
+2 F Sync
+1 F Bind "" "PGCAT_5" [] ["-2247" "61091"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B ParseComplete
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["885" "58770"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Parse "PGCAT_6" "SELECT abalance FROM pgbench_accounts WHERE aid = $1;" []
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B ParseComplete
+1 B ReadyForQuery T
+2 F Parse "PGCAT_6" "SELECT abalance FROM pgbench_accounts WHERE aid = $1;" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["61091"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-2247"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_6" [] ["58770"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["885"]
+2 B CommandComplete "SELECT 1"
+1 F Parse "PGCAT_7" "UPDATE pgbench_tellers SET tbalance = tbalance + $1 WHERE tid = $2;" []
+2 B ReadyForQuery T
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+2 F Parse "PGCAT_7" "UPDATE pgbench_tellers SET tbalance = tbalance + $1 WHERE tid = $2;" []
+2 F Sync
+1 F Bind "" "PGCAT_7" [] ["-2247" "4"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 B ParseComplete
+1 F Sync
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["885" "4"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Parse "PGCAT_8" "UPDATE pgbench_branches SET bbalance = bbalance + $1 WHERE bid = $2;" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["-2247" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Parse "PGCAT_9" "INSERT INTO pgbench_history (tid, bid, aid, delta, mtime) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["4" "1" "61091" "-2247"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "PGCAT_10" "END;" []
+1 F Sync
+1 B ParseComplete
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+1 B BindComplete
+1 B NoData
+2 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Parse "PGCAT_8" "UPDATE pgbench_branches SET bbalance = bbalance + $1 WHERE bid = $2;" []
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B ParseComplete
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["-3940" "7815"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_8" [] ["885" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["7815"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-3940"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["-3940" "10"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["-3940" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["10" "1" "7815" "-3940"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Parse "PGCAT_9" "INSERT INTO pgbench_history (tid, bid, aid, delta, mtime) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);" []
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B ParseComplete
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["4" "1" "58770" "885"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_5" [] ["634" "59904"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["59904"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["634"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Parse "PGCAT_10" "END;" []
+2 F Sync
+2 B ParseComplete
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["634" "2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["634" "1"] [0]
+1 F Describe P ""
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Execute "" 0
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["-3599" "11813"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_6" [] ["11813"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_9" [] ["2" "1" "59904" "634"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["-3599"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Sync
+2 F Bind "" "PGCAT_7" [] ["-3599" "5"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+2 B BindComplete
+2 B NoData
+1 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["-3599" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["5" "1" "11813" "-3599"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_5" [] ["-493" "27811"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["27811"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-493"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+1 F Bind "" "PGCAT_7" [] ["-493" "6"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["516" "19315"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_8" [] ["-493" "1"] [0]
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_6" [] ["19315"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["516"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["516" "9"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_9" [] ["6" "1" "27811" "-493"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+2 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["516" "1"] [0]
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B NoData
+2 B ReadyForQuery T
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGCAT_9" [] ["9" "1" "19315" "516"] [0]
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["4848" "79726"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["79726"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["4848"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["4848" "10"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B BindComplete
+2 B NoData
+1 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["4848" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 F Bind "" "PGCAT_4" [] [] [0]
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["10" "1" "79726" "4848"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+2 F Bind "" "PGCAT_5" [] ["786" "81202"] [0]
+1 F Describe P ""
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Execute "" 0
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_6" [] ["81202"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["786"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["786" "3"] [0]
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["786" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_9" [] ["3" "1" "81202" "786"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["1884" "28445"] [0]
+2 B BindComplete
+2 B NoData
+1 F Describe P ""
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+2 B BindComplete
+1 B ReadyForQuery T
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Bind "" "PGCAT_4" [] [] [0]
+1 F Bind "" "PGCAT_6" [] ["28445"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Describe P ""
+2 F Sync
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["1884"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["1884" "9"] [0]
+1 F Describe P ""
+2 F Bind "" "PGCAT_5" [] ["454" "5053"] [0]
+1 F Execute "" 0
+2 F Describe P ""
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B BindComplete
+2 B ReadyForQuery T
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["1884" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_6" [] ["5053"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["454"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["9" "1" "28445" "1884"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_7" [] ["454" "3"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["454" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+1 B BindComplete
+2 B NoData
+1 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["-3401" "96939"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_9" [] ["3" "1" "5053" "454"] [0]
+2 F Describe P ""
+1 B BindComplete
+2 F Execute "" 0
+2 F Sync
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+1 F Bind "" "PGCAT_6" [] ["96939"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-3401"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["-3401" "2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["-3401" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["2" "1" "96939" "-3401"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_5" [] ["-3085" "27136"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_6" [] ["27136"] [0]
+1 B BindComplete
+2 F Describe P ""
+1 B NoData
+2 F Execute "" 0
+1 B CommandComplete "COMMIT"
+2 F Sync
+1 B ReadyForQuery I
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["-3085"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_7" [] ["-3085" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["-3569" "67235"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["-3085" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_6" [] ["67235"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-3569"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["-3569" "5"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 F Bind "" "PGCAT_9" [] ["1" "1" "27136" "-3085"] [0]
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+2 B BindComplete
+1 B CommandComplete "UPDATE 1"
+2 B NoData
+1 B ReadyForQuery T
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["-3569" "1"] [0]
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["5" "1" "67235" "-3569"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_5" [] ["392" "84958"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_6" [] ["84958"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["392"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["392" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B NoData
+2 B ReadyForQuery T
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGCAT_8" [] ["392" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["2" "1" "84958" "392"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_5" [] ["857" "94380"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B BindComplete
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGCAT_6" [] ["94380"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["857"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+1 F Bind "" "PGCAT_7" [] ["857" "5"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["-2923" "36128"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 F Bind "" "PGCAT_8" [] ["857" "1"] [0]
+2 B NoData
+1 F Describe P ""
+2 B CommandComplete "UPDATE 1"
+1 F Execute "" 0
+2 B ReadyForQuery T
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_6" [] ["36128"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 F Bind "" "PGCAT_9" [] ["5" "1" "94380" "857"] [0]
+2 B DataRow ["-2923"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_7" [] ["-2923" "9"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_8" [] ["-2923" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["9" "1" "36128" "-2923"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["-382" "18345"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["18345"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-382"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGCAT_7" [] ["-382" "6"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["1529" "93510"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_8" [] ["-382" "1"] [0]
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+2 F Bind "" "PGCAT_6" [] ["93510"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["1529"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["1529" "6"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_9" [] ["6" "1" "18345" "-382"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["1529" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["6" "1" "93510" "1529"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_5" [] ["1993" "89358"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["89358"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Bind "" "PGCAT_4" [] [] [0]
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["1993"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["1993" "8"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["1993" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["4250" "19915"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["8" "1" "89358" "1993"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_6" [] ["19915"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["4250"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["4250" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["4250" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["2" "1" "19915" "4250"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["307" "86444"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+1 F Bind "" "PGCAT_6" [] ["86444"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["307"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["307" "8"] [0]
+2 B BindComplete
+1 F Describe P ""
+2 B NoData
+1 F Execute "" 0
+2 B CommandComplete "COMMIT"
+1 F Sync
+2 B ReadyForQuery I
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["307" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+2 F Bind "" "PGCAT_5" [] ["3572" "50463"] [0]
+1 B CommandComplete "UPDATE 1"
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["8" "1" "86444" "307"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+2 B BindComplete
+1 B ReadyForQuery T
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+2 F Bind "" "PGCAT_6" [] ["50463"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["3572"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["3572" "8"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["3572" "1"] [0]
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["756" "75276"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Execute "" 0
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Sync
+1 F Bind "" "PGCAT_6" [] ["75276"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["756"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["8" "1" "50463" "3572"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_7" [] ["756" "8"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_8" [] ["756" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["-4729" "9133"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["8" "1" "75276" "756"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_6" [] ["9133"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["-4729"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["-4729" "4"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_8" [] ["-4729" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["2193" "38576"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["38576"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["2193"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["2193" "8"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+2 F Bind "" "PGCAT_9" [] ["4" "1" "9133" "-4729"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["2193" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["8" "1" "38576" "2193"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_5" [] ["-666" "13404"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_6" [] ["13404"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B NoData
+2 B DataRow ["-666"]
+1 B CommandComplete "COMMIT"
+2 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["-666" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["873" "57145"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["-666" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_6" [] ["57145"] [0]
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_9" [] ["1" "1" "13404" "-666"] [0]
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["873"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_7" [] ["873" "8"] [0]
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_8" [] ["873" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["8" "1" "57145" "873"] [0]
+2 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+2 F Describe P ""
+1 F Execute "" 0
+2 F Execute "" 0
+1 F Sync
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["189" "57987"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGCAT_6" [] ["57987"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["189"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["189" "4"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["3933" "24762"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["24762"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["3933"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["189" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["3933" "3"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_9" [] ["4" "1" "57987" "189"] [0]
+2 F Describe P ""
+1 B BindComplete
+2 F Execute "" 0
+2 F Sync
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["3933" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["-4985" "86630"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_9" [] ["3" "1" "24762" "3933"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+2 F Bind "" "PGCAT_6" [] ["86630"] [0]
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["-4985"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["-4985" "5"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["-4985" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["-265" "35536"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_9" [] ["5" "1" "86630" "-4985"] [0]
+2 F Describe P ""
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["35536"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-265"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+1 F Bind "" "PGCAT_7" [] ["-265" "8"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["-265" "1"] [0]
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["8" "1" "35536" "-265"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["2001" "83434"] [0]
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+2 F Describe P ""
+1 F Sync
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Bind "" "PGCAT_6" [] ["83434"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["2001"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["2001" "7"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_5" [] ["-1608" "51568"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B BindComplete
+2 B ReadyForQuery T
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_8" [] ["2001" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_6" [] ["51568"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B BindComplete
+2 B ReadyForQuery T
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["-1608"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["-1608" "2"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_9" [] ["7" "1" "83434" "2001"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["-1608" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+2 B BindComplete
+1 B ReadyForQuery T
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["2" "1" "51568" "-1608"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["3400" "49090"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_6" [] ["49090"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["3400"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["3400" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+2 B BindComplete
+1 B ReadyForQuery I
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_8" [] ["3400" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["2" "1" "49090" "3400"] [0]
+1 F Bind "" "PGCAT_5" [] ["2833" "84103"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+1 F Describe P ""
+2 F Sync
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+2 F Bind "" "PGCAT_10" [] [] [0]
+1 B ReadyForQuery T
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_6" [] ["84103"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["2833"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["2833" "10"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 B NoData
+1 F Bind "" "PGCAT_8" [] ["2833" "1"] [0]
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+1 B BindComplete
+2 F Bind "" "PGCAT_5" [] ["-1793" "72483"] [0]
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_9" [] ["10" "1" "84103" "2833"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_6" [] ["72483"] [0]
+1 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["-1793"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["-1793" "4"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_8" [] ["-1793" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+1 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+1 B NoData
+2 B ReadyForQuery T
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["1927" "87931"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_9" [] ["4" "1" "72483" "-1793"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_6" [] ["87931"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["1927"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGCAT_7" [] ["1927" "6"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_4" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 F Bind "" "PGCAT_8" [] ["1927" "1"] [0]
+2 B BindComplete
+2 B NoData
+1 F Describe P ""
+2 B CommandComplete "BEGIN"
+1 F Execute "" 0
+2 B ReadyForQuery T
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_5" [] ["-3855" "17010"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["6" "1" "87931" "1927"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_6" [] ["17010"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+2 B DataRow ["-3855"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+2 F Bind "" "PGCAT_7" [] ["-3855" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+2 F Bind "" "PGCAT_8" [] ["-3855" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_9" [] ["2" "1" "17010" "-3855"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Bind "" "PGCAT_10" [] [] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Bind "" "PGCAT_4" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_5" [] ["120" "24280"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_6" [] ["24280"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("abalance" 255853 3 23 4 -1 0)]
+1 B DataRow ["120"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_7" [] ["120" "8"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_8" [] ["120" "1"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_9" [] ["8" "1" "24280" "120"] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "PGCAT_10" [] [] [0]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Query "drop table if exists pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+2 B CommandComplete "DROP TABLE"
+2 B ReadyForQuery I
+2 F End
+1 F End
+2 B End
+1 B End

@@ -1,0 +1,208 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/grafana/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=K8m8vb/LgpDSEnOM6EBUZKbC"
+1 B AuthenticationSASLContinue "r=K8m8vb/LgpDSEnOM6EBUZKbCBak329xX8sKrqsQrt6KHbMa4,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=K8m8vb/LgpDSEnOM6EBUZKbCBak329xX8sKrqsQrt6KHbMa4,p=qSGe4Ru0GQ1lEiL37PpbHvIFQ6uYvizrtBeW5yebO4A="
+1 B AuthenticationSASLFinal "v=7uaZPtG6j839gO52G3yOukd9NK2XBFQwLhJGZrPwXFU="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "psql"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 785275 "a\xe2\xfe0"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_metrics (\"time\" timestamptz NOT NULL, host text NOT NULL, value float8);"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO compat_metrics SELECT '2026-01-02 03:00:00+00'::timestamptz + i * interval '20 seconds', h, i * 1.5 FROM generate_series(0, 29) AS i, unnest(ARRAY['a', 'b']) AS h;"
+1 B CommandComplete "INSERT 0 60"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=UQT10hw62N/j3rK4lnrhHigE"
+2 B AuthenticationSASLContinue "r=UQT10hw62N/j3rK4lnrhHigEMsLslXGL/rdfK6qPST7l2Et5,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=UQT10hw62N/j3rK4lnrhHigEMsLslXGL/rdfK6qPST7l2Et5,p=mGqVxbrhFTpFQOoyCWBxB/wg/KOA3Sx5o27rLq5Flks="
+2 B AuthenticationSASLFinal "v=K3thnJjLemHaCBzOBPG91bBou9czE5GuPef7GpGTYug="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 785442 "\x94Qǹ"
+2 B ReadyForQuery I
+2 F Query "-- ping"
+2 B EmptyQueryResponse
+2 B ReadyForQuery I
+2 F Query "SELECT current_setting('server_version_num')::int/100 as version"
+2 B RowDescription [("version" 0 0 23 4 -1 0)]
+2 B DataRow ["1900"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT extversion FROM pg_extension WHERE extname = 'timescaledb'"
+2 B RowDescription [("extversion" 3079 6 25 -1 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "SELECT\n    CASE WHEN \n          quote_ident(table_schema) IN (\n          SELECT\n            CASE WHEN trim(s[i]) = '\"$user\"' THEN user ELSE trim(s[i]) END\n          FROM\n            generate_series(\n              array_lower(string_to_array(current_setting('search_path'),','),1),\n              array_upper(string_to_array(current_setting('search_path'),','),1)\n            ) as i,\n            string_to_array(current_setting('search_path'),',') s\n          )\n      THEN quote_ident(table_name)\n      ELSE quote_ident(table_schema) || '.' || quote_ident(table_name)\n    END AS \"table\"\n    FROM information_schema.tables\n    WHERE quote_ident(table_schema) NOT IN ('information_schema',\n                             'pg_catalog',\n                             '_timescaledb_cache',\n                             '_timescaledb_catalog',\n                             '_timescaledb_internal',\n                             '_timescaledb_config',\n                             'timescaledb_information',\n                             'timescaledb_experimental')\n    ORDER BY CASE WHEN \n          quote_ident(table_schema) IN (\n          SELECT\n            CASE WHEN trim(s[i]) = '\"$user\"' THEN user ELSE trim(s[i]) END\n          FROM\n            generate_series(\n              array_lower(string_to_array(current_setting('search_path'),','),1),\n              array_upper(string_to_array(current_setting('search_path'),','),1)\n            ) as i,\n            string_to_array(current_setting('search_path'),',') s\n          ) THEN 0 ELSE 1 END, 1"
+2 B RowDescription [("table" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_metrics"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT quote_ident(column_name) AS \"column\", data_type AS \"type\"\n    FROM information_schema.columns\n    WHERE\n      CASE WHEN array_length(parse_ident('compat_metrics'),1) = 2\n        THEN quote_ident(table_schema) = (parse_ident('compat_metrics'))[1]\n          AND quote_ident(table_name) = (parse_ident('compat_metrics'))[2]\n        ELSE quote_ident(table_name) = 'compat_metrics'\n          AND \n          quote_ident(table_schema) IN (\n          SELECT\n            CASE WHEN trim(s[i]) = '\"$user\"' THEN user ELSE trim(s[i]) END\n          FROM\n            generate_series(\n              array_lower(string_to_array(current_setting('search_path'),','),1),\n              array_upper(string_to_array(current_setting('search_path'),','),1)\n            ) as i,\n            string_to_array(current_setting('search_path'),',') s\n          )\n      END"
+2 B RowDescription [("column" 0 0 25 -1 -1 0) ("type" 13428 8 1043 -1 -1 0)]
+2 B DataRow ["\"time\"" "timestamp with time zone"]
+2 B DataRow ["host" "text"]
+2 B DataRow ["value" "double precision"]
+2 B CommandComplete "SELECT 3"
+2 B ReadyForQuery I
+2 F Query "SELECT floor(extract(epoch from \"time\")/60)*60 AS \"time\", host AS metric, avg(value) AS value FROM compat_metrics WHERE \"time\" BETWEEN '2026-01-02T03:00:00Z' AND '2026-01-02T03:10:00Z' GROUP BY 1, 2 ORDER BY 1, 2"
+2 B RowDescription [("time" 0 0 1700 -1 -1 0) ("metric" 255801 2 25 -1 -1 0) ("value" 0 0 701 8 -1 0)]
+2 B DataRow ["1767322800" "a" "1.5"]
+2 B DataRow ["1767322800" "b" "1.5"]
+2 B DataRow ["1767322860" "a" "6"]
+2 B DataRow ["1767322860" "b" "6"]
+2 B DataRow ["1767322920" "a" "10.5"]
+2 B DataRow ["1767322920" "b" "10.5"]
+2 B DataRow ["1767322980" "a" "15"]
+2 B DataRow ["1767322980" "b" "15"]
+2 B DataRow ["1767323040" "a" "19.5"]
+2 B DataRow ["1767323040" "b" "19.5"]
+2 B DataRow ["1767323100" "a" "24"]
+2 B DataRow ["1767323100" "b" "24"]
+2 B DataRow ["1767323160" "a" "28.5"]
+2 B DataRow ["1767323160" "b" "28.5"]
+2 B DataRow ["1767323220" "a" "33"]
+2 B DataRow ["1767323220" "b" "33"]
+2 B DataRow ["1767323280" "a" "37.5"]
+2 B DataRow ["1767323280" "b" "37.5"]
+2 B DataRow ["1767323340" "a" "42"]
+2 B DataRow ["1767323340" "b" "42"]
+2 B CommandComplete "SELECT 20"
+2 B ReadyForQuery I
+2 F Query "SELECT \"time\", host, value FROM compat_metrics WHERE \"time\" BETWEEN '2026-01-02T03:00:00Z' AND '2026-01-02T03:10:00Z' ORDER BY \"time\", host"
+2 B RowDescription [("time" 255801 1 1184 8 -1 0) ("host" 255801 2 25 -1 -1 0) ("value" 255801 3 701 8 -1 0)]
+2 B DataRow ["2026-01-02 03:00:00+00" "a" "0"]
+2 B DataRow ["2026-01-02 03:00:00+00" "b" "0"]
+2 B DataRow ["2026-01-02 03:00:20+00" "a" "1.5"]
+2 B DataRow ["2026-01-02 03:00:20+00" "b" "1.5"]
+2 B DataRow ["2026-01-02 03:00:40+00" "a" "3"]
+2 B DataRow ["2026-01-02 03:00:40+00" "b" "3"]
+2 B DataRow ["2026-01-02 03:01:00+00" "a" "4.5"]
+2 B DataRow ["2026-01-02 03:01:00+00" "b" "4.5"]
+2 B DataRow ["2026-01-02 03:01:20+00" "a" "6"]
+2 B DataRow ["2026-01-02 03:01:20+00" "b" "6"]
+2 B DataRow ["2026-01-02 03:01:40+00" "a" "7.5"]
+2 B DataRow ["2026-01-02 03:01:40+00" "b" "7.5"]
+2 B DataRow ["2026-01-02 03:02:00+00" "a" "9"]
+2 B DataRow ["2026-01-02 03:02:00+00" "b" "9"]
+2 B DataRow ["2026-01-02 03:02:20+00" "a" "10.5"]
+2 B DataRow ["2026-01-02 03:02:20+00" "b" "10.5"]
+2 B DataRow ["2026-01-02 03:02:40+00" "a" "12"]
+2 B DataRow ["2026-01-02 03:02:40+00" "b" "12"]
+2 B DataRow ["2026-01-02 03:03:00+00" "a" "13.5"]
+2 B DataRow ["2026-01-02 03:03:00+00" "b" "13.5"]
+2 B DataRow ["2026-01-02 03:03:20+00" "a" "15"]
+2 B DataRow ["2026-01-02 03:03:20+00" "b" "15"]
+2 B DataRow ["2026-01-02 03:03:40+00" "a" "16.5"]
+2 B DataRow ["2026-01-02 03:03:40+00" "b" "16.5"]
+2 B DataRow ["2026-01-02 03:04:00+00" "a" "18"]
+2 B DataRow ["2026-01-02 03:04:00+00" "b" "18"]
+2 B DataRow ["2026-01-02 03:04:20+00" "a" "19.5"]
+2 B DataRow ["2026-01-02 03:04:20+00" "b" "19.5"]
+2 B DataRow ["2026-01-02 03:04:40+00" "a" "21"]
+2 B DataRow ["2026-01-02 03:04:40+00" "b" "21"]
+2 B DataRow ["2026-01-02 03:05:00+00" "a" "22.5"]
+2 B DataRow ["2026-01-02 03:05:00+00" "b" "22.5"]
+2 B DataRow ["2026-01-02 03:05:20+00" "a" "24"]
+2 B DataRow ["2026-01-02 03:05:20+00" "b" "24"]
+2 B DataRow ["2026-01-02 03:05:40+00" "a" "25.5"]
+2 B DataRow ["2026-01-02 03:05:40+00" "b" "25.5"]
+2 B DataRow ["2026-01-02 03:06:00+00" "a" "27"]
+2 B DataRow ["2026-01-02 03:06:00+00" "b" "27"]
+2 B DataRow ["2026-01-02 03:06:20+00" "a" "28.5"]
+2 B DataRow ["2026-01-02 03:06:20+00" "b" "28.5"]
+2 B DataRow ["2026-01-02 03:06:40+00" "a" "30"]
+2 B DataRow ["2026-01-02 03:06:40+00" "b" "30"]
+2 B DataRow ["2026-01-02 03:07:00+00" "a" "31.5"]
+2 B DataRow ["2026-01-02 03:07:00+00" "b" "31.5"]
+2 B DataRow ["2026-01-02 03:07:20+00" "a" "33"]
+2 B DataRow ["2026-01-02 03:07:20+00" "b" "33"]
+2 B DataRow ["2026-01-02 03:07:40+00" "a" "34.5"]
+2 B DataRow ["2026-01-02 03:07:40+00" "b" "34.5"]
+2 B DataRow ["2026-01-02 03:08:00+00" "a" "36"]
+2 B DataRow ["2026-01-02 03:08:00+00" "b" "36"]
+2 B DataRow ["2026-01-02 03:08:20+00" "a" "37.5"]
+2 B DataRow ["2026-01-02 03:08:20+00" "b" "37.5"]
+2 B DataRow ["2026-01-02 03:08:40+00" "a" "39"]
+2 B DataRow ["2026-01-02 03:08:40+00" "b" "39"]
+2 B DataRow ["2026-01-02 03:09:00+00" "a" "40.5"]
+2 B DataRow ["2026-01-02 03:09:00+00" "b" "40.5"]
+2 B DataRow ["2026-01-02 03:09:20+00" "a" "42"]
+2 B DataRow ["2026-01-02 03:09:20+00" "b" "42"]
+2 B DataRow ["2026-01-02 03:09:40+00" "a" "43.5"]
+2 B DataRow ["2026-01-02 03:09:40+00" "b" "43.5"]
+2 B CommandComplete "SELECT 60"
+2 B ReadyForQuery I
+2 F Query "SELECT 1 / 0"
+2 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+2 B ReadyForQuery I
+2 F End
+2 B End
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=uSoBPysogij0SwApSyCB/Mul"
+3 B AuthenticationSASLContinue "r=uSoBPysogij0SwApSyCB/MulSpnQvUABlirXEwHypA7hYXXT,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=uSoBPysogij0SwApSyCB/MulSpnQvUABlirXEwHypA7hYXXT,p=MsA8HFof4dgL0a7nzRZzSeBsbNjgOG+Z5gglzAyW2Io="
+3 B AuthenticationSASLFinal "v=sQfYa489AdHxMKP9gtuDl/GyYexphUfFBS9cmB1NsCU="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" "psql"
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 785457 ">[\xa3\x97"
+3 B ReadyForQuery I
+3 F Query "DROP TABLE compat_metrics"
+3 B CommandComplete "DROP TABLE"
+3 B ReadyForQuery I
+3 F Terminate
+3 F End
+3 B End
