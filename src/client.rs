@@ -16,6 +16,8 @@ pub(crate) struct Target {
     pub(crate) addr: SocketAddr,
     pub(crate) user: String,
     pub(crate) password: String,
+    /// Startup parameters that replay and the client add to each connection, such as `rupg.compat_version`.
+    pub(crate) params: Vec<(String, String)>,
 }
 
 /// The frontend side of an authentication exchange.
@@ -85,10 +87,25 @@ pub(crate) fn str_val(s: &str) -> Val {
     Val::Str(s.as_bytes().to_vec())
 }
 
-/// The startup message of protocol 3.0.
-pub(crate) fn startup(user: &str, database: &str) -> Msg {
-    let pairs = vec![str_val("user"), str_val(user), str_val("database"), str_val(database)];
-    Msg::new(Dir::F, "StartupMessage", vec![Val::Int(196_608), Val::List(pairs)])
+/// The startup message of protocol 3.0, with the parameters of the target.
+pub(crate) fn startup(target: &Target, database: &str) -> Msg {
+    let pairs =
+        vec![str_val("user"), str_val(&target.user), str_val("database"), str_val(database)];
+    let mut msg = Msg::new(Dir::F, "StartupMessage", vec![Val::Int(196_608), Val::List(pairs)]);
+    add_params(&mut msg, &target.params);
+    msg
+}
+
+/// Adds startup parameters to a `StartupMessage` that does not have them yet.
+pub(crate) fn add_params(msg: &mut Msg, params: &[(String, String)]) {
+    if let Some(Val::List(pairs)) = msg.vals.get_mut(1) {
+        for (k, v) in params {
+            if !pairs.chunks(2).any(|p| p[0].bytes() == Some(k.as_bytes())) {
+                pairs.push(str_val(k));
+                pairs.push(str_val(v));
+            }
+        }
+    }
 }
 
 /// One open connection.
@@ -104,7 +121,7 @@ impl Conn {
         stream.set_nodelay(true).map_err(|e| e.to_string())?;
         stream.set_read_timeout(Some(Duration::from_secs(300))).map_err(|e| e.to_string())?;
         let mut c = Conn { stream };
-        c.send(&startup(&target.user, database))?;
+        c.send(&startup(target, database))?;
         let mut auth = Auth::default();
         loop {
             let msg = c.recv()?;
