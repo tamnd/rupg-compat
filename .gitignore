@@ -3,3 +3,4 @@
 /runs/tmp
 *.rupg
 /work
+__pycache__/

@@ -2,12 +2,12 @@
 # compat-version: 19
 # server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
 # recorded: clients/r2dbc-postgresql/run.sh
-1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "r2dbc-postgresql" "client_encoding" "utf8" "DateStyle" "ISO" "extra_float_digits" "2" "TimeZone" "Asia/Singapore"
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "r2dbc-postgresql" "client_encoding" "utf8" "DateStyle" "ISO" "extra_float_digits" "2" "TimeZone" "UTC"
 1 B AuthenticationSASL "SCRAM-SHA-256"
-1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=postgres,r=zs$z?I!m<s9.\"o?'0O?]<KTe"
-1 B AuthenticationSASLContinue "r=zs$z?I!m<s9.\"o?'0O?]<KTesegJuIablgnNAZnDR5zU4cQx,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
-1 F SASLResponse "c=biws,r=zs$z?I!m<s9.\"o?'0O?]<KTesegJuIablgnNAZnDR5zU4cQx,p=lEThCTDWCc33epLqaiBx1elENUiIbbBN2xMe7QNTssc="
-1 B AuthenticationSASLFinal "v=uu9XfrBS2Yz9hDEBqXogri1IdLlOEAScnQvq/eKv1c4="
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=postgres,r=`N.b\\+Gzgb:c(E?PBh2XtM/l"
+1 B AuthenticationSASLContinue "r=`N.b\\+Gzgb:c(E?PBh2XtM/lF5+1jwyt20JbJX3HNQscukzr,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=`N.b\\+Gzgb:c(E?PBh2XtM/lF5+1jwyt20JbJX3HNQscukzr,p=miRwbO98Q2fKXvjd6QBVt6pePAl9orvif8r4GjYjsEQ="
+1 B AuthenticationSASLFinal "v=c3ds/krZP+jqHIC1jdyO9vYFf+wFnn56Yc9yCEc8zkI="
 1 B AuthenticationOk
 1 B ParameterStatus "IntervalStyle" "postgres"
 1 B ParameterStatus "search_path" "\"$user\", public"
@@ -19,12 +19,12 @@
 1 B ParameterStatus "server_encoding" "UTF8"
 1 B ParameterStatus "in_hot_standby" "off"
 1 B ParameterStatus "integer_datetimes" "on"
-1 B ParameterStatus "TimeZone" "Asia/Singapore"
+1 B ParameterStatus "TimeZone" "UTC"
 1 B ParameterStatus "application_name" "r2dbc-postgresql"
 1 B ParameterStatus "default_transaction_read_only" "off"
 1 B ParameterStatus "scram_iterations" "4096"
 1 B ParameterStatus "DateStyle" "ISO, MDY"
-1 B BackendKeyData 838371 "\xfe\x0fy\x92"
+1 B BackendKeyData 895059 "\xb5\x95\x92t"
 1 B ReadyForQuery I
 1 F Query "SHOW TRANSACTION ISOLATION LEVEL"
 1 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
@@ -55,7 +55,7 @@
 1 B ReadyForQuery I
 1 F Query "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text"
 1 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
-1 B DataRow ["42" "42" "9007199254740993" "1.5" "12.345" "t" "x" "\\x0102" "2026-01-02 11:04:05+08" "2026-01-02" "{1,2,3}" "{\"a\": 1}" "7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f" NULL]
+1 B DataRow ["42" "42" "9007199254740993" "1.5" "12.345" "t" "x" "\\x0102" "2026-01-02 03:04:05+00" "2026-01-02" "{1,2,3}" "{\"a\": 1}" "7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f" NULL]
 1 B CommandComplete "SELECT 1"
 1 B ReadyForQuery I
 1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2))"
@@ -123,7 +123,7 @@
 1 F Sync
 1 B ParseComplete
 1 B BindComplete
-1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B RowDescription [("id" 267619 1 23 4 -1 0) ("name" 267619 2 25 -1 -1 0) ("price" 267619 3 1700 -1 655366 0)]
 1 B DataRow ["1" "one" "1.50"]
 1 B DataRow ["2" "two" "2.50"]
 1 B DataRow ["3" "three" "3.50"]
@@ -136,7 +136,7 @@
 1 F Close P "B_6"
 1 F Sync
 1 B BindComplete
-1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B RowDescription [("id" 267619 1 23 4 -1 0) ("name" 267619 2 25 -1 -1 0) ("price" 267619 3 1700 -1 655366 0)]
 1 B DataRow ["1" "one" "1.50"]
 1 B DataRow ["2" "two" "2.50"]
 1 B DataRow ["3" "three" "3.50"]
@@ -149,7 +149,7 @@
 1 F Close P "B_7"
 1 F Sync
 1 B BindComplete
-1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B RowDescription [("id" 267619 1 23 4 -1 0) ("name" 267619 2 25 -1 -1 0) ("price" 267619 3 1700 -1 655366 0)]
 1 B DataRow ["1" "one" "1.50"]
 1 B DataRow ["2" "two" "2.50"]
 1 B DataRow ["3" "three" "3.50"]
@@ -162,7 +162,7 @@
 1 F Close P "B_8"
 1 F Sync
 1 B BindComplete
-1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B RowDescription [("id" 267619 1 23 4 -1 0) ("name" 267619 2 25 -1 -1 0) ("price" 267619 3 1700 -1 655366 0)]
 1 B DataRow ["1" "one" "1.50"]
 1 B DataRow ["2" "two" "2.50"]
 1 B DataRow ["3" "three" "3.50"]
@@ -175,7 +175,7 @@
 1 F Close P "B_9"
 1 F Sync
 1 B BindComplete
-1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B RowDescription [("id" 267619 1 23 4 -1 0) ("name" 267619 2 25 -1 -1 0) ("price" 267619 3 1700 -1 655366 0)]
 1 B DataRow ["1" "one" "1.50"]
 1 B DataRow ["2" "two" "2.50"]
 1 B DataRow ["3" "three" "3.50"]
@@ -188,7 +188,7 @@
 1 F Close P "B_10"
 1 F Sync
 1 B BindComplete
-1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B RowDescription [("id" 267619 1 23 4 -1 0) ("name" 267619 2 25 -1 -1 0) ("price" 267619 3 1700 -1 655366 0)]
 1 B DataRow ["1" "one" "1.50"]
 1 B DataRow ["2" "two" "2.50"]
 1 B DataRow ["3" "three" "3.50"]

@@ -319,9 +319,12 @@ fn record_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     if let Some(bin) = o.bin("psql").parent() {
         cmd.env("RUPG_COMPAT_BIN", bin);
     }
+    // The client runs in UTC, as the oracle does. Some clients send the time zone of the machine
+    // at startup or write local times into parameters, and the trace must not depend on the machine.
     cmd.env("PGPORT", p.addr.port().to_string())
         .env("PGSSLMODE", "disable")
-        .env("PGDATABASE", RECORD_DATABASE);
+        .env("PGDATABASE", RECORD_DATABASE)
+        .env("TZ", "UTC");
     let status = cmd.status().map_err(|e| format!("{what}: {e}"));
     p.finish()?;
     let status = status?;
