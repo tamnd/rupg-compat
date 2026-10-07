@@ -1,0 +1,2904 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/supavisor/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "Supavisor (auth_query)"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=yNOMbcQYUY7etP1LP1L2kzNg"
+1 B AuthenticationSASLContinue "r=yNOMbcQYUY7etP1LP1L2kzNgZMXQYX1op1kMhNu9rCAy+UP6,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=yNOMbcQYUY7etP1LP1L2kzNgZMXQYX1op1kMhNu9rCAy+UP6,p=nqn6TgvziMzMuqN2l5vApnEIb67IhCQZeth61JHC1S0="
+1 B AuthenticationSASLFinal "v=TU28X8ZU9TDfRUqd8hlwh7vH6bwIHvuAvERVHflgdnE="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "Supavisor (auth_query)"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 990023 "\x06$\xab\xa5"
+1 B ReadyForQuery I
+1 F Query "SELECT t.oid, t.typname, t.typsend, t.typreceive, t.typoutput, t.typinput,\n       coalesce(d.typelem, t.typelem), coalesce(r.rngsubtype, 0), ARRAY (\n  SELECT a.atttypid\n  FROM pg_attribute AS a\n  WHERE a.attrelid = t.typrelid AND a.attnum > 0 AND NOT a.attisdropped\n  ORDER BY a.attnum\n)\n\nFROM pg_type AS t\nLEFT JOIN pg_type AS d ON t.typbasetype = d.oid\nLEFT JOIN pg_range AS r ON r.rngtypid = t.oid OR r.rngmultitypid = t.oid OR (t.typbasetype <> 0 AND r.rngtypid = t.typbasetype)\nWHERE (t.typrelid = 0)\nAND (t.typelem = 0 OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_type s WHERE s.typrelid != 0 AND s.oid = t.typelem))\n\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typsend" 1247 19 24 4 -1 0) ("typreceive" 1247 18 24 4 -1 0) ("typoutput" 1247 17 24 4 -1 0) ("typinput" 1247 16 24 4 -1 0) ("coalesce" 0 0 26 4 -1 0) ("coalesce" 0 0 26 4 -1 0) ("array" 0 0 1028 -1 -1 0)]
+1 B DataRow ["16" "bool" "boolsend" "boolrecv" "boolout" "boolin" "0" "0" "{}"]
+1 B DataRow ["17" "bytea" "byteasend" "bytearecv" "byteaout" "byteain" "0" "0" "{}"]
+1 B DataRow ["18" "char" "charsend" "charrecv" "charout" "charin" "0" "0" "{}"]
+1 B DataRow ["19" "name" "namesend" "namerecv" "nameout" "namein" "18" "0" "{}"]
+1 B DataRow ["20" "int8" "int8send" "int8recv" "int8out" "int8in" "0" "0" "{}"]
+1 B DataRow ["21" "int2" "int2send" "int2recv" "int2out" "int2in" "0" "0" "{}"]
+1 B DataRow ["22" "int2vector" "int2vectorsend" "int2vectorrecv" "int2vectorout" "int2vectorin" "21" "0" "{}"]
+1 B DataRow ["23" "int4" "int4send" "int4recv" "int4out" "int4in" "0" "0" "{}"]
+1 B DataRow ["24" "regproc" "regprocsend" "regprocrecv" "regprocout" "regprocin" "0" "0" "{}"]
+1 B DataRow ["25" "text" "textsend" "textrecv" "textout" "textin" "0" "0" "{}"]
+1 B DataRow ["26" "oid" "oidsend" "oidrecv" "oidout" "oidin" "0" "0" "{}"]
+1 B DataRow ["27" "tid" "tidsend" "tidrecv" "tidout" "tidin" "0" "0" "{}"]
+1 B DataRow ["28" "xid" "xidsend" "xidrecv" "xidout" "xidin" "0" "0" "{}"]
+1 B DataRow ["29" "cid" "cidsend" "cidrecv" "cidout" "cidin" "0" "0" "{}"]
+1 B DataRow ["30" "oidvector" "oidvectorsend" "oidvectorrecv" "oidvectorout" "oidvectorin" "26" "0" "{}"]
+1 B DataRow ["114" "json" "json_send" "json_recv" "json_out" "json_in" "0" "0" "{}"]
+1 B DataRow ["142" "xml" "xml_send" "xml_recv" "xml_out" "xml_in" "0" "0" "{}"]
+1 B DataRow ["194" "pg_node_tree" "pg_node_tree_send" "pg_node_tree_recv" "pg_node_tree_out" "pg_node_tree_in" "0" "0" "{}"]
+1 B DataRow ["3361" "pg_ndistinct" "pg_ndistinct_send" "pg_ndistinct_recv" "pg_ndistinct_out" "pg_ndistinct_in" "0" "0" "{}"]
+1 B DataRow ["3402" "pg_dependencies" "pg_dependencies_send" "pg_dependencies_recv" "pg_dependencies_out" "pg_dependencies_in" "0" "0" "{}"]
+1 B DataRow ["5017" "pg_mcv_list" "pg_mcv_list_send" "pg_mcv_list_recv" "pg_mcv_list_out" "pg_mcv_list_in" "0" "0" "{}"]
+1 B DataRow ["32" "pg_ddl_command" "pg_ddl_command_send" "pg_ddl_command_recv" "pg_ddl_command_out" "pg_ddl_command_in" "0" "0" "{}"]
+1 B DataRow ["5069" "xid8" "xid8send" "xid8recv" "xid8out" "xid8in" "0" "0" "{}"]
+1 B DataRow ["600" "point" "point_send" "point_recv" "point_out" "point_in" "701" "0" "{}"]
+1 B DataRow ["601" "lseg" "lseg_send" "lseg_recv" "lseg_out" "lseg_in" "600" "0" "{}"]
+1 B DataRow ["602" "path" "path_send" "path_recv" "path_out" "path_in" "0" "0" "{}"]
+1 B DataRow ["603" "box" "box_send" "box_recv" "box_out" "box_in" "600" "0" "{}"]
+1 B DataRow ["604" "polygon" "poly_send" "poly_recv" "poly_out" "poly_in" "0" "0" "{}"]
+1 B DataRow ["628" "line" "line_send" "line_recv" "line_out" "line_in" "701" "0" "{}"]
+1 B DataRow ["700" "float4" "float4send" "float4recv" "float4out" "float4in" "0" "0" "{}"]
+1 B DataRow ["701" "float8" "float8send" "float8recv" "float8out" "float8in" "0" "0" "{}"]
+1 B DataRow ["705" "unknown" "unknownsend" "unknownrecv" "unknownout" "unknownin" "0" "0" "{}"]
+1 B DataRow ["718" "circle" "circle_send" "circle_recv" "circle_out" "circle_in" "0" "0" "{}"]
+1 B DataRow ["790" "money" "cash_send" "cash_recv" "cash_out" "cash_in" "0" "0" "{}"]
+1 B DataRow ["829" "macaddr" "macaddr_send" "macaddr_recv" "macaddr_out" "macaddr_in" "0" "0" "{}"]
+1 B DataRow ["869" "inet" "inet_send" "inet_recv" "inet_out" "inet_in" "0" "0" "{}"]
+1 B DataRow ["650" "cidr" "cidr_send" "cidr_recv" "cidr_out" "cidr_in" "0" "0" "{}"]
+1 B DataRow ["774" "macaddr8" "macaddr8_send" "macaddr8_recv" "macaddr8_out" "macaddr8_in" "0" "0" "{}"]
+1 B DataRow ["1033" "aclitem" "-" "-" "aclitemout" "aclitemin" "0" "0" "{}"]
+1 B DataRow ["1042" "bpchar" "bpcharsend" "bpcharrecv" "bpcharout" "bpcharin" "0" "0" "{}"]
+1 B DataRow ["1043" "varchar" "varcharsend" "varcharrecv" "varcharout" "varcharin" "0" "0" "{}"]
+1 B DataRow ["1082" "date" "date_send" "date_recv" "date_out" "date_in" "0" "0" "{}"]
+1 B DataRow ["1083" "time" "time_send" "time_recv" "time_out" "time_in" "0" "0" "{}"]
+1 B DataRow ["1114" "timestamp" "timestamp_send" "timestamp_recv" "timestamp_out" "timestamp_in" "0" "0" "{}"]
+1 B DataRow ["1184" "timestamptz" "timestamptz_send" "timestamptz_recv" "timestamptz_out" "timestamptz_in" "0" "0" "{}"]
+1 B DataRow ["1186" "interval" "interval_send" "interval_recv" "interval_out" "interval_in" "0" "0" "{}"]
+1 B DataRow ["1266" "timetz" "timetz_send" "timetz_recv" "timetz_out" "timetz_in" "0" "0" "{}"]
+1 B DataRow ["1560" "bit" "bit_send" "bit_recv" "bit_out" "bit_in" "0" "0" "{}"]
+1 B DataRow ["1562" "varbit" "varbit_send" "varbit_recv" "varbit_out" "varbit_in" "0" "0" "{}"]
+1 B DataRow ["1700" "numeric" "numeric_send" "numeric_recv" "numeric_out" "numeric_in" "0" "0" "{}"]
+1 B DataRow ["1790" "refcursor" "textsend" "textrecv" "textout" "textin" "0" "0" "{}"]
+1 B DataRow ["2202" "regprocedure" "regproceduresend" "regprocedurerecv" "regprocedureout" "regprocedurein" "0" "0" "{}"]
+1 B DataRow ["2203" "regoper" "regopersend" "regoperrecv" "regoperout" "regoperin" "0" "0" "{}"]
+1 B DataRow ["2204" "regoperator" "regoperatorsend" "regoperatorrecv" "regoperatorout" "regoperatorin" "0" "0" "{}"]
+1 B DataRow ["2205" "regclass" "regclasssend" "regclassrecv" "regclassout" "regclassin" "0" "0" "{}"]
+1 B DataRow ["4191" "regcollation" "regcollationsend" "regcollationrecv" "regcollationout" "regcollationin" "0" "0" "{}"]
+1 B DataRow ["2206" "regtype" "regtypesend" "regtyperecv" "regtypeout" "regtypein" "0" "0" "{}"]
+1 B DataRow ["4096" "regrole" "regrolesend" "regrolerecv" "regroleout" "regrolein" "0" "0" "{}"]
+1 B DataRow ["4089" "regnamespace" "regnamespacesend" "regnamespacerecv" "regnamespaceout" "regnamespacein" "0" "0" "{}"]
+1 B DataRow ["6490" "regdatabase" "regdatabasesend" "regdatabaserecv" "regdatabaseout" "regdatabasein" "0" "0" "{}"]
+1 B DataRow ["2950" "uuid" "uuid_send" "uuid_recv" "uuid_out" "uuid_in" "0" "0" "{}"]
+1 B DataRow ["3220" "pg_lsn" "pg_lsn_send" "pg_lsn_recv" "pg_lsn_out" "pg_lsn_in" "0" "0" "{}"]
+1 B DataRow ["3614" "tsvector" "tsvectorsend" "tsvectorrecv" "tsvectorout" "tsvectorin" "0" "0" "{}"]
+1 B DataRow ["3642" "gtsvector" "-" "-" "gtsvectorout" "gtsvectorin" "0" "0" "{}"]
+1 B DataRow ["3615" "tsquery" "tsquerysend" "tsqueryrecv" "tsqueryout" "tsqueryin" "0" "0" "{}"]
+1 B DataRow ["3734" "regconfig" "regconfigsend" "regconfigrecv" "regconfigout" "regconfigin" "0" "0" "{}"]
+1 B DataRow ["3769" "regdictionary" "regdictionarysend" "regdictionaryrecv" "regdictionaryout" "regdictionaryin" "0" "0" "{}"]
+1 B DataRow ["3802" "jsonb" "jsonb_send" "jsonb_recv" "jsonb_out" "jsonb_in" "0" "0" "{}"]
+1 B DataRow ["4072" "jsonpath" "jsonpath_send" "jsonpath_recv" "jsonpath_out" "jsonpath_in" "0" "0" "{}"]
+1 B DataRow ["2970" "txid_snapshot" "txid_snapshot_send" "txid_snapshot_recv" "txid_snapshot_out" "txid_snapshot_in" "0" "0" "{}"]
+1 B DataRow ["5038" "pg_snapshot" "pg_snapshot_send" "pg_snapshot_recv" "pg_snapshot_out" "pg_snapshot_in" "0" "0" "{}"]
+1 B DataRow ["3904" "int4range" "range_send" "range_recv" "range_out" "range_in" "0" "23" "{}"]
+1 B DataRow ["3906" "numrange" "range_send" "range_recv" "range_out" "range_in" "0" "1700" "{}"]
+1 B DataRow ["3908" "tsrange" "range_send" "range_recv" "range_out" "range_in" "0" "1114" "{}"]
+1 B DataRow ["3910" "tstzrange" "range_send" "range_recv" "range_out" "range_in" "0" "1184" "{}"]
+1 B DataRow ["3912" "daterange" "range_send" "range_recv" "range_out" "range_in" "0" "1082" "{}"]
+1 B DataRow ["3926" "int8range" "range_send" "range_recv" "range_out" "range_in" "0" "20" "{}"]
+1 B DataRow ["4451" "int4multirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "23" "{}"]
+1 B DataRow ["4532" "nummultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1700" "{}"]
+1 B DataRow ["4533" "tsmultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1114" "{}"]
+1 B DataRow ["4534" "tstzmultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1184" "{}"]
+1 B DataRow ["4535" "datemultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1082" "{}"]
+1 B DataRow ["4536" "int8multirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "20" "{}"]
+1 B DataRow ["2249" "record" "record_send" "record_recv" "record_out" "record_in" "0" "0" "{}"]
+1 B DataRow ["2287" "_record" "array_send" "array_recv" "array_out" "array_in" "2249" "0" "{}"]
+1 B DataRow ["2275" "cstring" "cstring_send" "cstring_recv" "cstring_out" "cstring_in" "0" "0" "{}"]
+1 B DataRow ["2276" "any" "-" "-" "any_out" "any_in" "0" "0" "{}"]
+1 B DataRow ["2277" "anyarray" "anyarray_send" "anyarray_recv" "anyarray_out" "anyarray_in" "0" "0" "{}"]
+1 B DataRow ["2278" "void" "void_send" "void_recv" "void_out" "void_in" "0" "0" "{}"]
+1 B DataRow ["2279" "trigger" "-" "-" "trigger_out" "trigger_in" "0" "0" "{}"]
+1 B DataRow ["3838" "event_trigger" "-" "-" "event_trigger_out" "event_trigger_in" "0" "0" "{}"]
+1 B DataRow ["2280" "language_handler" "-" "-" "language_handler_out" "language_handler_in" "0" "0" "{}"]
+1 B DataRow ["2281" "internal" "-" "-" "internal_out" "internal_in" "0" "0" "{}"]
+1 B DataRow ["2283" "anyelement" "-" "-" "anyelement_out" "anyelement_in" "0" "0" "{}"]
+1 B DataRow ["2776" "anynonarray" "-" "-" "anynonarray_out" "anynonarray_in" "0" "0" "{}"]
+1 B DataRow ["3500" "anyenum" "-" "-" "anyenum_out" "anyenum_in" "0" "0" "{}"]
+1 B DataRow ["3115" "fdw_handler" "-" "-" "fdw_handler_out" "fdw_handler_in" "0" "0" "{}"]
+1 B DataRow ["325" "index_am_handler" "-" "-" "index_am_handler_out" "index_am_handler_in" "0" "0" "{}"]
+1 B DataRow ["3310" "tsm_handler" "-" "-" "tsm_handler_out" "tsm_handler_in" "0" "0" "{}"]
+1 B DataRow ["269" "table_am_handler" "-" "-" "table_am_handler_out" "table_am_handler_in" "0" "0" "{}"]
+1 B DataRow ["3831" "anyrange" "-" "-" "anyrange_out" "anyrange_in" "0" "0" "{}"]
+1 B DataRow ["5077" "anycompatible" "-" "-" "anycompatible_out" "anycompatible_in" "0" "0" "{}"]
+1 B DataRow ["5078" "anycompatiblearray" "anycompatiblearray_send" "anycompatiblearray_recv" "anycompatiblearray_out" "anycompatiblearray_in" "0" "0" "{}"]
+1 B DataRow ["5079" "anycompatiblenonarray" "-" "-" "anycompatiblenonarray_out" "anycompatiblenonarray_in" "0" "0" "{}"]
+1 B DataRow ["5080" "anycompatiblerange" "-" "-" "anycompatiblerange_out" "anycompatiblerange_in" "0" "0" "{}"]
+1 B DataRow ["4537" "anymultirange" "-" "-" "anymultirange_out" "anymultirange_in" "0" "0" "{}"]
+1 B DataRow ["4538" "anycompatiblemultirange" "-" "-" "anycompatiblemultirange_out" "anycompatiblemultirange_in" "0" "0" "{}"]
+1 B DataRow ["4600" "pg_brin_bloom_summary" "brin_bloom_summary_send" "brin_bloom_summary_recv" "brin_bloom_summary_out" "brin_bloom_summary_in" "0" "0" "{}"]
+1 B DataRow ["4601" "pg_brin_minmax_multi_summary" "brin_minmax_multi_summary_send" "brin_minmax_multi_summary_recv" "brin_minmax_multi_summary_out" "brin_minmax_multi_summary_in" "0" "0" "{}"]
+1 B DataRow ["6437" "oid8" "oid8send" "oid8recv" "oid8out" "oid8in" "0" "0" "{}"]
+1 B DataRow ["1000" "_bool" "array_send" "array_recv" "array_out" "array_in" "16" "0" "{}"]
+1 B DataRow ["1001" "_bytea" "array_send" "array_recv" "array_out" "array_in" "17" "0" "{}"]
+1 B DataRow ["1002" "_char" "array_send" "array_recv" "array_out" "array_in" "18" "0" "{}"]
+1 B DataRow ["1003" "_name" "array_send" "array_recv" "array_out" "array_in" "19" "0" "{}"]
+1 B DataRow ["1016" "_int8" "array_send" "array_recv" "array_out" "array_in" "20" "0" "{}"]
+1 B DataRow ["1005" "_int2" "array_send" "array_recv" "array_out" "array_in" "21" "0" "{}"]
+1 B DataRow ["1006" "_int2vector" "array_send" "array_recv" "array_out" "array_in" "22" "0" "{}"]
+1 B DataRow ["1007" "_int4" "array_send" "array_recv" "array_out" "array_in" "23" "0" "{}"]
+1 B DataRow ["1008" "_regproc" "array_send" "array_recv" "array_out" "array_in" "24" "0" "{}"]
+1 B DataRow ["1009" "_text" "array_send" "array_recv" "array_out" "array_in" "25" "0" "{}"]
+1 B DataRow ["1028" "_oid" "array_send" "array_recv" "array_out" "array_in" "26" "0" "{}"]
+1 B DataRow ["1010" "_tid" "array_send" "array_recv" "array_out" "array_in" "27" "0" "{}"]
+1 B DataRow ["1011" "_xid" "array_send" "array_recv" "array_out" "array_in" "28" "0" "{}"]
+1 B DataRow ["1012" "_cid" "array_send" "array_recv" "array_out" "array_in" "29" "0" "{}"]
+1 B DataRow ["1013" "_oidvector" "array_send" "array_recv" "array_out" "array_in" "30" "0" "{}"]
+1 B DataRow ["199" "_json" "array_send" "array_recv" "array_out" "array_in" "114" "0" "{}"]
+1 B DataRow ["143" "_xml" "array_send" "array_recv" "array_out" "array_in" "142" "0" "{}"]
+1 B DataRow ["271" "_xid8" "array_send" "array_recv" "array_out" "array_in" "5069" "0" "{}"]
+1 B DataRow ["1017" "_point" "array_send" "array_recv" "array_out" "array_in" "600" "0" "{}"]
+1 B DataRow ["1018" "_lseg" "array_send" "array_recv" "array_out" "array_in" "601" "0" "{}"]
+1 B DataRow ["1019" "_path" "array_send" "array_recv" "array_out" "array_in" "602" "0" "{}"]
+1 B DataRow ["1020" "_box" "array_send" "array_recv" "array_out" "array_in" "603" "0" "{}"]
+1 B DataRow ["1027" "_polygon" "array_send" "array_recv" "array_out" "array_in" "604" "0" "{}"]
+1 B DataRow ["629" "_line" "array_send" "array_recv" "array_out" "array_in" "628" "0" "{}"]
+1 B DataRow ["1021" "_float4" "array_send" "array_recv" "array_out" "array_in" "700" "0" "{}"]
+1 B DataRow ["1022" "_float8" "array_send" "array_recv" "array_out" "array_in" "701" "0" "{}"]
+1 B DataRow ["719" "_circle" "array_send" "array_recv" "array_out" "array_in" "718" "0" "{}"]
+1 B DataRow ["791" "_money" "array_send" "array_recv" "array_out" "array_in" "790" "0" "{}"]
+1 B DataRow ["1040" "_macaddr" "array_send" "array_recv" "array_out" "array_in" "829" "0" "{}"]
+1 B DataRow ["1041" "_inet" "array_send" "array_recv" "array_out" "array_in" "869" "0" "{}"]
+1 B DataRow ["651" "_cidr" "array_send" "array_recv" "array_out" "array_in" "650" "0" "{}"]
+1 B DataRow ["775" "_macaddr8" "array_send" "array_recv" "array_out" "array_in" "774" "0" "{}"]
+1 B DataRow ["1034" "_aclitem" "array_send" "array_recv" "array_out" "array_in" "1033" "0" "{}"]
+1 B DataRow ["1014" "_bpchar" "array_send" "array_recv" "array_out" "array_in" "1042" "0" "{}"]
+1 B DataRow ["1015" "_varchar" "array_send" "array_recv" "array_out" "array_in" "1043" "0" "{}"]
+1 B DataRow ["1182" "_date" "array_send" "array_recv" "array_out" "array_in" "1082" "0" "{}"]
+1 B DataRow ["1183" "_time" "array_send" "array_recv" "array_out" "array_in" "1083" "0" "{}"]
+1 B DataRow ["1115" "_timestamp" "array_send" "array_recv" "array_out" "array_in" "1114" "0" "{}"]
+1 B DataRow ["1185" "_timestamptz" "array_send" "array_recv" "array_out" "array_in" "1184" "0" "{}"]
+1 B DataRow ["1187" "_interval" "array_send" "array_recv" "array_out" "array_in" "1186" "0" "{}"]
+1 B DataRow ["1270" "_timetz" "array_send" "array_recv" "array_out" "array_in" "1266" "0" "{}"]
+1 B DataRow ["1561" "_bit" "array_send" "array_recv" "array_out" "array_in" "1560" "0" "{}"]
+1 B DataRow ["1563" "_varbit" "array_send" "array_recv" "array_out" "array_in" "1562" "0" "{}"]
+1 B DataRow ["1231" "_numeric" "array_send" "array_recv" "array_out" "array_in" "1700" "0" "{}"]
+1 B DataRow ["2201" "_refcursor" "array_send" "array_recv" "array_out" "array_in" "1790" "0" "{}"]
+1 B DataRow ["2207" "_regprocedure" "array_send" "array_recv" "array_out" "array_in" "2202" "0" "{}"]
+1 B DataRow ["2208" "_regoper" "array_send" "array_recv" "array_out" "array_in" "2203" "0" "{}"]
+1 B DataRow ["2209" "_regoperator" "array_send" "array_recv" "array_out" "array_in" "2204" "0" "{}"]
+1 B DataRow ["2210" "_regclass" "array_send" "array_recv" "array_out" "array_in" "2205" "0" "{}"]
+1 B DataRow ["4192" "_regcollation" "array_send" "array_recv" "array_out" "array_in" "4191" "0" "{}"]
+1 B DataRow ["2211" "_regtype" "array_send" "array_recv" "array_out" "array_in" "2206" "0" "{}"]
+1 B DataRow ["4097" "_regrole" "array_send" "array_recv" "array_out" "array_in" "4096" "0" "{}"]
+1 B DataRow ["4090" "_regnamespace" "array_send" "array_recv" "array_out" "array_in" "4089" "0" "{}"]
+1 B DataRow ["6491" "_regdatabase" "array_send" "array_recv" "array_out" "array_in" "6490" "0" "{}"]
+1 B DataRow ["2951" "_uuid" "array_send" "array_recv" "array_out" "array_in" "2950" "0" "{}"]
+1 B DataRow ["3221" "_pg_lsn" "array_send" "array_recv" "array_out" "array_in" "3220" "0" "{}"]
+1 B DataRow ["3643" "_tsvector" "array_send" "array_recv" "array_out" "array_in" "3614" "0" "{}"]
+1 B DataRow ["3644" "_gtsvector" "array_send" "array_recv" "array_out" "array_in" "3642" "0" "{}"]
+1 B DataRow ["3645" "_tsquery" "array_send" "array_recv" "array_out" "array_in" "3615" "0" "{}"]
+1 B DataRow ["3735" "_regconfig" "array_send" "array_recv" "array_out" "array_in" "3734" "0" "{}"]
+1 B DataRow ["3770" "_regdictionary" "array_send" "array_recv" "array_out" "array_in" "3769" "0" "{}"]
+1 B DataRow ["3807" "_jsonb" "array_send" "array_recv" "array_out" "array_in" "3802" "0" "{}"]
+1 B DataRow ["4073" "_jsonpath" "array_send" "array_recv" "array_out" "array_in" "4072" "0" "{}"]
+1 B DataRow ["2949" "_txid_snapshot" "array_send" "array_recv" "array_out" "array_in" "2970" "0" "{}"]
+1 B DataRow ["5039" "_pg_snapshot" "array_send" "array_recv" "array_out" "array_in" "5038" "0" "{}"]
+1 B DataRow ["3905" "_int4range" "array_send" "array_recv" "array_out" "array_in" "3904" "0" "{}"]
+1 B DataRow ["3907" "_numrange" "array_send" "array_recv" "array_out" "array_in" "3906" "0" "{}"]
+1 B DataRow ["3909" "_tsrange" "array_send" "array_recv" "array_out" "array_in" "3908" "0" "{}"]
+1 B DataRow ["3911" "_tstzrange" "array_send" "array_recv" "array_out" "array_in" "3910" "0" "{}"]
+1 B DataRow ["3913" "_daterange" "array_send" "array_recv" "array_out" "array_in" "3912" "0" "{}"]
+1 B DataRow ["3927" "_int8range" "array_send" "array_recv" "array_out" "array_in" "3926" "0" "{}"]
+1 B DataRow ["6150" "_int4multirange" "array_send" "array_recv" "array_out" "array_in" "4451" "0" "{}"]
+1 B DataRow ["6151" "_nummultirange" "array_send" "array_recv" "array_out" "array_in" "4532" "0" "{}"]
+1 B DataRow ["6152" "_tsmultirange" "array_send" "array_recv" "array_out" "array_in" "4533" "0" "{}"]
+1 B DataRow ["6153" "_tstzmultirange" "array_send" "array_recv" "array_out" "array_in" "4534" "0" "{}"]
+1 B DataRow ["6155" "_datemultirange" "array_send" "array_recv" "array_out" "array_in" "4535" "0" "{}"]
+1 B DataRow ["6157" "_int8multirange" "array_send" "array_recv" "array_out" "array_in" "4536" "0" "{}"]
+1 B DataRow ["1263" "_cstring" "array_send" "array_recv" "array_out" "array_in" "2275" "0" "{}"]
+1 B DataRow ["6442" "_oid8" "array_send" "array_recv" "array_out" "array_in" "6437" "0" "{}"]
+1 B DataRow ["13354" "cardinal_number" "int4send" "domain_recv" "int4out" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13353" "_cardinal_number" "array_send" "array_recv" "array_out" "array_in" "13354" "0" "{}"]
+1 B DataRow ["13357" "character_data" "varcharsend" "domain_recv" "varcharout" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13356" "_character_data" "array_send" "array_recv" "array_out" "array_in" "13357" "0" "{}"]
+1 B DataRow ["13359" "sql_identifier" "namesend" "domain_recv" "nameout" "domain_in" "18" "0" "{}"]
+1 B DataRow ["13358" "_sql_identifier" "array_send" "array_recv" "array_out" "array_in" "13359" "0" "{}"]
+1 B DataRow ["13365" "time_stamp" "timestamptz_send" "domain_recv" "timestamptz_out" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13364" "_time_stamp" "array_send" "array_recv" "array_out" "array_in" "13365" "0" "{}"]
+1 B DataRow ["13367" "yes_or_no" "varcharsend" "domain_recv" "varcharout" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13366" "_yes_or_no" "array_send" "array_recv" "array_out" "array_in" "13367" "0" "{}"]
+1 B CommandComplete "SELECT 199"
+1 B ReadyForQuery I
+1 F Parse "" "select version()" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("version" 0 0 25 -1 -1 0)]
+1 F Bind "" "" [] [] [1]
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+1 B CommandComplete "SELECT 1"
+1 B CloseComplete
+1 B ReadyForQuery I
+2 F CancelRequest 990023 "\x06$\xab\xa5"
+2 B End
+2 F End
+1 F Terminate
+1 F End
+1 B End
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "Supavisor (auth_query)"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=qO5iZZT/HxlpdIqkbEOFEY5D"
+3 B AuthenticationSASLContinue "r=qO5iZZT/HxlpdIqkbEOFEY5Dth9iiGWJLbzbqnmhudA0I4+X,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=qO5iZZT/HxlpdIqkbEOFEY5Dth9iiGWJLbzbqnmhudA0I4+X,p=AHVfnVYTEo68a4KC+tZZAldfp+PMEGoY1vwi0HrChFE="
+3 B AuthenticationSASLFinal "v=vPo8BVYUP0WeyFGfffS136+6VhEXSQAUx9NNYbHq7Q4="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" "Supavisor (auth_query)"
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 990079 "\xbc\x89\x97\xc3"
+3 B ReadyForQuery I
+4 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "Supavisor"
+4 B AuthenticationSASL "SCRAM-SHA-256"
+4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=postgres,r=EEiSHm60DBo45tWZyLOUCNoF4g=="
+4 B AuthenticationSASLContinue "r=EEiSHm60DBo45tWZyLOUCNoF4g==hzRrlDIMURL02+nTdC4GAacs,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F SASLResponse "c=biws,r=EEiSHm60DBo45tWZyLOUCNoF4g==hzRrlDIMURL02+nTdC4GAacs,p=uMAMGtK+IiSeBSP+Tb+wI6fKHKgTI8FuIN6IC05rv9Q="
+4 B AuthenticationSASLFinal "v=wt0rCWczUgLu1ygxM2X1Y9W/VfOv0DRUamEH0YE1w/g="
+4 B AuthenticationOk
+4 B ParameterStatus "IntervalStyle" "postgres"
+4 B ParameterStatus "search_path" "\"$user\", public"
+4 B ParameterStatus "is_superuser" "on"
+4 B ParameterStatus "standard_conforming_strings" "on"
+4 B ParameterStatus "session_authorization" "postgres"
+4 B ParameterStatus "client_encoding" "UTF8"
+4 B ParameterStatus "server_version" "19beta4"
+4 B ParameterStatus "server_encoding" "UTF8"
+4 B ParameterStatus "in_hot_standby" "off"
+4 B ParameterStatus "integer_datetimes" "on"
+4 B ParameterStatus "TimeZone" "UTC"
+4 B ParameterStatus "application_name" "Supavisor"
+4 B ParameterStatus "default_transaction_read_only" "off"
+4 B ParameterStatus "scram_iterations" "4096"
+4 B ParameterStatus "DateStyle" "ISO, MDY"
+4 B BackendKeyData 990083 "\x8b\xdd\r\xc2"
+4 B ReadyForQuery I
+4 F Query "SELECT 1;"
+4 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+4 B DataRow ["1"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Parse "" "SELECT $1::int4 + 1, $2::text " []
+4 F Bind "" "" [] ["41" "abc"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("?column?" 0 0 23 4 -1 0) ("text" 0 0 25 -1 -1 0)]
+4 B DataRow ["42" "abc"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Query "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text;"
+4 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
+4 B DataRow ["42" "42" "9007199254740993" "1.5" "12.345" "t" "x" "\\x0102" "2026-01-02 03:04:05+00" "2026-01-02" "{1,2,3}" "{\"a\": 1}" "7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f" NULL]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2));"
+4 B CommandComplete "CREATE TABLE"
+4 B ReadyForQuery I
+4 F Query "BEGIN;"
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+4 F Bind "" "" [] ["1" "one" "1.50"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+4 F Bind "" "" [] ["2" "two" "2.50"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+4 F Bind "" "" [] ["3" "three" "3.50"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Query "COMMIT;"
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+4 F Query "BEGIN;"
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3) " []
+4 F Bind "" "" [] ["4" "four" "4.50"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Query "ROLLBACK;"
+4 B CommandComplete "ROLLBACK"
+4 B ReadyForQuery I
+4 F Parse "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id " []
+4 F Sync
+4 B ParseComplete
+4 B ReadyForQuery I
+4 F Bind "" "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg" [] ["1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("id" 281565 1 23 4 -1 0) ("name" 281565 2 25 -1 -1 0) ("price" 281565 3 1700 -1 655366 0)]
+4 B DataRow ["1" "one" "1.50"]
+4 B DataRow ["2" "two" "2.50"]
+4 B DataRow ["3" "three" "3.50"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Bind "" "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg" [] ["1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("id" 281565 1 23 4 -1 0) ("name" 281565 2 25 -1 -1 0) ("price" 281565 3 1700 -1 655366 0)]
+4 B DataRow ["1" "one" "1.50"]
+4 B DataRow ["2" "two" "2.50"]
+4 B DataRow ["3" "three" "3.50"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Bind "" "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg" [] ["1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("id" 281565 1 23 4 -1 0) ("name" 281565 2 25 -1 -1 0) ("price" 281565 3 1700 -1 655366 0)]
+4 B DataRow ["1" "one" "1.50"]
+4 B DataRow ["2" "two" "2.50"]
+4 B DataRow ["3" "three" "3.50"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Bind "" "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg" [] ["1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("id" 281565 1 23 4 -1 0) ("name" 281565 2 25 -1 -1 0) ("price" 281565 3 1700 -1 655366 0)]
+4 B DataRow ["1" "one" "1.50"]
+4 B DataRow ["2" "two" "2.50"]
+4 B DataRow ["3" "three" "3.50"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Bind "" "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg" [] ["1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("id" 281565 1 23 4 -1 0) ("name" 281565 2 25 -1 -1 0) ("price" 281565 3 1700 -1 655366 0)]
+4 B DataRow ["1" "one" "1.50"]
+4 B DataRow ["2" "two" "2.50"]
+4 B DataRow ["3" "three" "3.50"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Bind "" "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg" [] ["1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("id" 281565 1 23 4 -1 0) ("name" 281565 2 25 -1 -1 0) ("price" 281565 3 1700 -1 655366 0)]
+4 B DataRow ["1" "one" "1.50"]
+4 B DataRow ["2" "two" "2.50"]
+4 B DataRow ["3" "three" "3.50"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Close S "sv_dJd04naO/3fLhp0ngfwv4jIJWOsyM4yjU2MGthAPglg"
+4 F Sync
+4 B CloseComplete
+4 B ReadyForQuery I
+4 F Parse "" "UPDATE compat_items SET price = price * 2 WHERE id = $1 " []
+4 F Bind "" "" [] ["2"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery I
+4 F Query "SELECT 1 / 0;"
+4 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+4 B ReadyForQuery I
+4 F Query "BEGIN;"
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Query "SELECT 1 / 0;"
+4 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+4 B ReadyForQuery E
+4 F Query "ROLLBACK;"
+4 B CommandComplete "ROLLBACK"
+4 B ReadyForQuery I
+4 F Query "DROP TABLE compat_items;"
+4 B CommandComplete "DROP TABLE"
+4 B ReadyForQuery I
+4 F Query "drop table if exists pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+4 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_accounts\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+4 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_branches\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+4 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_history\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+4 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "table \"pgbench_tellers\" does not exist, skipping" F "tablecmds.c" L "1528" R "DropErrorMsgNonExistent"
+4 B CommandComplete "DROP TABLE"
+4 B ReadyForQuery I
+4 F Query "create table pgbench_history(tid int,bid int,aid    int,delta int,mtime timestamp,filler char(22))"
+4 B CommandComplete "CREATE TABLE"
+4 B ReadyForQuery I
+4 F Query "create table pgbench_tellers(tid int not null,bid int,tbalance int,filler char(84)) with (fillfactor=100)"
+4 B CommandComplete "CREATE TABLE"
+4 B ReadyForQuery I
+4 F Query "create table pgbench_accounts(aid    int not null,bid int,abalance int,filler char(84)) with (fillfactor=100)"
+4 B CommandComplete "CREATE TABLE"
+4 B ReadyForQuery I
+4 F Query "create table pgbench_branches(bid int not null,bbalance int,filler char(88)) with (fillfactor=100)"
+4 B CommandComplete "CREATE TABLE"
+4 B ReadyForQuery I
+4 F Query "begin"
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Query "truncate table pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+4 B CommandComplete "TRUNCATE TABLE"
+4 B ReadyForQuery T
+4 F Query "insert into pgbench_branches(bid,bbalance) select bid, 0 from generate_series(1, 1) as bid"
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Query "insert into pgbench_tellers(tid,bid,tbalance) select tid, (tid - 1) / 10 + 1, 0 from generate_series(1, 10) as tid"
+4 B CommandComplete "INSERT 0 10"
+4 B ReadyForQuery T
+4 F Query "insert into pgbench_accounts(aid,bid,abalance,filler) select aid, (aid - 1) / 100000 + 1, 0, '' from generate_series(1, 100000) as aid"
+4 B CommandComplete "INSERT 0 100000"
+4 B ReadyForQuery T
+4 F Query "commit"
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+4 F Query "alter table pgbench_branches add primary key (bid)"
+4 B CommandComplete "ALTER TABLE"
+4 B ReadyForQuery I
+4 F Query "alter table pgbench_tellers add primary key (tid)"
+4 B CommandComplete "ALTER TABLE"
+4 B ReadyForQuery I
+4 F Query "alter table pgbench_accounts add primary key (aid)"
+4 B CommandComplete "ALTER TABLE"
+4 B ReadyForQuery I
+4 F Query "select count(*) from pgbench_branches"
+4 B RowDescription [("count" 0 0 20 8 -1 0)]
+4 B DataRow ["1"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Query "select o.n, p.partstrat, pg_catalog.count(i.inhparent) from pg_catalog.pg_class as c join pg_catalog.pg_namespace as n on (n.oid = c.relnamespace) cross join lateral (select pg_catalog.array_position(pg_catalog.current_schemas(true), n.nspname)) as o(n) left join pg_catalog.pg_partitioned_table as p on (p.partrelid = c.oid) left join pg_catalog.pg_inherits as i on (c.oid = i.inhparent) where c.relname = 'pgbench_accounts' and o.n is not null group by 1, 2 order by 1 asc limit 1"
+4 B RowDescription [("n" 0 0 23 4 -1 0) ("partstrat" 3350 2 18 1 -1 0) ("count" 0 0 20 8 -1 0)]
+4 B DataRow ["2" NULL "0"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Parse "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" "BEGIN;" []
+4 F Sync
+4 B ParseComplete
+4 B ReadyForQuery I
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "Supavisor"
+5 B AuthenticationSASL "SCRAM-SHA-256"
+5 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=postgres,r=EMuyUfIR0M3C2eS4PiHFwkkIAg=="
+5 B AuthenticationSASLContinue "r=EMuyUfIR0M3C2eS4PiHFwkkIAg==PH8cAnTYNj4GF1k1kFdPSQkj,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+5 F SASLResponse "c=biws,r=EMuyUfIR0M3C2eS4PiHFwkkIAg==PH8cAnTYNj4GF1k1kFdPSQkj,p=DQ7tltW9tRlvawqMdVvrPUOre9j9PaYaNFx2TiFZytk="
+5 B AuthenticationSASLFinal "v=GFAoOYmpQ/lMuLK8GxGD/7Pn6rgeS3iI8UjWEPnOgFQ="
+5 B AuthenticationOk
+5 B ParameterStatus "IntervalStyle" "postgres"
+5 B ParameterStatus "search_path" "\"$user\", public"
+5 B ParameterStatus "is_superuser" "on"
+5 B ParameterStatus "standard_conforming_strings" "on"
+5 B ParameterStatus "session_authorization" "postgres"
+5 B ParameterStatus "client_encoding" "UTF8"
+5 B ParameterStatus "server_version" "19beta4"
+5 B ParameterStatus "server_encoding" "UTF8"
+5 B ParameterStatus "in_hot_standby" "off"
+5 B ParameterStatus "integer_datetimes" "on"
+5 B ParameterStatus "TimeZone" "UTC"
+5 B ParameterStatus "application_name" "Supavisor"
+5 B ParameterStatus "default_transaction_read_only" "off"
+5 B ParameterStatus "scram_iterations" "4096"
+5 B ParameterStatus "DateStyle" "ISO, MDY"
+5 B BackendKeyData 990088 "\x15\xa4\x02\xb7"
+5 B ReadyForQuery I
+5 F Parse "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" "BEGIN;" []
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery I
+4 F Parse "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" "UPDATE pgbench_accounts SET abalance = abalance + $1 WHERE aid = $2;" []
+4 F Sync
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B ParseComplete
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["3807" "34835"] [0]
+5 F Parse "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" "UPDATE pgbench_accounts SET abalance = abalance + $1 WHERE aid = $2;" []
+5 F Sync
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B ParseComplete
+5 B ReadyForQuery T
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-3496" "81384"] [0]
+4 F Parse "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" "SELECT abalance FROM pgbench_accounts WHERE aid = $1;" []
+5 F Describe P ""
+4 F Sync
+4 B ParseComplete
+4 B ReadyForQuery T
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["34835"] [0]
+5 B BindComplete
+4 F Describe P ""
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+4 F Execute "" 0
+5 B ReadyForQuery T
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["3807"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Parse "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" "SELECT abalance FROM pgbench_accounts WHERE aid = $1;" []
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["81384"] [0]
+4 F Parse "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" "UPDATE pgbench_tellers SET tbalance = tbalance + $1 WHERE tid = $2;" []
+5 F Describe P ""
+5 F Execute "" 0
+4 F Sync
+5 F Sync
+4 B ParseComplete
+4 B ReadyForQuery T
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-3496"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["3807" "2"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Parse "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" "UPDATE pgbench_tellers SET tbalance = tbalance + $1 WHERE tid = $2;" []
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-3496" "4"] [0]
+4 F Parse "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" "UPDATE pgbench_branches SET bbalance = bbalance + $1 WHERE bid = $2;" []
+5 F Describe P ""
+5 F Execute "" 0
+4 F Sync
+5 F Sync
+4 B ParseComplete
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["3807" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Parse "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" "UPDATE pgbench_branches SET bbalance = bbalance + $1 WHERE bid = $2;" []
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B ParseComplete
+5 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-3496" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Parse "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" "INSERT INTO pgbench_history (tid, bid, aid, delta, mtime) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);" []
+4 F Sync
+4 B ParseComplete
+4 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["2" "1" "34835" "3807"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Parse "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" "END;" []
+4 F Sync
+4 B ParseComplete
+4 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Parse "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" "INSERT INTO pgbench_history (tid, bid, aid, delta, mtime) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);" []
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["4" "1" "81384" "-3496"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-3860" "7713"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["7713"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-3860"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Parse "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" "END;" []
+5 F Sync
+5 B ParseComplete
+5 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-3860" "10"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 B BindComplete
+5 F Sync
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-3860" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+5 B NoData
+4 B CommandComplete "UPDATE 1"
+5 B CommandComplete "COMMIT"
+4 B ReadyForQuery T
+5 B ReadyForQuery I
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["10" "1" "7713" "-3860"] [0]
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Describe P ""
+4 F Sync
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["1132" "52588"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+5 B NoData
+4 B CommandComplete "COMMIT"
+5 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery I
+5 B ReadyForQuery T
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["52588"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["1132"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["303" "77397"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["1132" "6"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["77397"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["303"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["303" "6"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 B BindComplete
+4 F Sync
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["1132" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["6" "1" "52588" "1132"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["303" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["6" "1" "77397" "303"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-2756" "43637"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["43637"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-2756"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-2756" "8"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-2756" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["8" "1" "43637" "-2756"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 B BindComplete
+5 B NoData
+4 F Describe P ""
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-414" "8530"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["8530"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-414"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-414" "7"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["3007" "82864"] [0]
+4 B BindComplete
+5 F Describe P ""
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+5 F Execute "" 0
+4 B ReadyForQuery T
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-414" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["82864"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+4 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["3007"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["3007" "4"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["7" "1" "8530" "-414"] [0]
+4 F Describe P ""
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["3007" "1"] [0]
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["4" "1" "82864" "3007"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-4147" "53104"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+4 B ReadyForQuery T
+5 B ReadyForQuery I
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["53104"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-4147"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-4147" "3"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["2863" "36634"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-4147" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+4 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["36634"] [0]
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["3" "1" "53104" "-4147"] [0]
+5 F Describe P ""
+4 F Describe P ""
+5 F Execute "" 0
+4 F Execute "" 0
+4 F Sync
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["2863"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["2863" "3"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["2863" "1"] [0]
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["3" "1" "36634" "2863"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["4226" "34388"] [0]
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["34388"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["4226"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["4226" "8"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-830" "26990"] [0]
+4 F Sync
+4 B BindComplete
+5 F Describe P ""
+4 B NoData
+5 F Execute "" 0
+4 B CommandComplete "UPDATE 1"
+5 F Sync
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["4226" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["26990"] [0]
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-830"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-830" "2"] [0]
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["8" "1" "34388" "4226"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 F Describe P ""
+5 F Sync
+5 B BindComplete
+4 F Execute "" 0
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-830" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["2" "1" "26990" "-830"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-2779" "2891"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["2891"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-2779"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-2779" "10"] [0]
+5 F Execute "" 0
+5 F Sync
+4 F Describe P ""
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-1245" "3616"] [0]
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-2779" "1"] [0]
+5 B BindComplete
+5 B NoData
+4 F Describe P ""
+5 B CommandComplete "UPDATE 1"
+4 F Execute "" 0
+5 B ReadyForQuery T
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["3616"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["10" "1" "2891" "-2779"] [0]
+5 B BindComplete
+4 F Describe P ""
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-1245"]
+4 F Execute "" 0
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-1245" "7"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B BindComplete
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-1245" "1"] [0]
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["7" "1" "3616" "-1245"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-3012" "49023"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["49023"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 B BindComplete
+5 F Describe P ""
+5 F Execute "" 0
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-3012"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-3036" "46334"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-3012" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["46334"] [0]
+4 B BindComplete
+5 F Describe P ""
+4 B NoData
+5 F Execute "" 0
+4 B CommandComplete "UPDATE 1"
+5 F Sync
+4 B ReadyForQuery T
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-3036"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-3012" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-3036" "10"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+5 B BindComplete
+4 B ReadyForQuery T
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["1" "1" "49023" "-3012"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-3036" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+4 B BindComplete
+5 B ReadyForQuery T
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["4489" "75677"] [0]
+4 F Describe P ""
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["10" "1" "46334" "-3036"] [0]
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+4 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["75677"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 B BindComplete
+5 F Describe P ""
+5 F Execute "" 0
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["4489"]
+5 F Sync
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["4489" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["4489" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["1" "1" "75677" "4489"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["4969" "50239"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["50239"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 F Describe P ""
+5 B DataRow ["4969"]
+4 F Execute "" 0
+5 B CommandComplete "SELECT 1"
+4 F Sync
+5 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["4969" "2"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["4969" "1"] [0]
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["2" "1" "50239" "4969"] [0]
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+4 B BindComplete
+5 F Sync
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-4209" "41882"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["41882"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-4209"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-4209" "6"] [0]
+5 B ReadyForQuery I
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-4209" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["6" "1" "41882" "-4209"] [0]
+5 B BindComplete
+4 F Describe P ""
+4 F Execute "" 0
+5 B NoData
+5 B CommandComplete "BEGIN"
+4 F Sync
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-2655" "41446"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["41446"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-2655"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-2655" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-2655" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-1901" "57436"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["1" "1" "41446" "-2655"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["57436"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-1901"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-1901" "9"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-1901" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["9" "1" "57436" "-1901"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["1917" "17187"] [0]
+4 B BindComplete
+5 F Describe P ""
+4 B NoData
+5 F Execute "" 0
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["17187"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["1917"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["1917" "5"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+5 B BindComplete
+4 B ReadyForQuery I
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["1917" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+5 B NoData
+4 B NoData
+5 B CommandComplete "UPDATE 1"
+4 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["5" "1" "17187" "1917"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-3441" "42468"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+4 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+4 B NoData
+5 B ReadyForQuery T
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["42468"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+4 B BindComplete
+5 F Execute "" 0
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 F Sync
+4 B DataRow ["-3441"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-3441" "7"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-3441" "1"] [0]
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["7" "1" "42468" "-3441"] [0]
+5 B BindComplete
+4 F Describe P ""
+4 F Execute "" 0
+5 B NoData
+5 B CommandComplete "BEGIN"
+4 F Sync
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-3368" "4638"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["4638"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-3368"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-3368" "6"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-3368" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Sync
+4 B BindComplete
+5 B BindComplete
+5 B NoData
+4 B NoData
+5 B CommandComplete "UPDATE 1"
+4 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["4579" "15206"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["6" "1" "4638" "-3368"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+4 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["15206"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["4579"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["4579" "9"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["4579" "1"] [0]
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["9" "1" "15206" "4579"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-3198" "51921"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["51921"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-3198"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-3198" "1"] [0]
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["1565" "71344"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-3198" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["71344"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["1" "1" "51921" "-3198"] [0]
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["1565"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["1565" "6"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 B BindComplete
+5 F Describe P ""
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["1565" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["6" "1" "71344" "1565"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["2059" "5295"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+5 F Sync
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["5295"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["2059"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["2059" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["2059" "1"] [0]
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["1" "1" "5295" "2059"] [0]
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["618" "91166"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+4 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["91166"] [0]
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["618"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["618" "3"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["618" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["3" "1" "91166" "618"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-2966" "72855"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["72855"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+4 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-2966"]
+4 B NoData
+5 B CommandComplete "SELECT 1"
+4 B CommandComplete "COMMIT"
+5 B ReadyForQuery T
+4 B ReadyForQuery I
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-2966" "3"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+4 B BindComplete
+5 F Sync
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-273" "45823"] [0]
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-2966" "1"] [0]
+4 F Describe P ""
+5 F Describe P ""
+4 F Execute "" 0
+5 F Execute "" 0
+4 F Sync
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["3" "1" "72855" "-2966"] [0]
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["45823"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+4 B BindComplete
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-273"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-273" "5"] [0]
+4 F Describe P ""
+5 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Execute "" 0
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Sync
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-273" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 B ReadyForQuery T
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["5" "1" "45823" "-273"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-4547" "15563"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["15563"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-4547"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-4547" "3"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-4547" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 B NoData
+4 F Describe P ""
+5 B CommandComplete "UPDATE 1"
+4 F Execute "" 0
+5 B ReadyForQuery T
+4 F Sync
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["3" "1" "15563" "-4547"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+4 B BindComplete
+5 B ReadyForQuery T
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-1205" "53666"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+5 B BindComplete
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["53666"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-1205"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-1205" "9"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["2032" "27340"] [0]
+4 B BindComplete
+4 B NoData
+5 F Describe P ""
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-1205" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["9" "1" "53666" "-1205"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["27340"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["2032"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["2032" "9"] [0]
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["2032" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-4884" "18913"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["18913"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["9" "1" "27340" "2032"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-4884"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-4884" "5"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-4884" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["5" "1" "18913" "-4884"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-2712" "44730"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["1604" "61967"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["61967"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["1604"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["1604" "10"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["1604" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["44730"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["10" "1" "61967" "1604"] [0]
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["-2712"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-2712" "9"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-2712" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["9" "1" "44730" "-2712"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+4 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["-4444" "99832"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+5 B NoData
+4 B CommandComplete "UPDATE 1"
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+4 B ReadyForQuery T
+4 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["99832"] [0]
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+4 F Describe P ""
+5 F Sync
+4 F Execute "" 0
+5 B BindComplete
+4 F Sync
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+4 B BindComplete
+4 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B DataRow ["-4444"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["-4444" "2"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["1428" "90370"] [0]
+4 B BindComplete
+5 F Describe P ""
+5 F Execute "" 0
+4 B NoData
+4 B CommandComplete "UPDATE 1"
+5 F Sync
+4 B ReadyForQuery T
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["-4444" "1"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["90370"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+5 B BindComplete
+4 B NoData
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+4 B CommandComplete "UPDATE 1"
+5 B DataRow ["1428"]
+4 B ReadyForQuery T
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+4 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["2" "1" "99832" "-4444"] [0]
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["1428" "2"] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "INSERT 0 1"
+4 B ReadyForQuery T
+4 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B BindComplete
+4 B NoData
+4 B CommandComplete "COMMIT"
+4 B ReadyForQuery I
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["1428" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["2" "1" "90370" "1428"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+5 F Bind "" "sv_qelcmuEzv9PV7BQ7uCkFVnQPGdgDoxD65EifESsJzZc" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/BGJCAvQoFC+jJC3ZU9zP+Koq0SiZAQe0qN1kBbDJFQ" [] ["2974" "94059"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_f653QsqY9pnUgXOj2dlQpfWfzwhQZ/EwZB5CGvoEuTc" [] ["94059"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B RowDescription [("abalance" 281581 3 23 4 -1 0)]
+5 B DataRow ["2974"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_qQiJCxA946/XgAKf3rROv2LkJwZGpCkK69taJPr0dqM" [] ["2974" "8"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_w0wAJ97KzOWj/9DzQpHgoCv2WPpnk/xZtNlsUO3tNQE" [] ["2974" "1"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "UPDATE 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_/IMwEg0Ss2dW3FHlgTxL7c8yqg6JSip3lON+fVOg6II" [] ["8" "1" "94059" "2974"] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "INSERT 0 1"
+5 B ReadyForQuery T
+5 F Bind "" "sv_qY9QXSSRc2njTLieXqAeYnL0p+UrvH+ePZQCmWS482I" [] [] [0]
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B BindComplete
+5 B NoData
+5 B CommandComplete "COMMIT"
+5 B ReadyForQuery I
+5 F Query "drop table if exists pgbench_accounts, pgbench_branches, pgbench_history, pgbench_tellers"
+5 B CommandComplete "DROP TABLE"
+5 B ReadyForQuery I
+4 F End
+5 F End
+6 F CancelRequest 990079 "\xbc\x89\x97\xc3"
+5 B End
+6 B End
+6 F End
+3 F Terminate
+3 F End
+3 B End
+4 B End

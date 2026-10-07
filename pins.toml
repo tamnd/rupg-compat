@@ -175,6 +175,10 @@ version = "2.1.3"
 [clients.sqlx]
 version = "0.9.0"
 
+[clients.supavisor]
+# The release archive, built with Mix on Erlang/OTP 27.3.4.16 and Elixir 1.18.5 of clients/elixir.sh, with the packages of its mix.lock. Named prepared statements are on, and pgbench runs through the transaction pool.
+version = "2.9.13"
+
 [clients.superset]
 # With the pins of clients/superset/constraints.txt and psycopg2 2.9.13.
 version = "6.1.0"
