@@ -346,11 +346,10 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         let first = replay::replay(&t, &oracle, timeout);
         reset(&oracle);
         let second = replay::replay(&t, &oracle, timeout);
-        let unstable: std::collections::BTreeSet<compare::Place> =
-            compare::compare(&first.lines, &second.lines, &Default::default())
-                .diffs
-                .into_keys()
-                .collect();
+        let unstable = compare::unstable(&first.lines, &second.lines);
+        // A note of the second run, such as a timeout, can make a group look unstable, so it fails the run too.
+        let notes: Vec<String> =
+            second.notes.iter().map(|n| format!("second oracle run: {n}")).collect();
         let r = if target.addr == oracle.addr {
             first
         } else {
@@ -374,11 +373,11 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         for ((conn, group), d) in o.diffs.iter().take(args.number("show")?.unwrap_or(5)) {
             out!("  connection {conn} group {group}: {d}");
         }
-        for n in &r.notes {
+        for n in r.notes.iter().chain(&notes) {
             out!("  {n}");
         }
         total.add(&o);
-        failed |= !o.diffs.is_empty() || !r.notes.is_empty() || gaps > 0;
+        failed |= !o.diffs.is_empty() || !r.notes.is_empty() || !notes.is_empty() || gaps > 0;
         if let Some(out) = args.get("out") {
             let replayed = trace::Trace { header: t.header.clone(), lines: r.lines };
             std::fs::write(out, replayed.to_text()).map_err(|e| format!("{out}: {e}"))?;
