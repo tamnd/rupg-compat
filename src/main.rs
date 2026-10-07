@@ -21,6 +21,7 @@ mod client;
 mod compare;
 mod diff;
 mod frame;
+mod import;
 mod levels;
 mod message;
 mod oracle;
@@ -53,6 +54,8 @@ commands:
   diff SQL                  run one statement on the oracle and on the server under test, compare the answers
                             and show the first different byte (--server ADDR, --database DB)
   trace FILE...             check that each line of a trace parses and count its messages
+  import                    write corpus/postgres/N/ from the source of the oracle at its pin: the SHA-256
+                            manifest of the suites, the lists and the counts (--all, --check, --corpus DIR)
 
 options:
   --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
@@ -100,6 +103,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("trace") => trace_command(args)?,
         Some("replay") => return replay_command(args, &pins),
         Some("diff") => return diff_command(args, &pins),
+        Some("import") => return import_command(args, &pins),
         None if args.flag("help") => out!("{USAGE}"),
         _ if args.words.is_empty() && args.rest.is_empty() => {
             eprintln!("{USAGE}");
@@ -458,6 +462,62 @@ fn diff_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     }
     print_exclusions(&outcome);
     Ok(if outcome.diffs.is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+fn import_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(&["compat-version", "all", "check", "corpus"])?;
+    let corpus = PathBuf::from(args.get("corpus").unwrap_or("corpus"));
+    let majors: Vec<u32> = if args.flag("all") {
+        pins.postgres.iter().rev().map(|p| p.major).collect()
+    } else {
+        vec![args.compat_version(pins.reference)?]
+    };
+    let mut failed = false;
+    for major in majors {
+        let o = Oracle::new(pins, major, &args.work_dir())?;
+        let src = o.src();
+        let head = Command::new("git")
+            .arg("-C")
+            .arg(&src)
+            .args(["rev-parse", "HEAD"])
+            .output()
+            .map_err(|e| format!("git: {e}"))?;
+        let head = String::from_utf8_lossy(&head.stdout).trim().to_string();
+        if head != o.pin.commit {
+            return Err(format!(
+                "{} is at {head:?}, not at the pin {}; run rupg-compat oracle build --compat-version {major}",
+                src.display(),
+                o.pin.commit
+            ));
+        }
+        let imp = import::import(&src, major, &o.pin.commit)?;
+        let dir = import::corpus_dir(&corpus, major);
+        if args.flag("check") {
+            let differ = import::check(&dir, &imp);
+            if differ.is_empty() {
+                out!("{}: equal to the source at {}", dir.display(), o.pin.commit);
+            } else {
+                out!(
+                    "{}: these files differ from the source at {}: {}",
+                    dir.display(),
+                    o.pin.commit,
+                    differ.join(", ")
+                );
+                failed = true;
+            }
+        } else {
+            std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+            for (name, text) in &imp.outputs {
+                std::fs::write(dir.join(name), text).map_err(|e| format!("{name}: {e}"))?;
+            }
+            let files = imp.outputs[0].1.lines().count();
+            out!("{}: {files} files in the manifest at {}", dir.display(), o.pin.commit);
+        }
+        for c in &imp.counts {
+            out!("  {}.{} = {}", c.table, c.key, c.value);
+        }
+    }
+    Ok(if failed { ExitCode::FAILURE } else { ExitCode::SUCCESS })
 }
 
 /// Prints each exclusion of spec/05 section 5.3 and each rule of section 5.2 with its counts.
