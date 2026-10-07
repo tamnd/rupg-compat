@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The dependencies of the Liquibase scenario: Liquibase with its command line and the driver. java.sh resolves them with Maven. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>compat</groupId>
+  <artifactId>liquibase</artifactId>
+  <version>1</version>
+  <dependencies>
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>5.0.4</version>
+    </dependency>
+    <!-- liquibase-core declares picocli as optional, but the command line needs it. This is the version that liquibase-core 5.0.4 declares. -->
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.7.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.7.13</version>
+    </dependency>
+  </dependencies>
+</project>

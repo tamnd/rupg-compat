@@ -157,7 +157,7 @@ mod tests {
             if ["libpq", "psql", "pg_dump"].contains(&c.name.as_str()) {
                 assert_eq!(c.version, reference.release);
             } else {
-                let install = ["run.sh", "go.mod", "Cargo.toml", "package.json"]
+                let install = ["run.sh", "go.mod", "Cargo.toml", "package.json", "pom.xml"]
                     .iter()
                     .filter_map(|f| std::fs::read_to_string(dir.join(f)).ok())
                     .collect::<String>();

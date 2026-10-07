@@ -1,0 +1,227 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/r2dbc-postgresql/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "r2dbc-postgresql" "client_encoding" "utf8" "DateStyle" "ISO" "extra_float_digits" "2" "TimeZone" "Asia/Singapore"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=postgres,r=zs$z?I!m<s9.\"o?'0O?]<KTe"
+1 B AuthenticationSASLContinue "r=zs$z?I!m<s9.\"o?'0O?]<KTesegJuIablgnNAZnDR5zU4cQx,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=zs$z?I!m<s9.\"o?'0O?]<KTesegJuIablgnNAZnDR5zU4cQx,p=lEThCTDWCc33epLqaiBx1elENUiIbbBN2xMe7QNTssc="
+1 B AuthenticationSASLFinal "v=uu9XfrBS2Yz9hDEBqXogri1IdLlOEAScnQvq/eKv1c4="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "Asia/Singapore"
+1 B ParameterStatus "application_name" "r2dbc-postgresql"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 838371 "\xfe\x0fy\x92"
+1 B ReadyForQuery I
+1 F Query "SHOW TRANSACTION ISOLATION LEVEL"
+1 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+1 B DataRow ["read committed"]
+1 B CommandComplete "SHOW"
+1 B ReadyForQuery I
+1 F Query "SELECT oid, * FROM pg_catalog.pg_type WHERE typname IN ('hstore','geometry','vector')"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typnamespace" 1247 3 26 4 -1 0) ("typowner" 1247 4 26 4 -1 0) ("typlen" 1247 5 21 2 -1 0) ("typbyval" 1247 6 16 1 -1 0) ("typtype" 1247 7 18 1 -1 0) ("typcategory" 1247 8 18 1 -1 0) ("typispreferred" 1247 9 16 1 -1 0) ("typisdefined" 1247 10 16 1 -1 0) ("typdelim" 1247 11 18 1 -1 0) ("typrelid" 1247 12 26 4 -1 0) ("typsubscript" 1247 13 24 4 -1 0) ("typelem" 1247 14 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0) ("typinput" 1247 16 24 4 -1 0) ("typoutput" 1247 17 24 4 -1 0) ("typreceive" 1247 18 24 4 -1 0) ("typsend" 1247 19 24 4 -1 0) ("typmodin" 1247 20 24 4 -1 0) ("typmodout" 1247 21 24 4 -1 0) ("typanalyze" 1247 22 24 4 -1 0) ("typalign" 1247 23 18 1 -1 0) ("typstorage" 1247 24 18 1 -1 0) ("typnotnull" 1247 25 16 1 -1 0) ("typbasetype" 1247 26 26 4 -1 0) ("typtypmod" 1247 27 23 4 -1 0) ("typndims" 1247 28 23 4 -1 0) ("typcollation" 1247 29 26 4 -1 0) ("typdefaultbin" 1247 30 194 -1 -1 0) ("typdefault" 1247 31 25 -1 -1 0) ("typacl" 1247 32 1034 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT 1"
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "S_0" "SELECT $1::int4 + 1, $2::text" [23 1043]
+1 F Bind "B_0" "S_0" [1 0] ["\x00\x00\x00)" "abc"] []
+1 F Describe P "B_0"
+1 F Execute "B_0" 0
+1 F Close P "B_0"
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("?column?" 0 0 23 4 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B DataRow ["42" "abc"]
+1 B CommandComplete "SELECT 1"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Query "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text"
+1 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B DataRow ["42" "42" "9007199254740993" "1.5" "12.345" "t" "x" "\\x0102" "2026-01-02 11:04:05+08" "2026-01-02" "{1,2,3}" "{\"a\": 1}" "7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2))"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "S_1" "INSERT INTO compat_items VALUES ($1, $2, $3)" [23 1043 1700]
+1 F Bind "B_1" "S_1" [1 0 0] ["\x00\x00\x00\x01" "one" "1.50"] []
+1 F Describe P "B_1"
+1 F Execute "B_1" 0
+1 F Close P "B_1"
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Bind "B_2" "S_1" [1 0 0] ["\x00\x00\x00\x02" "two" "2.50"] []
+1 F Describe P "B_2"
+1 F Execute "B_2" 0
+1 F Close P "B_2"
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Bind "B_3" "S_1" [1 0 0] ["\x00\x00\x00\x03" "three" "3.50"] []
+1 F Describe P "B_3"
+1 F Execute "B_3" 0
+1 F Close P "B_3"
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "B_4" "S_1" [1 0 0] ["\x00\x00\x00\x04" "four" "4.50"] []
+1 F Describe P "B_4"
+1 F Execute "B_4" 0
+1 F Close P "B_4"
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "S_2" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id" [23]
+1 F Bind "B_5" "S_2" [1] ["\x00\x00\x00\x01"] []
+1 F Describe P "B_5"
+1 F Execute "B_5" 0
+1 F Close P "B_5"
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Bind "B_6" "S_2" [1] ["\x00\x00\x00\x01"] []
+1 F Describe P "B_6"
+1 F Execute "B_6" 0
+1 F Close P "B_6"
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Bind "B_7" "S_2" [1] ["\x00\x00\x00\x01"] []
+1 F Describe P "B_7"
+1 F Execute "B_7" 0
+1 F Close P "B_7"
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Bind "B_8" "S_2" [1] ["\x00\x00\x00\x01"] []
+1 F Describe P "B_8"
+1 F Execute "B_8" 0
+1 F Close P "B_8"
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Bind "B_9" "S_2" [1] ["\x00\x00\x00\x01"] []
+1 F Describe P "B_9"
+1 F Execute "B_9" 0
+1 F Close P "B_9"
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Bind "B_10" "S_2" [1] ["\x00\x00\x00\x01"] []
+1 F Describe P "B_10"
+1 F Execute "B_10" 0
+1 F Close P "B_10"
+1 F Sync
+1 B BindComplete
+1 B RowDescription [("id" 264604 1 23 4 -1 0) ("name" 264604 2 25 -1 -1 0) ("price" 264604 3 1700 -1 655366 0)]
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Parse "S_3" "UPDATE compat_items SET price = price * 2 WHERE id = $1" [23]
+1 F Bind "B_11" "S_3" [1] ["\x00\x00\x00\x02"] []
+1 F Describe P "B_11"
+1 F Execute "B_11" 0
+1 F Close P "B_11"
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Query "SELECT 1 / 0"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT 1 / 0"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE compat_items"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
