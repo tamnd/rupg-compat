@@ -1,0 +1,19 @@
+name: Suite or client
+description: Add a suite, a client or a test corpus, or change how one is counted.
+title: "suite: "
+labels: ["kind/feature"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: The suite or client
+      description: The name, the version, the upstream repository and the level (L1 to L5) that it counts toward.
+    validations:
+      required: true
+  - type: textarea
+    id: denominator
+    attributes:
+      label: The denominator
+      description: How many items the suite has at its pin, and how you counted them.
+    validations:
+      required: true

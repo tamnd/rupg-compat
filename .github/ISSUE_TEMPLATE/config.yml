@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: A difference in rupg
+    url: https://github.com/tamnd/rupg/issues/new/choose
+    about: A difference between rupg and PostgreSQL goes to the engine repository.

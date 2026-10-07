@@ -1,0 +1,6 @@
+* text=auto eol=lf
+
+# Expected output and recorded traces are compared byte for byte. Git must not change them.
+**/*.expected -text
+**/*.out -text
+**/*.trace -text
