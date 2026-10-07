@@ -2,12 +2,12 @@
 # compat-version: 19
 # server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
 # recorded: clients/hibernate/run.sh
-1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "Asia/Singapore"
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "UTC"
 1 B AuthenticationSASL "SCRAM-SHA-256"
-1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=?-.+q7~Yxv@OjzNSX3{spp7?"
-1 B AuthenticationSASLContinue "r=?-.+q7~Yxv@OjzNSX3{spp7?U9dKvnjydlRT+d5i3kgQ1knl,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
-1 F SASLResponse "c=biws,r=?-.+q7~Yxv@OjzNSX3{spp7?U9dKvnjydlRT+d5i3kgQ1knl,p=VCjmi4+8K2LhOieHbXiTlSyEQDPzWDZOafbOCgs9iYk="
-1 B AuthenticationSASLFinal "v=zyigVmF6LU0Ge5UVZDuIZQVp2h2S0TJaBTFTUQrIjWA="
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=u34?U20:n(=[ULK5WUb@|Bg}"
+1 B AuthenticationSASLContinue "r=u34?U20:n(=[ULK5WUb@|Bg}+H1Zscg7gQHwafQlRMNi7nsm,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=u34?U20:n(=[ULK5WUb@|Bg}+H1Zscg7gQHwafQlRMNi7nsm,p=+VAu5/mT0s/AMmxWx9Ms82Id2Rm5WnP7JSfJV/0yJfM="
+1 B AuthenticationSASLFinal "v=c3VyY5n/wD83KuMyJpORM+DJvNakOew0Bu+O1DU3Dsc="
 1 B AuthenticationOk
 1 B ParameterStatus "IntervalStyle" "postgres"
 1 B ParameterStatus "search_path" "\"$user\", public"
@@ -19,12 +19,12 @@
 1 B ParameterStatus "server_encoding" "UTF8"
 1 B ParameterStatus "in_hot_standby" "off"
 1 B ParameterStatus "integer_datetimes" "on"
-1 B ParameterStatus "TimeZone" "Asia/Singapore"
+1 B ParameterStatus "TimeZone" "UTC"
 1 B ParameterStatus "application_name" ""
 1 B ParameterStatus "default_transaction_read_only" "off"
 1 B ParameterStatus "scram_iterations" "4096"
 1 B ParameterStatus "DateStyle" "ISO, MDY"
-1 B BackendKeyData 838133 "\xa4ĕ\xb3"
+1 B BackendKeyData 894104 "0\xd1\x0c\xbf"
 1 B ReadyForQuery I
 1 F Query "SET application_name = 'PostgreSQL JDBC Driver'"
 1 B CommandComplete "SET"
@@ -77,12 +77,12 @@
 1 F Terminate
 1 F End
 1 B End
-2 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "Asia/Singapore"
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "UTC"
 2 B AuthenticationSASL "SCRAM-SHA-256"
-2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=00i^Kin`oVx05715@Hr}\"z7N"
-2 B AuthenticationSASLContinue "r=00i^Kin`oVx05715@Hr}\"z7NQvYQOl7wJkJtRZDXH1uUwU3o,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
-2 F SASLResponse "c=biws,r=00i^Kin`oVx05715@Hr}\"z7NQvYQOl7wJkJtRZDXH1uUwU3o,p=jEkq/dO//5zYvbiopqIGW4i/78ykqfL0EU2opjN+ot4="
-2 B AuthenticationSASLFinal "v=6CTYDCBHo8ziGgjWzzRt4I58PgzmdYfh4vtTAn3Qv48="
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=#ChUka0v9eC{\"zqzTV?W'4|`"
+2 B AuthenticationSASLContinue "r=#ChUka0v9eC{\"zqzTV?W'4|`zHz3swcGCcqHXW4dYaUZW0Ku,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=#ChUka0v9eC{\"zqzTV?W'4|`zHz3swcGCcqHXW4dYaUZW0Ku,p=FNTfq4rET+/22FlgIxddhIOblOleooh/qWnj0RB2YDc="
+2 B AuthenticationSASLFinal "v=jOZO15mrI08vaWDc15sDeb4gfBIs4X/1R7GLv4X9Ngo="
 2 B AuthenticationOk
 2 B ParameterStatus "IntervalStyle" "postgres"
 2 B ParameterStatus "search_path" "\"$user\", public"
@@ -94,25 +94,25 @@
 2 B ParameterStatus "server_encoding" "UTF8"
 2 B ParameterStatus "in_hot_standby" "off"
 2 B ParameterStatus "integer_datetimes" "on"
-2 B ParameterStatus "TimeZone" "Asia/Singapore"
+2 B ParameterStatus "TimeZone" "UTC"
 2 B ParameterStatus "application_name" ""
 2 B ParameterStatus "default_transaction_read_only" "off"
 2 B ParameterStatus "scram_iterations" "4096"
 2 B ParameterStatus "DateStyle" "ISO, MDY"
-2 B BackendKeyData 838138 "\"cų"
+2 B BackendKeyData 894109 "\xc5K\xf7\xf9"
 2 B ReadyForQuery I
 2 F Query "SET application_name = 'PostgreSQL JDBC Driver'"
 2 B CommandComplete "SET"
 2 B ParameterStatus "application_name" "PostgreSQL JDBC Driver"
 2 B ReadyForQuery I
 2 F Query "BEGIN"
-2 B CommandComplete "BEGIN"
-2 B ReadyForQuery T
 2 F Parse "" "select string_agg(word, ',') from pg_catalog.pg_get_keywords() where word <> ALL ('{a,abs,absolute,action,ada,add,admin,after,all,allocate,alter,always,and,any,are,array,as,asc,asensitive,assertion,assignment,asymmetric,at,atomic,attribute,attributes,authorization,avg,before,begin,bernoulli,between,bigint,binary,blob,boolean,both,breadth,by,c,call,called,cardinality,cascade,cascaded,case,cast,catalog,catalog_name,ceil,ceiling,chain,char,char_length,character,character_length,character_set_catalog,character_set_name,character_set_schema,characteristics,characters,check,checked,class_origin,clob,close,coalesce,cobol,code_units,collate,collation,collation_catalog,collation_name,collation_schema,collect,column,column_name,command_function,command_function_code,commit,committed,condition,condition_number,connect,connection_name,constraint,constraint_catalog,constraint_name,constraint_schema,constraints,constructors,contains,continue,convert,corr,corresponding,count,covar_pop,covar_samp,create,cross,cube,cume_dist,current,current_collation,current_date,current_default_transform_group,current_path,current_role,current_time,current_timestamp,current_transform_group_for_type,current_user,cursor,cursor_name,cycle,data,date,datetime_interval_code,datetime_interval_precision,day,deallocate,dec,decimal,declare,default,defaults,deferrable,deferred,defined,definer,degree,delete,dense_rank,depth,deref,derived,desc,describe,descriptor,deterministic,diagnostics,disconnect,dispatch,distinct,domain,double,drop,dynamic,dynamic_function,dynamic_function_code,each,element,else,end,end-exec,equals,escape,every,except,exception,exclude,excluding,exec,execute,exists,exp,external,extract,false,fetch,filter,final,first,float,floor,following,for,foreign,fortran,found,free,from,full,function,fusion,g,general,get,global,go,goto,grant,granted,group,grouping,having,hierarchy,hold,hour,identity,immediate,implementation,in,including,increment,indicator,initially,inner,inout,input,insensitive,insert,instance,instantiable,int,integer,intersect,intersection,interval,into,invoker,is,isolation,join,k,key,key_member,key_type,language,large,last,lateral,leading,left,length,level,like,ln,local,localtime,localtimestamp,locator,lower,m,map,match,matched,max,maxvalue,member,merge,message_length,message_octet_length,message_text,method,min,minute,minvalue,mod,modifies,module,month,more,multiset,mumps,name,names,national,natural,nchar,nclob,nesting,new,next,no,none,normalize,normalized,not,\"null\",nullable,nullif,nulls,number,numeric,object,octet_length,octets,of,old,on,only,open,option,options,or,order,ordering,ordinality,others,out,outer,output,over,overlaps,overlay,overriding,pad,parameter,parameter_mode,parameter_name,parameter_ordinal_position,parameter_specific_catalog,parameter_specific_name,parameter_specific_schema,partial,partition,pascal,path,percent_rank,percentile_cont,percentile_disc,placing,pli,position,power,preceding,precision,prepare,preserve,primary,prior,privileges,procedure,public,range,rank,read,reads,real,recursive,ref,references,referencing,regr_avgx,regr_avgy,regr_count,regr_intercept,regr_r2,regr_slope,regr_sxx,regr_sxy,regr_syy,relative,release,repeatable,restart,result,return,returned_cardinality,returned_length,returned_octet_length,returned_sqlstate,returns,revoke,right,role,rollback,rollup,routine,routine_catalog,routine_name,routine_schema,row,row_count,row_number,rows,savepoint,scale,schema,schema_name,scope_catalog,scope_name,scope_schema,scroll,search,second,section,security,select,self,sensitive,sequence,serializable,server_name,session,session_user,set,sets,similar,simple,size,smallint,some,source,space,specific,specific_name,specifictype,sql,sqlexception,sqlstate,sqlwarning,sqrt,start,state,statement,static,stddev_pop,stddev_samp,structure,style,subclass_origin,submultiset,substring,sum,symmetric,system,system_user,table,table_name,tablesample,temporary,then,ties,time,timestamp,timezone_hour,timezone_minute,to,top_level_count,trailing,transaction,transaction_active,transactions_committed,transactions_rolled_back,transform,transforms,translate,translation,treat,trigger,trigger_catalog,trigger_name,trigger_schema,trim,true,type,uescape,unbounded,uncommitted,under,union,unique,unknown,unnamed,unnest,update,upper,usage,user,user_defined_type_catalog,user_defined_type_code,user_defined_type_name,user_defined_type_schema,using,value,values,var_pop,var_samp,varchar,varying,view,when,whenever,where,width_bucket,window,with,within,without,work,write,year,zone}'::text[])" []
 2 F Bind "" "" [] [] []
 2 F Describe P ""
 2 F Execute "" 0
 2 F Sync
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
 2 B ParseComplete
 2 B BindComplete
 2 B RowDescription [("string_agg" 0 0 25 -1 -1 0)]
@@ -262,8 +262,8 @@
 2 B ReadyForQuery T
 2 B ParseComplete
 2 B BindComplete
-2 B RowDescription [("id" 264455 1 23 4 -1 0) ("price" 264455 2 1700 -1 655366 0) ("added" 264455 3 1184 8 6 0) ("name" 264455 4 1043 -1 259 0)]
-2 B DataRow ["1" "1.50" "2026-01-02 11:04:05+08" "one"]
+2 B RowDescription [("id" 267260 1 23 4 -1 0) ("price" 267260 2 1700 -1 655366 0) ("added" 267260 3 1184 8 6 0) ("name" 267260 4 1043 -1 259 0)]
+2 B DataRow ["1" "1.50" "2026-01-02 03:04:05+00" "one"]
 2 B CommandComplete "INSERT 0 1"
 2 B ReadyForQuery T
 2 F Parse "" "insert into compat_items (added,name,price) values ($1,$2,$3)\nRETURNING *" [0 1043 1700]
@@ -273,7 +273,7 @@
 2 F Sync
 2 B ParseComplete
 2 B BindComplete
-2 B RowDescription [("id" 264455 1 23 4 -1 0) ("price" 264455 2 1700 -1 655366 0) ("added" 264455 3 1184 8 6 0) ("name" 264455 4 1043 -1 259 0)]
+2 B RowDescription [("id" 267260 1 23 4 -1 0) ("price" 267260 2 1700 -1 655366 0) ("added" 267260 3 1184 8 6 0) ("name" 267260 4 1043 -1 259 0)]
 2 B DataRow ["2" "2.50" NULL "two"]
 2 B CommandComplete "INSERT 0 1"
 2 B ReadyForQuery T
@@ -284,7 +284,7 @@
 2 F Sync
 2 B ParseComplete
 2 B BindComplete
-2 B RowDescription [("id" 264465 1 23 4 -1 0) ("item_id" 264465 2 23 4 -1 0) ("qty" 264465 3 23 4 -1 0)]
+2 B RowDescription [("id" 267270 1 23 4 -1 0) ("item_id" 267270 2 23 4 -1 0) ("qty" 267270 3 23 4 -1 0)]
 2 B DataRow ["1" "1" "2"]
 2 B CommandComplete "INSERT 0 1"
 2 B ReadyForQuery T
@@ -295,7 +295,7 @@
 2 F Sync
 2 B ParseComplete
 2 B BindComplete
-2 B RowDescription [("id" 264465 1 23 4 -1 0) ("item_id" 264465 2 23 4 -1 0) ("qty" 264465 3 23 4 -1 0)]
+2 B RowDescription [("id" 267270 1 23 4 -1 0) ("item_id" 267270 2 23 4 -1 0) ("qty" 267270 3 23 4 -1 0)]
 2 B DataRow ["2" "2" "1"]
 2 B CommandComplete "INSERT 0 1"
 2 B ReadyForQuery T
@@ -319,7 +319,7 @@
 2 B ReadyForQuery T
 2 B ParseComplete
 2 B BindComplete
-2 B RowDescription [("id" 264455 1 23 4 -1 0) ("price" 264455 2 1700 -1 655366 0) ("added" 264455 3 1184 8 6 0) ("name" 264455 4 1043 -1 259 0)]
+2 B RowDescription [("id" 267260 1 23 4 -1 0) ("price" 267260 2 1700 -1 655366 0) ("added" 267260 3 1184 8 6 0) ("name" 267260 4 1043 -1 259 0)]
 2 B DataRow ["3" "3.50" NULL "three"]
 2 B CommandComplete "INSERT 0 1"
 2 B ReadyForQuery T
@@ -341,8 +341,8 @@
 2 B ReadyForQuery T
 2 B ParseComplete
 2 B BindComplete
-2 B RowDescription [("id" 264455 1 23 4 -1 0) ("added" 264455 3 1184 8 6 0) ("name" 264455 4 1043 -1 259 0) ("item_id" 264465 2 23 4 -1 0) ("id" 264465 1 23 4 -1 0) ("qty" 264465 3 23 4 -1 0) ("price" 264455 2 1700 -1 655366 0)]
-2 B DataRow ["1" "2026-01-02 11:04:05+08" "one" "1" "1" "2" "1.50"]
+2 B RowDescription [("id" 267260 1 23 4 -1 0) ("added" 267260 3 1184 8 6 0) ("name" 267260 4 1043 -1 259 0) ("item_id" 267270 2 23 4 -1 0) ("id" 267270 1 23 4 -1 0) ("qty" 267270 3 23 4 -1 0) ("price" 267260 2 1700 -1 655366 0)]
+2 B DataRow ["1" "2026-01-02 03:04:05+00" "one" "1" "1" "2" "1.50"]
 2 B DataRow ["2" NULL "two" "2" "2" "1" "2.50"]
 2 B CommandComplete "SELECT 2"
 2 B ReadyForQuery T
@@ -362,7 +362,7 @@
 2 B ReadyForQuery T
 2 B ParseComplete
 2 B BindComplete
-2 B RowDescription [("id" 264455 1 23 4 -1 0) ("added" 264455 3 1184 8 6 0) ("name" 264455 4 1043 -1 259 0) ("price" 264455 2 1700 -1 655366 0)]
+2 B RowDescription [("id" 267260 1 23 4 -1 0) ("added" 267260 3 1184 8 6 0) ("name" 267260 4 1043 -1 259 0) ("price" 267260 2 1700 -1 655366 0)]
 2 B DataRow ["2" NULL "two" "2.50"]
 2 B CommandComplete "SELECT 1"
 2 B ReadyForQuery T
@@ -431,12 +431,12 @@
 2 F Terminate
 2 F End
 2 B End
-3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "Asia/Singapore"
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "UTC"
 3 B AuthenticationSASL "SCRAM-SHA-256"
-3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=+>dWL4GjyTj2P1zOgwI#XQK!"
-3 B AuthenticationSASLContinue "r=+>dWL4GjyTj2P1zOgwI#XQK!6CD1e1nO72OK8HbPXpTJApTU,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
-3 F SASLResponse "c=biws,r=+>dWL4GjyTj2P1zOgwI#XQK!6CD1e1nO72OK8HbPXpTJApTU,p=hWudRz54C1ivldShOEr0F6llGlzcrVW7Mo1OZ6/nkmA="
-3 B AuthenticationSASLFinal "v=ED0itnpovVqYcmpRP1Yhb/0oRLQJpoFqS2ycpttkLBY="
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=288%gHEen8b~maUDB[%ff(w4"
+3 B AuthenticationSASLContinue "r=288%gHEen8b~maUDB[%ff(w4pJIP4ta4fzftta4WQ6rpKeLB,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=288%gHEen8b~maUDB[%ff(w4pJIP4ta4fzftta4WQ6rpKeLB,p=wGZKIebjc7tlgsrEoAg/gHTYBQ040he31jXVXHYyxwY="
+3 B AuthenticationSASLFinal "v=XgM2BcQMHdEm9h1Ll6wYvw0qPVaiIb7TA0JocW0hVrU="
 3 B AuthenticationOk
 3 B ParameterStatus "IntervalStyle" "postgres"
 3 B ParameterStatus "search_path" "\"$user\", public"
@@ -448,25 +448,25 @@
 3 B ParameterStatus "server_encoding" "UTF8"
 3 B ParameterStatus "in_hot_standby" "off"
 3 B ParameterStatus "integer_datetimes" "on"
-3 B ParameterStatus "TimeZone" "Asia/Singapore"
+3 B ParameterStatus "TimeZone" "UTC"
 3 B ParameterStatus "application_name" ""
 3 B ParameterStatus "default_transaction_read_only" "off"
 3 B ParameterStatus "scram_iterations" "4096"
 3 B ParameterStatus "DateStyle" "ISO, MDY"
-3 B BackendKeyData 838147 "l.\x11\x07"
+3 B BackendKeyData 894117 "(m~\x05"
 3 B ReadyForQuery I
 3 F Query "SET application_name = 'PostgreSQL JDBC Driver'"
 3 B CommandComplete "SET"
 3 B ParameterStatus "application_name" "PostgreSQL JDBC Driver"
 3 B ReadyForQuery I
 3 F Query "BEGIN"
+3 B CommandComplete "BEGIN"
+3 B ReadyForQuery T
 3 F Parse "" "select current_schema()" []
 3 F Bind "" "" [] [] []
 3 F Describe P ""
 3 F Execute "" 0
 3 F Sync
-3 B CommandComplete "BEGIN"
-3 B ReadyForQuery T
 3 B ParseComplete
 3 B BindComplete
 3 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
@@ -506,12 +506,12 @@
 3 F Terminate
 3 F End
 3 B End
-4 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "Asia/Singapore"
+4 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "UTC"
 4 B AuthenticationSASL "SCRAM-SHA-256"
-4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=[_CJ<lj)NYW]*2Um([/_C*pb"
-4 B AuthenticationSASLContinue "r=[_CJ<lj)NYW]*2Um([/_C*pb3kTK+X0lFJdKY2MAsoQb1LQc,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
-4 F SASLResponse "c=biws,r=[_CJ<lj)NYW]*2Um([/_C*pb3kTK+X0lFJdKY2MAsoQb1LQc,p=di2pZHPrfAItZZA1aVGhajpcpantGdAgi0rIsD4HWy8="
-4 B AuthenticationSASLFinal "v=dFqEZcR2MaXajlx4hH6c+QAxzQfFa2ZLbxB2VMUrdGw="
+4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=(1`gYZQB-a7.bI^^:ZERN7}b"
+4 B AuthenticationSASLContinue "r=(1`gYZQB-a7.bI^^:ZERN7}bOSCdNRu9E7XoNJ1ektssB0r9,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F SASLResponse "c=biws,r=(1`gYZQB-a7.bI^^:ZERN7}bOSCdNRu9E7XoNJ1ektssB0r9,p=G52UHWGyE+kTnWsyRZSaYX9Ooli4/dOBhSh/ke2qX4Y="
+4 B AuthenticationSASLFinal "v=Q42uIRHLj/vGptayM8uN8uNNb45YHC93bR8566Fb8/c="
 4 B AuthenticationOk
 4 B ParameterStatus "IntervalStyle" "postgres"
 4 B ParameterStatus "search_path" "\"$user\", public"
@@ -523,25 +523,25 @@
 4 B ParameterStatus "server_encoding" "UTF8"
 4 B ParameterStatus "in_hot_standby" "off"
 4 B ParameterStatus "integer_datetimes" "on"
-4 B ParameterStatus "TimeZone" "Asia/Singapore"
+4 B ParameterStatus "TimeZone" "UTC"
 4 B ParameterStatus "application_name" ""
 4 B ParameterStatus "default_transaction_read_only" "off"
 4 B ParameterStatus "scram_iterations" "4096"
 4 B ParameterStatus "DateStyle" "ISO, MDY"
-4 B BackendKeyData 838150 "\x00!\xd6("
+4 B BackendKeyData 894120 "Ӷ\x1a\x95"
 4 B ReadyForQuery I
 4 F Query "SET application_name = 'PostgreSQL JDBC Driver'"
 4 B CommandComplete "SET"
 4 B ParameterStatus "application_name" "PostgreSQL JDBC Driver"
 4 B ReadyForQuery I
 4 F Query "BEGIN"
-4 B CommandComplete "BEGIN"
 4 F Parse "" "select string_agg(word, ',') from pg_catalog.pg_get_keywords() where word <> ALL ('{a,abs,absolute,action,ada,add,admin,after,all,allocate,alter,always,and,any,are,array,as,asc,asensitive,assertion,assignment,asymmetric,at,atomic,attribute,attributes,authorization,avg,before,begin,bernoulli,between,bigint,binary,blob,boolean,both,breadth,by,c,call,called,cardinality,cascade,cascaded,case,cast,catalog,catalog_name,ceil,ceiling,chain,char,char_length,character,character_length,character_set_catalog,character_set_name,character_set_schema,characteristics,characters,check,checked,class_origin,clob,close,coalesce,cobol,code_units,collate,collation,collation_catalog,collation_name,collation_schema,collect,column,column_name,command_function,command_function_code,commit,committed,condition,condition_number,connect,connection_name,constraint,constraint_catalog,constraint_name,constraint_schema,constraints,constructors,contains,continue,convert,corr,corresponding,count,covar_pop,covar_samp,create,cross,cube,cume_dist,current,current_collation,current_date,current_default_transform_group,current_path,current_role,current_time,current_timestamp,current_transform_group_for_type,current_user,cursor,cursor_name,cycle,data,date,datetime_interval_code,datetime_interval_precision,day,deallocate,dec,decimal,declare,default,defaults,deferrable,deferred,defined,definer,degree,delete,dense_rank,depth,deref,derived,desc,describe,descriptor,deterministic,diagnostics,disconnect,dispatch,distinct,domain,double,drop,dynamic,dynamic_function,dynamic_function_code,each,element,else,end,end-exec,equals,escape,every,except,exception,exclude,excluding,exec,execute,exists,exp,external,extract,false,fetch,filter,final,first,float,floor,following,for,foreign,fortran,found,free,from,full,function,fusion,g,general,get,global,go,goto,grant,granted,group,grouping,having,hierarchy,hold,hour,identity,immediate,implementation,in,including,increment,indicator,initially,inner,inout,input,insensitive,insert,instance,instantiable,int,integer,intersect,intersection,interval,into,invoker,is,isolation,join,k,key,key_member,key_type,language,large,last,lateral,leading,left,length,level,like,ln,local,localtime,localtimestamp,locator,lower,m,map,match,matched,max,maxvalue,member,merge,message_length,message_octet_length,message_text,method,min,minute,minvalue,mod,modifies,module,month,more,multiset,mumps,name,names,national,natural,nchar,nclob,nesting,new,next,no,none,normalize,normalized,not,\"null\",nullable,nullif,nulls,number,numeric,object,octet_length,octets,of,old,on,only,open,option,options,or,order,ordering,ordinality,others,out,outer,output,over,overlaps,overlay,overriding,pad,parameter,parameter_mode,parameter_name,parameter_ordinal_position,parameter_specific_catalog,parameter_specific_name,parameter_specific_schema,partial,partition,pascal,path,percent_rank,percentile_cont,percentile_disc,placing,pli,position,power,preceding,precision,prepare,preserve,primary,prior,privileges,procedure,public,range,rank,read,reads,real,recursive,ref,references,referencing,regr_avgx,regr_avgy,regr_count,regr_intercept,regr_r2,regr_slope,regr_sxx,regr_sxy,regr_syy,relative,release,repeatable,restart,result,return,returned_cardinality,returned_length,returned_octet_length,returned_sqlstate,returns,revoke,right,role,rollback,rollup,routine,routine_catalog,routine_name,routine_schema,row,row_count,row_number,rows,savepoint,scale,schema,schema_name,scope_catalog,scope_name,scope_schema,scroll,search,second,section,security,select,self,sensitive,sequence,serializable,server_name,session,session_user,set,sets,similar,simple,size,smallint,some,source,space,specific,specific_name,specifictype,sql,sqlexception,sqlstate,sqlwarning,sqrt,start,state,statement,static,stddev_pop,stddev_samp,structure,style,subclass_origin,submultiset,substring,sum,symmetric,system,system_user,table,table_name,tablesample,temporary,then,ties,time,timestamp,timezone_hour,timezone_minute,to,top_level_count,trailing,transaction,transaction_active,transactions_committed,transactions_rolled_back,transform,transforms,translate,translation,treat,trigger,trigger_catalog,trigger_name,trigger_schema,trim,true,type,uescape,unbounded,uncommitted,under,union,unique,unknown,unnamed,unnest,update,upper,usage,user,user_defined_type_catalog,user_defined_type_code,user_defined_type_name,user_defined_type_schema,using,value,values,var_pop,var_samp,varchar,varying,view,when,whenever,where,width_bucket,window,with,within,without,work,write,year,zone}'::text[])" []
-4 B ReadyForQuery T
 4 F Bind "" "" [] [] []
 4 F Describe P ""
 4 F Execute "" 0
 4 F Sync
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
 4 B ParseComplete
 4 B BindComplete
 4 B RowDescription [("string_agg" 0 0 25 -1 -1 0)]
