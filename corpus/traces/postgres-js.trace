@@ -1,0 +1,544 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/postgres-js/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "application_name" "postgres.js"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=sx69gFOVpoZKAtkr7vUmwXFp"
+1 B AuthenticationSASLContinue "r=sx69gFOVpoZKAtkr7vUmwXFpVJbmT/Cpw/ZF8LsxrVKV1TSN,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=sx69gFOVpoZKAtkr7vUmwXFpVJbmT/Cpw/ZF8LsxrVKV1TSN,p=pUZkmGyPT2CfzvuKa7GcaT1nN8zVkyQgW7CvxIOJZWo="
+1 B AuthenticationSASLFinal "v=Qsvn1iFyRVOtCrDafJq4tEtr3DCa3yUFX5SiqzEKXt0="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "postgres.js"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 790928 "Ў\xf8P"
+1 B ReadyForQuery I
+1 F Parse "ngmw2dc4cjg1" "\n      select b.oid, b.typarray\n      from pg_catalog.pg_type a\n      left join pg_catalog.pg_type b on b.oid = a.typelem\n      where a.typcategory = 'A'\n      group by b.oid, b.typarray\n      order by b.oid\n    " []
+1 F Describe S "ngmw2dc4cjg1"
+1 F Bind "" "ngmw2dc4cjg1" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0)]
+1 B BindComplete
+1 B DataRow ["16" "1000"]
+1 B DataRow ["17" "1001"]
+1 B DataRow ["18" "1002"]
+1 B DataRow ["19" "1003"]
+1 B DataRow ["20" "1016"]
+1 B DataRow ["21" "1005"]
+1 B DataRow ["22" "1006"]
+1 B DataRow ["23" "1007"]
+1 B DataRow ["24" "1008"]
+1 B DataRow ["25" "1009"]
+1 B DataRow ["26" "1028"]
+1 B DataRow ["27" "1010"]
+1 B DataRow ["28" "1011"]
+1 B DataRow ["29" "1012"]
+1 B DataRow ["30" "1013"]
+1 B DataRow ["71" "210"]
+1 B DataRow ["75" "270"]
+1 B DataRow ["81" "272"]
+1 B DataRow ["83" "273"]
+1 B DataRow ["114" "199"]
+1 B DataRow ["142" "143"]
+1 B DataRow ["600" "1017"]
+1 B DataRow ["601" "1018"]
+1 B DataRow ["602" "1019"]
+1 B DataRow ["603" "1020"]
+1 B DataRow ["604" "1027"]
+1 B DataRow ["628" "629"]
+1 B DataRow ["650" "651"]
+1 B DataRow ["700" "1021"]
+1 B DataRow ["701" "1022"]
+1 B DataRow ["718" "719"]
+1 B DataRow ["774" "775"]
+1 B DataRow ["790" "791"]
+1 B DataRow ["829" "1040"]
+1 B DataRow ["869" "1041"]
+1 B DataRow ["1033" "1034"]
+1 B DataRow ["1042" "1014"]
+1 B DataRow ["1043" "1015"]
+1 B DataRow ["1082" "1182"]
+1 B DataRow ["1083" "1183"]
+1 B DataRow ["1114" "1115"]
+1 B DataRow ["1184" "1185"]
+1 B DataRow ["1186" "1187"]
+1 B DataRow ["1248" "10052"]
+1 B DataRow ["1266" "1270"]
+1 B DataRow ["1560" "1561"]
+1 B DataRow ["1562" "1563"]
+1 B DataRow ["1700" "1231"]
+1 B DataRow ["1790" "2201"]
+1 B DataRow ["2173" "10096"]
+1 B DataRow ["2202" "2207"]
+1 B DataRow ["2203" "2208"]
+1 B DataRow ["2204" "2209"]
+1 B DataRow ["2205" "2210"]
+1 B DataRow ["2206" "2211"]
+1 B DataRow ["2275" "1263"]
+1 B DataRow ["2842" "10057"]
+1 B DataRow ["2843" "10058"]
+1 B DataRow ["2950" "2951"]
+1 B DataRow ["2970" "2949"]
+1 B DataRow ["3220" "3221"]
+1 B DataRow ["3614" "3643"]
+1 B DataRow ["3615" "3645"]
+1 B DataRow ["3642" "3644"]
+1 B DataRow ["3734" "3735"]
+1 B DataRow ["3769" "3770"]
+1 B DataRow ["3802" "3807"]
+1 B DataRow ["3904" "3905"]
+1 B DataRow ["3906" "3907"]
+1 B DataRow ["3908" "3909"]
+1 B DataRow ["3910" "3911"]
+1 B DataRow ["3912" "3913"]
+1 B DataRow ["3926" "3927"]
+1 B DataRow ["4066" "10093"]
+1 B DataRow ["4072" "4073"]
+1 B DataRow ["4089" "4090"]
+1 B DataRow ["4096" "4097"]
+1 B DataRow ["4191" "4192"]
+1 B DataRow ["4451" "6150"]
+1 B DataRow ["4532" "6151"]
+1 B DataRow ["4533" "6152"]
+1 B DataRow ["4534" "6153"]
+1 B DataRow ["4535" "6155"]
+1 B DataRow ["4536" "6157"]
+1 B DataRow ["5038" "5039"]
+1 B DataRow ["5069" "271"]
+1 B DataRow ["6101" "10111"]
+1 B DataRow ["6437" "6442"]
+1 B DataRow ["6490" "6491"]
+1 B DataRow ["10001" "10000"]
+1 B DataRow ["10003" "10002"]
+1 B DataRow ["10005" "10004"]
+1 B DataRow ["10007" "10006"]
+1 B DataRow ["10009" "10008"]
+1 B DataRow ["10011" "10010"]
+1 B DataRow ["10013" "10012"]
+1 B DataRow ["10015" "10014"]
+1 B DataRow ["10017" "10016"]
+1 B DataRow ["10019" "10018"]
+1 B DataRow ["10021" "10020"]
+1 B DataRow ["10023" "10022"]
+1 B DataRow ["10025" "10024"]
+1 B DataRow ["10027" "10026"]
+1 B DataRow ["10029" "10028"]
+1 B DataRow ["10031" "10030"]
+1 B DataRow ["10033" "10032"]
+1 B DataRow ["10035" "10034"]
+1 B DataRow ["10037" "10036"]
+1 B DataRow ["10039" "10038"]
+1 B DataRow ["10041" "10040"]
+1 B DataRow ["10043" "10042"]
+1 B DataRow ["10045" "10044"]
+1 B DataRow ["10047" "10046"]
+1 B DataRow ["10049" "10048"]
+1 B DataRow ["10051" "10050"]
+1 B DataRow ["10054" "10053"]
+1 B DataRow ["10056" "10055"]
+1 B DataRow ["10060" "10059"]
+1 B DataRow ["10062" "10061"]
+1 B DataRow ["10064" "10063"]
+1 B DataRow ["10066" "10065"]
+1 B DataRow ["10068" "10067"]
+1 B DataRow ["10070" "10069"]
+1 B DataRow ["10072" "10071"]
+1 B DataRow ["10074" "10073"]
+1 B DataRow ["10076" "10075"]
+1 B DataRow ["10078" "10077"]
+1 B DataRow ["10080" "10079"]
+1 B DataRow ["10082" "10081"]
+1 B DataRow ["10084" "10083"]
+1 B DataRow ["10086" "10085"]
+1 B DataRow ["10088" "10087"]
+1 B DataRow ["10090" "10089"]
+1 B DataRow ["10092" "10091"]
+1 B DataRow ["10095" "10094"]
+1 B DataRow ["10098" "10097"]
+1 B DataRow ["10100" "10099"]
+1 B DataRow ["10102" "10101"]
+1 B DataRow ["10104" "10103"]
+1 B DataRow ["10106" "10105"]
+1 B DataRow ["10108" "10107"]
+1 B DataRow ["10110" "10109"]
+1 B DataRow ["10113" "10112"]
+1 B DataRow ["12002" "12001"]
+1 B DataRow ["12007" "12006"]
+1 B DataRow ["12012" "12011"]
+1 B DataRow ["12016" "12015"]
+1 B DataRow ["12020" "12019"]
+1 B DataRow ["12025" "12024"]
+1 B DataRow ["12030" "12029"]
+1 B DataRow ["12035" "12034"]
+1 B DataRow ["12040" "12039"]
+1 B DataRow ["12045" "12044"]
+1 B DataRow ["12050" "12049"]
+1 B DataRow ["12055" "12054"]
+1 B DataRow ["12060" "12059"]
+1 B DataRow ["12065" "12064"]
+1 B DataRow ["12070" "12069"]
+1 B DataRow ["12075" "12074"]
+1 B DataRow ["12080" "12079"]
+1 B DataRow ["12084" "12083"]
+1 B DataRow ["12088" "12087"]
+1 B DataRow ["12092" "12091"]
+1 B DataRow ["12097" "12096"]
+1 B DataRow ["12102" "12101"]
+1 B DataRow ["12106" "12105"]
+1 B DataRow ["12111" "12110"]
+1 B DataRow ["12117" "12116"]
+1 B DataRow ["12121" "12120"]
+1 B DataRow ["12125" "12124"]
+1 B DataRow ["12129" "12128"]
+1 B DataRow ["12133" "12132"]
+1 B DataRow ["12137" "12136"]
+1 B DataRow ["12141" "12140"]
+1 B DataRow ["12145" "12144"]
+1 B DataRow ["12149" "12148"]
+1 B DataRow ["12153" "12152"]
+1 B DataRow ["12157" "12156"]
+1 B DataRow ["12162" "12161"]
+1 B DataRow ["12167" "12166"]
+1 B DataRow ["12172" "12171"]
+1 B DataRow ["12176" "12175"]
+1 B DataRow ["12181" "12180"]
+1 B DataRow ["12185" "12184"]
+1 B DataRow ["12190" "12189"]
+1 B DataRow ["12195" "12194"]
+1 B DataRow ["12199" "12198"]
+1 B DataRow ["12203" "12202"]
+1 B DataRow ["12208" "12207"]
+1 B DataRow ["12212" "12211"]
+1 B DataRow ["12216" "12215"]
+1 B DataRow ["12221" "12220"]
+1 B DataRow ["12225" "12224"]
+1 B DataRow ["12229" "12228"]
+1 B DataRow ["12234" "12233"]
+1 B DataRow ["12238" "12237"]
+1 B DataRow ["12242" "12241"]
+1 B DataRow ["12247" "12246"]
+1 B DataRow ["12252" "12251"]
+1 B DataRow ["12256" "12255"]
+1 B DataRow ["12260" "12259"]
+1 B DataRow ["12264" "12263"]
+1 B DataRow ["12268" "12267"]
+1 B DataRow ["12272" "12271"]
+1 B DataRow ["12277" "12276"]
+1 B DataRow ["12281" "12280"]
+1 B DataRow ["12285" "12284"]
+1 B DataRow ["12290" "12289"]
+1 B DataRow ["12294" "12293"]
+1 B DataRow ["12299" "12298"]
+1 B DataRow ["12303" "12302"]
+1 B DataRow ["12308" "12307"]
+1 B DataRow ["12313" "12312"]
+1 B DataRow ["12317" "12316"]
+1 B DataRow ["12321" "12320"]
+1 B DataRow ["12325" "12324"]
+1 B DataRow ["12329" "12328"]
+1 B DataRow ["12333" "12332"]
+1 B DataRow ["12338" "12337"]
+1 B DataRow ["12343" "12342"]
+1 B DataRow ["12348" "12347"]
+1 B DataRow ["12353" "12352"]
+1 B DataRow ["12358" "12357"]
+1 B DataRow ["12362" "12361"]
+1 B DataRow ["12367" "12366"]
+1 B DataRow ["12372" "12371"]
+1 B DataRow ["12376" "12375"]
+1 B DataRow ["12380" "12379"]
+1 B DataRow ["12384" "12383"]
+1 B DataRow ["13354" "13353"]
+1 B DataRow ["13357" "13356"]
+1 B DataRow ["13359" "13358"]
+1 B DataRow ["13362" "13361"]
+1 B DataRow ["13365" "13364"]
+1 B DataRow ["13367" "13366"]
+1 B DataRow ["13371" "13370"]
+1 B DataRow ["13376" "13375"]
+1 B DataRow ["13380" "13379"]
+1 B DataRow ["13385" "13384"]
+1 B DataRow ["13390" "13389"]
+1 B DataRow ["13395" "13394"]
+1 B DataRow ["13400" "13399"]
+1 B DataRow ["13405" "13404"]
+1 B DataRow ["13410" "13409"]
+1 B DataRow ["13415" "13414"]
+1 B DataRow ["13420" "13419"]
+1 B DataRow ["13425" "13424"]
+1 B DataRow ["13430" "13429"]
+1 B DataRow ["13435" "13434"]
+1 B DataRow ["13440" "13439"]
+1 B DataRow ["13445" "13444"]
+1 B DataRow ["13450" "13449"]
+1 B DataRow ["13454" "13453"]
+1 B DataRow ["13459" "13458"]
+1 B DataRow ["13463" "13462"]
+1 B DataRow ["13468" "13467"]
+1 B DataRow ["13473" "13472"]
+1 B DataRow ["13478" "13477"]
+1 B DataRow ["13482" "13481"]
+1 B DataRow ["13487" "13486"]
+1 B DataRow ["13492" "13491"]
+1 B DataRow ["13496" "13495"]
+1 B DataRow ["13501" "13500"]
+1 B DataRow ["13506" "13505"]
+1 B DataRow ["13511" "13510"]
+1 B DataRow ["13516" "13515"]
+1 B DataRow ["13520" "13519"]
+1 B DataRow ["13525" "13524"]
+1 B DataRow ["13530" "13529"]
+1 B DataRow ["13535" "13534"]
+1 B DataRow ["13540" "13539"]
+1 B DataRow ["13545" "13544"]
+1 B DataRow ["13550" "13549"]
+1 B DataRow ["13555" "13554"]
+1 B DataRow ["13559" "13558"]
+1 B DataRow ["13564" "13563"]
+1 B DataRow ["13569" "13568"]
+1 B DataRow ["13574" "13573"]
+1 B DataRow ["13579" "13578"]
+1 B DataRow ["13584" "13583"]
+1 B DataRow ["13588" "13587"]
+1 B DataRow ["13593" "13592"]
+1 B DataRow ["13597" "13596"]
+1 B DataRow ["13602" "13601"]
+1 B DataRow ["13607" "13606"]
+1 B DataRow ["13612" "13611"]
+1 B DataRow ["13617" "13616"]
+1 B DataRow ["13622" "13621"]
+1 B DataRow ["13627" "13626"]
+1 B DataRow ["13632" "13631"]
+1 B DataRow ["13637" "13636"]
+1 B DataRow ["13641" "13640"]
+1 B DataRow ["13645" "13644"]
+1 B DataRow ["13649" "13648"]
+1 B DataRow ["13653" "13652"]
+1 B DataRow ["13657" "13656"]
+1 B DataRow ["13661" "13660"]
+1 B DataRow ["13665" "13664"]
+1 B DataRow ["13670" "13669"]
+1 B DataRow ["13674" "13673"]
+1 B DataRow ["13678" "13677"]
+1 B DataRow ["13683" "13682"]
+1 B DataRow ["13688" "13687"]
+1 B CommandComplete "SELECT 303"
+1 B ReadyForQuery I
+1 F Query "SELECT 1"
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 B DataRow ["1"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "ngmw2dc4cjg2" "SELECT $1::int4 + 1, $2::text" [0 0]
+1 F Describe S "ngmw2dc4cjg2"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23 25]
+1 B RowDescription [("?column?" 0 0 23 4 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 F Bind "" "ngmw2dc4cjg2" [] ["41" "abc"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["42" "abc"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text"
+1 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B DataRow ["42" "42" "9007199254740993" "1.5" "12.345" "t" "x" "\\x0102" "2026-01-02 03:04:05+00" "2026-01-02" "{1,2,3}" "{\"a\": 1}" "7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "ngmw2dc4cjg3" "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2))" []
+1 F Describe S "ngmw2dc4cjg3"
+1 F Bind "" "ngmw2dc4cjg3" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 B BindComplete
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "begin "
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "ngmw2dc4cjg4" "INSERT INTO compat_items VALUES ($1, $2, $3)" [0 0 0]
+1 F Describe S "ngmw2dc4cjg4"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23 25 1700]
+1 B NoData
+1 F Bind "" "ngmw2dc4cjg4" [] ["1" "one" "1.50"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "ngmw2dc4cjg4" [] ["2" "two" "2.50"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "ngmw2dc4cjg4" [] ["3" "three" "3.50"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "ngmw2dc4cjg5" "commit" []
+1 F Describe S "ngmw2dc4cjg5"
+1 F Bind "" "ngmw2dc4cjg5" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 B BindComplete
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "begin "
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "ngmw2dc4cjg4" [] ["4" "four" "4.50"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "ngmw2dc4cjg6" "rollback" []
+1 F Describe S "ngmw2dc4cjg6"
+1 F Bind "" "ngmw2dc4cjg6" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 B BindComplete
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "ngmw2dc4cjg7" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id" [0]
+1 F Describe S "ngmw2dc4cjg7"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23]
+1 B RowDescription [("id" 256798 1 23 4 -1 0) ("name" 256798 2 25 -1 -1 0) ("price" 256798 3 1700 -1 655366 0)]
+1 F Bind "" "ngmw2dc4cjg7" [] ["1"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "ngmw2dc4cjg7" [] ["1"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "ngmw2dc4cjg7" [] ["1"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "ngmw2dc4cjg7" [] ["1"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "ngmw2dc4cjg7" [] ["1"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "ngmw2dc4cjg7" [] ["1"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["1" "one" "1.50"]
+1 B DataRow ["2" "two" "2.50"]
+1 B DataRow ["3" "three" "3.50"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Parse "ngmw2dc4cjg8" "UPDATE compat_items SET price = price * 2 WHERE id = $1" [0]
+1 F Describe S "ngmw2dc4cjg8"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23]
+1 B NoData
+1 F Bind "" "ngmw2dc4cjg8" [] ["2"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+1 F Parse "ngmw2dc4cjg9" "SELECT 1 / 0" []
+1 F Describe S "ngmw2dc4cjg9"
+1 F Bind "" "ngmw2dc4cjg9" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "begin "
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "ngmw2dc4cjg9" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Bind "" "ngmw2dc4cjg6" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "ngmw2dc4cjg10" "DROP TABLE compat_items" []
+1 F Describe S "ngmw2dc4cjg10"
+1 F Bind "" "ngmw2dc4cjg10" [] [] []
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 B BindComplete
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
