@@ -404,16 +404,22 @@ struct Step {
     line: Option<Line>,
     pending: Vec<Msg>,
     pending_end: bool,
+    /// For each other connection, the number of its backend messages that come before the frontend line in the trace.
+    after: Vec<(u32, usize)>,
 }
 
 /// Cuts a trace into steps, in the order of the trace.
 fn steps(trace: &Trace) -> Vec<Step> {
     let mut out = Vec::new();
     let mut pending: BTreeMap<u32, (Vec<Msg>, bool)> = BTreeMap::new();
+    let mut received: BTreeMap<u32, usize> = BTreeMap::new();
     for line in &trace.lines {
         let p = pending.entry(line.conn).or_default();
         match (line.dir, &line.event) {
-            (Dir::B, Event::Msg(m)) => p.0.push(m.clone()),
+            (Dir::B, Event::Msg(m)) => {
+                p.0.push(m.clone());
+                *received.entry(line.conn).or_default() += 1;
+            }
             (Dir::B, Event::End) => p.1 = true,
             (Dir::F, event) => {
                 let (msgs, end) = std::mem::take(p);
@@ -423,13 +429,26 @@ fn steps(trace: &Trace) -> Vec<Step> {
                     line: Some(line.clone()),
                     pending: msgs,
                     pending_end: end,
+                    after: received
+                        .iter()
+                        .filter(|&(&c, _)| c != line.conn)
+                        .map(|(&c, &n)| (c, n))
+                        .collect(),
                 });
             }
         }
     }
     for (conn, (msgs, end)) in pending {
         if !msgs.is_empty() || end {
-            out.push(Step { conn, event: None, line: None, pending: msgs, pending_end: end });
+            let step = Step {
+                conn,
+                event: None,
+                line: None,
+                pending: msgs,
+                pending_end: end,
+                after: Vec::new(),
+            };
+            out.push(step);
         }
     }
     out
@@ -440,6 +459,8 @@ struct Session {
     stream: Option<TcpStream>,
     /// The messages of the server that replay has not written out yet.
     got: VecDeque<Msg>,
+    /// The number of messages that the server sent.
+    received: usize,
     eof: bool,
     /// The time of the last message to or from the server.
     last: Option<Instant>,
@@ -493,7 +514,7 @@ struct Runner<'a> {
 
 /// Replays a trace on one server. `timeout` is the longest wait for one answer.
 ///
-/// Each connection keeps the order of its own lines. Across connections, replay sends the lines in the order of the trace. When the connection of the next line waits for its server and the server is quiet for a moment, replay sends the next lines of the other connections. A lock can make one connection wait for another, and the order in which the server got the messages of two connections can differ from the order in the trace, so a strict order can stop the replay.
+/// Each connection keeps the order of its own lines. Across connections, replay sends the lines in the order of the trace, and a line waits until the other connections got the backend messages that come before it in the trace. When the connection of the next line waits for its server and the server is quiet for a moment, replay sends the next lines of the other connections. A lock can make one connection wait for another, and the order in which the server got the messages of two connections can differ from the order in the trace, so a strict order can stop the replay.
 pub(crate) fn replay(trace: &Trace, target: &Target, timeout: Duration) -> Replayed {
     let (tx, rx) = mpsc::channel();
     let mut r =
@@ -562,6 +583,13 @@ pub(crate) fn replay(trace: &Trace, target: &Target, timeout: Duration) -> Repla
     r.out
 }
 
+/// True when the other connections got the backend messages that come before the line of `step` in the trace. A connection whose server is quiet does not hold the step back: its server can send fewer messages than the trace has, or wait for a lock.
+fn in_order(sessions: &BTreeMap<u32, Session>, step: &Step, now: Instant) -> bool {
+    step.after.iter().all(|&(conn, n)| {
+        sessions.get(&conn).is_none_or(|s| s.received >= n || s.eof || s.quiet(now) >= IDLE)
+    })
+}
+
 /// How long replay waits for a message before it looks at the connections again.
 const TICK: Duration = Duration::from_millis(10);
 
@@ -573,6 +601,9 @@ impl Runner<'_> {
     /// How many received messages answer `step`, or None when replay must wait. A `CancelRequest` also waits until the server of the connection that it cancels is quiet, so the statement runs when the cancel comes, as in the trace.
     fn ready(&self, step: &Step, now: Instant) -> Option<usize> {
         let n = self.sessions.get(&step.conn)?.answer(step, now)?;
+        if !in_order(&self.sessions, step, now) {
+            return None;
+        }
         if let Some(Event::Msg(m)) = &step.event
             && m.name() == "CancelRequest"
         {
@@ -595,6 +626,7 @@ impl Runner<'_> {
             match msg {
                 Some(m) => {
                     s.got.push_back(m);
+                    s.received += 1;
                     s.last = Some(Instant::now());
                 }
                 None => s.eof = true,
@@ -952,6 +984,46 @@ mod tests {
     }
 
     #[test]
+    fn a_step_waits_for_the_answers_of_other_connections_before_it() {
+        let rfq = || vec![Val::Byte(b'I')];
+        let trace = Trace {
+            header: Vec::new(),
+            lines: vec![
+                line(1, Dir::F, "Query", vec![str_val("create table t (a int)")]),
+                line(1, Dir::B, "CommandComplete", vec![str_val("CREATE TABLE")]),
+                line(1, Dir::B, "ReadyForQuery", rfq()),
+                line(2, Dir::F, "Query", vec![str_val("lock table t")]),
+                line(2, Dir::B, "CommandComplete", vec![str_val("LOCK TABLE")]),
+                line(1, Dir::F, "Query", vec![str_val("select 1")]),
+            ],
+        };
+        let steps = steps(&trace);
+        let after: Vec<&[(u32, usize)]> = steps.iter().map(|s| s.after.as_slice()).collect();
+        assert_eq!(after, [&[][..], &[(1, 2)][..], &[(2, 1)][..], &[][..]]);
+        let now = Instant::now();
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let mut sessions = BTreeMap::new();
+        sessions.insert(
+            1,
+            Session {
+                stream: Some(TcpStream::connect(listener.local_addr().unwrap()).unwrap()),
+                last: Some(now),
+                received: 1,
+                ..Session::default()
+            },
+        );
+        sessions.insert(2, Session::default());
+        assert!(!in_order(&sessions, &steps[1], now), "the create table is not done yet");
+        assert!(
+            in_order(&sessions, &steps[1], now + IDLE),
+            "a quiet server does not hold the step back"
+        );
+        sessions.get_mut(&1).unwrap().received = 2;
+        assert!(in_order(&sessions, &steps[1], now));
+        assert!(in_order(&sessions, &steps[0], now));
+    }
+
+    #[test]
     fn a_step_waits_for_its_terminators_and_its_tail() {
         let now = Instant::now();
         let rfq = Msg::new(Dir::B, "ReadyForQuery", vec![Val::Byte(b'I')]);
@@ -962,6 +1034,7 @@ mod tests {
             line: None,
             pending: vec![done.clone(), rfq.clone(), done.clone()],
             pending_end: false,
+            after: Vec::new(),
         };
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let mut s = Session {

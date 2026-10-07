@@ -165,6 +165,7 @@ mod tests {
                     "pom.xml",
                     "scenario.csproj",
                     "Gemfile",
+                    "mix.exs",
                 ]
                 .iter()
                 .filter_map(|f| std::fs::read_to_string(dir.join(f)).ok())

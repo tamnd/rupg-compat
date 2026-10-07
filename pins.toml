@@ -45,7 +45,7 @@ commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
 
 [clients]
 # One table for each client whose trace or suite is in corpus/ or clients/, with the version that made it.
-# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod, Cargo.toml, package.json, pom.xml, scenario.csproj or Gemfile installs. The Node clients run on the Node.js of clients/node.sh, the Java clients run on the JDK and Maven of clients/java.sh, the .NET clients run on the .NET SDK of clients/dotnet.sh, and the Ruby clients run on the Ruby of clients/ruby.sh.
+# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod, Cargo.toml, package.json, pom.xml, scenario.csproj, Gemfile or mix.exs installs. The Node clients run on the Node.js of clients/node.sh, the Java clients run on the JDK and Maven of clients/java.sh, the .NET clients run on the .NET SDK of clients/dotnet.sh, the Ruby clients run on the Ruby of clients/ruby.sh, and the Elixir clients run on the Erlang/OTP and Elixir of clients/elixir.sh.
 
 [clients.asyncpg]
 version = "0.32.0"
@@ -64,6 +64,10 @@ version = "6.1.2"
 [clients.drizzle]
 # Drizzle ORM on node-postgres 8.23.1, with Drizzle Kit 0.31.11.
 version = "0.45.3"
+
+[clients.ecto]
+# Ecto SQL with Ecto 3.14.2, on Postgrex 0.22.4.
+version = "3.14.0"
 
 [clients.efcore]
 # The Npgsql provider of EF Core, on EF Core 10.0.12 and Npgsql 10.0.3, with the dotnet-ef tool 10.0.12.
@@ -123,6 +127,9 @@ version = "5.11.0"
 [clients.postgres-js]
 # The package postgres.
 version = "3.4.9"
+
+[clients.postgrex]
+version = "0.22.4"
 
 [clients.prisma]
 # The Prisma CLI and Prisma Client on @prisma/adapter-pg 7.10.0 and node-postgres 8.23.1.
