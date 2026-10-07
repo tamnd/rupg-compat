@@ -1,0 +1,50 @@
+# The counts of spec/05 section 5.4, taken by `rupg-compat import` from the source tree of the oracle.
+# Each count has the rule that took it. `rupg-compat import --check` takes them again.
+version = 17
+commit = "083ac033419f690758508e08c1736089384bbee8"
+
+[regress]
+# the names on the test: lines of parallel_schedule
+scheduled_tests = 225
+# the files sql/*.sql
+sql_files = 227
+# the files in expected/
+expected_files = 257
+# the files in expected/ without an alternative suffix _N
+primary_expected_files = 228
+# the lines of the primary expected files
+expected_lines = 252722
+# the lines of the primary expected files that start with ERROR:
+error_lines = 6116
+# the primary expected files with an ERROR: line
+error_files = 181
+# the lines of expected/T.out, or of output/T.source up to 14, for each scheduled test T
+scheduled_expected_lines = 249606
+# the lines of those files that start with ERROR:
+scheduled_error_lines = 6086
+# those files with an ERROR: line
+scheduled_error_files = 180
+
+[isolation]
+# the files specs/*.spec
+specs = 123
+# the names on the test: lines of isolation_schedule
+scheduled_specs = 121
+# the files in expected/
+expected_files = 132
+
+[libpq_pipeline]
+# the files traces/*.trace
+traces = 9
+
+[catalog]
+# the CATALOG( lines of src/include/catalog/pg_*.h
+catalogs = 64
+# the CATALOG( lines with BKI_SHARED_RELATION
+shared_catalogs = 11
+# the CREATE VIEW and CREATE OR REPLACE VIEW lines of system_views.sql
+system_views = 78
+# the system views whose name starts with pg_stat, which includes pg_statio
+statistics_views = 46
+# the CREATE VIEW lines of information_schema.sql
+information_schema_views = 65

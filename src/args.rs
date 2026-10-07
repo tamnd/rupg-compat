@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 /// The options that take no value.
-const FLAGS: [&str; 4] = ["--all", "--force", "--help", "--keep"];
+const FLAGS: [&str; 5] = ["--all", "--check", "--force", "--help", "--keep"];
 
 /// A parsed command line.
 #[derive(Debug, Default, PartialEq, Eq)]
