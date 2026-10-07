@@ -4,7 +4,7 @@
 //!
 //! Replay solves the three problems of section 21.3.5:
 //!
-//! 1. OIDs differ. Replay learns a map from the OIDs of the trace to the OIDs of the server. It reads them from the table and type OIDs of `RowDescription`, the types of `ParameterDescription` and the columns of type `oid` in `DataRow`, for user objects only (OID 16384 and up). It rewrites the OIDs in `Query`, `Parse`, `Bind` and `FunctionCall` before it sends them, and maps the answers back to the OIDs of the trace. In `Bind`, it maps text parameters and binary parameters of 4 or 8 bytes.
+//! 1. OIDs differ. Replay learns a map from the OIDs of the trace to the OIDs of the server. It reads them from the table and type OIDs of `RowDescription`, the types of `ParameterDescription` and the columns of type `oid` in `DataRow` (in text or binary format), for user objects only (OID 16384 and up). It rewrites the OIDs in `Query`, `Parse`, `Bind` and `FunctionCall` before it sends them, and maps the answers back to the OIDs of the trace. In `Bind`, it maps text parameters and binary parameters of 4 or 8 bytes.
 //! 2. SCRAM has new nonces each time. Replay makes a new SCRAM exchange with each server.
 //! 3. Cancel keys differ. Replay rewrites each `CancelRequest` to the process ID and the key that the server sent on the connection that the trace cancels. The key keeps the length that the server sent, so it works for protocol 3.0 and 3.2.
 
@@ -38,6 +38,8 @@ pub(crate) struct OidMap {
     to_trace: BTreeMap<u32, u32>,
     /// The OIDs of the trace that are enum labels, from the `oid` column of `pg_enum`.
     labels: BTreeSet<u32>,
+    /// How many statements of the trace make enum labels: `CREATE TYPE ... AS ENUM` and `ALTER TYPE ... ADD VALUE`.
+    enums: usize,
     /// How many values replay changed with the map, in both directions.
     pub(crate) applied: usize,
 }
@@ -49,21 +51,36 @@ impl OidMap {
 
     /// Spec/05 section 5.3 item 2 excludes the values of user OIDs but compares the gaps between consecutive ones. Returns the number of pairs of consecutive user OIDs of the trace and the number of pairs with another gap on the server.
     ///
-    /// PostgreSQL gives only even OIDs to enum labels (`EnumValuesCreate` in `pg_enum.c` skips the odd ones). So the gap before a label is one more when the OID before it is even. The gap before a label may differ by 1 when the label is even on both sides.
+    /// PostgreSQL gives only even OIDs to enum labels (`EnumValuesCreate` and `AddEnumLabel` in `pg_enum.c` skip the odd ones). So a statement that makes enum labels uses one more OID when the next OID is odd. The parity of the next OID is not the same in the trace and in the replay, so:
+    /// - the gap before a label may differ by 1 when the label is even on both sides;
+    /// - the other gaps may differ by 1 for each statement of the trace that makes enum labels, when the trace does not show the labels. The sum of these differences is at most the number of such statements.
     pub(crate) fn gaps(&self) -> (usize, usize) {
         let pairs: Vec<(i64, i64)> =
             self.to_server.iter().map(|(&t, &s)| (i64::from(t), i64::from(s))).collect();
-        let differ = pairs
-            .windows(2)
-            .filter(|w| {
-                let (trace, server) = (w[1].0 - w[0].0, w[1].1 - w[0].1);
-                let label = u32::try_from(w[1].0).is_ok_and(|t| self.labels.contains(&t))
-                    && w[1].0 % 2 == 0
-                    && w[1].1 % 2 == 0;
-                trace != server && !(label && (trace - server).abs() == 1)
-            })
-            .count();
+        let mut slack = self.enums;
+        let mut differ = 0;
+        for w in pairs.windows(2) {
+            let (trace, server) = (w[1].0 - w[0].0, w[1].1 - w[0].1);
+            let off = trace.abs_diff(server) as usize;
+            let label = u32::try_from(w[1].0).is_ok_and(|t| self.labels.contains(&t))
+                && w[1].0 % 2 == 0
+                && w[1].1 % 2 == 0;
+            if off == 0 {
+                continue;
+            } else if label && off == 1 {
+                slack = slack.saturating_sub(1);
+            } else if off <= slack {
+                slack -= off;
+            } else {
+                differ += 1;
+            }
+        }
         (pairs.len().saturating_sub(1), differ)
+    }
+
+    /// Counts the statements in `sql` that make enum labels.
+    fn count_enums(&mut self, sql: &[u8]) {
+        self.enums += enum_statements(sql);
     }
 
     /// Notes that `trace` is the OID of an enum label in the trace.
@@ -167,6 +184,24 @@ impl OidMap {
     }
 }
 
+/// The number of `AS ENUM` and `ADD VALUE` word pairs in a statement, in any case. A pair in a string or a comment counts too, so the count can only be too high.
+fn enum_statements(sql: &[u8]) -> usize {
+    let words: Vec<Vec<u8>> = sql
+        .split(|b| !(b.is_ascii_alphanumeric() || *b == b'_'))
+        .filter(|w| !w.is_empty())
+        .map(<[u8]>::to_ascii_uppercase)
+        .collect();
+    words
+        .windows(2)
+        .filter(|w| matches!((&w[0][..], &w[1][..]), (b"AS", b"ENUM") | (b"ADD", b"VALUE")))
+        .count()
+}
+
+/// The value of a column of type `oid`, in text or in binary format. The `RowDescription` of a `Describe` before the `Bind` does not tell the format, so the value tells it: a text OID with 4 digits is below 16384, so 4 bytes that are not all digits are binary. Prisma reads the OIDs of the constraints in binary format.
+fn oid_column(v: &[u8]) -> Option<u32> {
+    parse_oid(v).or_else(|| <[u8; 4]>::try_from(v).ok().map(u32::from_be_bytes))
+}
+
 fn parse_oid(s: &[u8]) -> Option<u32> {
     if s.is_empty()
         || s.len() > 10
@@ -201,7 +236,7 @@ fn learn_labels(map: &mut OidMap, trace: &Msg, columns: &[usize]) {
         return;
     }
     for &i in columns {
-        if let Some(oid) = trace.vals[0].list().get(i).and_then(Val::bytes).and_then(parse_oid) {
+        if let Some(oid) = trace.vals[0].list().get(i).and_then(Val::bytes).and_then(oid_column) {
             map.label(oid);
         }
     }
@@ -235,7 +270,7 @@ fn learn(map: &mut OidMap, trace: &Msg, server: &Msg, types: &[i64]) {
             for ((t, s), ty) in cols.zip(types) {
                 if *ty == OID_TYPE
                     && let (Some(a), Some(b)) =
-                        (t.bytes().and_then(parse_oid), s.bytes().and_then(parse_oid))
+                        (t.bytes().and_then(oid_column), s.bytes().and_then(oid_column))
                 {
                     map.learn(a, b);
                 }
@@ -268,8 +303,13 @@ fn map_backend(map: &mut OidMap, msg: &mut Msg, types: &[i64]) {
         "DataRow" => {
             if let Val::List(cols) = &mut msg.vals[0] {
                 for (c, ty) in cols.iter_mut().zip(types) {
-                    if *ty == OID_TYPE {
+                    if *ty != OID_TYPE {
+                        continue;
+                    }
+                    if c.bytes().and_then(parse_oid).is_some() {
                         map.map_text_value(c, true);
+                    } else if c.bytes().is_some_and(|b| b.len() == 4) {
+                        map.map_binary_value(c, true);
                     }
                 }
             }
@@ -283,11 +323,13 @@ fn map_frontend(map: &mut OidMap, msg: &mut Msg) {
     match msg.name() {
         "Query" => {
             if let Val::Str(s) = &mut msg.vals[0] {
+                map.count_enums(s);
                 *s = map.map_sql(s, false);
             }
         }
         "Parse" => {
             if let Val::Str(s) = &mut msg.vals[1] {
+                map.count_enums(s);
                 *s = map.map_sql(s, false);
             }
             if let Val::List(types) = &mut msg.vals[2] {
@@ -738,6 +780,33 @@ mod tests {
     }
 
     #[test]
+    fn a_statement_that_makes_enum_labels_may_change_one_gap_by_one() {
+        assert_eq!(
+            enum_statements(b"CREATE TYPE \"m\" AS ENUM ('a', 'b'); create type n as\nenum ()"),
+            2
+        );
+        assert_eq!(enum_statements(b"ALTER TYPE m ADD VALUE IF NOT EXISTS 'c'"), 1);
+        assert_eq!(enum_statements(b"SELECT 'as', enum_range(NULL::m), alias_enum"), 0);
+        // The table before the type is even in the trace and odd on the server, so the labels skip one OID more on the server.
+        let pairs = [(16_384, 20_001), (16_406, 20_024), (16_419, 20_037)];
+        let enums = |sql: &[u8]| {
+            let mut map = OidMap::default();
+            let mut q = Msg::new(Dir::F, "Query", vec![str_val(std::str::from_utf8(sql).unwrap())]);
+            map_frontend(&mut map, &mut q);
+            for (t, s) in pairs {
+                map.learn(t, s);
+            }
+            map
+        };
+        assert_eq!(enums(b"CREATE TYPE m AS ENUM ('a')").gaps(), (2, 0));
+        assert_eq!(enums(b"CREATE TABLE m (a int)").gaps(), (2, 1));
+        // One statement explains one OID, not two.
+        let mut map = enums(b"CREATE TYPE m AS ENUM ('a')");
+        map.learn(16_430, 20_050);
+        assert_eq!(map.gaps(), (3, 1));
+    }
+
+    #[test]
     fn the_map_rewrites_whole_numbers_only() {
         let mut m = OidMap::default();
         m.learn(16_400, 16_500);
@@ -781,6 +850,20 @@ mod tests {
         let mut got = dr("17004");
         map_backend(&mut m, &mut got, &[26, 23]);
         assert_eq!(got, dr("16388"));
+        // A binary `oid` column, as Prisma reads it.
+        let bin = |oid: u32| {
+            Msg::new(
+                Dir::B,
+                "DataRow",
+                vec![Val::List(vec![Val::Str(oid.to_be_bytes().to_vec()), str_val("16390")])],
+            )
+        };
+        learn(&mut m, &bin(16_392), &bin(17_010), &[26, 23]);
+        assert_eq!(m.len(), 4);
+        let mut got = bin(17_010);
+        map_backend(&mut m, &mut got, &[26, 23]);
+        assert_eq!(got, bin(16_392));
+        assert_eq!(oid_column(b"1234"), Some(1234));
         let mut q =
             Msg::new(Dir::F, "Query", vec![str_val("SELECT * FROM pg_class WHERE oid = 16384")]);
         map_frontend(&mut m, &mut q);
