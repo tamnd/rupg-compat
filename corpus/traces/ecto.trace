@@ -1,0 +1,988 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/ecto/run.sh
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=ZUGI1EHgpthFbb4Vvb5W+NYA"
+2 B AuthenticationSASLContinue "r=ZUGI1EHgpthFbb4Vvb5W+NYAAw3HVbTLdBxpm4ZSec6CwTNC,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=/U8RE9DNugQU0tX+6zKMOZVh"
+1 B AuthenticationSASLContinue "r=/U8RE9DNugQU0tX+6zKMOZVhUZ2L+hxjcccvQy+fDuo/xkBj,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=ZUGI1EHgpthFbb4Vvb5W+NYAAw3HVbTLdBxpm4ZSec6CwTNC,p=tcIMENPVXe+nGIBwuGmlQFfX1B53TUbUdr1rt+k1Y6c="
+1 F SASLResponse "c=biws,r=/U8RE9DNugQU0tX+6zKMOZVhUZ2L+hxjcccvQy+fDuo/xkBj,p=HrhqpI9/D/CHsFGvsxNvhfN+rXkqWysxSpg7pyB+qVA="
+2 B AuthenticationSASLFinal "v=hm7eL47gjAk5Hgvq2vEsf9Ie1DiECkyOMJCoPcxDJtU="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 967956 "\xd9k&\x9d"
+2 B ReadyForQuery I
+1 B AuthenticationSASLFinal "v=CI/sYTZyfy8IJCC8aksAAQwRVmM6zKz3OApD3jpi2fc="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 967957 "\xd5\x1c]\xcb"
+1 B ReadyForQuery I
+1 F Query "SELECT t.oid, t.typname, t.typsend, t.typreceive, t.typoutput, t.typinput,\n       coalesce(d.typelem, t.typelem), coalesce(r.rngsubtype, 0), ARRAY (\n  SELECT a.atttypid\n  FROM pg_attribute AS a\n  WHERE a.attrelid = t.typrelid AND a.attnum > 0 AND NOT a.attisdropped\n  ORDER BY a.attnum\n)\n\nFROM pg_type AS t\nLEFT JOIN pg_type AS d ON t.typbasetype = d.oid\nLEFT JOIN pg_range AS r ON r.rngtypid = t.oid OR r.rngmultitypid = t.oid OR (t.typbasetype <> 0 AND r.rngtypid = t.typbasetype)\nWHERE (t.typrelid = 0)\nAND (t.typelem = 0 OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_type s WHERE s.typrelid != 0 AND s.oid = t.typelem))\n\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typsend" 1247 19 24 4 -1 0) ("typreceive" 1247 18 24 4 -1 0) ("typoutput" 1247 17 24 4 -1 0) ("typinput" 1247 16 24 4 -1 0) ("coalesce" 0 0 26 4 -1 0) ("coalesce" 0 0 26 4 -1 0) ("array" 0 0 1028 -1 -1 0)]
+1 B DataRow ["16" "bool" "boolsend" "boolrecv" "boolout" "boolin" "0" "0" "{}"]
+1 B DataRow ["17" "bytea" "byteasend" "bytearecv" "byteaout" "byteain" "0" "0" "{}"]
+1 B DataRow ["18" "char" "charsend" "charrecv" "charout" "charin" "0" "0" "{}"]
+1 B DataRow ["19" "name" "namesend" "namerecv" "nameout" "namein" "18" "0" "{}"]
+1 B DataRow ["20" "int8" "int8send" "int8recv" "int8out" "int8in" "0" "0" "{}"]
+1 B DataRow ["21" "int2" "int2send" "int2recv" "int2out" "int2in" "0" "0" "{}"]
+1 B DataRow ["22" "int2vector" "int2vectorsend" "int2vectorrecv" "int2vectorout" "int2vectorin" "21" "0" "{}"]
+1 B DataRow ["23" "int4" "int4send" "int4recv" "int4out" "int4in" "0" "0" "{}"]
+1 B DataRow ["24" "regproc" "regprocsend" "regprocrecv" "regprocout" "regprocin" "0" "0" "{}"]
+1 B DataRow ["25" "text" "textsend" "textrecv" "textout" "textin" "0" "0" "{}"]
+1 B DataRow ["26" "oid" "oidsend" "oidrecv" "oidout" "oidin" "0" "0" "{}"]
+1 B DataRow ["27" "tid" "tidsend" "tidrecv" "tidout" "tidin" "0" "0" "{}"]
+1 B DataRow ["28" "xid" "xidsend" "xidrecv" "xidout" "xidin" "0" "0" "{}"]
+1 B DataRow ["29" "cid" "cidsend" "cidrecv" "cidout" "cidin" "0" "0" "{}"]
+1 B DataRow ["30" "oidvector" "oidvectorsend" "oidvectorrecv" "oidvectorout" "oidvectorin" "26" "0" "{}"]
+1 B DataRow ["114" "json" "json_send" "json_recv" "json_out" "json_in" "0" "0" "{}"]
+1 B DataRow ["142" "xml" "xml_send" "xml_recv" "xml_out" "xml_in" "0" "0" "{}"]
+1 B DataRow ["194" "pg_node_tree" "pg_node_tree_send" "pg_node_tree_recv" "pg_node_tree_out" "pg_node_tree_in" "0" "0" "{}"]
+1 B DataRow ["3361" "pg_ndistinct" "pg_ndistinct_send" "pg_ndistinct_recv" "pg_ndistinct_out" "pg_ndistinct_in" "0" "0" "{}"]
+1 B DataRow ["3402" "pg_dependencies" "pg_dependencies_send" "pg_dependencies_recv" "pg_dependencies_out" "pg_dependencies_in" "0" "0" "{}"]
+1 B DataRow ["5017" "pg_mcv_list" "pg_mcv_list_send" "pg_mcv_list_recv" "pg_mcv_list_out" "pg_mcv_list_in" "0" "0" "{}"]
+1 B DataRow ["32" "pg_ddl_command" "pg_ddl_command_send" "pg_ddl_command_recv" "pg_ddl_command_out" "pg_ddl_command_in" "0" "0" "{}"]
+1 B DataRow ["5069" "xid8" "xid8send" "xid8recv" "xid8out" "xid8in" "0" "0" "{}"]
+1 B DataRow ["600" "point" "point_send" "point_recv" "point_out" "point_in" "701" "0" "{}"]
+1 B DataRow ["601" "lseg" "lseg_send" "lseg_recv" "lseg_out" "lseg_in" "600" "0" "{}"]
+1 B DataRow ["602" "path" "path_send" "path_recv" "path_out" "path_in" "0" "0" "{}"]
+1 B DataRow ["603" "box" "box_send" "box_recv" "box_out" "box_in" "600" "0" "{}"]
+1 B DataRow ["604" "polygon" "poly_send" "poly_recv" "poly_out" "poly_in" "0" "0" "{}"]
+1 B DataRow ["628" "line" "line_send" "line_recv" "line_out" "line_in" "701" "0" "{}"]
+1 B DataRow ["700" "float4" "float4send" "float4recv" "float4out" "float4in" "0" "0" "{}"]
+1 B DataRow ["701" "float8" "float8send" "float8recv" "float8out" "float8in" "0" "0" "{}"]
+1 B DataRow ["705" "unknown" "unknownsend" "unknownrecv" "unknownout" "unknownin" "0" "0" "{}"]
+1 B DataRow ["718" "circle" "circle_send" "circle_recv" "circle_out" "circle_in" "0" "0" "{}"]
+1 B DataRow ["790" "money" "cash_send" "cash_recv" "cash_out" "cash_in" "0" "0" "{}"]
+1 B DataRow ["829" "macaddr" "macaddr_send" "macaddr_recv" "macaddr_out" "macaddr_in" "0" "0" "{}"]
+1 B DataRow ["869" "inet" "inet_send" "inet_recv" "inet_out" "inet_in" "0" "0" "{}"]
+1 B DataRow ["650" "cidr" "cidr_send" "cidr_recv" "cidr_out" "cidr_in" "0" "0" "{}"]
+1 B DataRow ["774" "macaddr8" "macaddr8_send" "macaddr8_recv" "macaddr8_out" "macaddr8_in" "0" "0" "{}"]
+1 B DataRow ["1033" "aclitem" "-" "-" "aclitemout" "aclitemin" "0" "0" "{}"]
+1 B DataRow ["1042" "bpchar" "bpcharsend" "bpcharrecv" "bpcharout" "bpcharin" "0" "0" "{}"]
+1 B DataRow ["1043" "varchar" "varcharsend" "varcharrecv" "varcharout" "varcharin" "0" "0" "{}"]
+1 B DataRow ["1082" "date" "date_send" "date_recv" "date_out" "date_in" "0" "0" "{}"]
+1 B DataRow ["1083" "time" "time_send" "time_recv" "time_out" "time_in" "0" "0" "{}"]
+1 B DataRow ["1114" "timestamp" "timestamp_send" "timestamp_recv" "timestamp_out" "timestamp_in" "0" "0" "{}"]
+1 B DataRow ["1184" "timestamptz" "timestamptz_send" "timestamptz_recv" "timestamptz_out" "timestamptz_in" "0" "0" "{}"]
+1 B DataRow ["1186" "interval" "interval_send" "interval_recv" "interval_out" "interval_in" "0" "0" "{}"]
+1 B DataRow ["1266" "timetz" "timetz_send" "timetz_recv" "timetz_out" "timetz_in" "0" "0" "{}"]
+1 B DataRow ["1560" "bit" "bit_send" "bit_recv" "bit_out" "bit_in" "0" "0" "{}"]
+1 B DataRow ["1562" "varbit" "varbit_send" "varbit_recv" "varbit_out" "varbit_in" "0" "0" "{}"]
+1 B DataRow ["1700" "numeric" "numeric_send" "numeric_recv" "numeric_out" "numeric_in" "0" "0" "{}"]
+1 B DataRow ["1790" "refcursor" "textsend" "textrecv" "textout" "textin" "0" "0" "{}"]
+1 B DataRow ["2202" "regprocedure" "regproceduresend" "regprocedurerecv" "regprocedureout" "regprocedurein" "0" "0" "{}"]
+1 B DataRow ["2203" "regoper" "regopersend" "regoperrecv" "regoperout" "regoperin" "0" "0" "{}"]
+1 B DataRow ["2204" "regoperator" "regoperatorsend" "regoperatorrecv" "regoperatorout" "regoperatorin" "0" "0" "{}"]
+1 B DataRow ["2205" "regclass" "regclasssend" "regclassrecv" "regclassout" "regclassin" "0" "0" "{}"]
+1 B DataRow ["4191" "regcollation" "regcollationsend" "regcollationrecv" "regcollationout" "regcollationin" "0" "0" "{}"]
+1 B DataRow ["2206" "regtype" "regtypesend" "regtyperecv" "regtypeout" "regtypein" "0" "0" "{}"]
+1 B DataRow ["4096" "regrole" "regrolesend" "regrolerecv" "regroleout" "regrolein" "0" "0" "{}"]
+1 B DataRow ["4089" "regnamespace" "regnamespacesend" "regnamespacerecv" "regnamespaceout" "regnamespacein" "0" "0" "{}"]
+1 B DataRow ["6490" "regdatabase" "regdatabasesend" "regdatabaserecv" "regdatabaseout" "regdatabasein" "0" "0" "{}"]
+1 B DataRow ["2950" "uuid" "uuid_send" "uuid_recv" "uuid_out" "uuid_in" "0" "0" "{}"]
+1 B DataRow ["3220" "pg_lsn" "pg_lsn_send" "pg_lsn_recv" "pg_lsn_out" "pg_lsn_in" "0" "0" "{}"]
+1 B DataRow ["3614" "tsvector" "tsvectorsend" "tsvectorrecv" "tsvectorout" "tsvectorin" "0" "0" "{}"]
+1 B DataRow ["3642" "gtsvector" "-" "-" "gtsvectorout" "gtsvectorin" "0" "0" "{}"]
+1 B DataRow ["3615" "tsquery" "tsquerysend" "tsqueryrecv" "tsqueryout" "tsqueryin" "0" "0" "{}"]
+1 B DataRow ["3734" "regconfig" "regconfigsend" "regconfigrecv" "regconfigout" "regconfigin" "0" "0" "{}"]
+1 B DataRow ["3769" "regdictionary" "regdictionarysend" "regdictionaryrecv" "regdictionaryout" "regdictionaryin" "0" "0" "{}"]
+1 B DataRow ["3802" "jsonb" "jsonb_send" "jsonb_recv" "jsonb_out" "jsonb_in" "0" "0" "{}"]
+1 B DataRow ["4072" "jsonpath" "jsonpath_send" "jsonpath_recv" "jsonpath_out" "jsonpath_in" "0" "0" "{}"]
+1 B DataRow ["2970" "txid_snapshot" "txid_snapshot_send" "txid_snapshot_recv" "txid_snapshot_out" "txid_snapshot_in" "0" "0" "{}"]
+1 B DataRow ["5038" "pg_snapshot" "pg_snapshot_send" "pg_snapshot_recv" "pg_snapshot_out" "pg_snapshot_in" "0" "0" "{}"]
+1 B DataRow ["3904" "int4range" "range_send" "range_recv" "range_out" "range_in" "0" "23" "{}"]
+1 B DataRow ["3906" "numrange" "range_send" "range_recv" "range_out" "range_in" "0" "1700" "{}"]
+1 B DataRow ["3908" "tsrange" "range_send" "range_recv" "range_out" "range_in" "0" "1114" "{}"]
+1 B DataRow ["3910" "tstzrange" "range_send" "range_recv" "range_out" "range_in" "0" "1184" "{}"]
+1 B DataRow ["3912" "daterange" "range_send" "range_recv" "range_out" "range_in" "0" "1082" "{}"]
+1 B DataRow ["3926" "int8range" "range_send" "range_recv" "range_out" "range_in" "0" "20" "{}"]
+1 B DataRow ["4451" "int4multirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "23" "{}"]
+1 B DataRow ["4532" "nummultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1700" "{}"]
+1 B DataRow ["4533" "tsmultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1114" "{}"]
+1 B DataRow ["4534" "tstzmultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1184" "{}"]
+1 B DataRow ["4535" "datemultirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "1082" "{}"]
+1 B DataRow ["4536" "int8multirange" "multirange_send" "multirange_recv" "multirange_out" "multirange_in" "0" "20" "{}"]
+1 B DataRow ["2249" "record" "record_send" "record_recv" "record_out" "record_in" "0" "0" "{}"]
+1 B DataRow ["2287" "_record" "array_send" "array_recv" "array_out" "array_in" "2249" "0" "{}"]
+1 B DataRow ["2275" "cstring" "cstring_send" "cstring_recv" "cstring_out" "cstring_in" "0" "0" "{}"]
+1 B DataRow ["2276" "any" "-" "-" "any_out" "any_in" "0" "0" "{}"]
+1 B DataRow ["2277" "anyarray" "anyarray_send" "anyarray_recv" "anyarray_out" "anyarray_in" "0" "0" "{}"]
+1 B DataRow ["2278" "void" "void_send" "void_recv" "void_out" "void_in" "0" "0" "{}"]
+1 B DataRow ["2279" "trigger" "-" "-" "trigger_out" "trigger_in" "0" "0" "{}"]
+1 B DataRow ["3838" "event_trigger" "-" "-" "event_trigger_out" "event_trigger_in" "0" "0" "{}"]
+1 B DataRow ["2280" "language_handler" "-" "-" "language_handler_out" "language_handler_in" "0" "0" "{}"]
+1 B DataRow ["2281" "internal" "-" "-" "internal_out" "internal_in" "0" "0" "{}"]
+1 B DataRow ["2283" "anyelement" "-" "-" "anyelement_out" "anyelement_in" "0" "0" "{}"]
+1 B DataRow ["2776" "anynonarray" "-" "-" "anynonarray_out" "anynonarray_in" "0" "0" "{}"]
+1 B DataRow ["3500" "anyenum" "-" "-" "anyenum_out" "anyenum_in" "0" "0" "{}"]
+1 B DataRow ["3115" "fdw_handler" "-" "-" "fdw_handler_out" "fdw_handler_in" "0" "0" "{}"]
+1 B DataRow ["325" "index_am_handler" "-" "-" "index_am_handler_out" "index_am_handler_in" "0" "0" "{}"]
+1 B DataRow ["3310" "tsm_handler" "-" "-" "tsm_handler_out" "tsm_handler_in" "0" "0" "{}"]
+1 B DataRow ["269" "table_am_handler" "-" "-" "table_am_handler_out" "table_am_handler_in" "0" "0" "{}"]
+1 B DataRow ["3831" "anyrange" "-" "-" "anyrange_out" "anyrange_in" "0" "0" "{}"]
+1 B DataRow ["5077" "anycompatible" "-" "-" "anycompatible_out" "anycompatible_in" "0" "0" "{}"]
+1 B DataRow ["5078" "anycompatiblearray" "anycompatiblearray_send" "anycompatiblearray_recv" "anycompatiblearray_out" "anycompatiblearray_in" "0" "0" "{}"]
+1 B DataRow ["5079" "anycompatiblenonarray" "-" "-" "anycompatiblenonarray_out" "anycompatiblenonarray_in" "0" "0" "{}"]
+1 B DataRow ["5080" "anycompatiblerange" "-" "-" "anycompatiblerange_out" "anycompatiblerange_in" "0" "0" "{}"]
+1 B DataRow ["4537" "anymultirange" "-" "-" "anymultirange_out" "anymultirange_in" "0" "0" "{}"]
+1 B DataRow ["4538" "anycompatiblemultirange" "-" "-" "anycompatiblemultirange_out" "anycompatiblemultirange_in" "0" "0" "{}"]
+1 B DataRow ["4600" "pg_brin_bloom_summary" "brin_bloom_summary_send" "brin_bloom_summary_recv" "brin_bloom_summary_out" "brin_bloom_summary_in" "0" "0" "{}"]
+1 B DataRow ["4601" "pg_brin_minmax_multi_summary" "brin_minmax_multi_summary_send" "brin_minmax_multi_summary_recv" "brin_minmax_multi_summary_out" "brin_minmax_multi_summary_in" "0" "0" "{}"]
+1 B DataRow ["6437" "oid8" "oid8send" "oid8recv" "oid8out" "oid8in" "0" "0" "{}"]
+1 B DataRow ["1000" "_bool" "array_send" "array_recv" "array_out" "array_in" "16" "0" "{}"]
+1 B DataRow ["1001" "_bytea" "array_send" "array_recv" "array_out" "array_in" "17" "0" "{}"]
+1 B DataRow ["1002" "_char" "array_send" "array_recv" "array_out" "array_in" "18" "0" "{}"]
+1 B DataRow ["1003" "_name" "array_send" "array_recv" "array_out" "array_in" "19" "0" "{}"]
+1 B DataRow ["1016" "_int8" "array_send" "array_recv" "array_out" "array_in" "20" "0" "{}"]
+1 B DataRow ["1005" "_int2" "array_send" "array_recv" "array_out" "array_in" "21" "0" "{}"]
+1 B DataRow ["1006" "_int2vector" "array_send" "array_recv" "array_out" "array_in" "22" "0" "{}"]
+1 B DataRow ["1007" "_int4" "array_send" "array_recv" "array_out" "array_in" "23" "0" "{}"]
+1 B DataRow ["1008" "_regproc" "array_send" "array_recv" "array_out" "array_in" "24" "0" "{}"]
+1 B DataRow ["1009" "_text" "array_send" "array_recv" "array_out" "array_in" "25" "0" "{}"]
+1 B DataRow ["1028" "_oid" "array_send" "array_recv" "array_out" "array_in" "26" "0" "{}"]
+1 B DataRow ["1010" "_tid" "array_send" "array_recv" "array_out" "array_in" "27" "0" "{}"]
+1 B DataRow ["1011" "_xid" "array_send" "array_recv" "array_out" "array_in" "28" "0" "{}"]
+1 B DataRow ["1012" "_cid" "array_send" "array_recv" "array_out" "array_in" "29" "0" "{}"]
+1 B DataRow ["1013" "_oidvector" "array_send" "array_recv" "array_out" "array_in" "30" "0" "{}"]
+1 B DataRow ["199" "_json" "array_send" "array_recv" "array_out" "array_in" "114" "0" "{}"]
+1 B DataRow ["143" "_xml" "array_send" "array_recv" "array_out" "array_in" "142" "0" "{}"]
+1 B DataRow ["271" "_xid8" "array_send" "array_recv" "array_out" "array_in" "5069" "0" "{}"]
+1 B DataRow ["1017" "_point" "array_send" "array_recv" "array_out" "array_in" "600" "0" "{}"]
+1 B DataRow ["1018" "_lseg" "array_send" "array_recv" "array_out" "array_in" "601" "0" "{}"]
+1 B DataRow ["1019" "_path" "array_send" "array_recv" "array_out" "array_in" "602" "0" "{}"]
+1 B DataRow ["1020" "_box" "array_send" "array_recv" "array_out" "array_in" "603" "0" "{}"]
+1 B DataRow ["1027" "_polygon" "array_send" "array_recv" "array_out" "array_in" "604" "0" "{}"]
+1 B DataRow ["629" "_line" "array_send" "array_recv" "array_out" "array_in" "628" "0" "{}"]
+1 B DataRow ["1021" "_float4" "array_send" "array_recv" "array_out" "array_in" "700" "0" "{}"]
+1 B DataRow ["1022" "_float8" "array_send" "array_recv" "array_out" "array_in" "701" "0" "{}"]
+1 B DataRow ["719" "_circle" "array_send" "array_recv" "array_out" "array_in" "718" "0" "{}"]
+1 B DataRow ["791" "_money" "array_send" "array_recv" "array_out" "array_in" "790" "0" "{}"]
+1 B DataRow ["1040" "_macaddr" "array_send" "array_recv" "array_out" "array_in" "829" "0" "{}"]
+1 B DataRow ["1041" "_inet" "array_send" "array_recv" "array_out" "array_in" "869" "0" "{}"]
+1 B DataRow ["651" "_cidr" "array_send" "array_recv" "array_out" "array_in" "650" "0" "{}"]
+1 B DataRow ["775" "_macaddr8" "array_send" "array_recv" "array_out" "array_in" "774" "0" "{}"]
+1 B DataRow ["1034" "_aclitem" "array_send" "array_recv" "array_out" "array_in" "1033" "0" "{}"]
+1 B DataRow ["1014" "_bpchar" "array_send" "array_recv" "array_out" "array_in" "1042" "0" "{}"]
+1 B DataRow ["1015" "_varchar" "array_send" "array_recv" "array_out" "array_in" "1043" "0" "{}"]
+1 B DataRow ["1182" "_date" "array_send" "array_recv" "array_out" "array_in" "1082" "0" "{}"]
+1 B DataRow ["1183" "_time" "array_send" "array_recv" "array_out" "array_in" "1083" "0" "{}"]
+1 B DataRow ["1115" "_timestamp" "array_send" "array_recv" "array_out" "array_in" "1114" "0" "{}"]
+1 B DataRow ["1185" "_timestamptz" "array_send" "array_recv" "array_out" "array_in" "1184" "0" "{}"]
+1 B DataRow ["1187" "_interval" "array_send" "array_recv" "array_out" "array_in" "1186" "0" "{}"]
+1 B DataRow ["1270" "_timetz" "array_send" "array_recv" "array_out" "array_in" "1266" "0" "{}"]
+1 B DataRow ["1561" "_bit" "array_send" "array_recv" "array_out" "array_in" "1560" "0" "{}"]
+1 B DataRow ["1563" "_varbit" "array_send" "array_recv" "array_out" "array_in" "1562" "0" "{}"]
+1 B DataRow ["1231" "_numeric" "array_send" "array_recv" "array_out" "array_in" "1700" "0" "{}"]
+1 B DataRow ["2201" "_refcursor" "array_send" "array_recv" "array_out" "array_in" "1790" "0" "{}"]
+1 B DataRow ["2207" "_regprocedure" "array_send" "array_recv" "array_out" "array_in" "2202" "0" "{}"]
+1 B DataRow ["2208" "_regoper" "array_send" "array_recv" "array_out" "array_in" "2203" "0" "{}"]
+1 B DataRow ["2209" "_regoperator" "array_send" "array_recv" "array_out" "array_in" "2204" "0" "{}"]
+1 B DataRow ["2210" "_regclass" "array_send" "array_recv" "array_out" "array_in" "2205" "0" "{}"]
+1 B DataRow ["4192" "_regcollation" "array_send" "array_recv" "array_out" "array_in" "4191" "0" "{}"]
+1 B DataRow ["2211" "_regtype" "array_send" "array_recv" "array_out" "array_in" "2206" "0" "{}"]
+1 B DataRow ["4097" "_regrole" "array_send" "array_recv" "array_out" "array_in" "4096" "0" "{}"]
+1 B DataRow ["4090" "_regnamespace" "array_send" "array_recv" "array_out" "array_in" "4089" "0" "{}"]
+1 B DataRow ["6491" "_regdatabase" "array_send" "array_recv" "array_out" "array_in" "6490" "0" "{}"]
+1 B DataRow ["2951" "_uuid" "array_send" "array_recv" "array_out" "array_in" "2950" "0" "{}"]
+1 B DataRow ["3221" "_pg_lsn" "array_send" "array_recv" "array_out" "array_in" "3220" "0" "{}"]
+1 B DataRow ["3643" "_tsvector" "array_send" "array_recv" "array_out" "array_in" "3614" "0" "{}"]
+1 B DataRow ["3644" "_gtsvector" "array_send" "array_recv" "array_out" "array_in" "3642" "0" "{}"]
+1 B DataRow ["3645" "_tsquery" "array_send" "array_recv" "array_out" "array_in" "3615" "0" "{}"]
+1 B DataRow ["3735" "_regconfig" "array_send" "array_recv" "array_out" "array_in" "3734" "0" "{}"]
+1 B DataRow ["3770" "_regdictionary" "array_send" "array_recv" "array_out" "array_in" "3769" "0" "{}"]
+1 B DataRow ["3807" "_jsonb" "array_send" "array_recv" "array_out" "array_in" "3802" "0" "{}"]
+1 B DataRow ["4073" "_jsonpath" "array_send" "array_recv" "array_out" "array_in" "4072" "0" "{}"]
+1 B DataRow ["2949" "_txid_snapshot" "array_send" "array_recv" "array_out" "array_in" "2970" "0" "{}"]
+1 B DataRow ["5039" "_pg_snapshot" "array_send" "array_recv" "array_out" "array_in" "5038" "0" "{}"]
+1 B DataRow ["3905" "_int4range" "array_send" "array_recv" "array_out" "array_in" "3904" "0" "{}"]
+1 B DataRow ["3907" "_numrange" "array_send" "array_recv" "array_out" "array_in" "3906" "0" "{}"]
+1 B DataRow ["3909" "_tsrange" "array_send" "array_recv" "array_out" "array_in" "3908" "0" "{}"]
+1 B DataRow ["3911" "_tstzrange" "array_send" "array_recv" "array_out" "array_in" "3910" "0" "{}"]
+1 B DataRow ["3913" "_daterange" "array_send" "array_recv" "array_out" "array_in" "3912" "0" "{}"]
+1 B DataRow ["3927" "_int8range" "array_send" "array_recv" "array_out" "array_in" "3926" "0" "{}"]
+1 B DataRow ["6150" "_int4multirange" "array_send" "array_recv" "array_out" "array_in" "4451" "0" "{}"]
+1 B DataRow ["6151" "_nummultirange" "array_send" "array_recv" "array_out" "array_in" "4532" "0" "{}"]
+1 B DataRow ["6152" "_tsmultirange" "array_send" "array_recv" "array_out" "array_in" "4533" "0" "{}"]
+1 B DataRow ["6153" "_tstzmultirange" "array_send" "array_recv" "array_out" "array_in" "4534" "0" "{}"]
+1 B DataRow ["6155" "_datemultirange" "array_send" "array_recv" "array_out" "array_in" "4535" "0" "{}"]
+1 B DataRow ["6157" "_int8multirange" "array_send" "array_recv" "array_out" "array_in" "4536" "0" "{}"]
+1 B DataRow ["1263" "_cstring" "array_send" "array_recv" "array_out" "array_in" "2275" "0" "{}"]
+1 B DataRow ["6442" "_oid8" "array_send" "array_recv" "array_out" "array_in" "6437" "0" "{}"]
+1 B DataRow ["13354" "cardinal_number" "int4send" "domain_recv" "int4out" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13353" "_cardinal_number" "array_send" "array_recv" "array_out" "array_in" "13354" "0" "{}"]
+1 B DataRow ["13357" "character_data" "varcharsend" "domain_recv" "varcharout" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13356" "_character_data" "array_send" "array_recv" "array_out" "array_in" "13357" "0" "{}"]
+1 B DataRow ["13359" "sql_identifier" "namesend" "domain_recv" "nameout" "domain_in" "18" "0" "{}"]
+1 B DataRow ["13358" "_sql_identifier" "array_send" "array_recv" "array_out" "array_in" "13359" "0" "{}"]
+1 B DataRow ["13365" "time_stamp" "timestamptz_send" "domain_recv" "timestamptz_out" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13364" "_time_stamp" "array_send" "array_recv" "array_out" "array_in" "13365" "0" "{}"]
+1 B DataRow ["13367" "yes_or_no" "varcharsend" "domain_recv" "varcharout" "domain_in" "0" "0" "{}"]
+1 B DataRow ["13366" "_yes_or_no" "array_send" "array_recv" "array_out" "array_in" "13367" "0" "{}"]
+1 B CommandComplete "SELECT 199"
+1 B ReadyForQuery I
+1 F Parse "" "CREATE TABLE IF NOT EXISTS \"schema_migrations\" (\"version\" bigint, \"inserted_at\" timestamp(0), PRIMARY KEY (\"version\"))" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "CREATE TABLE"
+1 B CloseComplete
+1 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "LOCK TABLE \"schema_migrations\" IN SHARE UPDATE EXCLUSIVE MODE" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "LOCK TABLE"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Close S "ecto_34"
+2 F Parse "ecto_34" "SELECT s0.\"version\" FROM \"schema_migrations\" AS s0" []
+2 F Describe S "ecto_34"
+2 F Sync
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription []
+2 B RowDescription [("version" 273199 1 20 8 -1 0)]
+2 B ReadyForQuery T
+2 F Bind "" "ecto_34" [] [] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery T
+2 F Query "COMMIT"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "LOCK TABLE \"schema_migrations\" IN SHARE UPDATE EXCLUSIVE MODE" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "LOCK TABLE"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Close S "ecto_34"
+1 F Parse "ecto_34" "SELECT s0.\"version\" FROM \"schema_migrations\" AS s0" []
+1 F Describe S "ecto_34"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("version" 273199 1 20 8 -1 0)]
+1 F Bind "" "ecto_34" [] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery T
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "CREATE TYPE compat_mood AS ENUM ('happy', 'sad')" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "CREATE TYPE"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Parse "" "CREATE TABLE \"compat_items\" (\"id\" bigserial, \"name\" varchar(100) NOT NULL, \"price\" decimal(10,2), \"mood\" compat_mood DEFAULT 'happy' NOT NULL, \"tags\" text[], \"extra\" jsonb, \"inserted_at\" timestamp NOT NULL, \"updated_at\" timestamp NOT NULL, PRIMARY KEY (\"id\"))" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "CREATE TABLE"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Parse "" "CREATE UNIQUE INDEX \"compat_items_name_index\" ON \"compat_items\" (\"name\")" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "CREATE INDEX"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Close S "ecto_insert_schema_migrations_0"
+2 F Parse "ecto_insert_schema_migrations_0" "INSERT INTO \"schema_migrations\" (\"version\",\"inserted_at\") VALUES ($1,$2)" []
+2 F Describe S "ecto_insert_schema_migrations_0"
+2 F Flush
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription [20 1114]
+2 B NoData
+2 F Bind "" "ecto_insert_schema_migrations_0" [1 1] ["\x00\x00\x12m,\x1f\x8bA" "\x00\x03\x00C[\xbc.\x00"] []
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Query "COMMIT"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "LOCK TABLE \"schema_migrations\" IN SHARE UPDATE EXCLUSIVE MODE" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "LOCK TABLE"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Bind "" "ecto_34" [] [] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x00\x00\x12m,\x1f\x8bA"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "CREATE TABLE \"compat_orders\" (\"id\" bigserial, \"item_id\" bigint NOT NULL, CONSTRAINT \"compat_orders_item_id_fkey\" FOREIGN KEY (\"item_id\") REFERENCES \"compat_items\"(\"id\"), \"qty\" integer DEFAULT 1 NOT NULL, \"inserted_at\" timestamp NOT NULL, \"updated_at\" timestamp NOT NULL, PRIMARY KEY (\"id\"))" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "CREATE TABLE"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Parse "" "CREATE INDEX \"compat_orders_item_id_index\" ON \"compat_orders\" (\"item_id\")" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "CREATE INDEX"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Close S "ecto_insert_schema_migrations_0"
+1 F Parse "ecto_insert_schema_migrations_0" "INSERT INTO \"schema_migrations\" (\"version\",\"inserted_at\") VALUES ($1,$2)" []
+1 F Describe S "ecto_insert_schema_migrations_0"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [20 1114]
+1 B NoData
+1 F Bind "" "ecto_insert_schema_migrations_0" [1 1] ["\x00\x00\x12m,\x1f\x8bB" "\x00\x03\x00C[\xbc.\x00"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Query "COMMIT"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Close S "ecto_insert_compat_items_0"
+1 F Parse "ecto_insert_compat_items_0" "INSERT INTO \"compat_items\" (\"extra\",\"name\",\"price\",\"tags\",\"inserted_at\",\"updated_at\") VALUES ($1,$2,$3,$4,$5,$6) RETURNING \"id\"" []
+1 F Describe S "ecto_insert_compat_items_0"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [3802 1043 1700 1009 1114 1114]
+1 B RowDescription [("id" 273212 1 20 8 -1 0)]
+1 F Bind "" "ecto_insert_compat_items_0" [1 1 1 1 1 1] ["\x01{\"n\":1}" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x19\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01a" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x01"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Close S "ecto_insert_compat_items_0"
+1 F Parse "ecto_insert_compat_items_0" "INSERT INTO \"compat_items\" (\"extra\",\"name\",\"price\",\"tags\",\"inserted_at\",\"updated_at\",\"mood\") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING \"id\"" []
+1 F Describe S "ecto_insert_compat_items_0"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [3802 1043 1700 1009 1114 1114 273206]
+1 B RowDescription [("id" 273212 1 20 8 -1 0)]
+1 F Close S "ecto_insert_compat_items_0"
+1 F Sync
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Query "SELECT t.oid, t.typname, t.typsend, t.typreceive, t.typoutput, t.typinput,\n       coalesce(d.typelem, t.typelem), coalesce(r.rngsubtype, 0), ARRAY (\n  SELECT a.atttypid\n  FROM pg_attribute AS a\n  WHERE a.attrelid = t.typrelid AND a.attnum > 0 AND NOT a.attisdropped\n  ORDER BY a.attnum\n)\n\nFROM pg_type AS t\nLEFT JOIN pg_type AS d ON t.typbasetype = d.oid\nLEFT JOIN pg_range AS r ON r.rngtypid = t.oid OR r.rngmultitypid = t.oid OR (t.typbasetype <> 0 AND r.rngtypid = t.typbasetype)\nWHERE t.oid IN (273206)\n"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typsend" 1247 19 24 4 -1 0) ("typreceive" 1247 18 24 4 -1 0) ("typoutput" 1247 17 24 4 -1 0) ("typinput" 1247 16 24 4 -1 0) ("coalesce" 0 0 26 4 -1 0) ("coalesce" 0 0 26 4 -1 0) ("array" 0 0 1028 -1 -1 0)]
+1 B DataRow ["273206" "compat_mood" "enum_send" "enum_recv" "enum_out" "enum_in" "0" "0" "{}"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery T
+1 F Parse "ecto_insert_compat_items_0" "INSERT INTO \"compat_items\" (\"extra\",\"name\",\"price\",\"tags\",\"inserted_at\",\"updated_at\",\"mood\") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING \"id\"" []
+1 F Describe S "ecto_insert_compat_items_0"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [3802 1043 1700 1009 1114 1114 273206]
+1 B RowDescription [("id" 273212 1 20 8 -1 0)]
+1 F Bind "" "ecto_insert_compat_items_0" [1 1 1 1 1 1 1] ["\x01{\"n\":2}" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x19\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01b\x00\x00\x00\x01c" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@" "sad"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Close S "ecto_insert_compat_orders_0"
+1 F Parse "ecto_insert_compat_orders_0" "INSERT INTO \"compat_orders\" (\"inserted_at\",\"updated_at\",\"item_id\",\"qty\") VALUES ($1,$2,$3,$4) RETURNING \"id\"" []
+1 F Describe S "ecto_insert_compat_orders_0"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [1114 1114 20 23]
+1 B RowDescription [("id" 273228 1 20 8 -1 0)]
+1 F Bind "" "ecto_insert_compat_orders_0" [1 1 1 1] ["\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00\x00\x00\x02"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x01"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "ecto_insert_compat_orders_0" [1 1 1 1] ["\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x00\x00\x00\x00\x00\x00\x02" "\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02"]
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Close S "ecto_insert_compat_items_0"
+2 F Parse "ecto_insert_compat_items_0" "INSERT INTO \"compat_items\" (\"name\",\"price\",\"inserted_at\",\"updated_at\") VALUES ($1,$2,$3,$4) RETURNING \"id\"" []
+2 F Describe S "ecto_insert_compat_items_0"
+2 F Flush
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription [1043 1700 1114 1114]
+2 B RowDescription [("id" 273212 1 20 8 -1 0)]
+2 F Bind "" "ecto_insert_compat_items_0" [1 1 1 1] ["three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x03"]
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Query "ROLLBACK"
+2 B CommandComplete "ROLLBACK"
+2 B ReadyForQuery I
+1 F Close S "ecto_194"
+1 F Parse "ecto_194" "SELECT c0.\"id\", c0.\"name\", c0.\"price\", c0.\"mood\", c0.\"tags\", c0.\"extra\", c0.\"inserted_at\", c0.\"updated_at\" FROM \"compat_items\" AS c0 ORDER BY c0.\"id\"" []
+1 F Describe S "ecto_194"
+1 F Sync
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("id" 273212 1 20 8 -1 0) ("name" 273212 2 1043 -1 104 0) ("price" 273212 3 1700 -1 655366 0) ("mood" 273212 4 273206 4 -1 0) ("tags" 273212 5 1009 -1 -1 0) ("extra" 273212 6 3802 -1 -1 0) ("inserted_at" 273212 7 1114 8 -1 0) ("updated_at" 273212 8 1114 8 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "ecto_194" [] [] [1 1 1 1 1 1 1 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88" "happy" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x19\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01a" "\x01{\"n\": 1}" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"]
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88" "sad" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x19\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01b\x00\x00\x00\x01c" "\x01{\"n\": 2}" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+2 F Close S "ecto_867"
+2 F Parse "ecto_867" "SELECT c0.\"id\", c0.\"qty\", c0.\"item_id\", c0.\"inserted_at\", c0.\"updated_at\", c0.\"item_id\" FROM \"compat_orders\" AS c0 WHERE (c0.\"item_id\" = ANY($1)) ORDER BY c0.\"item_id\"" []
+2 F Describe S "ecto_867"
+2 F Sync
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription [1016]
+2 B RowDescription [("id" 273228 1 20 8 -1 0) ("qty" 273228 3 23 4 -1 0) ("item_id" 273228 2 20 8 -1 0) ("inserted_at" 273228 4 1114 8 -1 0) ("updated_at" 273228 5 1114 8 -1 0) ("item_id" 273228 2 20 8 -1 0)]
+2 B ReadyForQuery I
+2 F Bind "" "ecto_867" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x14\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x01"] [1 1 1 1 1 1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x01" "\x00\x00\x00\x02" "\x00\x00\x00\x00\x00\x00\x00\x01" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x00\x00\x00\x00\x00\x00\x01"]
+2 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02" "\x00\x00\x00\x01" "\x00\x00\x00\x00\x00\x00\x00\x02" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x00\x00\x00\x00\x00\x00\x02"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery I
+1 F Close S "ecto_226"
+1 F Parse "ecto_226" "SELECT c0.\"id\", c0.\"name\", c0.\"price\", c0.\"mood\", c0.\"tags\", c0.\"extra\", c0.\"inserted_at\", c0.\"updated_at\" FROM \"compat_items\" AS c0 WHERE (c0.\"name\" = $1)" []
+1 F Describe S "ecto_226"
+1 F Sync
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [25]
+1 B RowDescription [("id" 273212 1 20 8 -1 0) ("name" 273212 2 1043 -1 104 0) ("price" 273212 3 1700 -1 655366 0) ("mood" 273212 4 273206 4 -1 0) ("tags" 273212 5 1009 -1 -1 0) ("extra" 273212 6 3802 -1 -1 0) ("inserted_at" 273212 7 1114 8 -1 0) ("updated_at" 273212 8 1114 8 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "ecto_226" [1] ["two"] [1 1 1 1 1 1 1 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88" "sad" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x19\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01b\x00\x00\x00\x01c" "\x01{\"n\": 2}" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+2 F Close S "ecto_899"
+2 F Parse "ecto_899" "SELECT count(*) FROM \"compat_items\" AS c0 WHERE (c0.\"mood\" = 'sad')" []
+2 F Describe S "ecto_899"
+2 F Sync
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription []
+2 B RowDescription [("count" 0 0 20 8 -1 0)]
+2 B ReadyForQuery I
+2 F Bind "" "ecto_899" [] [] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x01"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+1 F Close S "ecto_258"
+1 F Parse "ecto_258" "SELECT count(*) FROM \"compat_orders\" AS c0 WHERE (c0.\"qty\" = 1)" []
+1 F Describe S "ecto_258"
+1 F Sync
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("count" 0 0 20 8 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "ecto_258" [] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x01"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+2 F Close S "ecto_931"
+2 F Parse "ecto_931" "SELECT c0.\"name\", sum(c1.\"qty\") FROM \"compat_items\" AS c0 INNER JOIN \"compat_orders\" AS c1 ON c1.\"item_id\" = c0.\"id\" GROUP BY c0.\"name\" ORDER BY c0.\"name\"" []
+2 F Describe S "ecto_931"
+2 F Sync
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription []
+2 B RowDescription [("name" 273212 2 1043 -1 104 0) ("sum" 0 0 20 8 -1 0)]
+2 B ReadyForQuery I
+2 F Bind "" "ecto_931" [] [] [1 1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["one" "\x00\x00\x00\x00\x00\x00\x00\x02"]
+2 B DataRow ["two" "\x00\x00\x00\x00\x00\x00\x00\x01"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery I
+1 F Parse "" "SELECT * FROM compat_items WHERE price > $1 ORDER BY id" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [1700]
+1 B RowDescription [("id" 273212 1 20 8 -1 0) ("name" 273212 2 1043 -1 104 0) ("price" 273212 3 1700 -1 655366 0) ("mood" 273212 4 273206 4 -1 0) ("tags" 273212 5 1009 -1 -1 0) ("extra" 273212 6 3802 -1 -1 0) ("inserted_at" 273212 7 1114 8 -1 0) ("updated_at" 273212 8 1114 8 -1 0)]
+1 F Bind "" "" [1] ["\x00\x02\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00"] [1 1 1 1 1 1 1 1]
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88" "sad" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x19\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01b\x00\x00\x00\x01c" "\x01{\"n\": 2}" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"]
+1 B CommandComplete "SELECT 1"
+1 B CloseComplete
+1 B ReadyForQuery I
+2 F Close S "ecto_226"
+2 F Parse "ecto_226" "SELECT c0.\"id\", c0.\"name\", c0.\"price\", c0.\"mood\", c0.\"tags\", c0.\"extra\", c0.\"inserted_at\", c0.\"updated_at\" FROM \"compat_items\" AS c0 WHERE (c0.\"name\" = $1)" [25]
+2 F Describe S "ecto_226"
+2 F Flush
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription [25]
+2 B RowDescription [("id" 273212 1 20 8 -1 0) ("name" 273212 2 1043 -1 104 0) ("price" 273212 3 1700 -1 655366 0) ("mood" 273212 4 273206 4 -1 0) ("tags" 273212 5 1009 -1 -1 0) ("extra" 273212 6 3802 -1 -1 0) ("inserted_at" 273212 7 1114 8 -1 0) ("updated_at" 273212 8 1114 8 -1 0)]
+2 F Bind "" "ecto_226" [1] ["two"] [1 1 1 1 1 1 1 1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88" "sad" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x19\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01b\x00\x00\x00\x01c" "\x01{\"n\": 2}" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+1 F Close S "ecto_update_compat_items_1"
+1 F Parse "ecto_update_compat_items_1" "UPDATE \"compat_items\" SET \"price\" = $1, \"updated_at\" = $2 WHERE \"id\" = $3" []
+1 F Describe S "ecto_update_compat_items_1"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [1700 1114 20]
+1 B NoData
+1 F Bind "" "ecto_update_compat_items_1" [1 1 1] ["\x00\x02\x00\x00\x00\x00\x00\x02\x00\x05\x00\x00" "\x00\x03\x00C[\xcb\xc2\xdd" "\x00\x00\x00\x00\x00\x00\x00\x02"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+2 F Close S "ecto_963"
+2 F Parse "ecto_963" "UPDATE \"compat_orders\" AS c0 SET \"qty\" = $1 WHERE (c0.\"qty\" = 1)" []
+2 F Describe S "ecto_963"
+2 F Sync
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription [23]
+2 B NoData
+2 B ReadyForQuery I
+2 F Bind "" "ecto_963" [1] ["\x00\x00\x00\x03"] []
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery I
+1 F Close S "ecto_insert_compat_items_0"
+1 F Parse "ecto_insert_compat_items_0" "INSERT INTO \"compat_items\" (\"name\",\"inserted_at\",\"updated_at\") VALUES ($1,$2,$3) RETURNING \"id\"" []
+1 F Describe S "ecto_insert_compat_items_0"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [1043 1114 1114]
+1 B RowDescription [("id" 273212 1 20 8 -1 0)]
+1 F Bind "" "ecto_insert_compat_items_0" [1 1 1] ["one" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x02\xea]\xbb\x15\x13@"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B ErrorResponse S "ERROR" V "ERROR" C "23505" M "duplicate key value violates unique constraint \"compat_items_name_index\"" D "Key (name)=(one) already exists." s "public" t "compat_items" n "compat_items_name_index" F "nbtinsert.c" L "669" R "_bt_check_unique"
+1 B ReadyForQuery I
+2 F Parse "" "SELECT 1 / 0" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+2 F Bind "" "" [] [] [1]
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+2 B ReadyForQuery I
+1 F Parse "" "CREATE TABLE IF NOT EXISTS \"schema_migrations\" (\"version\" bigint, \"inserted_at\" timestamp(0), PRIMARY KEY (\"version\"))" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B NoticeResponse S "NOTICE" V "NOTICE" C "42P07" M "relation \"schema_migrations\" already exists, skipping" F "parse_utilcmd.c" L "214" R "transformCreateStmt"
+1 B CommandComplete "CREATE TABLE"
+1 B CloseComplete
+1 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "LOCK TABLE \"schema_migrations\" IN SHARE UPDATE EXCLUSIVE MODE" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "LOCK TABLE"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Bind "" "ecto_34" [] [] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x00\x00\x12m,\x1f\x8bA"]
+2 B DataRow ["\x00\x00\x12m,\x1f\x8bB"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery T
+2 F Query "COMMIT"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "LOCK TABLE \"schema_migrations\" IN SHARE UPDATE EXCLUSIVE MODE" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "LOCK TABLE"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Bind "" "ecto_34" [] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x12m,\x1f\x8bA"]
+1 B DataRow ["\x00\x00\x12m,\x1f\x8bB"]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery T
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "DROP INDEX \"compat_orders_item_id_index\"" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "DROP INDEX"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Parse "" "DROP TABLE \"compat_orders\"" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "DROP TABLE"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Close S "ecto_418"
+2 F Parse "ecto_418" "DELETE FROM \"schema_migrations\" AS s0 WHERE (s0.\"version\" = $1::bigint)" []
+2 F Describe S "ecto_418"
+2 F Sync
+2 B CloseComplete
+2 B ParseComplete
+2 B ParameterDescription [20]
+2 B NoData
+2 B ReadyForQuery T
+2 F Bind "" "ecto_418" [1] ["\x00\x00\x12m,\x1f\x8bB"] []
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "DELETE 1"
+2 B ReadyForQuery T
+2 F Query "COMMIT"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Query "BEGIN"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "LOCK TABLE \"schema_migrations\" IN SHARE UPDATE EXCLUSIVE MODE" []
+2 F Describe S ""
+2 F Flush
+2 B ParseComplete
+2 B ParameterDescription []
+2 B NoData
+2 F Bind "" "" [] [] []
+2 F Execute "" 0
+2 F Close S ""
+2 F Sync
+2 B BindComplete
+2 B CommandComplete "LOCK TABLE"
+2 B CloseComplete
+2 B ReadyForQuery T
+2 F Bind "" "ecto_34" [] [] [1]
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B DataRow ["\x00\x00\x12m,\x1f\x8bA"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery T
+1 F Query "BEGIN"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "" "DROP INDEX \"compat_items_name_index\"" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "DROP INDEX"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Parse "" "DROP TABLE \"compat_items\"" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "DROP TABLE"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Parse "" "DROP TYPE compat_mood" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "DROP TYPE"
+1 B CloseComplete
+1 B ReadyForQuery T
+1 F Close S "ecto_418"
+1 F Parse "ecto_418" "DELETE FROM \"schema_migrations\" AS s0 WHERE (s0.\"version\" = $1::bigint)" [20]
+1 F Describe S "ecto_418"
+1 F Flush
+1 B CloseComplete
+1 B ParseComplete
+1 B ParameterDescription [20]
+1 B NoData
+1 F Bind "" "ecto_418" [1] ["\x00\x00\x12m,\x1f\x8bA"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "DELETE 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+2 F Query "COMMIT"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+1 F Parse "" "DROP TABLE schema_migrations" []
+1 F Describe S ""
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B NoData
+1 F Bind "" "" [] [] []
+1 F Execute "" 0
+1 F Close S ""
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "DROP TABLE"
+1 B CloseComplete
+1 B ReadyForQuery I
+3 F CancelRequest 967956 "\xd9k&\x9d"
+3 B End
+3 F End
+2 F Terminate
+2 F End
+2 B End
+4 F CancelRequest 967957 "\xd5\x1c]\xcb"
+4 B End
+4 F End
+1 F Terminate
+1 F End
+1 B End
