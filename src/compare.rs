@@ -614,17 +614,22 @@ mod tests {
     #[test]
     fn rows_without_order_by_are_a_multiset() {
         let q = |sql: &str, rows: &str| format!("1 F Query \"{sql}\"\n{rows}1 B ReadyForQuery I");
-        let ab = "1 B DataRow [\"a\"]\n1 B DataRow [\"b\"]\n";
-        let ba = "1 B DataRow [\"b\"]\n1 B DataRow [\"a\"]\n";
-        assert!(run(&q("SELECT x FROM t", ab), &q("SELECT x FROM t", ba)).diffs.is_empty());
+        let a_then_b = "1 B DataRow [\"a\"]\n1 B DataRow [\"b\"]\n";
+        let b_then_a = "1 B DataRow [\"b\"]\n1 B DataRow [\"a\"]\n";
+        assert!(
+            run(&q("SELECT x FROM t", a_then_b), &q("SELECT x FROM t", b_then_a)).diffs.is_empty()
+        );
         assert_eq!(
-            run(&q("SELECT x FROM t ORDER BY x", ab), &q("SELECT x FROM t ORDER BY x", ba))
-                .diffs
-                .len(),
+            run(
+                &q("SELECT x FROM t ORDER BY x", a_then_b),
+                &q("SELECT x FROM t ORDER BY x", b_then_a)
+            )
+            .diffs
+            .len(),
             1
         );
         assert_eq!(
-            run(&q("SELECT x FROM t", ab), &q("SELECT x FROM t", "1 B DataRow [\"a\"]\n"))
+            run(&q("SELECT x FROM t", a_then_b), &q("SELECT x FROM t", "1 B DataRow [\"a\"]\n"))
                 .diffs
                 .len(),
             1
@@ -635,7 +640,7 @@ mod tests {
     fn error_text_counts_and_the_source_fields_do_not() {
         let e = |m: &str, line: &str| {
             format!(
-                "1 F Query \"SELEC\"\n1 B ErrorResponse S \"ERROR\" C \"42601\" M \"{m}\" F \"scan.l\" L \"{line}\" R \"scanner_yyerror\"\n1 B ReadyForQuery I"
+                "1 F Query \"SELECT 1 +\"\n1 B ErrorResponse S \"ERROR\" C \"42601\" M \"{m}\" F \"scan.l\" L \"{line}\" R \"scanner_yyerror\"\n1 B ReadyForQuery I"
             )
         };
         let o = run(&e("syntax error", "1"), &e("syntax error", "2"));
