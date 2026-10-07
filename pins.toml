@@ -45,10 +45,14 @@ commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
 
 [clients]
 # One table for each client whose trace or suite is in corpus/ or clients/, with the version that made it.
-# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod, Cargo.toml, package.json, pom.xml or scenario.csproj installs. The Node clients run on the Node.js of clients/node.sh, the Java clients run on the JDK and Maven of clients/java.sh, and the .NET clients run on the .NET SDK of clients/dotnet.sh.
+# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod, Cargo.toml, package.json, pom.xml, scenario.csproj or Gemfile installs. The Node clients run on the Node.js of clients/node.sh, the Java clients run on the JDK and Maven of clients/java.sh, the .NET clients run on the .NET SDK of clients/dotnet.sh, and the Ruby clients run on the Ruby of clients/ruby.sh.
 
 [clients.asyncpg]
 version = "0.32.0"
+
+[clients.activerecord]
+# Active Record, the ORM of Rails, on the pg gem 1.7.0.
+version = "8.1.4"
 
 [clients.diesel]
 # Diesel CLI, with the libpq of the oracle build.
@@ -140,6 +144,10 @@ version = "2.9.13"
 
 [clients.r2dbc-postgresql]
 version = "1.1.3.RELEASE"
+
+[clients.ruby-pg]
+# The pg gem for x86_64-linux, with its own libpq 18.6.
+version = "1.7.0"
 
 [clients.sequelize]
 # On node-postgres 8.23.1.
