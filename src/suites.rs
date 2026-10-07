@@ -203,6 +203,10 @@ fn invoke(
         .arg(format!("--user={}", oracle::USER));
     if dir == REGRESS {
         cmd.arg("--dlpath=.").arg("--max-concurrent-tests=20");
+        // In 14, the makefile asks pg_regress to make the directory of the tablespace test. From 15, pg_regress always makes it.
+        if o.pin.major <= 14 {
+            cmd.arg("--make-testtablespace-dir");
+        }
     }
     cmd.args(tests).stdin(Stdio::null());
     server.env(o, &mut cmd);
