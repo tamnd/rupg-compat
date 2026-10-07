@@ -9,6 +9,7 @@ use std::process::{Command, Stdio};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 use crate::client;
+use crate::compare::{Count, Outcome, Share};
 use crate::import::{self, ISOLATION, PIPELINE, REGRESS};
 use crate::oracle::{self, Oracle};
 
@@ -72,6 +73,60 @@ impl Server {
     }
 }
 
+/// The counts of a run that compares answers with the rules of `compare`: replay, the catalog suite and the parameter suite.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct Checked {
+    pub(crate) items: [Count; 15],
+    pub(crate) rules: [Count; 4],
+    pub(crate) share: Share,
+    /// The share of each case, by name.
+    pub(crate) cases: Vec<(String, Share)>,
+}
+
+impl Checked {
+    pub(crate) fn new(o: &Outcome, cases: Vec<(String, Share)>) -> Checked {
+        Checked { items: o.items, rules: o.rules, share: o.share, cases }
+    }
+
+    /// The part of the result file after the lists.
+    fn to_toml(&self) -> String {
+        let ints = |v: &mut dyn Iterator<Item = usize>| {
+            v.map(|n| n.to_string()).collect::<Vec<_>>().join(", ")
+        };
+        let s = self.share;
+        let mut text = format!(
+            "messages = {}\nmessages_equal = {}\nrows = {}\nrows_equal = {}\nunstable_messages = {}\n",
+            s.messages, s.messages_equal, s.rows, s.rows_equal, s.unstable_messages
+        );
+        for (table, counts) in [("exclusions", &self.items[..]), ("rules", &self.rules[..])] {
+            text.push_str(&format!(
+                "\n[{table}]\napplied = [{}]\ndiffered = [{}]\n",
+                ints(&mut counts.iter().map(|c| c.applied)),
+                ints(&mut counts.iter().map(|c| c.differed))
+            ));
+        }
+        if !self.cases.is_empty() {
+            text.push_str("\n# messages, messages equal, rows, rows equal\n[cases]\n");
+            for (name, s) in &self.cases {
+                text.push_str(&format!(
+                    "{} = [{}, {}, {}, {}]\n",
+                    quote(name),
+                    s.messages,
+                    s.messages_equal,
+                    s.rows,
+                    s.rows_equal
+                ));
+            }
+        }
+        text
+    }
+}
+
+/// A basic TOML string.
+pub(crate) fn quote(s: &str) -> String {
+    format!("\"{}\"", s.replace('\\', "\\\\").replace('"', "\\\""))
+}
+
 /// The result of one run of one suite.
 #[derive(Debug, Default, PartialEq, Eq)]
 pub(crate) struct Run {
@@ -80,6 +135,8 @@ pub(crate) struct Run {
     /// The cases that the unstable filter took out. They are in neither list.
     pub(crate) unstable: Vec<String>,
     pub(crate) seconds: u64,
+    /// The counts of the comparison, for the runs that use `compare`.
+    pub(crate) checked: Option<Checked>,
 }
 
 impl Run {
@@ -93,8 +150,7 @@ impl Run {
 
     /// The result file, in the subset of TOML that `src/toml.rs` reads.
     pub(crate) fn to_toml(&self, o: &Oracle, server: &Server, started: &str) -> String {
-        let quote =
-            |name: &str| format!("  \"{}\",\n", name.replace('\\', "\\\\").replace('"', "\\\""));
+        let quote = |name: &str| format!("  {},\n", quote(name));
         let list = |pass: bool| {
             self.tests.iter().filter(|t| t.1 == pass).map(|t| quote(&t.0)).collect::<String>()
         };
@@ -111,7 +167,7 @@ impl Run {
             list(true),
             list(false),
             suite = self.suite,
-        )
+        ) + &self.checked.as_ref().map(Checked::to_toml).unwrap_or_default()
     }
 }
 
@@ -482,6 +538,7 @@ mod tests {
             tests: vec![("a".into(), true), ("b\"".into(), false)],
             unstable: vec!["c".into()],
             seconds: 3,
+            checked: None,
         };
         let pins = crate::pins::Pins::builtin();
         let o = Oracle::new(&pins, 19, Path::new("/w")).unwrap();

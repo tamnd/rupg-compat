@@ -14,7 +14,7 @@ use crate::client::{self, Conn, Target};
 use crate::compare::{self, Outcome};
 use crate::import;
 use crate::message::{Dir, Msg, Val};
-use crate::suites::Run;
+use crate::suites::{Checked, Run};
 use crate::trace::{Event, Line, Trace};
 
 /// The database that the catalog suite makes new on each server.
@@ -159,13 +159,19 @@ pub(crate) fn verdicts(
     unstable: &BTreeSet<compare::Place>,
 ) -> Run {
     let mut run = Run { suite: suite.into(), ..Run::default() };
+    let mut shares = Vec::new();
     for (i, case) in cases.iter().enumerate() {
         if unstable.contains(&(CONN, i)) {
             run.unstable.push(case.name.clone());
         } else {
             run.tests.push((case.name.clone(), !outcome.diffs.contains_key(&(CONN, i))));
+            shares.push((
+                case.name.clone(),
+                outcome.shares.get(&(CONN, i)).copied().unwrap_or_default(),
+            ));
         }
     }
+    run.checked = Some(Checked::new(outcome, shares));
     run
 }
 
@@ -275,5 +281,8 @@ mod tests {
         let run = verdicts("catalog", &cases, &outcome, &BTreeSet::from([(CONN, 1)]));
         assert_eq!(run.tests, [("a".to_string(), true), ("c".into(), false)]);
         assert_eq!(run.unstable, ["b"]);
+        let checked = run.checked.unwrap();
+        let names: Vec<&str> = checked.cases.iter().map(|c| c.0.as_str()).collect();
+        assert_eq!(names, ["a", "c"]);
     }
 }

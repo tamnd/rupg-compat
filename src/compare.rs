@@ -45,6 +45,29 @@ pub(crate) struct Count {
 /// Where a difference is: the connection and the group in it.
 pub(crate) type Place = (u32, usize);
 
+/// How much of the answer of the oracle the answer under test has, after the rules and the exclusions. The report publishes these shares (spec/21 section 21.15).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) struct Share {
+    /// The backend messages of the oracle, and those that are equal at the same place in the answer under test.
+    pub(crate) messages: usize,
+    pub(crate) messages_equal: usize,
+    /// The `DataRow` messages of the oracle, and those that the answer under test has too, counted as a multiset.
+    pub(crate) rows: usize,
+    pub(crate) rows_equal: usize,
+    /// The backend messages of the oracle in the groups that the unstable filter took out. They are not in `messages`.
+    pub(crate) unstable_messages: usize,
+}
+
+impl Share {
+    pub(crate) fn add(&mut self, other: Share) {
+        self.messages += other.messages;
+        self.messages_equal += other.messages_equal;
+        self.rows += other.rows;
+        self.rows_equal += other.rows_equal;
+        self.unstable_messages += other.unstable_messages;
+    }
+}
+
 #[derive(Debug, Default)]
 pub(crate) struct Outcome {
     /// The groups that the comparison looked at, and the backend messages in them.
@@ -52,6 +75,9 @@ pub(crate) struct Outcome {
     pub(crate) messages: usize,
     pub(crate) items: [Count; 15],
     pub(crate) rules: [Count; 4],
+    /// The share of all groups, and of each group.
+    pub(crate) share: Share,
+    pub(crate) shares: BTreeMap<Place, Share>,
     /// The first difference of each group that differs.
     pub(crate) diffs: BTreeMap<Place, String>,
     /// The groups that the unstable filter took out.
@@ -63,6 +89,7 @@ impl Outcome {
         self.groups += other.groups;
         self.messages += other.messages;
         self.unstable += other.unstable;
+        self.share.add(other.share);
         for (a, b) in self.items.iter_mut().zip(other.items) {
             a.applied += b.applied;
             a.differed += b.differed;
@@ -327,12 +354,13 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     {
         return Some(5);
     }
-    // Item 3: the wait event of a process is a sample of its state, like a counter.
+    // Item 3: the wait event of a process is a sample of its state, like a counter. The decisions of `pg_stat_autovacuum_scores` (new in 19) compare its scores, which are counters, with thresholds.
     if name == "reltuples"
         || ctx.statistics
             && (NUMERIC_TYPES.contains(&ty)
                 || TIME_TYPES.contains(&ty)
-                || ["wait_event_type", "wait_event"].contains(&name))
+                || ["wait_event_type", "wait_event"].contains(&name)
+                || ["do_vacuum", "do_analyze", "for_wraparound"].contains(&name))
     {
         return Some(3);
     }
@@ -526,6 +554,26 @@ fn sort_rows(out: &mut [Shown]) {
     }
 }
 
+/// The share of one group: the messages of `want` that are equal at the same place in `got`, and the rows of `want` that `got` has too.
+fn share(want: &[Shown], got: &[Shown]) -> Share {
+    let equal = want.iter().zip(got).filter(|(w, g)| w.msg == g.msg).count();
+    let mut left: BTreeMap<&[Val], usize> = BTreeMap::new();
+    for g in got.iter().filter(|g| g.msg.name() == "DataRow") {
+        *left.entry(&g.msg.vals).or_default() += 1;
+    }
+    let mut share = Share { messages: want.len(), messages_equal: equal, ..Share::default() };
+    for w in want.iter().filter(|w| w.msg.name() == "DataRow") {
+        share.rows += 1;
+        if let Some(n) = left.get_mut(w.msg.vals.as_slice())
+            && *n > 0
+        {
+            *n -= 1;
+            share.rows_equal += 1;
+        }
+    }
+    share
+}
+
 fn count(outcome: &mut Outcome, rule: Rule, differed: bool) {
     let c = match rule {
         Rule::Item(n) => &mut outcome.items[n - 1],
@@ -567,6 +615,8 @@ pub(crate) fn compare(want: &[Line], got: &[Line], skip: &BTreeSet<Place>) -> Ou
                 context(if wg.front.is_empty() { gg } else { wg }, &mut prepared, replication);
             if skip.contains(&(conn, i)) {
                 out.unstable += 1;
+                // The messages of an unstable group are not a difference. The ratchet counts them, so that more unstable groups do not lower its number. A copy of the column state keeps the comparison of the next groups as it is.
+                out.share.unstable_messages += show(wg, &ctx, &mut wcols.clone()).len();
                 continue;
             }
             out.groups += 1;
@@ -587,6 +637,9 @@ pub(crate) fn compare(want: &[Line], got: &[Line], skip: &BTreeSet<Place>) -> Ou
                         .insert((conn, i), format!("want {}\n    got  {got}", format_msg(&ws.msg)));
                 }
             }
+            let share = share(&w, &g);
+            out.share.add(share);
+            out.shares.insert((conn, i), share);
             if g.len() > w.len() && !out.diffs.contains_key(&(conn, i)) {
                 out.diffs.insert(
                     (conn, i),
@@ -650,6 +703,25 @@ mod tests {
         assert_eq!(o.rules[3], Count { applied: 1, differed: 1 });
         let c = a.replace("\"key1\"", "\"longer key\"");
         assert_eq!(run(&a, &c).diffs.len(), 1);
+    }
+
+    #[test]
+    fn the_share_counts_equal_messages_and_rows() {
+        let want = "1 F Query \"SELECT x FROM t\"\n1 B DataRow [\"a\"]\n1 B DataRow [\"b\"]\n1 B DataRow [\"b\"]\n1 B CommandComplete \"SELECT 3\"\n1 B ReadyForQuery I";
+        let got = "1 F Query \"SELECT x FROM t\"\n1 B DataRow [\"b\"]\n1 B DataRow [\"c\"]\n1 B DataRow [\"a\"]\n1 B CommandComplete \"SELECT 3\"\n1 B ReadyForQuery I";
+        let o = run(want, got);
+        // Sorted, the rows are a b b and a b c: two of three are equal at their place and in the multiset.
+        let share =
+            Share { messages: 5, messages_equal: 4, rows: 3, rows_equal: 2, unstable_messages: 0 };
+        assert_eq!(o.share, share);
+        assert_eq!(o.shares[&(1, 0)], share);
+        // The messages of an unstable group are not in the share, but the ratchet counts them.
+        let skipped = compare(&lines(want), &lines(got), &BTreeSet::from([(1, 0)]));
+        assert_eq!((skipped.share.messages, skipped.share.unstable_messages), (0, 5));
+        assert_eq!(
+            run(want, want).share,
+            Share { messages: 5, messages_equal: 5, rows: 3, rows_equal: 3, unstable_messages: 0 }
+        );
     }
 
     #[test]
@@ -755,6 +827,12 @@ mod tests {
         );
         assert!(o.diffs.is_empty());
         assert_eq!(o.items[2], Count { applied: 1, differed: 1 });
+        let d = format!("{} {}", col("relname", 19), col("do_analyze", 16));
+        let sql = "SELECT relname, do_analyze FROM pg_stat_autovacuum_scores";
+        let o = run(&q(sql, &d, "\"pg_database\" \"f\""), &q(sql, &d, "\"pg_database\" \"t\""));
+        assert!(o.diffs.is_empty());
+        let o = run(&q(sql, &d, "\"pg_database\" \"f\""), &q(sql, &d, "\"pg_class\" \"f\""));
+        assert_eq!(o.diffs.len(), 1);
     }
 
     #[test]
