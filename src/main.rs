@@ -29,6 +29,7 @@ mod pins;
 mod proxy;
 mod replay;
 mod scram;
+mod suites;
 mod toml;
 mod trace;
 
@@ -56,6 +57,12 @@ commands:
   trace FILE...             check that each line of a trace parses and count its messages
   import                    write corpus/postgres/N/ from the source of the oracle at its pin: the SHA-256
                             manifest of the suites, the lists and the counts (--all, --check, --corpus DIR)
+  regress                   run the 239 scheduled regression tests with pg_regress of the oracle build
+  isolation                 run the isolation specs with pg_isolation_regress: the schedule, then the specs
+                            that it does not list
+  pipeline                  run each test of libpq_pipeline and compare the 9 libpq traces
+                            (each suite: --server ADDR for the server under test, else the oracle; --corpus DIR;
+                            it writes results/N/<suite>-<oracle|server>.toml in the work directory)
 
 options:
   --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
@@ -104,6 +111,9 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("replay") => return replay_command(args, &pins),
         Some("diff") => return diff_command(args, &pins),
         Some("import") => return import_command(args, &pins),
+        Some(suite @ ("regress" | "isolation" | "pipeline")) => {
+            return suite_command(args, &pins, suite);
+        }
         None if args.flag("help") => out!("{USAGE}"),
         _ if args.words.is_empty() && args.rest.is_empty() => {
             eprintln!("{USAGE}");
@@ -518,6 +528,29 @@ fn import_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         }
     }
     Ok(if failed { ExitCode::FAILURE } else { ExitCode::SUCCESS })
+}
+
+/// Runs one PostgreSQL suite against the oracle or, with `--server`, against the server under test.
+fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, String> {
+    args.only(&["compat-version", "server", "corpus"])?;
+    let work = args.work_dir();
+    let corpus = PathBuf::from(args.get("corpus").unwrap_or("corpus"));
+    let server = match args.get("server") {
+        Some(s) => suites::Server {
+            addr: s.parse().map_err(|e| format!("--server {s}: {e}"))?,
+            oracle: false,
+        },
+        None => suites::Server { addr: oracle_addr(&running_oracle(args, pins)?), oracle: true },
+    };
+    let o = Oracle::new(pins, args.compat_version(pins.reference)?, &work)?;
+    let started = suites::utc_now();
+    let run = match suite {
+        "regress" => suites::regress(&o, &corpus, &server, &work)?,
+        "isolation" => suites::isolation(&o, &corpus, &server, &work)?,
+        _ => suites::pipeline(&o, &corpus, &server, &work)?,
+    };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Prints each exclusion of spec/05 section 5.3 and each rule of section 5.2 with its counts.
