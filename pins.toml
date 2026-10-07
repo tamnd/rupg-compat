@@ -99,6 +99,10 @@ version = "19beta4"
 # Liquibase with picocli 4.7.7 for the command line, on pgjdbc 42.7.13.
 version = "5.0.4"
 
+[clients.metabase]
+# The JAR of the release, with pgjdbc 42.7.12 in it, on the JDK of java.sh. The application database is H2.
+version = "0.64.1"
+
 [clients.node-postgres]
 # The package pg.
 version = "8.23.1"
