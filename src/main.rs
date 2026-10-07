@@ -19,6 +19,7 @@ macro_rules! out {
 mod args;
 mod client;
 mod compare;
+mod diff;
 mod frame;
 mod levels;
 mod message;
@@ -49,10 +50,14 @@ commands:
   replay TRACE...           reset the databases of each trace, send it to the oracle twice to find the unstable
                             groups, then to the server under test, and compare the answers
                             (--server ADDR for another server, --timeout S, --out FILE, --show N)
+  diff SQL                  run one statement on the oracle and on the server under test, compare the answers
+                            and show the first different byte (--server ADDR, --database DB)
   trace FILE...             check that each line of a trace parses and count its messages
 
 options:
-  --compat-version N        the oracle of version N (default: the reference of pins.toml)
+  --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
+                            the startup message also sets rupg.compat_version to N on the server under test
+  --version N               the same as --compat-version N, for the oracle commands only
   --work DIR                the work directory (default: $RUPG_COMPAT_WORK, then ./work)";
 
 fn main() -> ExitCode {
@@ -94,6 +99,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("record") => return record_command(args, &pins),
         Some("trace") => trace_command(args)?,
         Some("replay") => return replay_command(args, &pins),
+        Some("diff") => return diff_command(args, &pins),
         None if args.flag("help") => out!("{USAGE}"),
         _ if args.words.is_empty() && args.rest.is_empty() => {
             eprintln!("{USAGE}");
@@ -106,12 +112,20 @@ fn run(args: &Args) -> Result<ExitCode, String> {
 }
 
 fn oracle_command(args: &Args, pins: &Pins) -> Result<(), String> {
-    args.only(&["compat-version", "all", "jobs", "force"])?;
+    args.only(&["compat-version", "version", "all", "jobs", "force"])?;
     let work = args.work_dir();
+    // Spec/21 section 21.3.4 writes `oracle build --version V`, and every command takes `--compat-version V`. Both work here.
+    let version = match args.number("version")? {
+        Some(_) if args.get("compat-version").is_some() => {
+            return Err("give --version or --compat-version, not both".into());
+        }
+        Some(v) => v,
+        None => args.compat_version(pins.reference)?,
+    };
     let majors: Vec<u32> = if args.flag("all") {
         pins.postgres.iter().rev().map(|p| p.major).collect()
     } else {
-        vec![args.compat_version(pins.reference)?]
+        vec![version]
     };
     let oracles =
         majors.iter().map(|&m| Oracle::new(pins, m, &work)).collect::<Result<Vec<_>, _>>()?;
@@ -193,7 +207,18 @@ fn oracle_target(o: &Oracle) -> client::Target {
         addr: oracle_addr(o),
         user: oracle::USER.into(),
         password: oracle::PASSWORD.into(),
+        params: Vec::new(),
     }
+}
+
+/// The server under test: the oracle itself, or `--server ADDR` with `rupg.compat_version` set to the version of the oracle (spec/21 section 21.3.4).
+fn server_target(args: &Args, o: &Oracle) -> Result<client::Target, String> {
+    let mut target = oracle_target(o);
+    if let Some(server) = args.get("server") {
+        target.addr = server.parse().map_err(|e| format!("--server {server}: {e}"))?;
+        target.params.push(("rupg.compat_version".into(), o.pin.major.to_string()));
+    }
+    Ok(target)
 }
 
 fn proxy_command(args: &Args, pins: &Pins) -> Result<(), String> {
@@ -325,10 +350,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     }
     let o = running_oracle(args, pins)?;
     let oracle = oracle_target(&o);
-    let mut target = oracle.clone();
-    if let Some(server) = args.get("server") {
-        target.addr = server.parse().map_err(|e| format!("--server {server}: {e}"))?;
-    }
+    let target = server_target(args, &o)?;
     let timeout = std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30));
     let mut failed = false;
     let mut total = compare::Outcome::default();
@@ -350,7 +372,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         // A note of the second run, such as a timeout, can make a group look unstable, so it fails the run too.
         let notes: Vec<String> =
             second.notes.iter().map(|n| format!("second oracle run: {n}")).collect();
-        let r = if target.addr == oracle.addr {
+        let r = if args.get("server").is_none() {
             first
         } else {
             reset(&target);
@@ -385,6 +407,57 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     }
     print_exclusions(&total);
     Ok(if failed { ExitCode::FAILURE } else { ExitCode::SUCCESS })
+}
+
+fn diff_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(&["compat-version", "server", "database"])?;
+    let sql = args.words[1..].join(" ");
+    if sql.trim().is_empty() {
+        return Err("usage: rupg-compat diff SQL [--server ADDR] [--database DB]".into());
+    }
+    let o = running_oracle(args, pins)?;
+    let oracle = oracle_target(&o);
+    let server = server_target(args, &o)?;
+    let database = args.get("database").unwrap_or("postgres");
+    let want = client::Conn::connect(&oracle, database)?.query(&sql)?;
+    let got = client::Conn::connect(&server, database)?.query(&sql)?;
+    let lines = |msgs: &[message::Msg]| {
+        let query = message::Msg::new(message::Dir::F, "Query", vec![client::str_val(&sql)]);
+        std::iter::once((message::Dir::F, query))
+            .chain(msgs.iter().map(|m| (message::Dir::B, m.clone())))
+            .map(|(dir, m)| trace::Line { conn: 1, dir, event: trace::Event::Msg(m) })
+            .collect::<Vec<_>>()
+    };
+    let outcome = compare::compare(&lines(&want), &lines(&got), &Default::default());
+    out!("oracle {} at {}: {} messages", o.pin.major, oracle.addr, want.len());
+    out!("server at {}: {} messages", server.addr, got.len());
+    match diff::first_difference(&want, &got) {
+        None => out!("the answers are the same, byte for byte"),
+        Some(d) => {
+            let byte = |b: Option<u8>| b.map_or("no byte".to_string(), |b| format!("0x{b:02x}"));
+            out!(
+                "the first different byte is at offset {}, byte {} of message {}: {} on the oracle, {} on the server",
+                d.offset,
+                d.within,
+                d.message + 1,
+                byte(d.want),
+                byte(d.got)
+            );
+            for (side, msgs) in [("oracle", &want), ("server", &got)] {
+                let shown = msgs.get(d.message).map_or("no message".into(), trace::format_msg);
+                out!("  {side}: {shown}");
+            }
+        }
+    }
+    if outcome.diffs.is_empty() {
+        out!("after the rules and the exclusions, the answers are equal");
+    } else {
+        for d in outcome.diffs.values() {
+            out!("after the rules and the exclusions: {d}");
+        }
+    }
+    print_exclusions(&outcome);
+    Ok(if outcome.diffs.is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Prints each exclusion of spec/05 section 5.3 and each rule of section 5.2 with its counts.

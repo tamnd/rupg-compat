@@ -14,7 +14,7 @@ use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::client::{Auth, Target, str_val};
+use crate::client::{Auth, Target, add_params, str_val};
 use crate::frame;
 use crate::message::{Dir, Msg, Val};
 use crate::trace::{Event, Line, Trace};
@@ -603,6 +603,7 @@ impl Runner<'_> {
                 self.out.cancels += 1;
                 msg.vals = vec![Val::Int(pid), Val::Str(key)];
             }
+            "StartupMessage" => add_params(&mut msg, &self.target.params),
             _ => map_frontend(&mut self.out.oids, &mut msg),
         }
         Ok(msg)
