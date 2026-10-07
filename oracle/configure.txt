@@ -1,0 +1,7 @@
+# The configure options of every oracle, one for each line (spec/21 section 21.3.3).
+# `rupg-compat oracle build` adds `--prefix` and, when the environment sets them, `--with-includes` and `--with-libraries`.
+--with-ssl=openssl
+--with-icu
+--with-readline
+--with-zlib
+--without-llvm
