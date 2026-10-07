@@ -395,6 +395,14 @@ pub(crate) fn verify(src: &Path, dir: &Path, prefix: &str) -> Result<usize, Stri
     Ok(checked)
 }
 
+/// Reads a list of `corpus/postgres/N/`: the words of each line.
+pub(crate) fn list(dir: &Path, name: &str) -> Result<Vec<Vec<String>>, String> {
+    let path = dir.join(name);
+    let text = fs::read_to_string(&path)
+        .map_err(|e| format!("{}: {e}; run rupg-compat import first", path.display()))?;
+    Ok(text.lines().map(|l| l.split_whitespace().map(str::to_string).collect()).collect())
+}
+
 /// The directory of the import of version N.
 pub(crate) fn corpus_dir(corpus: &Path, major: u32) -> PathBuf {
     corpus.join("postgres").join(major.to_string())
