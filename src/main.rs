@@ -29,6 +29,7 @@ mod oracle;
 mod pins;
 mod proxy;
 mod replay;
+mod report;
 mod scram;
 mod suites;
 mod toml;
@@ -69,6 +70,10 @@ commands:
   parameters                SHOW ALL, pg_settings, and SET TO DEFAULT, set_config and SHOW of each parameter
                             (both: two runs on the oracle find the unstable cases, then --server ADDR, else
                             the first oracle run, is compared with the rules and the exclusions of spec/05)
+  report                    write reports/<date>/report.md from the result files of the work directory, with one
+                            table for each level and version and the exclusions of each run, then check each row
+                            of ratchet.toml (--compat-version N for one version, --date YYYY-MM-DD, --out DIR,
+                            --ratchet FILE, --raise to write the numbers above the ratchet to it)
 
 options:
   --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
@@ -117,6 +122,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("replay") => return replay_command(args, &pins),
         Some("diff") => return diff_command(args, &pins),
         Some("import") => return import_command(args, &pins),
+        Some("report") => return report_command(args, &pins),
         Some(suite @ ("catalog" | "parameters")) => return introspect_command(args, &pins, suite),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
@@ -339,6 +345,14 @@ fn trace_command(args: &Args) -> Result<(), String> {
     Ok(())
 }
 
+/// The name of a trace in its result file: the file name without `.trace`, with each byte other than a letter, a digit, '-', '_' or '.' as '_'.
+fn trace_name(path: &Path) -> String {
+    let stem = path.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
+    stem.chars()
+        .map(|c| if c.is_ascii_alphanumeric() || "-_.".contains(c) { c } else { '_' })
+        .collect()
+}
+
 /// The databases that the connections of a trace open.
 fn trace_databases(t: &trace::Trace) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
@@ -370,12 +384,17 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         return Err("--out takes one trace".into());
     }
     let o = running_oracle(args, pins)?;
+    let pg = &o;
     let oracle = oracle_target(&o);
     let target = server_target(args, &o)?;
     let timeout = std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30));
+    let server = suites::Server { addr: target.addr, oracle: args.get("server").is_none() };
+    let work = args.work_dir();
     let mut failed = false;
     let mut total = compare::Outcome::default();
     for file in files {
+        let started = suites::utc_now();
+        let clock = std::time::Instant::now();
         let t = trace::Trace::read(Path::new(file))?;
         let reset = |server: &client::Target| {
             for db in trace_databases(&t) {
@@ -420,7 +439,23 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             out!("  {n}");
         }
         total.add(&o);
-        failed |= !o.diffs.is_empty() || !r.notes.is_empty() || !notes.is_empty() || gaps > 0;
+        let bad = !o.diffs.is_empty() || !r.notes.is_empty() || !notes.is_empty() || gaps > 0;
+        failed |= bad;
+        // Each trace has a result file for the report: the trace is one test, and the share of its messages is the number of level L1.
+        let name = trace_name(Path::new(file));
+        let run = suites::Run {
+            suite: format!("replay-{name}"),
+            tests: vec![(name, !bad)],
+            unstable: Vec::new(),
+            seconds: clock.elapsed().as_secs(),
+            checked: Some(suites::Checked::new(&o, Vec::new())),
+        };
+        let path = suites::result_file(&work, pg.pin.major, &run.suite, server.side());
+        std::fs::create_dir_all(path.parent().unwrap_or(&work))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        std::fs::write(&path, run.to_toml(pg, &server, &started))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        out!("  result in {}", path.display());
         if let Some(out) = args.get("out") {
             let replayed = trace::Trace { header: t.header.clone(), lines: r.lines };
             std::fs::write(out, replayed.to_text()).map_err(|e| format!("{out}: {e}"))?;
@@ -589,6 +624,67 @@ fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode,
     }
     print_exclusions(&outcome);
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Writes the report and checks the ratchet (spec/21 section 21.15).
+fn report_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(&["compat-version", "date", "out", "ratchet", "raise"])?;
+    let work = args.work_dir();
+    let mut versions: Vec<u32> = match args.number("compat-version")? {
+        Some(v) if pins.postgres.iter().any(|p| p.major == v) => vec![v],
+        Some(v) => return Err(format!("pins.toml has no PostgreSQL {v}")),
+        None => pins.postgres.iter().map(|p| p.major).collect(),
+    };
+    versions.sort_unstable_by(|a, b| b.cmp(a));
+    let date = match args.get("date") {
+        Some(d) => d.to_string(),
+        None => suites::utc_now()[..10].to_string(),
+    };
+    let shape = date.len() == 10
+        && date
+            .bytes()
+            .enumerate()
+            .all(|(i, b)| if i == 4 || i == 7 { b == b'-' } else { b.is_ascii_digit() });
+    if !shape {
+        return Err(format!("--date {date}: give the date as YYYY-MM-DD"));
+    }
+    let records = report::load(&work)?;
+    let ratchet_file = PathBuf::from(args.get("ratchet").unwrap_or("ratchet.toml"));
+    let old = std::fs::read_to_string(&ratchet_file)
+        .map_err(|e| format!("{}: {e}", ratchet_file.display()))?;
+    let mut ratchet = report::read_ratchet(&old)?;
+    let rows: Vec<(u32, report::Row)> = versions
+        .iter()
+        .flat_map(|&v| report::rows(&records, v).into_iter().map(move |r| (v, r)))
+        .collect();
+    let check = report::check(&ratchet, &rows, &versions);
+    let dir = match args.get("out") {
+        Some(d) => PathBuf::from(d),
+        None => report::report_dir(Path::new("reports"), &date),
+    };
+    std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+    let path = dir.join("report.md");
+    let text = report::markdown(&date, pins, &records, &versions, &work, &check);
+    std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))?;
+    out!("{}: {} result files", path.display(), records.len());
+    let levels = ["L1", "L2", "L3", "L4", "L5"];
+    for (v, r) in rows.iter().filter(|(_, r)| !r.key.starts_with("rows of ")) {
+        let n =
+            |n: Option<report::Number>| n.map_or("not run".into(), |(a, b)| format!("{a} of {b}"));
+        out!("  {v} {} {}: server {}, oracle {}", levels[r.level], r.key, n(r.server), n(r.oracle));
+    }
+    for (level, key, best, n) in &check.below {
+        let now = n.map_or("no result".into(), |n| n.to_string());
+        out!("ratchet: {level} {key:?} is {now}, below {best}");
+    }
+    out!("ratchet: {} rows below, {} rows above or new", check.below.len(), check.above.len());
+    if args.flag("raise") && !check.above.is_empty() {
+        report::raise(&mut ratchet, &check);
+        std::fs::write(&ratchet_file, report::write_ratchet(&old, &ratchet))
+            .map_err(|e| format!("{}: {e}", ratchet_file.display()))?;
+        out!("ratchet: wrote {} rows to {}", check.above.len(), ratchet_file.display());
+    }
+    Ok(if check.below.is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Prints each exclusion of spec/05 section 5.3 and each rule of section 5.2 with its counts.
