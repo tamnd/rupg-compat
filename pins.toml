@@ -45,7 +45,7 @@ commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
 
 [clients]
 # One table for each client whose trace or suite is in corpus/ or clients/, with the version that made it.
-# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod or Cargo.toml installs.
+# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod, Cargo.toml or package.json installs. The Node clients run on the Node.js of clients/node.sh.
 
 [clients.asyncpg]
 version = "0.32.0"
@@ -56,6 +56,10 @@ version = "2.3.13"
 
 [clients.django]
 version = "6.1.2"
+
+[clients.drizzle]
+# Drizzle ORM on node-postgres 8.23.1, with Drizzle Kit 0.31.11.
+version = "0.45.3"
 
 [clients.golang-migrate]
 version = "4.20.1"
@@ -71,6 +75,10 @@ version = "1.12.3"
 # The libpq of the oracle build of the reference version.
 version = "19beta4"
 
+[clients.node-postgres]
+# The package pg.
+version = "8.23.1"
+
 [clients.pg_dump]
 # pg_dump and pg_restore of the oracle build of the reference version.
 version = "19beta4"
@@ -85,6 +93,14 @@ version = "1.2.0"
 [clients.pgx]
 version = "5.11.0"
 
+[clients.postgres-js]
+# The package postgres.
+version = "3.4.9"
+
+[clients.prisma]
+# The Prisma CLI and Prisma Client on @prisma/adapter-pg 7.10.0 and node-postgres 8.23.1.
+version = "7.10.0"
+
 [clients.psql]
 # The psql of the oracle build of the reference version.
 version = "19beta4"
@@ -94,6 +110,10 @@ version = "3.3.6"
 
 [clients.psycopg2]
 version = "2.9.13"
+
+[clients.sequelize]
+# On node-postgres 8.23.1.
+version = "6.37.8"
 
 [clients.sqlalchemy]
 # SQLAlchemy with Alembic 1.20.0.
@@ -108,3 +128,7 @@ version = "6.1.0"
 
 [clients.tokio-postgres]
 version = "0.7.18"
+
+[clients.typeorm]
+# On node-postgres 8.23.1.
+version = "1.1.1"

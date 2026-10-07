@@ -145,7 +145,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
 }
 
 fn oracle_command(args: &Args, pins: &Pins) -> Result<(), String> {
-    args.only(&["compat-version", "version", "all", "jobs", "force"])?;
+    args.only(2, &["compat-version", "version", "all", "jobs", "force"])?;
     let work = args.work_dir();
     // Spec/21 section 21.3.4 writes `oracle build --version V`, and every command takes `--compat-version V`. Both work here.
     let version = match args.number("version")? {
@@ -255,7 +255,7 @@ fn server_target(args: &Args, o: &Oracle) -> Result<client::Target, String> {
 }
 
 fn proxy_command(args: &Args, pins: &Pins) -> Result<(), String> {
-    args.only(&["compat-version", "listen", "out"])?;
+    args.only(1, &["compat-version", "listen", "out"])?;
     let o = running_oracle(args, pins)?;
     let out = PathBuf::from(args.get("out").ok_or("proxy needs --out FILE")?);
     let listen = args.get("listen").unwrap_or("127.0.0.1:0");
@@ -272,7 +272,7 @@ fn proxy_command(args: &Args, pins: &Pins) -> Result<(), String> {
 }
 
 fn record_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "out"])?;
+    args.only(2, &["compat-version", "out"])?;
     let name = args.word(1).ok_or("usage: rupg-compat record <name> [-- command]")?;
     if name.is_empty() || !name.bytes().all(|b| b.is_ascii_alphanumeric() || b"-_.".contains(&b)) {
         return Err(format!("the trace name {name:?} must be letters, digits, '-', '_' and '.'"));
@@ -332,7 +332,7 @@ fn record_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
 }
 
 fn trace_command(args: &Args) -> Result<(), String> {
-    args.only(&[])?;
+    args.only(usize::MAX, &[])?;
     if args.words.len() < 2 {
         return Err("usage: rupg-compat trace FILE...".into());
     }
@@ -387,7 +387,7 @@ fn trace_databases(t: &trace::Trace) -> Vec<String> {
 }
 
 fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "server", "timeout", "out", "show"])?;
+    args.only(usize::MAX, &["compat-version", "server", "timeout", "out", "show"])?;
     let files = &args.words[1..];
     if files.is_empty() {
         return Err("usage: rupg-compat replay TRACE... [--server ADDR] [--out FILE]".into());
@@ -478,7 +478,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
 }
 
 fn diff_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "server", "database"])?;
+    args.only(usize::MAX, &["compat-version", "server", "database"])?;
     let sql = args.words[1..].join(" ");
     if sql.trim().is_empty() {
         return Err("usage: rupg-compat diff SQL [--server ADDR] [--database DB]".into());
@@ -529,7 +529,7 @@ fn diff_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
 }
 
 fn import_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "all", "check", "corpus"])?;
+    args.only(1, &["compat-version", "all", "check", "corpus"])?;
     let corpus = PathBuf::from(args.get("corpus").unwrap_or("corpus"));
     let majors: Vec<u32> = if args.flag("all") {
         pins.postgres.iter().rev().map(|p| p.major).collect()
@@ -586,7 +586,7 @@ fn import_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
 
 /// Runs one PostgreSQL suite against the oracle or, with `--server`, against the server under test.
 fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "server", "corpus"])?;
+    args.only(1, &["compat-version", "server", "corpus"])?;
     let work = args.work_dir();
     let corpus = PathBuf::from(args.get("corpus").unwrap_or("corpus"));
     let server = match args.get("server") {
@@ -609,7 +609,7 @@ fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, Stri
 
 /// Runs the catalog suite or the parameter suite (spec/05 section 5.6.5).
 fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "server", "corpus", "show"])?;
+    args.only(1, &["compat-version", "server", "corpus", "show"])?;
     let work = args.work_dir();
     let corpus = PathBuf::from(args.get("corpus").unwrap_or("corpus"));
     let o = running_oracle(args, pins)?;
@@ -640,7 +640,7 @@ fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode,
 
 /// Writes the report and checks the ratchet (spec/21 section 21.15).
 fn report_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "date", "out", "ratchet", "raise"])?;
+    args.only(1, &["compat-version", "date", "out", "ratchet", "raise"])?;
     let work = args.work_dir();
     let mut versions: Vec<u32> = match args.number("compat-version")? {
         Some(v) if pins.postgres.iter().any(|p| p.major == v) => vec![v],
@@ -701,7 +701,7 @@ fn report_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
 
 /// Writes or checks the reference outputs of the shim suites (spec/03 section 3.15, item 7).
 fn reference_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "check", "shim"])?;
+    args.only(1, &["compat-version", "check", "shim"])?;
     let work = args.work_dir();
     let shim = PathBuf::from(args.get("shim").unwrap_or("shim"));
     let shims: Vec<&pins::Pin> =

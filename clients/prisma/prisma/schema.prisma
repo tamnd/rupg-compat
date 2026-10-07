@@ -1,0 +1,39 @@
+// The models of the Prisma scenario.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Mood {
+  sad
+  ok
+  happy
+
+  @@map("compat_mood")
+}
+
+model Item {
+  id     Int       @id @default(autoincrement())
+  name   String    @unique
+  price  Decimal?  @db.Decimal(10, 2)
+  mood   Mood      @default(ok)
+  added  DateTime? @db.Timestamptz(6)
+  tags   String[]
+  extra  Json?
+  orders Order[]
+
+  @@map("compat_items")
+}
+
+model Order {
+  id     Int  @id @default(autoincrement())
+  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId Int  @map("item_id")
+  qty    Int  @default(1)
+
+  @@index([itemId])
+  @@map("compat_orders")
+}

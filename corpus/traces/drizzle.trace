@@ -1,0 +1,563 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/drizzle/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=qlUuB91Ea46gWjLLrAy589Ym"
+1 B AuthenticationSASLContinue "r=qlUuB91Ea46gWjLLrAy589Ym2lJelQ251rnNQspJ66ttB1WX,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=qlUuB91Ea46gWjLLrAy589Ym2lJelQ251rnNQspJ66ttB1WX,p=6W28uL9EmSpwlLlx2H8mTMUJqwv3ylnDMK70dLg3Ir4="
+1 B AuthenticationSASLFinal "v=QhJGgI5cfFDQVBUQClCcnop/M4+8JW6lsYBYhojCt1g="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 806000 "\xfbӨa"
+1 B ReadyForQuery I
+1 F Query "SELECT \n    n.nspname AS table_schema, \n    c.relname AS table_name, \n    CASE \n        WHEN c.relkind = 'r' THEN 'table'\n        WHEN c.relkind = 'v' THEN 'view'\n        WHEN c.relkind = 'm' THEN 'materialized_view'\n    END AS type,\n\tc.relrowsecurity AS rls_enabled\nFROM \n    pg_catalog.pg_class c\nJOIN \n    pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE \n\tc.relkind IN ('r', 'v', 'm') \n     AND n.nspname = 'public';"
+1 B RowDescription [("table_schema" 2615 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("type" 0 0 25 -1 -1 0) ("rls_enabled" 1259 24 16 1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "select s.nspname as table_schema\n  from pg_catalog.pg_namespace s\n  join pg_catalog.pg_user u on u.usesysid = s.nspowner\n  where nspname not in ('information_schema', 'pg_catalog', 'public')\n        and nspname not like 'pg_toast%'\n        and nspname not like 'pg_temp_%'\n  order by table_schema;"
+1 B RowDescription [("table_schema" 2615 2 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "select schemaname, sequencename, start_value, min_value, max_value, increment_by, cycle, cache_size from pg_sequences as seq WHERE schemaname = 'public';"
+1 B RowDescription [("schemaname" 12048 1 19 64 -1 0) ("sequencename" 12048 2 19 64 -1 0) ("start_value" 12048 5 20 8 -1 0) ("min_value" 12048 6 20 8 -1 0) ("max_value" 12048 7 20 8 -1 0) ("increment_by" 12048 8 20 8 -1 0) ("cycle" 12048 9 16 1 -1 0) ("cache_size" 12048 10 20 8 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "select n.nspname as enum_schema,\n  t.typname as enum_name,\n  e.enumlabel as enum_value,\n  e.enumsortorder as sort_order\n  from pg_type t\n  join pg_enum e on t.oid = e.enumtypid\n  join pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n   WHERE n.nspname = 'public'\n  order by enum_schema, enum_name, sort_order;"
+1 B RowDescription [("enum_schema" 2615 2 19 64 -1 0) ("enum_name" 1247 2 19 64 -1 0) ("enum_value" 3501 4 19 64 -1 0) ("sort_order" 3501 3 700 4 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "SELECT rolname, rolinherit, rolcreatedb, rolcreaterole FROM pg_roles;"
+1 B RowDescription [("rolname" 12000 1 19 64 -1 0) ("rolinherit" 12000 3 16 1 -1 0) ("rolcreatedb" 12000 5 16 1 -1 0) ("rolcreaterole" 12000 4 16 1 -1 0)]
+1 B DataRow ["pg_database_owner" "t" "f" "f"]
+1 B DataRow ["pg_read_all_data" "t" "f" "f"]
+1 B DataRow ["pg_write_all_data" "t" "f" "f"]
+1 B DataRow ["pg_monitor" "t" "f" "f"]
+1 B DataRow ["pg_read_all_settings" "t" "f" "f"]
+1 B DataRow ["pg_read_all_stats" "t" "f" "f"]
+1 B DataRow ["pg_stat_scan_tables" "t" "f" "f"]
+1 B DataRow ["pg_read_server_files" "t" "f" "f"]
+1 B DataRow ["pg_write_server_files" "t" "f" "f"]
+1 B DataRow ["pg_execute_server_program" "t" "f" "f"]
+1 B DataRow ["pg_signal_backend" "t" "f" "f"]
+1 B DataRow ["pg_checkpoint" "t" "f" "f"]
+1 B DataRow ["pg_maintain" "t" "f" "f"]
+1 B DataRow ["pg_use_reserved_connections" "t" "f" "f"]
+1 B DataRow ["pg_create_subscription" "t" "f" "f"]
+1 B DataRow ["pg_signal_autovacuum_worker" "t" "f" "f"]
+1 B DataRow ["postgres" "t" "t" "t"]
+1 B CommandComplete "SELECT 17"
+1 B ReadyForQuery I
+1 F Query "SELECT schemaname, tablename, policyname as name, permissive as \"as\", roles as to, cmd as for, qual as using, with_check as \"withCheck\" FROM pg_policies WHERE schemaname = 'public';"
+1 B RowDescription [("schemaname" 12018 1 19 64 -1 0) ("tablename" 12018 2 19 64 -1 0) ("name" 12018 3 19 64 -1 0) ("as" 12018 4 25 -1 -1 0) ("to" 12018 5 1003 -1 -1 0) ("for" 12018 6 25 -1 -1 0) ("using" 12018 7 25 -1 -1 0) ("withCheck" 12018 8 25 -1 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "CREATE TYPE \"public\".\"compat_mood\" AS ENUM('sad', 'ok', 'happy');"
+1 B CommandComplete "CREATE TYPE"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE \"compat_items\" (\n\t\"id\" serial PRIMARY KEY NOT NULL,\n\t\"name\" text NOT NULL,\n\t\"price\" numeric(10, 2),\n\t\"mood\" \"compat_mood\" DEFAULT 'ok',\n\t\"added\" timestamp with time zone,\n\t\"extra\" jsonb,\n\tCONSTRAINT \"compat_items_name_unique\" UNIQUE(\"name\")\n);\n"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE \"compat_orders\" (\n\t\"id\" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name \"compat_orders_id_seq\" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),\n\t\"item_id\" integer NOT NULL,\n\t\"qty\" integer DEFAULT 1 NOT NULL\n);\n"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "ALTER TABLE \"compat_orders\" ADD CONSTRAINT \"compat_orders_item_id_compat_items_id_fk\" FOREIGN KEY (\"item_id\") REFERENCES \"public\".\"compat_items\"(\"id\") ON DELETE cascade ON UPDATE no action;"
+1 B CommandComplete "ALTER TABLE"
+1 B ReadyForQuery I
+1 F Query "CREATE INDEX \"compat_orders_item\" ON \"compat_orders\" USING btree (\"item_id\");"
+1 B CommandComplete "CREATE INDEX"
+1 B ReadyForQuery I
+1 F End
+1 B End
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=T5vMDFjqvSlOag2ih3JTD4KF"
+2 B AuthenticationSASLContinue "r=T5vMDFjqvSlOag2ih3JTD4KFGGxV00sndIa9BkDa77Fx3erv,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=T5vMDFjqvSlOag2ih3JTD4KFGGxV00sndIa9BkDa77Fx3erv,p=iBDzwYy7RrJqaxvddNcUT12ePf+owl3G1es0+grxhoE="
+2 B AuthenticationSASLFinal "v=FG/GQuwsl5QKUpaRr6HIPJePCskwUrhDtbGB4G4qVWo="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 806013 "0\x9c\xa8:"
+2 B ReadyForQuery I
+2 F Query "begin"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "insert into \"compat_items\" (\"id\", \"name\", \"price\", \"mood\", \"added\", \"extra\") values (default, $1, $2, $3, $4, $5), (default, $6, $7, default, default, default) returning \"id\", \"name\", \"price\", \"mood\", \"added\", \"extra\"" []
+2 F Bind "" "" [0 0 0 0 0 0 0] ["one" "1.50" "happy" "2026-01-02T03:04:05.000Z" "{\"n\":1}" "two" "2.50"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("id" 257866 1 23 4 -1 0) ("name" 257866 2 25 -1 -1 0) ("price" 257866 3 1700 -1 655366 0) ("mood" 257866 4 257859 4 -1 0) ("added" 257866 5 1184 8 -1 0) ("extra" 257866 6 3802 -1 -1 0)]
+2 B DataRow ["1" "one" "1.50" "happy" "2026-01-02 03:04:05+00" "{\"n\": 1}"]
+2 B DataRow ["2" "two" "2.50" "ok" NULL NULL]
+2 B CommandComplete "INSERT 0 2"
+2 B ReadyForQuery T
+2 F Parse "" "insert into \"compat_orders\" (\"id\", \"item_id\", \"qty\") values (default, $1, $2), (default, $3, default)" []
+2 F Bind "" "" [0 0 0] ["1" "2" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 2"
+2 B ReadyForQuery T
+2 F Query "commit"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Query "begin"
+2 B CommandComplete "BEGIN"
+2 B ReadyForQuery T
+2 F Parse "" "insert into \"compat_items\" (\"id\", \"name\", \"price\", \"mood\", \"added\", \"extra\") values (default, $1, $2, default, default, default)" []
+2 F Bind "" "" [0 0] ["three" "3.50"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Query "rollback"
+2 B CommandComplete "ROLLBACK"
+2 B ReadyForQuery I
+2 F Query "select \"items\".\"id\", \"items\".\"name\", \"items\".\"price\", \"items\".\"mood\", \"items\".\"added\", \"items\".\"extra\", \"items_orders\".\"data\" as \"orders\" from \"compat_items\" \"items\" left join lateral (select coalesce(json_agg(json_build_array(\"items_orders\".\"id\", \"items_orders\".\"item_id\", \"items_orders\".\"qty\")), '[]'::json) as \"data\" from \"compat_orders\" \"items_orders\" where \"items_orders\".\"item_id\" = \"items\".\"id\") \"items_orders\" on true order by \"items\".\"id\""
+2 B RowDescription [("id" 257866 1 23 4 -1 0) ("name" 257866 2 25 -1 -1 0) ("price" 257866 3 1700 -1 655366 0) ("mood" 257866 4 257859 4 -1 0) ("added" 257866 5 1184 8 -1 0) ("extra" 257866 6 3802 -1 -1 0) ("orders" 0 0 114 -1 -1 0)]
+2 B DataRow ["1" "one" "1.50" "happy" "2026-01-02 03:04:05+00" "{\"n\": 1}" "[[1, 1, 2]]"]
+2 B DataRow ["2" "two" "2.50" "ok" NULL NULL "[[2, 2, 1]]"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery I
+2 F Parse "" "select \"id\", \"name\", \"price\", \"mood\", \"added\", \"extra\" from \"compat_items\" where \"compat_items\".\"name\" = $1" []
+2 F Bind "" "" [0] ["two"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("id" 257866 1 23 4 -1 0) ("name" 257866 2 25 -1 -1 0) ("price" 257866 3 1700 -1 655366 0) ("mood" 257866 4 257859 4 -1 0) ("added" 257866 5 1184 8 -1 0) ("extra" 257866 6 3802 -1 -1 0)]
+2 B DataRow ["2" "two" "2.50" "ok" NULL NULL]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "select count(*) from \"compat_orders\" where \"compat_orders\".\"qty\" = $1" []
+2 F Bind "" "" [0] ["1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("count" 0 0 20 8 -1 0)]
+2 B DataRow ["1"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "update \"compat_items\" set \"price\" = $1 where \"compat_items\".\"name\" = $2" []
+2 F Bind "" "" [0 0] ["5.00" "two"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery I
+2 F Parse "compat_by_name" "select \"id\", \"name\", \"price\", \"mood\", \"added\", \"extra\" from \"compat_items\" where \"compat_items\".\"name\" = $1" []
+2 F Bind "" "compat_by_name" [0] ["one"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("id" 257866 1 23 4 -1 0) ("name" 257866 2 25 -1 -1 0) ("price" 257866 3 1700 -1 655366 0) ("mood" 257866 4 257859 4 -1 0) ("added" 257866 5 1184 8 -1 0) ("extra" 257866 6 3802 -1 -1 0)]
+2 B DataRow ["1" "one" "1.50" "happy" "2026-01-02 03:04:05+00" "{\"n\": 1}"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Bind "" "compat_by_name" [0] ["one"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("id" 257866 1 23 4 -1 0) ("name" 257866 2 25 -1 -1 0) ("price" 257866 3 1700 -1 655366 0) ("mood" 257866 4 257859 4 -1 0) ("added" 257866 5 1184 8 -1 0) ("extra" 257866 6 3802 -1 -1 0)]
+2 B DataRow ["1" "one" "1.50" "happy" "2026-01-02 03:04:05+00" "{\"n\": 1}"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Bind "" "compat_by_name" [0] ["one"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B BindComplete
+2 B RowDescription [("id" 257866 1 23 4 -1 0) ("name" 257866 2 25 -1 -1 0) ("price" 257866 3 1700 -1 655366 0) ("mood" 257866 4 257859 4 -1 0) ("added" 257866 5 1184 8 -1 0) ("extra" 257866 6 3802 -1 -1 0)]
+2 B DataRow ["1" "one" "1.50" "happy" "2026-01-02 03:04:05+00" "{\"n\": 1}"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "insert into \"compat_items\" (\"id\", \"name\", \"price\", \"mood\", \"added\", \"extra\") values (default, $1, default, default, default, default)" []
+2 F Bind "" "" [0] ["one"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B NoData
+2 B ErrorResponse S "ERROR" V "ERROR" C "23505" M "duplicate key value violates unique constraint \"compat_items_name_unique\"" D "Key (name)=(one) already exists." s "public" t "compat_items" n "compat_items_name_unique" F "nbtinsert.c" L "669" R "_bt_check_unique"
+2 B ReadyForQuery I
+2 F Terminate
+2 F End
+2 B End
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=3NYBxpel9hdwkXwBLA+KqolJ"
+3 B AuthenticationSASLContinue "r=3NYBxpel9hdwkXwBLA+KqolJz+2WHCjLmVMY7KxNCJ71rH9H,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=3NYBxpel9hdwkXwBLA+KqolJz+2WHCjLmVMY7KxNCJ71rH9H,p=RhNxsjl9Foj1cjRZ8OwK4y8BGYK+6E7PPrANZbvukS8="
+3 B AuthenticationSASLFinal "v=25a6KICelO1bzGqbzLMKDDIr0HEjuu3gfGtCop3Pf00="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" ""
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 806048 "\x9f\xc3\x0f\xaf"
+3 B ReadyForQuery I
+3 F Query "SELECT \n    n.nspname AS table_schema, \n    c.relname AS table_name, \n    CASE \n        WHEN c.relkind = 'r' THEN 'table'\n        WHEN c.relkind = 'v' THEN 'view'\n        WHEN c.relkind = 'm' THEN 'materialized_view'\n    END AS type,\n\tc.relrowsecurity AS rls_enabled\nFROM \n    pg_catalog.pg_class c\nJOIN \n    pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE \n\tc.relkind IN ('r', 'v', 'm') \n     AND n.nspname = 'public';"
+3 B RowDescription [("table_schema" 2615 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("type" 0 0 25 -1 -1 0) ("rls_enabled" 1259 24 16 1 -1 0)]
+3 B DataRow ["public" "compat_items" "table" "f"]
+3 B DataRow ["public" "compat_orders" "table" "f"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Query "select s.nspname as table_schema\n  from pg_catalog.pg_namespace s\n  join pg_catalog.pg_user u on u.usesysid = s.nspowner\n  where nspname not in ('information_schema', 'pg_catalog', 'public')\n        and nspname not like 'pg_toast%'\n        and nspname not like 'pg_temp_%'\n  order by table_schema;"
+3 B RowDescription [("table_schema" 2615 2 19 64 -1 0)]
+3 B CommandComplete "SELECT 0"
+3 B ReadyForQuery I
+3 F Query "select schemaname, sequencename, start_value, min_value, max_value, increment_by, cycle, cache_size from pg_sequences as seq WHERE schemaname = 'public';"
+3 B RowDescription [("schemaname" 12048 1 19 64 -1 0) ("sequencename" 12048 2 19 64 -1 0) ("start_value" 12048 5 20 8 -1 0) ("min_value" 12048 6 20 8 -1 0) ("max_value" 12048 7 20 8 -1 0) ("increment_by" 12048 8 20 8 -1 0) ("cycle" 12048 9 16 1 -1 0) ("cache_size" 12048 10 20 8 -1 0)]
+3 B DataRow ["public" "compat_items_id_seq" "1" "1" "2147483647" "1" "f" "1"]
+3 B DataRow ["public" "compat_orders_id_seq" "1" "1" "2147483647" "1" "f" "1"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Query "select n.nspname as enum_schema,\n  t.typname as enum_name,\n  e.enumlabel as enum_value,\n  e.enumsortorder as sort_order\n  from pg_type t\n  join pg_enum e on t.oid = e.enumtypid\n  join pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n   WHERE n.nspname = 'public'\n  order by enum_schema, enum_name, sort_order;"
+3 B RowDescription [("enum_schema" 2615 2 19 64 -1 0) ("enum_name" 1247 2 19 64 -1 0) ("enum_value" 3501 4 19 64 -1 0) ("sort_order" 3501 3 700 4 -1 0)]
+3 B DataRow ["public" "compat_mood" "sad" "1"]
+3 B DataRow ["public" "compat_mood" "ok" "2"]
+3 B DataRow ["public" "compat_mood" "happy" "3"]
+3 B CommandComplete "SELECT 3"
+3 B ReadyForQuery I
+3 F Query "SELECT rolname, rolinherit, rolcreatedb, rolcreaterole FROM pg_roles;"
+3 B RowDescription [("rolname" 12000 1 19 64 -1 0) ("rolinherit" 12000 3 16 1 -1 0) ("rolcreatedb" 12000 5 16 1 -1 0) ("rolcreaterole" 12000 4 16 1 -1 0)]
+3 B DataRow ["pg_database_owner" "t" "f" "f"]
+3 B DataRow ["pg_read_all_data" "t" "f" "f"]
+3 B DataRow ["pg_write_all_data" "t" "f" "f"]
+3 B DataRow ["pg_monitor" "t" "f" "f"]
+3 B DataRow ["pg_read_all_settings" "t" "f" "f"]
+3 B DataRow ["pg_read_all_stats" "t" "f" "f"]
+3 B DataRow ["pg_stat_scan_tables" "t" "f" "f"]
+3 B DataRow ["pg_read_server_files" "t" "f" "f"]
+3 B DataRow ["pg_write_server_files" "t" "f" "f"]
+3 B DataRow ["pg_execute_server_program" "t" "f" "f"]
+3 B DataRow ["pg_signal_backend" "t" "f" "f"]
+3 B DataRow ["pg_checkpoint" "t" "f" "f"]
+3 B DataRow ["pg_maintain" "t" "f" "f"]
+3 B DataRow ["pg_use_reserved_connections" "t" "f" "f"]
+3 B DataRow ["pg_create_subscription" "t" "f" "f"]
+3 B DataRow ["pg_signal_autovacuum_worker" "t" "f" "f"]
+3 B DataRow ["postgres" "t" "t" "t"]
+3 B CommandComplete "SELECT 17"
+3 B ReadyForQuery I
+3 F Query "SELECT schemaname, tablename, policyname as name, permissive as \"as\", roles as to, cmd as for, qual as using, with_check as \"withCheck\" FROM pg_policies WHERE schemaname = 'public';"
+3 B RowDescription [("schemaname" 12018 1 19 64 -1 0) ("tablename" 12018 2 19 64 -1 0) ("name" 12018 3 19 64 -1 0) ("as" 12018 4 25 -1 -1 0) ("to" 12018 5 1003 -1 -1 0) ("for" 12018 6 25 -1 -1 0) ("using" 12018 7 25 -1 -1 0) ("withCheck" 12018 8 25 -1 -1 0)]
+3 B CommandComplete "SELECT 0"
+3 B ReadyForQuery I
+3 F Query "SELECT \n    a.attrelid::regclass::text AS table_name,  -- Table, view, or materialized view name\n    a.attname AS column_name,   -- Column name\n    CASE \n        WHEN NOT a.attisdropped THEN \n            CASE \n                WHEN a.attnotnull THEN 'NO'\n                ELSE 'YES'\n            END \n        ELSE NULL \n    END AS is_nullable,  -- NULL or NOT NULL constraint\n    a.attndims AS array_dimensions,  -- Array dimensions\n    CASE \n        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[]) \n        AND EXISTS (\n            SELECT FROM pg_attrdef ad\n            WHERE ad.adrelid = a.attrelid \n            AND ad.adnum = a.attnum \n            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval(''' \n                || pg_get_serial_sequence(a.attrelid::regclass::text, a.attname)::regclass || '''::regclass)'\n        )\n        THEN CASE a.atttypid\n            WHEN 'int'::regtype THEN 'serial'\n            WHEN 'int8'::regtype THEN 'bigserial'\n            WHEN 'int2'::regtype THEN 'smallserial'\n        END\n        ELSE format_type(a.atttypid, a.atttypmod)\n    END AS data_type,  -- Column data type\n--    ns.nspname AS type_schema,  -- Schema name\n    pg_get_serial_sequence('\"public\".\"compat_items\"', a.attname)::regclass AS seq_name,  -- Serial sequence (if any)\n    c.column_default,  -- Column default value\n    c.data_type AS additional_dt,  -- Data type from information_schema\n    c.udt_name AS enum_name,  -- Enum type (if applicable)\n    c.is_generated,  -- Is it a generated column?\n    c.generation_expression,  -- Generation expression (if generated)\n    c.is_identity,  -- Is it an identity column?\n    c.identity_generation,  -- Identity generation strategy (ALWAYS or BY DEFAULT)\n    c.identity_start,  -- Start value of identity column\n    c.identity_increment,  -- Increment for identity column\n    c.identity_maximum,  -- Maximum value for identity column\n    c.identity_minimum,  -- Minimum value for identity column\n    c.identity_cycle,  -- Does the identity column cycle?\n    enum_ns.nspname AS type_schema  -- Schema of the enum type\nFROM \n    pg_attribute a\nJOIN \n    pg_class cls ON cls.oid = a.attrelid  -- Join pg_class to get table/view/materialized view info\nJOIN \n    pg_namespace ns ON ns.oid = cls.relnamespace  -- Join namespace to get schema info\nLEFT JOIN \n    information_schema.columns c ON c.column_name = a.attname \n        AND c.table_schema = ns.nspname \n        AND c.table_name = cls.relname  -- Match schema and table/view name\nLEFT JOIN \n    pg_type enum_t ON enum_t.oid = a.atttypid  -- Join to get the type info\nLEFT JOIN \n    pg_namespace enum_ns ON enum_ns.oid = enum_t.typnamespace  -- Join to get the enum schema\nWHERE \n    a.attnum > 0  -- Valid column numbers only\n    AND NOT a.attisdropped  -- Skip dropped columns\n    AND cls.relkind IN ('r', 'v', 'm')  -- Include regular tables ('r'), views ('v'), and materialized views ('m')\n    AND ns.nspname = 'public'  -- Filter by schema\n    AND cls.relname = 'compat_items'  -- Filter by table name\nORDER BY \n    a.attnum;  -- Order by column number"
+3 B RowDescription [("table_name" 0 0 25 -1 -1 0) ("column_name" 1249 2 19 64 -1 0) ("is_nullable" 0 0 25 -1 -1 0) ("array_dimensions" 1249 7 21 2 -1 0) ("data_type" 0 0 25 -1 -1 0) ("seq_name" 0 0 2205 4 -1 0) ("column_default" 13428 6 1043 -1 -1 0) ("additional_dt" 13428 8 1043 -1 -1 0) ("enum_name" 13428 28 19 64 -1 0) ("is_generated" 13428 42 1043 -1 -1 0) ("generation_expression" 13428 43 1043 -1 -1 0) ("is_identity" 13428 35 1043 -1 7 0) ("identity_generation" 13428 36 1043 -1 -1 0) ("identity_start" 13428 37 1043 -1 -1 0) ("identity_increment" 13428 38 1043 -1 -1 0) ("identity_maximum" 13428 39 1043 -1 -1 0) ("identity_minimum" 13428 40 1043 -1 -1 0) ("identity_cycle" 13428 41 1043 -1 7 0) ("type_schema" 2615 2 19 64 -1 0)]
+3 B DataRow ["compat_items" "id" "NO" "0" "serial" "compat_items_id_seq" "nextval('compat_items_id_seq'::regclass)" "integer" "int4" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+3 B DataRow ["compat_items" "name" "NO" "0" "text" NULL NULL "text" "text" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+3 B DataRow ["compat_items" "price" "YES" "0" "numeric(10,2)" NULL NULL "numeric" "numeric" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+3 B DataRow ["compat_items" "mood" "YES" "0" "compat_mood" NULL "'ok'::compat_mood" "USER-DEFINED" "compat_mood" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "public"]
+3 B DataRow ["compat_items" "added" "YES" "0" "timestamp with time zone" NULL NULL "timestamp with time zone" "timestamptz" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+3 B DataRow ["compat_items" "extra" "YES" "0" "jsonb" NULL NULL "jsonb" "jsonb" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+3 B CommandComplete "SELECT 6"
+3 B ReadyForQuery I
+3 F Query "SELECT \n    a.attrelid::regclass::text AS table_name,  -- Table, view, or materialized view name\n    a.attname AS column_name,   -- Column name\n    CASE \n        WHEN NOT a.attisdropped THEN \n            CASE \n                WHEN a.attnotnull THEN 'NO'\n                ELSE 'YES'\n            END \n        ELSE NULL \n    END AS is_nullable,  -- NULL or NOT NULL constraint\n    a.attndims AS array_dimensions,  -- Array dimensions\n    CASE \n        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[]) \n        AND EXISTS (\n            SELECT FROM pg_attrdef ad\n            WHERE ad.adrelid = a.attrelid \n            AND ad.adnum = a.attnum \n            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval(''' \n                || pg_get_serial_sequence(a.attrelid::regclass::text, a.attname)::regclass || '''::regclass)'\n        )\n        THEN CASE a.atttypid\n            WHEN 'int'::regtype THEN 'serial'\n            WHEN 'int8'::regtype THEN 'bigserial'\n            WHEN 'int2'::regtype THEN 'smallserial'\n        END\n        ELSE format_type(a.atttypid, a.atttypmod)\n    END AS data_type,  -- Column data type\n--    ns.nspname AS type_schema,  -- Schema name\n    pg_get_serial_sequence('\"public\".\"compat_orders\"', a.attname)::regclass AS seq_name,  -- Serial sequence (if any)\n    c.column_default,  -- Column default value\n    c.data_type AS additional_dt,  -- Data type from information_schema\n    c.udt_name AS enum_name,  -- Enum type (if applicable)\n    c.is_generated,  -- Is it a generated column?\n    c.generation_expression,  -- Generation expression (if generated)\n    c.is_identity,  -- Is it an identity column?\n    c.identity_generation,  -- Identity generation strategy (ALWAYS or BY DEFAULT)\n    c.identity_start,  -- Start value of identity column\n    c.identity_increment,  -- Increment for identity column\n    c.identity_maximum,  -- Maximum value for identity column\n    c.identity_minimum,  -- Minimum value for identity column\n    c.identity_cycle,  -- Does the identity column cycle?\n    enum_ns.nspname AS type_schema  -- Schema of the enum type\nFROM \n    pg_attribute a\nJOIN \n    pg_class cls ON cls.oid = a.attrelid  -- Join pg_class to get table/view/materialized view info\nJOIN \n    pg_namespace ns ON ns.oid = cls.relnamespace  -- Join namespace to get schema info\nLEFT JOIN \n    information_schema.columns c ON c.column_name = a.attname \n        AND c.table_schema = ns.nspname \n        AND c.table_name = cls.relname  -- Match schema and table/view name\nLEFT JOIN \n    pg_type enum_t ON enum_t.oid = a.atttypid  -- Join to get the type info\nLEFT JOIN \n    pg_namespace enum_ns ON enum_ns.oid = enum_t.typnamespace  -- Join to get the enum schema\nWHERE \n    a.attnum > 0  -- Valid column numbers only\n    AND NOT a.attisdropped  -- Skip dropped columns\n    AND cls.relkind IN ('r', 'v', 'm')  -- Include regular tables ('r'), views ('v'), and materialized views ('m')\n    AND ns.nspname = 'public'  -- Filter by schema\n    AND cls.relname = 'compat_orders'  -- Filter by table name\nORDER BY \n    a.attnum;  -- Order by column number"
+3 B RowDescription [("table_name" 0 0 25 -1 -1 0) ("column_name" 1249 2 19 64 -1 0) ("is_nullable" 0 0 25 -1 -1 0) ("array_dimensions" 1249 7 21 2 -1 0) ("data_type" 0 0 25 -1 -1 0) ("seq_name" 0 0 2205 4 -1 0) ("column_default" 13428 6 1043 -1 -1 0) ("additional_dt" 13428 8 1043 -1 -1 0) ("enum_name" 13428 28 19 64 -1 0) ("is_generated" 13428 42 1043 -1 -1 0) ("generation_expression" 13428 43 1043 -1 -1 0) ("is_identity" 13428 35 1043 -1 7 0) ("identity_generation" 13428 36 1043 -1 -1 0) ("identity_start" 13428 37 1043 -1 -1 0) ("identity_increment" 13428 38 1043 -1 -1 0) ("identity_maximum" 13428 39 1043 -1 -1 0) ("identity_minimum" 13428 40 1043 -1 -1 0) ("identity_cycle" 13428 41 1043 -1 7 0) ("type_schema" 2615 2 19 64 -1 0)]
+3 B DataRow ["compat_orders" "id" "NO" "0" "integer" "compat_orders_id_seq" NULL "integer" "int4" "NEVER" NULL "YES" "ALWAYS" "1" "1" "2147483647" "1" "NO" "pg_catalog"]
+3 B DataRow ["compat_orders" "item_id" "NO" "0" "integer" NULL NULL "integer" "int4" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+3 B DataRow ["compat_orders" "qty" "NO" "0" "integer" NULL "1" "integer" "int4" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+3 B CommandComplete "SELECT 3"
+3 B ReadyForQuery I
+3 F Query "SELECT c.column_name, c.data_type, constraint_type, constraint_name, constraint_schema\n      FROM information_schema.table_constraints tc\n      JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name)\n      JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema\n        AND tc.table_name = c.table_name AND ccu.column_name = c.column_name\n      WHERE tc.table_name = 'compat_items' and constraint_schema = 'public';"
+3 B RowDescription [("column_name" 13428 4 19 64 -1 0) ("data_type" 13428 8 1043 -1 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_name" 13543 3 19 64 -1 0) ("constraint_schema" 13543 2 19 64 -1 0)]
+3 B DataRow ["id" "integer" "CHECK" "compat_items_id_not_null" "public"]
+3 B DataRow ["name" "text" "CHECK" "compat_items_name_not_null" "public"]
+3 B DataRow ["id" "integer" "PRIMARY KEY" "compat_items_pkey" "public"]
+3 B DataRow ["name" "text" "UNIQUE" "compat_items_name_unique" "public"]
+3 B CommandComplete "SELECT 4"
+3 B ReadyForQuery I
+3 F Query "SELECT c.column_name, c.data_type, constraint_type, constraint_name, constraint_schema\n      FROM information_schema.table_constraints tc\n      JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name)\n      JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema\n        AND tc.table_name = c.table_name AND ccu.column_name = c.column_name\n      WHERE tc.table_name = 'compat_orders' and constraint_schema = 'public';"
+3 B RowDescription [("column_name" 13428 4 19 64 -1 0) ("data_type" 13428 8 1043 -1 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_name" 13543 3 19 64 -1 0) ("constraint_schema" 13543 2 19 64 -1 0)]
+3 B DataRow ["id" "integer" "CHECK" "compat_orders_id_not_null" "public"]
+3 B DataRow ["item_id" "integer" "CHECK" "compat_orders_item_id_not_null" "public"]
+3 B DataRow ["qty" "integer" "CHECK" "compat_orders_qty_not_null" "public"]
+3 B DataRow ["id" "integer" "PRIMARY KEY" "compat_orders_pkey" "public"]
+3 B DataRow ["id" "integer" "FOREIGN KEY" "compat_orders_item_id_compat_items_id_fk" "public"]
+3 B CommandComplete "SELECT 5"
+3 B ReadyForQuery I
+3 F Query "SELECT \n\t\t\t\t\t\ttc.constraint_name,\n\t\t\t\t\t\ttc.constraint_type,\n\t\t\t\t\t\tpg_get_constraintdef(con.oid) AS constraint_definition\n\t\t\t\t\tFROM \n\t\t\t\t\t\tinformation_schema.table_constraints AS tc\n\t\t\t\t\t\tJOIN pg_constraint AS con \n\t\t\t\t\t\t\tON tc.constraint_name = con.conname\n\t\t\t\t\t\t\tAND con.conrelid = (\n\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\tFROM pg_class \n\t\t\t\t\t\t\t\tWHERE relname = tc.table_name \n\t\t\t\t\t\t\t\tAND relnamespace = (\n\t\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\t\tFROM pg_namespace \n\t\t\t\t\t\t\t\t\tWHERE nspname = tc.constraint_schema\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\tWHERE \n\t\t\t\t\t\ttc.table_name = 'compat_items'\n\t\t\t\t\t\tAND tc.constraint_schema = 'public'\n\t\t\t\t\t\tAND tc.constraint_type = 'CHECK'\n\t\t\t\t\t\tAND con.contype = 'c';"
+3 B RowDescription [("constraint_name" 13543 3 19 64 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_definition" 0 0 25 -1 -1 0)]
+3 B CommandComplete "SELECT 0"
+3 B ReadyForQuery I
+3 F Query "SELECT \n\t\t\t\t\t\ttc.constraint_name,\n\t\t\t\t\t\ttc.constraint_type,\n\t\t\t\t\t\tpg_get_constraintdef(con.oid) AS constraint_definition\n\t\t\t\t\tFROM \n\t\t\t\t\t\tinformation_schema.table_constraints AS tc\n\t\t\t\t\t\tJOIN pg_constraint AS con \n\t\t\t\t\t\t\tON tc.constraint_name = con.conname\n\t\t\t\t\t\t\tAND con.conrelid = (\n\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\tFROM pg_class \n\t\t\t\t\t\t\t\tWHERE relname = tc.table_name \n\t\t\t\t\t\t\t\tAND relnamespace = (\n\t\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\t\tFROM pg_namespace \n\t\t\t\t\t\t\t\t\tWHERE nspname = tc.constraint_schema\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\tWHERE \n\t\t\t\t\t\ttc.table_name = 'compat_orders'\n\t\t\t\t\t\tAND tc.constraint_schema = 'public'\n\t\t\t\t\t\tAND tc.constraint_type = 'CHECK'\n\t\t\t\t\t\tAND con.contype = 'c';"
+3 B RowDescription [("constraint_name" 13543 3 19 64 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_definition" 0 0 25 -1 -1 0)]
+3 B CommandComplete "SELECT 0"
+3 B ReadyForQuery I
+3 F Query "SELECT\n            con.contype AS constraint_type,\n            nsp.nspname AS constraint_schema,\n            con.conname AS constraint_name,\n            rel.relname AS table_name,\n            att.attname AS column_name,\n            fnsp.nspname AS foreign_table_schema,\n            frel.relname AS foreign_table_name,\n            fatt.attname AS foreign_column_name,\n            CASE con.confupdtype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS update_rule,\n            CASE con.confdeltype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS delete_rule\n          FROM\n            pg_catalog.pg_constraint con\n            JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid\n            JOIN pg_catalog.pg_namespace nsp ON nsp.oid = con.connamespace\n            LEFT JOIN pg_catalog.pg_attribute att ON att.attnum = ANY (con.conkey)\n              AND att.attrelid = con.conrelid\n            LEFT JOIN pg_catalog.pg_class frel ON frel.oid = con.confrelid\n            LEFT JOIN pg_catalog.pg_namespace fnsp ON fnsp.oid = frel.relnamespace\n            LEFT JOIN pg_catalog.pg_attribute fatt ON fatt.attnum = ANY (con.confkey)\n              AND fatt.attrelid = con.confrelid\n          WHERE\n            nsp.nspname = 'public'\n            AND rel.relname = 'compat_items'\n            AND con.contype IN ('f');"
+3 B RowDescription [("constraint_type" 2606 4 18 1 -1 0) ("constraint_schema" 2615 2 19 64 -1 0) ("constraint_name" 2606 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("column_name" 1249 2 19 64 -1 0) ("foreign_table_schema" 2615 2 19 64 -1 0) ("foreign_table_name" 1259 2 19 64 -1 0) ("foreign_column_name" 1249 2 19 64 -1 0) ("update_rule" 0 0 25 -1 -1 0) ("delete_rule" 0 0 25 -1 -1 0)]
+3 B CommandComplete "SELECT 0"
+3 B ReadyForQuery I
+3 F Query "SELECT\n            con.contype AS constraint_type,\n            nsp.nspname AS constraint_schema,\n            con.conname AS constraint_name,\n            rel.relname AS table_name,\n            att.attname AS column_name,\n            fnsp.nspname AS foreign_table_schema,\n            frel.relname AS foreign_table_name,\n            fatt.attname AS foreign_column_name,\n            CASE con.confupdtype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS update_rule,\n            CASE con.confdeltype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS delete_rule\n          FROM\n            pg_catalog.pg_constraint con\n            JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid\n            JOIN pg_catalog.pg_namespace nsp ON nsp.oid = con.connamespace\n            LEFT JOIN pg_catalog.pg_attribute att ON att.attnum = ANY (con.conkey)\n              AND att.attrelid = con.conrelid\n            LEFT JOIN pg_catalog.pg_class frel ON frel.oid = con.confrelid\n            LEFT JOIN pg_catalog.pg_namespace fnsp ON fnsp.oid = frel.relnamespace\n            LEFT JOIN pg_catalog.pg_attribute fatt ON fatt.attnum = ANY (con.confkey)\n              AND fatt.attrelid = con.confrelid\n          WHERE\n            nsp.nspname = 'public'\n            AND rel.relname = 'compat_orders'\n            AND con.contype IN ('f');"
+3 B RowDescription [("constraint_type" 2606 4 18 1 -1 0) ("constraint_schema" 2615 2 19 64 -1 0) ("constraint_name" 2606 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("column_name" 1249 2 19 64 -1 0) ("foreign_table_schema" 2615 2 19 64 -1 0) ("foreign_table_name" 1259 2 19 64 -1 0) ("foreign_column_name" 1249 2 19 64 -1 0) ("update_rule" 0 0 25 -1 -1 0) ("delete_rule" 0 0 25 -1 -1 0)]
+3 B DataRow ["f" "public" "compat_orders_item_id_compat_items_id_fk" "compat_orders" "item_id" "public" "compat_items" "id" "NO ACTION" "CASCADE"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery I
+3 F Query "SELECT  DISTINCT ON (t.relname, ic.relname, k.i) t.relname as table_name, ic.relname AS indexname,\n        k.i AS index_order,\n        i.indisunique as is_unique,\n        am.amname as method,\n        ic.reloptions as with,\n        coalesce(a.attname, pg_get_indexdef(i.indexrelid, k.i, false)) AS column_name,\n          CASE\n        WHEN pg_get_expr(i.indexprs, i.indrelid) IS NOT NULL THEN 1\n        ELSE 0\n    END AS is_expression,\n        i.indoption[k.i-1] & 1 = 1 AS descending,\n        i.indoption[k.i-1] & 2 = 2 AS nulls_first,\n        pg_get_expr(\n                              i.indpred,\n                              i.indrelid\n                          ) as where,\n         opc.opcname\n      FROM pg_class t\n          LEFT JOIN pg_index i ON t.oid = i.indrelid\n          LEFT JOIN pg_class ic ON ic.oid = i.indexrelid\n\t\t  CROSS JOIN LATERAL (SELECT unnest(i.indkey), generate_subscripts(i.indkey, 1) + 1) AS k(attnum, i)\n          LEFT JOIN pg_attribute AS a\n            ON i.indrelid = a.attrelid AND k.attnum = a.attnum\n          JOIN pg_namespace c on c.oid = t.relnamespace\n        LEFT JOIN pg_am AS am ON ic.relam = am.oid\n        JOIN pg_opclass opc ON opc.oid = ANY(i.indclass)\n      WHERE\n      c.nspname = 'public' AND\n      t.relname = 'compat_items';"
+3 B RowDescription [("table_name" 1259 2 19 64 -1 0) ("indexname" 1259 2 19 64 -1 0) ("index_order" 0 0 23 4 -1 0) ("is_unique" 2610 5 16 1 -1 0) ("method" 2601 2 19 64 -1 0) ("with" 1259 33 1009 -1 -1 0) ("column_name" 0 0 19 64 -1 0) ("is_expression" 0 0 23 4 -1 0) ("descending" 0 0 16 1 -1 0) ("nulls_first" 0 0 16 1 -1 0) ("where" 0 0 25 -1 -1 0) ("opcname" 2616 3 19 64 -1 0)]
+3 B DataRow ["compat_items" "compat_items_name_unique" "1" "t" "btree" NULL "name" "0" "f" "f" NULL "text_ops"]
+3 B DataRow ["compat_items" "compat_items_pkey" "1" "t" "btree" NULL "id" "0" "f" "f" NULL "int4_ops"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Query "SELECT  DISTINCT ON (t.relname, ic.relname, k.i) t.relname as table_name, ic.relname AS indexname,\n        k.i AS index_order,\n        i.indisunique as is_unique,\n        am.amname as method,\n        ic.reloptions as with,\n        coalesce(a.attname, pg_get_indexdef(i.indexrelid, k.i, false)) AS column_name,\n          CASE\n        WHEN pg_get_expr(i.indexprs, i.indrelid) IS NOT NULL THEN 1\n        ELSE 0\n    END AS is_expression,\n        i.indoption[k.i-1] & 1 = 1 AS descending,\n        i.indoption[k.i-1] & 2 = 2 AS nulls_first,\n        pg_get_expr(\n                              i.indpred,\n                              i.indrelid\n                          ) as where,\n         opc.opcname\n      FROM pg_class t\n          LEFT JOIN pg_index i ON t.oid = i.indrelid\n          LEFT JOIN pg_class ic ON ic.oid = i.indexrelid\n\t\t  CROSS JOIN LATERAL (SELECT unnest(i.indkey), generate_subscripts(i.indkey, 1) + 1) AS k(attnum, i)\n          LEFT JOIN pg_attribute AS a\n            ON i.indrelid = a.attrelid AND k.attnum = a.attnum\n          JOIN pg_namespace c on c.oid = t.relnamespace\n        LEFT JOIN pg_am AS am ON ic.relam = am.oid\n        JOIN pg_opclass opc ON opc.oid = ANY(i.indclass)\n      WHERE\n      c.nspname = 'public' AND\n      t.relname = 'compat_orders';"
+3 B RowDescription [("table_name" 1259 2 19 64 -1 0) ("indexname" 1259 2 19 64 -1 0) ("index_order" 0 0 23 4 -1 0) ("is_unique" 2610 5 16 1 -1 0) ("method" 2601 2 19 64 -1 0) ("with" 1259 33 1009 -1 -1 0) ("column_name" 0 0 19 64 -1 0) ("is_expression" 0 0 23 4 -1 0) ("descending" 0 0 16 1 -1 0) ("nulls_first" 0 0 16 1 -1 0) ("where" 0 0 25 -1 -1 0) ("opcname" 2616 3 19 64 -1 0)]
+3 B DataRow ["compat_orders" "compat_orders_item" "1" "f" "btree" NULL "item_id" "0" "f" "f" NULL "int4_ops"]
+3 B DataRow ["compat_orders" "compat_orders_pkey" "1" "t" "btree" NULL "id" "0" "f" "f" NULL "int4_ops"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Query "SELECT\n          idx.indexrelname AS index_name,\n          idx.relname AS table_name,\n          schemaname,\n          CASE WHEN con.conname IS NOT NULL THEN 1 ELSE 0 END AS generated_by_constraint\n        FROM\n          pg_stat_user_indexes idx\n        LEFT JOIN\n          pg_constraint con ON con.conindid = idx.indexrelid\n        WHERE idx.relname = 'compat_items' and schemaname = 'public'\n        group by index_name, table_name,schemaname, generated_by_constraint;"
+3 B RowDescription [("index_name" 12210 5 19 64 -1 0) ("table_name" 12210 4 19 64 -1 0) ("schemaname" 12210 3 19 64 -1 0) ("generated_by_constraint" 0 0 23 4 -1 0)]
+3 B DataRow ["compat_items_name_unique" "compat_items" "public" "1"]
+3 B DataRow ["compat_items_pkey" "compat_items" "public" "1"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F Query "SELECT\n          idx.indexrelname AS index_name,\n          idx.relname AS table_name,\n          schemaname,\n          CASE WHEN con.conname IS NOT NULL THEN 1 ELSE 0 END AS generated_by_constraint\n        FROM\n          pg_stat_user_indexes idx\n        LEFT JOIN\n          pg_constraint con ON con.conindid = idx.indexrelid\n        WHERE idx.relname = 'compat_orders' and schemaname = 'public'\n        group by index_name, table_name,schemaname, generated_by_constraint;"
+3 B RowDescription [("index_name" 12210 5 19 64 -1 0) ("table_name" 12210 4 19 64 -1 0) ("schemaname" 12210 3 19 64 -1 0) ("generated_by_constraint" 0 0 23 4 -1 0)]
+3 B DataRow ["compat_orders_item" "compat_orders" "public" "0"]
+3 B DataRow ["compat_orders_pkey" "compat_orders" "public" "1"]
+3 B CommandComplete "SELECT 2"
+3 B ReadyForQuery I
+3 F End
+3 B End
+4 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+4 B AuthenticationSASL "SCRAM-SHA-256"
+4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=MDd9LfT5saVIEKKms5c+/NtE"
+4 B AuthenticationSASLContinue "r=MDd9LfT5saVIEKKms5c+/NtEMWybRYRJtfIKJ/gM1HNCyi7R,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F SASLResponse "c=biws,r=MDd9LfT5saVIEKKms5c+/NtEMWybRYRJtfIKJ/gM1HNCyi7R,p=Sf7nCLW1Fi8yQbUJiwDzOkDreLqCbBhDouuH6Aqn0SA="
+4 B AuthenticationSASLFinal "v=+f06rJRbPaqPpPv9ZI3sbGy7in8ei+mww6E5Ck4iAaw="
+4 B AuthenticationOk
+4 B ParameterStatus "IntervalStyle" "postgres"
+4 B ParameterStatus "search_path" "\"$user\", public"
+4 B ParameterStatus "is_superuser" "on"
+4 B ParameterStatus "standard_conforming_strings" "on"
+4 B ParameterStatus "session_authorization" "postgres"
+4 B ParameterStatus "client_encoding" "UTF8"
+4 B ParameterStatus "server_version" "19beta4"
+4 B ParameterStatus "server_encoding" "UTF8"
+4 B ParameterStatus "in_hot_standby" "off"
+4 B ParameterStatus "integer_datetimes" "on"
+4 B ParameterStatus "TimeZone" "UTC"
+4 B ParameterStatus "application_name" ""
+4 B ParameterStatus "default_transaction_read_only" "off"
+4 B ParameterStatus "scram_iterations" "4096"
+4 B ParameterStatus "DateStyle" "ISO, MDY"
+4 B BackendKeyData 806255 "\xe4\x07U\x81"
+4 B ReadyForQuery I
+4 F Query "SELECT \n    n.nspname AS table_schema, \n    c.relname AS table_name, \n    CASE \n        WHEN c.relkind = 'r' THEN 'table'\n        WHEN c.relkind = 'v' THEN 'view'\n        WHEN c.relkind = 'm' THEN 'materialized_view'\n    END AS type,\n\tc.relrowsecurity AS rls_enabled\nFROM \n    pg_catalog.pg_class c\nJOIN \n    pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE \n\tc.relkind IN ('r', 'v', 'm') \n     AND n.nspname = 'public';"
+4 B RowDescription [("table_schema" 2615 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("type" 0 0 25 -1 -1 0) ("rls_enabled" 1259 24 16 1 -1 0)]
+4 B DataRow ["public" "compat_items" "table" "f"]
+4 B DataRow ["public" "compat_orders" "table" "f"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Query "select s.nspname as table_schema\n  from pg_catalog.pg_namespace s\n  join pg_catalog.pg_user u on u.usesysid = s.nspowner\n  where nspname not in ('information_schema', 'pg_catalog', 'public')\n        and nspname not like 'pg_toast%'\n        and nspname not like 'pg_temp_%'\n  order by table_schema;"
+4 B RowDescription [("table_schema" 2615 2 19 64 -1 0)]
+4 B CommandComplete "SELECT 0"
+4 B ReadyForQuery I
+4 F Query "select schemaname, sequencename, start_value, min_value, max_value, increment_by, cycle, cache_size from pg_sequences as seq WHERE schemaname = 'public';"
+4 B RowDescription [("schemaname" 12048 1 19 64 -1 0) ("sequencename" 12048 2 19 64 -1 0) ("start_value" 12048 5 20 8 -1 0) ("min_value" 12048 6 20 8 -1 0) ("max_value" 12048 7 20 8 -1 0) ("increment_by" 12048 8 20 8 -1 0) ("cycle" 12048 9 16 1 -1 0) ("cache_size" 12048 10 20 8 -1 0)]
+4 B DataRow ["public" "compat_items_id_seq" "1" "1" "2147483647" "1" "f" "1"]
+4 B DataRow ["public" "compat_orders_id_seq" "1" "1" "2147483647" "1" "f" "1"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Query "select n.nspname as enum_schema,\n  t.typname as enum_name,\n  e.enumlabel as enum_value,\n  e.enumsortorder as sort_order\n  from pg_type t\n  join pg_enum e on t.oid = e.enumtypid\n  join pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n   WHERE n.nspname = 'public'\n  order by enum_schema, enum_name, sort_order;"
+4 B RowDescription [("enum_schema" 2615 2 19 64 -1 0) ("enum_name" 1247 2 19 64 -1 0) ("enum_value" 3501 4 19 64 -1 0) ("sort_order" 3501 3 700 4 -1 0)]
+4 B DataRow ["public" "compat_mood" "sad" "1"]
+4 B DataRow ["public" "compat_mood" "ok" "2"]
+4 B DataRow ["public" "compat_mood" "happy" "3"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Query "SELECT rolname, rolinherit, rolcreatedb, rolcreaterole FROM pg_roles;"
+4 B RowDescription [("rolname" 12000 1 19 64 -1 0) ("rolinherit" 12000 3 16 1 -1 0) ("rolcreatedb" 12000 5 16 1 -1 0) ("rolcreaterole" 12000 4 16 1 -1 0)]
+4 B DataRow ["pg_database_owner" "t" "f" "f"]
+4 B DataRow ["pg_read_all_data" "t" "f" "f"]
+4 B DataRow ["pg_write_all_data" "t" "f" "f"]
+4 B DataRow ["pg_monitor" "t" "f" "f"]
+4 B DataRow ["pg_read_all_settings" "t" "f" "f"]
+4 B DataRow ["pg_read_all_stats" "t" "f" "f"]
+4 B DataRow ["pg_stat_scan_tables" "t" "f" "f"]
+4 B DataRow ["pg_read_server_files" "t" "f" "f"]
+4 B DataRow ["pg_write_server_files" "t" "f" "f"]
+4 B DataRow ["pg_execute_server_program" "t" "f" "f"]
+4 B DataRow ["pg_signal_backend" "t" "f" "f"]
+4 B DataRow ["pg_checkpoint" "t" "f" "f"]
+4 B DataRow ["pg_maintain" "t" "f" "f"]
+4 B DataRow ["pg_use_reserved_connections" "t" "f" "f"]
+4 B DataRow ["pg_create_subscription" "t" "f" "f"]
+4 B DataRow ["pg_signal_autovacuum_worker" "t" "f" "f"]
+4 B DataRow ["postgres" "t" "t" "t"]
+4 B CommandComplete "SELECT 17"
+4 B ReadyForQuery I
+4 F Query "SELECT schemaname, tablename, policyname as name, permissive as \"as\", roles as to, cmd as for, qual as using, with_check as \"withCheck\" FROM pg_policies WHERE schemaname = 'public';"
+4 B RowDescription [("schemaname" 12018 1 19 64 -1 0) ("tablename" 12018 2 19 64 -1 0) ("name" 12018 3 19 64 -1 0) ("as" 12018 4 25 -1 -1 0) ("to" 12018 5 1003 -1 -1 0) ("for" 12018 6 25 -1 -1 0) ("using" 12018 7 25 -1 -1 0) ("withCheck" 12018 8 25 -1 -1 0)]
+4 B CommandComplete "SELECT 0"
+4 B ReadyForQuery I
+4 F Query "SELECT \n    a.attrelid::regclass::text AS table_name,  -- Table, view, or materialized view name\n    a.attname AS column_name,   -- Column name\n    CASE \n        WHEN NOT a.attisdropped THEN \n            CASE \n                WHEN a.attnotnull THEN 'NO'\n                ELSE 'YES'\n            END \n        ELSE NULL \n    END AS is_nullable,  -- NULL or NOT NULL constraint\n    a.attndims AS array_dimensions,  -- Array dimensions\n    CASE \n        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[]) \n        AND EXISTS (\n            SELECT FROM pg_attrdef ad\n            WHERE ad.adrelid = a.attrelid \n            AND ad.adnum = a.attnum \n            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval(''' \n                || pg_get_serial_sequence(a.attrelid::regclass::text, a.attname)::regclass || '''::regclass)'\n        )\n        THEN CASE a.atttypid\n            WHEN 'int'::regtype THEN 'serial'\n            WHEN 'int8'::regtype THEN 'bigserial'\n            WHEN 'int2'::regtype THEN 'smallserial'\n        END\n        ELSE format_type(a.atttypid, a.atttypmod)\n    END AS data_type,  -- Column data type\n--    ns.nspname AS type_schema,  -- Schema name\n    pg_get_serial_sequence('\"public\".\"compat_items\"', a.attname)::regclass AS seq_name,  -- Serial sequence (if any)\n    c.column_default,  -- Column default value\n    c.data_type AS additional_dt,  -- Data type from information_schema\n    c.udt_name AS enum_name,  -- Enum type (if applicable)\n    c.is_generated,  -- Is it a generated column?\n    c.generation_expression,  -- Generation expression (if generated)\n    c.is_identity,  -- Is it an identity column?\n    c.identity_generation,  -- Identity generation strategy (ALWAYS or BY DEFAULT)\n    c.identity_start,  -- Start value of identity column\n    c.identity_increment,  -- Increment for identity column\n    c.identity_maximum,  -- Maximum value for identity column\n    c.identity_minimum,  -- Minimum value for identity column\n    c.identity_cycle,  -- Does the identity column cycle?\n    enum_ns.nspname AS type_schema  -- Schema of the enum type\nFROM \n    pg_attribute a\nJOIN \n    pg_class cls ON cls.oid = a.attrelid  -- Join pg_class to get table/view/materialized view info\nJOIN \n    pg_namespace ns ON ns.oid = cls.relnamespace  -- Join namespace to get schema info\nLEFT JOIN \n    information_schema.columns c ON c.column_name = a.attname \n        AND c.table_schema = ns.nspname \n        AND c.table_name = cls.relname  -- Match schema and table/view name\nLEFT JOIN \n    pg_type enum_t ON enum_t.oid = a.atttypid  -- Join to get the type info\nLEFT JOIN \n    pg_namespace enum_ns ON enum_ns.oid = enum_t.typnamespace  -- Join to get the enum schema\nWHERE \n    a.attnum > 0  -- Valid column numbers only\n    AND NOT a.attisdropped  -- Skip dropped columns\n    AND cls.relkind IN ('r', 'v', 'm')  -- Include regular tables ('r'), views ('v'), and materialized views ('m')\n    AND ns.nspname = 'public'  -- Filter by schema\n    AND cls.relname = 'compat_items'  -- Filter by table name\nORDER BY \n    a.attnum;  -- Order by column number"
+4 B RowDescription [("table_name" 0 0 25 -1 -1 0) ("column_name" 1249 2 19 64 -1 0) ("is_nullable" 0 0 25 -1 -1 0) ("array_dimensions" 1249 7 21 2 -1 0) ("data_type" 0 0 25 -1 -1 0) ("seq_name" 0 0 2205 4 -1 0) ("column_default" 13428 6 1043 -1 -1 0) ("additional_dt" 13428 8 1043 -1 -1 0) ("enum_name" 13428 28 19 64 -1 0) ("is_generated" 13428 42 1043 -1 -1 0) ("generation_expression" 13428 43 1043 -1 -1 0) ("is_identity" 13428 35 1043 -1 7 0) ("identity_generation" 13428 36 1043 -1 -1 0) ("identity_start" 13428 37 1043 -1 -1 0) ("identity_increment" 13428 38 1043 -1 -1 0) ("identity_maximum" 13428 39 1043 -1 -1 0) ("identity_minimum" 13428 40 1043 -1 -1 0) ("identity_cycle" 13428 41 1043 -1 7 0) ("type_schema" 2615 2 19 64 -1 0)]
+4 B DataRow ["compat_items" "id" "NO" "0" "serial" "compat_items_id_seq" "nextval('compat_items_id_seq'::regclass)" "integer" "int4" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+4 B DataRow ["compat_items" "name" "NO" "0" "text" NULL NULL "text" "text" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+4 B DataRow ["compat_items" "price" "YES" "0" "numeric(10,2)" NULL NULL "numeric" "numeric" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+4 B DataRow ["compat_items" "mood" "YES" "0" "compat_mood" NULL "'ok'::compat_mood" "USER-DEFINED" "compat_mood" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "public"]
+4 B DataRow ["compat_items" "added" "YES" "0" "timestamp with time zone" NULL NULL "timestamp with time zone" "timestamptz" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+4 B DataRow ["compat_items" "extra" "YES" "0" "jsonb" NULL NULL "jsonb" "jsonb" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+4 B CommandComplete "SELECT 6"
+4 B ReadyForQuery I
+4 F Query "SELECT \n    a.attrelid::regclass::text AS table_name,  -- Table, view, or materialized view name\n    a.attname AS column_name,   -- Column name\n    CASE \n        WHEN NOT a.attisdropped THEN \n            CASE \n                WHEN a.attnotnull THEN 'NO'\n                ELSE 'YES'\n            END \n        ELSE NULL \n    END AS is_nullable,  -- NULL or NOT NULL constraint\n    a.attndims AS array_dimensions,  -- Array dimensions\n    CASE \n        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[]) \n        AND EXISTS (\n            SELECT FROM pg_attrdef ad\n            WHERE ad.adrelid = a.attrelid \n            AND ad.adnum = a.attnum \n            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval(''' \n                || pg_get_serial_sequence(a.attrelid::regclass::text, a.attname)::regclass || '''::regclass)'\n        )\n        THEN CASE a.atttypid\n            WHEN 'int'::regtype THEN 'serial'\n            WHEN 'int8'::regtype THEN 'bigserial'\n            WHEN 'int2'::regtype THEN 'smallserial'\n        END\n        ELSE format_type(a.atttypid, a.atttypmod)\n    END AS data_type,  -- Column data type\n--    ns.nspname AS type_schema,  -- Schema name\n    pg_get_serial_sequence('\"public\".\"compat_orders\"', a.attname)::regclass AS seq_name,  -- Serial sequence (if any)\n    c.column_default,  -- Column default value\n    c.data_type AS additional_dt,  -- Data type from information_schema\n    c.udt_name AS enum_name,  -- Enum type (if applicable)\n    c.is_generated,  -- Is it a generated column?\n    c.generation_expression,  -- Generation expression (if generated)\n    c.is_identity,  -- Is it an identity column?\n    c.identity_generation,  -- Identity generation strategy (ALWAYS or BY DEFAULT)\n    c.identity_start,  -- Start value of identity column\n    c.identity_increment,  -- Increment for identity column\n    c.identity_maximum,  -- Maximum value for identity column\n    c.identity_minimum,  -- Minimum value for identity column\n    c.identity_cycle,  -- Does the identity column cycle?\n    enum_ns.nspname AS type_schema  -- Schema of the enum type\nFROM \n    pg_attribute a\nJOIN \n    pg_class cls ON cls.oid = a.attrelid  -- Join pg_class to get table/view/materialized view info\nJOIN \n    pg_namespace ns ON ns.oid = cls.relnamespace  -- Join namespace to get schema info\nLEFT JOIN \n    information_schema.columns c ON c.column_name = a.attname \n        AND c.table_schema = ns.nspname \n        AND c.table_name = cls.relname  -- Match schema and table/view name\nLEFT JOIN \n    pg_type enum_t ON enum_t.oid = a.atttypid  -- Join to get the type info\nLEFT JOIN \n    pg_namespace enum_ns ON enum_ns.oid = enum_t.typnamespace  -- Join to get the enum schema\nWHERE \n    a.attnum > 0  -- Valid column numbers only\n    AND NOT a.attisdropped  -- Skip dropped columns\n    AND cls.relkind IN ('r', 'v', 'm')  -- Include regular tables ('r'), views ('v'), and materialized views ('m')\n    AND ns.nspname = 'public'  -- Filter by schema\n    AND cls.relname = 'compat_orders'  -- Filter by table name\nORDER BY \n    a.attnum;  -- Order by column number"
+4 B RowDescription [("table_name" 0 0 25 -1 -1 0) ("column_name" 1249 2 19 64 -1 0) ("is_nullable" 0 0 25 -1 -1 0) ("array_dimensions" 1249 7 21 2 -1 0) ("data_type" 0 0 25 -1 -1 0) ("seq_name" 0 0 2205 4 -1 0) ("column_default" 13428 6 1043 -1 -1 0) ("additional_dt" 13428 8 1043 -1 -1 0) ("enum_name" 13428 28 19 64 -1 0) ("is_generated" 13428 42 1043 -1 -1 0) ("generation_expression" 13428 43 1043 -1 -1 0) ("is_identity" 13428 35 1043 -1 7 0) ("identity_generation" 13428 36 1043 -1 -1 0) ("identity_start" 13428 37 1043 -1 -1 0) ("identity_increment" 13428 38 1043 -1 -1 0) ("identity_maximum" 13428 39 1043 -1 -1 0) ("identity_minimum" 13428 40 1043 -1 -1 0) ("identity_cycle" 13428 41 1043 -1 7 0) ("type_schema" 2615 2 19 64 -1 0)]
+4 B DataRow ["compat_orders" "id" "NO" "0" "integer" "compat_orders_id_seq" NULL "integer" "int4" "NEVER" NULL "YES" "ALWAYS" "1" "1" "2147483647" "1" "NO" "pg_catalog"]
+4 B DataRow ["compat_orders" "item_id" "NO" "0" "integer" NULL NULL "integer" "int4" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+4 B DataRow ["compat_orders" "qty" "NO" "0" "integer" NULL "1" "integer" "int4" "NEVER" NULL "NO" NULL NULL NULL NULL NULL "NO" "pg_catalog"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+4 F Query "SELECT c.column_name, c.data_type, constraint_type, constraint_name, constraint_schema\n      FROM information_schema.table_constraints tc\n      JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name)\n      JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema\n        AND tc.table_name = c.table_name AND ccu.column_name = c.column_name\n      WHERE tc.table_name = 'compat_items' and constraint_schema = 'public';"
+4 B RowDescription [("column_name" 13428 4 19 64 -1 0) ("data_type" 13428 8 1043 -1 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_name" 13543 3 19 64 -1 0) ("constraint_schema" 13543 2 19 64 -1 0)]
+4 B DataRow ["id" "integer" "CHECK" "compat_items_id_not_null" "public"]
+4 B DataRow ["name" "text" "CHECK" "compat_items_name_not_null" "public"]
+4 B DataRow ["id" "integer" "PRIMARY KEY" "compat_items_pkey" "public"]
+4 B DataRow ["name" "text" "UNIQUE" "compat_items_name_unique" "public"]
+4 B CommandComplete "SELECT 4"
+4 B ReadyForQuery I
+4 F Query "SELECT c.column_name, c.data_type, constraint_type, constraint_name, constraint_schema\n      FROM information_schema.table_constraints tc\n      JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name)\n      JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema\n        AND tc.table_name = c.table_name AND ccu.column_name = c.column_name\n      WHERE tc.table_name = 'compat_orders' and constraint_schema = 'public';"
+4 B RowDescription [("column_name" 13428 4 19 64 -1 0) ("data_type" 13428 8 1043 -1 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_name" 13543 3 19 64 -1 0) ("constraint_schema" 13543 2 19 64 -1 0)]
+4 B DataRow ["id" "integer" "CHECK" "compat_orders_id_not_null" "public"]
+4 B DataRow ["item_id" "integer" "CHECK" "compat_orders_item_id_not_null" "public"]
+4 B DataRow ["qty" "integer" "CHECK" "compat_orders_qty_not_null" "public"]
+4 B DataRow ["id" "integer" "PRIMARY KEY" "compat_orders_pkey" "public"]
+4 B DataRow ["id" "integer" "FOREIGN KEY" "compat_orders_item_id_compat_items_id_fk" "public"]
+4 B CommandComplete "SELECT 5"
+4 B ReadyForQuery I
+4 F Query "SELECT \n\t\t\t\t\t\ttc.constraint_name,\n\t\t\t\t\t\ttc.constraint_type,\n\t\t\t\t\t\tpg_get_constraintdef(con.oid) AS constraint_definition\n\t\t\t\t\tFROM \n\t\t\t\t\t\tinformation_schema.table_constraints AS tc\n\t\t\t\t\t\tJOIN pg_constraint AS con \n\t\t\t\t\t\t\tON tc.constraint_name = con.conname\n\t\t\t\t\t\t\tAND con.conrelid = (\n\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\tFROM pg_class \n\t\t\t\t\t\t\t\tWHERE relname = tc.table_name \n\t\t\t\t\t\t\t\tAND relnamespace = (\n\t\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\t\tFROM pg_namespace \n\t\t\t\t\t\t\t\t\tWHERE nspname = tc.constraint_schema\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\tWHERE \n\t\t\t\t\t\ttc.table_name = 'compat_items'\n\t\t\t\t\t\tAND tc.constraint_schema = 'public'\n\t\t\t\t\t\tAND tc.constraint_type = 'CHECK'\n\t\t\t\t\t\tAND con.contype = 'c';"
+4 B RowDescription [("constraint_name" 13543 3 19 64 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_definition" 0 0 25 -1 -1 0)]
+4 B CommandComplete "SELECT 0"
+4 B ReadyForQuery I
+4 F Query "SELECT \n\t\t\t\t\t\ttc.constraint_name,\n\t\t\t\t\t\ttc.constraint_type,\n\t\t\t\t\t\tpg_get_constraintdef(con.oid) AS constraint_definition\n\t\t\t\t\tFROM \n\t\t\t\t\t\tinformation_schema.table_constraints AS tc\n\t\t\t\t\t\tJOIN pg_constraint AS con \n\t\t\t\t\t\t\tON tc.constraint_name = con.conname\n\t\t\t\t\t\t\tAND con.conrelid = (\n\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\tFROM pg_class \n\t\t\t\t\t\t\t\tWHERE relname = tc.table_name \n\t\t\t\t\t\t\t\tAND relnamespace = (\n\t\t\t\t\t\t\t\t\tSELECT oid \n\t\t\t\t\t\t\t\t\tFROM pg_namespace \n\t\t\t\t\t\t\t\t\tWHERE nspname = tc.constraint_schema\n\t\t\t\t\t\t\t\t)\n\t\t\t\t\t\t\t)\n\t\t\t\t\tWHERE \n\t\t\t\t\t\ttc.table_name = 'compat_orders'\n\t\t\t\t\t\tAND tc.constraint_schema = 'public'\n\t\t\t\t\t\tAND tc.constraint_type = 'CHECK'\n\t\t\t\t\t\tAND con.contype = 'c';"
+4 B RowDescription [("constraint_name" 13543 3 19 64 -1 0) ("constraint_type" 13543 7 1043 -1 -1 0) ("constraint_definition" 0 0 25 -1 -1 0)]
+4 B CommandComplete "SELECT 0"
+4 B ReadyForQuery I
+4 F Query "SELECT\n            con.contype AS constraint_type,\n            nsp.nspname AS constraint_schema,\n            con.conname AS constraint_name,\n            rel.relname AS table_name,\n            att.attname AS column_name,\n            fnsp.nspname AS foreign_table_schema,\n            frel.relname AS foreign_table_name,\n            fatt.attname AS foreign_column_name,\n            CASE con.confupdtype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS update_rule,\n            CASE con.confdeltype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS delete_rule\n          FROM\n            pg_catalog.pg_constraint con\n            JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid\n            JOIN pg_catalog.pg_namespace nsp ON nsp.oid = con.connamespace\n            LEFT JOIN pg_catalog.pg_attribute att ON att.attnum = ANY (con.conkey)\n              AND att.attrelid = con.conrelid\n            LEFT JOIN pg_catalog.pg_class frel ON frel.oid = con.confrelid\n            LEFT JOIN pg_catalog.pg_namespace fnsp ON fnsp.oid = frel.relnamespace\n            LEFT JOIN pg_catalog.pg_attribute fatt ON fatt.attnum = ANY (con.confkey)\n              AND fatt.attrelid = con.confrelid\n          WHERE\n            nsp.nspname = 'public'\n            AND rel.relname = 'compat_items'\n            AND con.contype IN ('f');"
+4 B RowDescription [("constraint_type" 2606 4 18 1 -1 0) ("constraint_schema" 2615 2 19 64 -1 0) ("constraint_name" 2606 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("column_name" 1249 2 19 64 -1 0) ("foreign_table_schema" 2615 2 19 64 -1 0) ("foreign_table_name" 1259 2 19 64 -1 0) ("foreign_column_name" 1249 2 19 64 -1 0) ("update_rule" 0 0 25 -1 -1 0) ("delete_rule" 0 0 25 -1 -1 0)]
+4 B CommandComplete "SELECT 0"
+4 B ReadyForQuery I
+4 F Query "SELECT\n            con.contype AS constraint_type,\n            nsp.nspname AS constraint_schema,\n            con.conname AS constraint_name,\n            rel.relname AS table_name,\n            att.attname AS column_name,\n            fnsp.nspname AS foreign_table_schema,\n            frel.relname AS foreign_table_name,\n            fatt.attname AS foreign_column_name,\n            CASE con.confupdtype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS update_rule,\n            CASE con.confdeltype\n              WHEN 'a' THEN 'NO ACTION'\n              WHEN 'r' THEN 'RESTRICT'\n              WHEN 'n' THEN 'SET NULL'\n              WHEN 'c' THEN 'CASCADE'\n              WHEN 'd' THEN 'SET DEFAULT'\n            END AS delete_rule\n          FROM\n            pg_catalog.pg_constraint con\n            JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid\n            JOIN pg_catalog.pg_namespace nsp ON nsp.oid = con.connamespace\n            LEFT JOIN pg_catalog.pg_attribute att ON att.attnum = ANY (con.conkey)\n              AND att.attrelid = con.conrelid\n            LEFT JOIN pg_catalog.pg_class frel ON frel.oid = con.confrelid\n            LEFT JOIN pg_catalog.pg_namespace fnsp ON fnsp.oid = frel.relnamespace\n            LEFT JOIN pg_catalog.pg_attribute fatt ON fatt.attnum = ANY (con.confkey)\n              AND fatt.attrelid = con.confrelid\n          WHERE\n            nsp.nspname = 'public'\n            AND rel.relname = 'compat_orders'\n            AND con.contype IN ('f');"
+4 B RowDescription [("constraint_type" 2606 4 18 1 -1 0) ("constraint_schema" 2615 2 19 64 -1 0) ("constraint_name" 2606 2 19 64 -1 0) ("table_name" 1259 2 19 64 -1 0) ("column_name" 1249 2 19 64 -1 0) ("foreign_table_schema" 2615 2 19 64 -1 0) ("foreign_table_name" 1259 2 19 64 -1 0) ("foreign_column_name" 1249 2 19 64 -1 0) ("update_rule" 0 0 25 -1 -1 0) ("delete_rule" 0 0 25 -1 -1 0)]
+4 B DataRow ["f" "public" "compat_orders_item_id_compat_items_id_fk" "compat_orders" "item_id" "public" "compat_items" "id" "NO ACTION" "CASCADE"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Query "SELECT  DISTINCT ON (t.relname, ic.relname, k.i) t.relname as table_name, ic.relname AS indexname,\n        k.i AS index_order,\n        i.indisunique as is_unique,\n        am.amname as method,\n        ic.reloptions as with,\n        coalesce(a.attname, pg_get_indexdef(i.indexrelid, k.i, false)) AS column_name,\n          CASE\n        WHEN pg_get_expr(i.indexprs, i.indrelid) IS NOT NULL THEN 1\n        ELSE 0\n    END AS is_expression,\n        i.indoption[k.i-1] & 1 = 1 AS descending,\n        i.indoption[k.i-1] & 2 = 2 AS nulls_first,\n        pg_get_expr(\n                              i.indpred,\n                              i.indrelid\n                          ) as where,\n         opc.opcname\n      FROM pg_class t\n          LEFT JOIN pg_index i ON t.oid = i.indrelid\n          LEFT JOIN pg_class ic ON ic.oid = i.indexrelid\n\t\t  CROSS JOIN LATERAL (SELECT unnest(i.indkey), generate_subscripts(i.indkey, 1) + 1) AS k(attnum, i)\n          LEFT JOIN pg_attribute AS a\n            ON i.indrelid = a.attrelid AND k.attnum = a.attnum\n          JOIN pg_namespace c on c.oid = t.relnamespace\n        LEFT JOIN pg_am AS am ON ic.relam = am.oid\n        JOIN pg_opclass opc ON opc.oid = ANY(i.indclass)\n      WHERE\n      c.nspname = 'public' AND\n      t.relname = 'compat_items';"
+4 B RowDescription [("table_name" 1259 2 19 64 -1 0) ("indexname" 1259 2 19 64 -1 0) ("index_order" 0 0 23 4 -1 0) ("is_unique" 2610 5 16 1 -1 0) ("method" 2601 2 19 64 -1 0) ("with" 1259 33 1009 -1 -1 0) ("column_name" 0 0 19 64 -1 0) ("is_expression" 0 0 23 4 -1 0) ("descending" 0 0 16 1 -1 0) ("nulls_first" 0 0 16 1 -1 0) ("where" 0 0 25 -1 -1 0) ("opcname" 2616 3 19 64 -1 0)]
+4 B DataRow ["compat_items" "compat_items_name_unique" "1" "t" "btree" NULL "name" "0" "f" "f" NULL "text_ops"]
+4 B DataRow ["compat_items" "compat_items_pkey" "1" "t" "btree" NULL "id" "0" "f" "f" NULL "int4_ops"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Query "SELECT  DISTINCT ON (t.relname, ic.relname, k.i) t.relname as table_name, ic.relname AS indexname,\n        k.i AS index_order,\n        i.indisunique as is_unique,\n        am.amname as method,\n        ic.reloptions as with,\n        coalesce(a.attname, pg_get_indexdef(i.indexrelid, k.i, false)) AS column_name,\n          CASE\n        WHEN pg_get_expr(i.indexprs, i.indrelid) IS NOT NULL THEN 1\n        ELSE 0\n    END AS is_expression,\n        i.indoption[k.i-1] & 1 = 1 AS descending,\n        i.indoption[k.i-1] & 2 = 2 AS nulls_first,\n        pg_get_expr(\n                              i.indpred,\n                              i.indrelid\n                          ) as where,\n         opc.opcname\n      FROM pg_class t\n          LEFT JOIN pg_index i ON t.oid = i.indrelid\n          LEFT JOIN pg_class ic ON ic.oid = i.indexrelid\n\t\t  CROSS JOIN LATERAL (SELECT unnest(i.indkey), generate_subscripts(i.indkey, 1) + 1) AS k(attnum, i)\n          LEFT JOIN pg_attribute AS a\n            ON i.indrelid = a.attrelid AND k.attnum = a.attnum\n          JOIN pg_namespace c on c.oid = t.relnamespace\n        LEFT JOIN pg_am AS am ON ic.relam = am.oid\n        JOIN pg_opclass opc ON opc.oid = ANY(i.indclass)\n      WHERE\n      c.nspname = 'public' AND\n      t.relname = 'compat_orders';"
+4 B RowDescription [("table_name" 1259 2 19 64 -1 0) ("indexname" 1259 2 19 64 -1 0) ("index_order" 0 0 23 4 -1 0) ("is_unique" 2610 5 16 1 -1 0) ("method" 2601 2 19 64 -1 0) ("with" 1259 33 1009 -1 -1 0) ("column_name" 0 0 19 64 -1 0) ("is_expression" 0 0 23 4 -1 0) ("descending" 0 0 16 1 -1 0) ("nulls_first" 0 0 16 1 -1 0) ("where" 0 0 25 -1 -1 0) ("opcname" 2616 3 19 64 -1 0)]
+4 B DataRow ["compat_orders" "compat_orders_item" "1" "f" "btree" NULL "item_id" "0" "f" "f" NULL "int4_ops"]
+4 B DataRow ["compat_orders" "compat_orders_pkey" "1" "t" "btree" NULL "id" "0" "f" "f" NULL "int4_ops"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Query "SELECT\n          idx.indexrelname AS index_name,\n          idx.relname AS table_name,\n          schemaname,\n          CASE WHEN con.conname IS NOT NULL THEN 1 ELSE 0 END AS generated_by_constraint\n        FROM\n          pg_stat_user_indexes idx\n        LEFT JOIN\n          pg_constraint con ON con.conindid = idx.indexrelid\n        WHERE idx.relname = 'compat_items' and schemaname = 'public'\n        group by index_name, table_name,schemaname, generated_by_constraint;"
+4 B RowDescription [("index_name" 12210 5 19 64 -1 0) ("table_name" 12210 4 19 64 -1 0) ("schemaname" 12210 3 19 64 -1 0) ("generated_by_constraint" 0 0 23 4 -1 0)]
+4 B DataRow ["compat_items_name_unique" "compat_items" "public" "1"]
+4 B DataRow ["compat_items_pkey" "compat_items" "public" "1"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Query "SELECT\n          idx.indexrelname AS index_name,\n          idx.relname AS table_name,\n          schemaname,\n          CASE WHEN con.conname IS NOT NULL THEN 1 ELSE 0 END AS generated_by_constraint\n        FROM\n          pg_stat_user_indexes idx\n        LEFT JOIN\n          pg_constraint con ON con.conindid = idx.indexrelid\n        WHERE idx.relname = 'compat_orders' and schemaname = 'public'\n        group by index_name, table_name,schemaname, generated_by_constraint;"
+4 B RowDescription [("index_name" 12210 5 19 64 -1 0) ("table_name" 12210 4 19 64 -1 0) ("schemaname" 12210 3 19 64 -1 0) ("generated_by_constraint" 0 0 23 4 -1 0)]
+4 B DataRow ["compat_orders_item" "compat_orders" "public" "0"]
+4 B DataRow ["compat_orders_pkey" "compat_orders" "public" "1"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F End
+4 B End
+5 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+5 B AuthenticationSASL "SCRAM-SHA-256"
+5 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=OmdpKwDOEDXCC4XSl19oQUCJ"
+5 B AuthenticationSASLContinue "r=OmdpKwDOEDXCC4XSl19oQUCJ7TaFq2te5gCZI420eTjTaRDc,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+5 F SASLResponse "c=biws,r=OmdpKwDOEDXCC4XSl19oQUCJ7TaFq2te5gCZI420eTjTaRDc,p=U/MArDs0FTvCZ3CgtkDQqlBQkf0CplDYnTzoUeH3rxM="
+5 B AuthenticationSASLFinal "v=orb8PdI39DbVsLcfVeZ27ObF21pDk9OsEBJCTDL2IO0="
+5 B AuthenticationOk
+5 B ParameterStatus "IntervalStyle" "postgres"
+5 B ParameterStatus "search_path" "\"$user\", public"
+5 B ParameterStatus "is_superuser" "on"
+5 B ParameterStatus "standard_conforming_strings" "on"
+5 B ParameterStatus "session_authorization" "postgres"
+5 B ParameterStatus "client_encoding" "UTF8"
+5 B ParameterStatus "server_version" "19beta4"
+5 B ParameterStatus "server_encoding" "UTF8"
+5 B ParameterStatus "in_hot_standby" "off"
+5 B ParameterStatus "integer_datetimes" "on"
+5 B ParameterStatus "TimeZone" "UTC"
+5 B ParameterStatus "application_name" "psql"
+5 B ParameterStatus "default_transaction_read_only" "off"
+5 B ParameterStatus "scram_iterations" "4096"
+5 B ParameterStatus "DateStyle" "ISO, MDY"
+5 B BackendKeyData 806261 "8\xc0\xa4q"
+5 B ReadyForQuery I
+5 F Query "DROP TABLE compat_orders, compat_items; DROP TYPE compat_mood"
+5 B CommandComplete "DROP TABLE"
+5 B CommandComplete "DROP TYPE"
+5 B ReadyForQuery I
+5 F Terminate
+5 F End
+5 B End

@@ -76,8 +76,12 @@ impl Args {
         std::path::absolute(&dir).unwrap_or(dir)
     }
 
-    /// Fails if an option is not in `known`, so that a typo does not pass in silence.
-    pub(crate) fn only(&self, known: &[&str]) -> Result<(), String> {
+    /// Fails if an option is not in `known` or if there are more than `words` positional words, so that a typo does not pass in silence.
+    /// For example, `oracle stop 14` fails. The version comes from `--compat-version 14`.
+    pub(crate) fn only(&self, words: usize, known: &[&str]) -> Result<(), String> {
+        if let Some(w) = self.words.get(words) {
+            return Err(format!("unexpected word {w:?}"));
+        }
         match self.options.keys().find(|k| !known.contains(&k.as_str()) && *k != "work") {
             Some(k) => Err(format!("unknown option --{k}")),
             None => Ok(()),
@@ -109,6 +113,10 @@ mod tests {
         assert!(parse("--compat-version").is_err());
         assert!(parse("--jobs 1 --jobs 2").is_err());
         assert!(parse("--compat-version x").unwrap().compat_version(19).is_err());
-        assert!(parse("--colour red").unwrap().only(&["compat-version"]).is_err());
+        assert!(parse("--colour red").unwrap().only(1, &["compat-version"]).is_err());
+        assert!(parse("oracle stop 14").unwrap().only(2, &[]).is_err());
+        assert!(
+            parse("oracle stop --compat-version 14").unwrap().only(2, &["compat-version"]).is_ok()
+        );
     }
 }

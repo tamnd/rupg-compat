@@ -1,0 +1,10 @@
+{
+  "name": "compat-client-typeorm",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "pg": "8.23.1",
+    "reflect-metadata": "0.2.2",
+    "typeorm": "1.1.1"
+  }
+}
