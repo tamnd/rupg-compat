@@ -567,6 +567,11 @@ pub(crate) fn compare(want: &[Line], got: &[Line], skip: &BTreeSet<Place>) -> Ou
     out
 }
 
+/// The unstable filter of spec/21 section 21.1: the groups whose answers differ between two runs on the oracle.
+pub(crate) fn unstable(first: &[Line], second: &[Line]) -> BTreeSet<Place> {
+    compare(first, second, &BTreeSet::new()).diffs.into_keys().collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -706,6 +711,22 @@ mod tests {
         let o = run(a, b);
         assert!(o.diffs.is_empty(), "{:?}", o.diffs);
         assert_eq!(o.rules[1].applied, 1);
+    }
+
+    #[test]
+    fn two_runs_find_the_unstable_groups() {
+        let run = |r: &str| {
+            format!(
+                "1 F Query \"SELECT 1\"\n1 B DataRow [\"1\"]\n1 B ReadyForQuery I\n1 F Query \"SELECT random()\"\n1 B DataRow [\"{r}\"]\n1 B ReadyForQuery I"
+            )
+        };
+        let (trace, first, second) = (run("0.1"), run("0.2"), run("0.3"));
+        let skip = unstable(&lines(&first), &lines(&second));
+        assert_eq!(skip, [(1, 1)].into());
+        let o = compare(&lines(&trace), &lines(&first), &skip);
+        assert!(o.diffs.is_empty());
+        assert_eq!((o.groups, o.unstable), (1, 1));
+        assert_eq!(unstable(&lines(&first), &lines(&first)), BTreeSet::new());
     }
 
     #[test]

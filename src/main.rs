@@ -46,7 +46,8 @@ commands:
   proxy --out FILE          record every connection to the oracle until stopped (--listen ADDR)
   record <name> [-- CMD]    run CMD, or clients/<name>/run.sh, through the proxy and write a trace
                             (default: corpus/traces/<name>.trace, --out FILE)
-  replay TRACE...           reset the databases of each trace, send it to the oracle and compare the answers
+  replay TRACE...           reset the databases of each trace, send it to the oracle twice to find the unstable
+                            groups, then to the server under test, and compare the answers
                             (--server ADDR for another server, --timeout S, --out FILE, --show N)
   trace FILE...             check that each line of a trace parses and count its messages
 
@@ -323,7 +324,8 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         return Err("--out takes one trace".into());
     }
     let o = running_oracle(args, pins)?;
-    let mut target = oracle_target(&o);
+    let oracle = oracle_target(&o);
+    let mut target = oracle.clone();
     if let Some(server) = args.get("server") {
         target.addr = server.parse().map_err(|e| format!("--server {server}: {e}"))?;
     }
@@ -332,20 +334,37 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     let mut total = compare::Outcome::default();
     for file in files {
         let t = trace::Trace::read(Path::new(file))?;
-        for db in trace_databases(&t) {
-            if let Err(e) = client::reset_database(&target, &db) {
-                out!("{file}: {e}");
+        let reset = |server: &client::Target| {
+            for db in trace_databases(&t) {
+                if let Err(e) = client::reset_database(server, &db) {
+                    out!("{file}: {e}");
+                }
             }
-        }
-        let r = replay::replay(&t, &target, timeout);
-        let mut o = compare::compare(&t.lines, &r.lines, &Default::default());
+        };
+        reset(&oracle);
+        // The unstable filter (spec/21 section 21.1): two runs on the oracle, and the groups that differ between them leave the comparison.
+        let first = replay::replay(&t, &oracle, timeout);
+        reset(&oracle);
+        let second = replay::replay(&t, &oracle, timeout);
+        let unstable = compare::unstable(&first.lines, &second.lines);
+        // A note of the second run, such as a timeout, can make a group look unstable, so it fails the run too.
+        let notes: Vec<String> =
+            second.notes.iter().map(|n| format!("second oracle run: {n}")).collect();
+        let r = if target.addr == oracle.addr {
+            first
+        } else {
+            reset(&target);
+            replay::replay(&t, &target, timeout)
+        };
+        let mut o = compare::compare(&t.lines, &r.lines, &unstable);
         o.items[1].applied += r.oids.applied;
         o.items[1].differed += r.oids.applied;
         let (pairs, gaps) = r.oids.gaps();
         out!(
-            "{file}: {} groups, {} backend messages, {} groups differ; {} OIDs mapped, {gaps} of {pairs} OID gaps differ, {} SCRAM exchanges, {} cancel keys rewritten",
+            "{file}: {} groups, {} backend messages, {} unstable groups, {} groups differ; {} OIDs mapped, {gaps} of {pairs} OID gaps differ, {} SCRAM exchanges, {} cancel keys rewritten",
             o.groups,
             o.messages,
+            o.unstable,
             o.diffs.len(),
             r.oids.len(),
             r.scram,
@@ -354,11 +373,11 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         for ((conn, group), d) in o.diffs.iter().take(args.number("show")?.unwrap_or(5)) {
             out!("  connection {conn} group {group}: {d}");
         }
-        for n in &r.notes {
+        for n in r.notes.iter().chain(&notes) {
             out!("  {n}");
         }
         total.add(&o);
-        failed |= !o.diffs.is_empty() || !r.notes.is_empty() || gaps > 0;
+        failed |= !o.diffs.is_empty() || !r.notes.is_empty() || !notes.is_empty() || gaps > 0;
         if let Some(out) = args.get("out") {
             let replayed = trace::Trace { header: t.header.clone(), lines: r.lines };
             std::fs::write(out, replayed.to_text()).map_err(|e| format!("{out}: {e}"))?;
