@@ -10,6 +10,7 @@ use std::process::{Command, ExitCode};
 
 mod args;
 mod client;
+mod compare;
 mod frame;
 mod levels;
 mod message;
@@ -38,7 +39,7 @@ commands:
   record <name> [-- CMD]    run CMD, or clients/<name>/run.sh, through the proxy and write a trace
                             (default: corpus/traces/<name>.trace, --out FILE)
   replay TRACE...           reset the databases of each trace, send it to the oracle and compare the answers
-                            (--server ADDR for another server, --timeout S, --out FILE)
+                            (--server ADDR for another server, --timeout S, --out FILE, --show N)
   trace FILE...             check that each line of a trace parses and count its messages
 
 options:
@@ -305,7 +306,7 @@ fn trace_databases(t: &trace::Trace) -> Vec<String> {
 }
 
 fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(&["compat-version", "server", "timeout", "out"])?;
+    args.only(&["compat-version", "server", "timeout", "out", "show"])?;
     let files = &args.words[1..];
     if files.is_empty() {
         return Err("usage: rupg-compat replay TRACE... [--server ADDR] [--out FILE]".into());
@@ -320,6 +321,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     }
     let timeout = std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30));
     let mut failed = false;
+    let mut total = compare::Outcome::default();
     for file in files {
         let t = trace::Trace::read(Path::new(file))?;
         for db in trace_databases(&t) {
@@ -328,45 +330,43 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             }
         }
         let r = replay::replay(&t, &target, timeout);
-        let (equal, total) = count_equal(&t.lines, &r.lines);
+        let mut o = compare::compare(&t.lines, &r.lines, &Default::default());
+        o.items[1].applied += r.oids.applied;
+        o.items[1].differed += r.oids.applied;
         println!(
-            "{file}: {equal} of {total} backend messages equal, {} OIDs mapped ({} values changed), {} SCRAM exchanges, {} cancel keys rewritten",
+            "{file}: {} groups, {} backend messages, {} groups differ; {} OIDs mapped, {} SCRAM exchanges, {} cancel keys rewritten",
+            o.groups,
+            o.messages,
+            o.diffs.len(),
             r.oids.len(),
-            r.oids.applied,
             r.scram,
             r.cancels
         );
+        for ((conn, group), d) in o.diffs.iter().take(args.number("show")?.unwrap_or(5)) {
+            println!("  connection {conn} group {group}: {d}");
+        }
         for n in &r.notes {
             println!("  {n}");
         }
-        failed |= equal != total || !r.notes.is_empty();
+        total.add(&o);
+        failed |= !o.diffs.is_empty() || !r.notes.is_empty();
         if let Some(out) = args.get("out") {
             let replayed = trace::Trace { header: t.header.clone(), lines: r.lines };
             std::fs::write(out, replayed.to_text()).map_err(|e| format!("{out}: {e}"))?;
         }
     }
+    print_exclusions(&total);
     Ok(if failed { ExitCode::FAILURE } else { ExitCode::SUCCESS })
 }
 
-/// Counts the backend messages of each connection that are equal at the same place. The comparison with the rules of each message type and the exclusions comes later.
-fn count_equal(want: &[trace::Line], got: &[trace::Line]) -> (usize, usize) {
-    let (want, got) = (backend_by_conn(want), backend_by_conn(got));
-    let mut equal = 0;
-    let mut total = 0;
-    for (conn, msgs) in &want {
-        total += msgs.len();
-        let other = got.get(conn).map(Vec::as_slice).unwrap_or_default();
-        equal += msgs.iter().zip(other).filter(|(a, b)| a == b).count();
+/// Prints each exclusion of spec/05 section 5.3 and each rule of section 5.2 with its counts.
+fn print_exclusions(o: &compare::Outcome) {
+    println!("exclusions (spec/05 section 5.3): applied, differed");
+    for (i, (name, c)) in compare::ITEMS.iter().zip(o.items).enumerate() {
+        println!("  {:>2}  {:>8} {:>8}  {name}", i + 1, c.applied, c.differed);
     }
-    (equal, total)
-}
-
-fn backend_by_conn(lines: &[trace::Line]) -> std::collections::BTreeMap<u32, Vec<&message::Msg>> {
-    let mut by_conn: std::collections::BTreeMap<u32, Vec<&message::Msg>> = Default::default();
-    for l in lines.iter().filter(|l| l.dir == message::Dir::B) {
-        if let Some(m) = l.msg() {
-            by_conn.entry(l.conn).or_default().push(m);
-        }
+    println!("rules (spec/05 section 5.2): applied, differed");
+    for (name, c) in compare::RULES.iter().zip(o.rules) {
+        println!("      {:>8} {:>8}  {name}", c.applied, c.differed);
     }
-    by_conn
 }
