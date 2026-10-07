@@ -1,0 +1,11 @@
+# The trace scenario for tokio-postgres. It is not part of the harness and has its own lock file.
+[package]
+name = "compat-client-tokio-postgres"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+[dependencies]
+tokio = { version = "=1.53.2", features = ["rt", "macros"] }
+tokio-postgres = "=0.7.18"

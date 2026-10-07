@@ -1,0 +1,285 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/golang-migrate/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=sMn/xqpLz+MmIVuYCJ8ALjEL"
+1 B AuthenticationSASLContinue "r=sMn/xqpLz+MmIVuYCJ8ALjELTIGVw5cOg7k46/Wh+X9wdeIK,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=sMn/xqpLz+MmIVuYCJ8ALjELTIGVw5cOg7k46/Wh+X9wdeIK,p=+cHCSOaBpI6e329egVJ0wCgaTMHY30Xr/u7VzSA7y5k="
+1 B AuthenticationSASLFinal "v=UVWyF/w6lqVPGF7bUz6LoENxZjozgHLFv7YcIIqILjw="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 739043 "\xbeeE\x1a"
+1 B ReadyForQuery I
+1 F Query "-- ping"
+1 B EmptyQueryResponse
+1 B ReadyForQuery I
+1 F Query "-- ping"
+1 B EmptyQueryResponse
+1 B ReadyForQuery I
+1 F Parse "stmtcache_c5b314e01b354fbe56946bbebcdcf249ebfe1785ac66f205" "SELECT CURRENT_SCHEMA()" []
+1 F Describe S "stmtcache_c5b314e01b354fbe56946bbebcdcf249ebfe1785ac66f205"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("current_schema" 0 0 19 64 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_c5b314e01b354fbe56946bbebcdcf249ebfe1785ac66f205" [] [] [0]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["public"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_b895561dd1cdc3b47ea1f3c353f4d563bfbf45ab7892fd9e" "SELECT pg_advisory_lock($1)" []
+1 F Describe S "stmtcache_b895561dd1cdc3b47ea1f3c353f4d563bfbf45ab7892fd9e"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [20]
+1 B RowDescription [("pg_advisory_lock" 0 0 2278 4 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_b895561dd1cdc3b47ea1f3c353f4d563bfbf45ab7892fd9e" [0] ["2262685539"] [0]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow [""]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_3d04fe318f1e1dd37681d993a934d90f8a0b82281c32394e" "SELECT COUNT(1) FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2 LIMIT 1" []
+1 F Describe S "stmtcache_3d04fe318f1e1dd37681d993a934d90f8a0b82281c32394e"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [19 19]
+1 B RowDescription [("count" 0 0 20 8 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_3d04fe318f1e1dd37681d993a934d90f8a0b82281c32394e" [0 0] ["public" "schema_migrations"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x00"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE IF NOT EXISTS \"public\".\"schema_migrations\" (version bigint not null primary key, dirty boolean not null)"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_0115c52b6c77a377e6585308ba0df3daaaf7d30a19a37b28" "SELECT pg_advisory_unlock($1)" []
+1 F Describe S "stmtcache_0115c52b6c77a377e6585308ba0df3daaaf7d30a19a37b28"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [20]
+1 B RowDescription [("pg_advisory_unlock" 0 0 16 1 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_0115c52b6c77a377e6585308ba0df3daaaf7d30a19a37b28" [0] ["2262685539"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x01"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_b895561dd1cdc3b47ea1f3c353f4d563bfbf45ab7892fd9e" [0] ["2262685539"] [0]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow [""]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_c8825283830a1e07fb92aefcb2cc5e7f4a2bf31d1db0dd4e" "SELECT version, dirty FROM \"public\".\"schema_migrations\" LIMIT 1" []
+1 F Describe S "stmtcache_c8825283830a1e07fb92aefcb2cc5e7f4a2bf31d1db0dd4e"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("version" 251252 1 20 8 -1 0) ("dirty" 251252 2 16 1 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_c8825283830a1e07fb92aefcb2cc5e7f4a2bf31d1db0dd4e" [] [] [1 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Parse "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" "INSERT INTO \"public\".\"schema_migrations\" (version, dirty) VALUES ($1, $2)" []
+1 F Describe S "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [20 16]
+1 B NoData
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" [1 1] ["\x00\x00\x00\x00\x00\x00\x00\x01" "\x01"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2));\n"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" [1 1] ["\x00\x00\x00\x00\x00\x00\x00\x01" "\x00"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" [1 1] ["\x00\x00\x00\x00\x00\x00\x00\x02" "\x01"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "CREATE INDEX compat_items_name ON compat_items (name);\nINSERT INTO compat_items VALUES (1, 'one', 1.50), (2, 'two', 2.50);\n"
+1 B CommandComplete "CREATE INDEX"
+1 B CommandComplete "INSERT 0 2"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" [1 1] ["\x00\x00\x00\x00\x00\x00\x00\x02" "\x00"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_0115c52b6c77a377e6585308ba0df3daaaf7d30a19a37b28" [0] ["2262685539"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x01"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_c8825283830a1e07fb92aefcb2cc5e7f4a2bf31d1db0dd4e" [] [] [1 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02" "\x00"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_b895561dd1cdc3b47ea1f3c353f4d563bfbf45ab7892fd9e" [0] ["2262685539"] [0]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow [""]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_c8825283830a1e07fb92aefcb2cc5e7f4a2bf31d1db0dd4e" [] [] [1 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x00\x00\x00\x00\x02" "\x00"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" [1 1] ["\x00\x00\x00\x00\x00\x00\x00\x01" "\x01"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "DROP INDEX compat_items_name;\n"
+1 B CommandComplete "DROP INDEX"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" [1 1] ["\x00\x00\x00\x00\x00\x00\x00\x01" "\x00"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_6a0aa7b0ebdde8d0cf1040c66c01899da409540aa3fbf080" [1 1] ["\xff\xff\xff\xff\xff\xff\xff\xff" "\x01"] []
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE compat_items;\n"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "TRUNCATE \"public\".\"schema_migrations\""
+1 B CommandComplete "TRUNCATE TABLE"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_0115c52b6c77a377e6585308ba0df3daaaf7d30a19a37b28" [0] ["2262685539"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x01"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End

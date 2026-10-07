@@ -3,4 +3,4 @@
 brin = "brin"
 
 [files]
-extend-exclude = ["vendor/", "*.expected"]
+extend-exclude = ["vendor/", "*.expected", "*.trace"]

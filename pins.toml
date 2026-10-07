@@ -45,13 +45,23 @@ commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
 
 [clients]
 # One table for each client whose trace or suite is in corpus/ or clients/, with the version that made it.
-# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh or go.mod installs.
+# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod or Cargo.toml installs.
 
 [clients.asyncpg]
 version = "0.32.0"
 
+[clients.django]
+version = "6.1.2"
+
+[clients.golang-migrate]
+version = "4.20.1"
+
 [clients.lib-pq]
 version = "1.12.3"
+
+[clients.pg_dump]
+# pg_dump and pg_restore of the oracle build of the reference version.
+version = "19beta4"
 
 [clients.pgx]
 version = "5.11.0"
@@ -65,3 +75,13 @@ version = "3.3.6"
 
 [clients.psycopg2]
 version = "2.9.13"
+
+[clients.sqlalchemy]
+# SQLAlchemy with Alembic 1.20.0.
+version = "2.1.3"
+
+[clients.sqlx]
+version = "0.9.0"
+
+[clients.tokio-postgres]
+version = "0.7.18"
