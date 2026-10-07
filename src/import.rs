@@ -148,8 +148,11 @@ pub(crate) fn import(src: &Path, major: u32, commit: &str) -> Result<Import, Str
     for rel in [format!("{REGRESS}/parallel_schedule"), format!("{REGRESS}/resultmap")] {
         manifest.push(rel);
     }
-    for dir in ["sql", "expected", "data"] {
-        manifest.extend(files(src, &format!("{REGRESS}/{dir}"))?);
+    // Up to 14, the tests with paths are in input/ and output/, and pg_regress makes their files when it runs.
+    for dir in ["sql", "expected", "data", "input", "output"] {
+        if dir == "sql" || dir == "expected" || src.join(REGRESS).join(dir).exists() {
+            manifest.extend(files(src, &format!("{REGRESS}/{dir}"))?);
+        }
     }
     manifest.push(format!("{ISOLATION}/isolation_schedule"));
     for dir in ["specs", "expected"] {
@@ -201,7 +204,11 @@ pub(crate) fn import(src: &Path, major: u32, commit: &str) -> Result<Import, Str
     let mut scheduled_lines = 0;
     let (mut scheduled_error_lines, mut scheduled_error_files) = (0, 0);
     for t in &scheduled {
-        let bytes = read(src, &format!("{REGRESS}/expected/{t}.out"))?;
+        let mut rel = format!("{REGRESS}/expected/{t}.out");
+        if !src.join(&rel).exists() {
+            rel = format!("{REGRESS}/output/{t}.source");
+        }
+        let bytes = read(src, &rel)?;
         scheduled_lines += lines(&bytes);
         let errors = bytes.split(|&b| b == b'\n').filter(|l| l.starts_with(b"ERROR:")).count();
         scheduled_error_lines += errors;
@@ -238,19 +245,19 @@ pub(crate) fn import(src: &Path, major: u32, commit: &str) -> Result<Import, Str
         "regress",
         "scheduled_expected_lines",
         scheduled_lines,
-        "the lines of expected/T.out for each scheduled test T",
+        "the lines of expected/T.out, or of output/T.source up to 14, for each scheduled test T",
     );
     count(
         "regress",
         "scheduled_error_lines",
         scheduled_error_lines,
-        "the lines of expected/T.out for each scheduled test T that start with ERROR:",
+        "the lines of those files that start with ERROR:",
     );
     count(
         "regress",
         "scheduled_error_files",
         scheduled_error_files,
-        "the files expected/T.out of a scheduled test T with an ERROR: line",
+        "those files with an ERROR: line",
     );
 
     // The isolation suite and libpq_pipeline.
