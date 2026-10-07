@@ -55,7 +55,9 @@ commands:
   trace FILE...             check that each line of a trace parses and count its messages
 
 options:
-  --compat-version N        the oracle of version N (default: the reference of pins.toml)
+  --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
+                            the startup message also sets rupg.compat_version to N on the server under test
+  --version N               the same as --compat-version N, for the oracle commands only
   --work DIR                the work directory (default: $RUPG_COMPAT_WORK, then ./work)";
 
 fn main() -> ExitCode {
@@ -110,12 +112,20 @@ fn run(args: &Args) -> Result<ExitCode, String> {
 }
 
 fn oracle_command(args: &Args, pins: &Pins) -> Result<(), String> {
-    args.only(&["compat-version", "all", "jobs", "force"])?;
+    args.only(&["compat-version", "version", "all", "jobs", "force"])?;
     let work = args.work_dir();
+    // Spec/21 section 21.3.4 writes `oracle build --version V`, and every command takes `--compat-version V`. Both work here.
+    let version = match args.number("version")? {
+        Some(_) if args.get("compat-version").is_some() => {
+            return Err("give --version or --compat-version, not both".into());
+        }
+        Some(v) => v,
+        None => args.compat_version(pins.reference)?,
+    };
     let majors: Vec<u32> = if args.flag("all") {
         pins.postgres.iter().rev().map(|p| p.major).collect()
     } else {
-        vec![args.compat_version(pins.reference)?]
+        vec![version]
     };
     let oracles =
         majors.iter().map(|&m| Oracle::new(pins, m, &work)).collect::<Result<Vec<_>, _>>()?;
