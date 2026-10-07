@@ -45,7 +45,7 @@ commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
 
 [clients]
 # One table for each client whose trace or suite is in corpus/ or clients/, with the version that made it.
-# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod, Cargo.toml, package.json or pom.xml installs. The Node clients run on the Node.js of clients/node.sh, and the Java clients run on the JDK and Maven of clients/java.sh.
+# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh, go.mod, Cargo.toml, package.json, pom.xml or scenario.csproj installs. The Node clients run on the Node.js of clients/node.sh, the Java clients run on the JDK and Maven of clients/java.sh, and the .NET clients run on the .NET SDK of clients/dotnet.sh.
 
 [clients.asyncpg]
 version = "0.32.0"
@@ -60,6 +60,10 @@ version = "6.1.2"
 [clients.drizzle]
 # Drizzle ORM on node-postgres 8.23.1, with Drizzle Kit 0.31.11.
 version = "0.45.3"
+
+[clients.efcore]
+# The Npgsql provider of EF Core, on EF Core 10.0.12 and Npgsql 10.0.3, with the dotnet-ef tool 10.0.12.
+version = "10.0.3"
 
 [clients.flyway]
 # The Flyway command line with the PostgreSQL module, on pgjdbc 42.7.13.
@@ -91,6 +95,9 @@ version = "5.0.4"
 # The package pg.
 version = "8.23.1"
 
+[clients.npgsql]
+version = "10.0.3"
+
 [clients.pg_dump]
 # pg_dump and pg_restore of the oracle build of the reference version.
 version = "19beta4"
@@ -120,6 +127,10 @@ version = "7.10.0"
 [clients.psql]
 # The psql of the oracle build of the reference version.
 version = "19beta4"
+
+[clients.psqlodbc]
+# The psqlODBC driver, built with the libpq of the oracle build, on unixODBC 2.3.14.
+version = "18.00.0004"
 
 [clients.psycopg]
 version = "3.3.6"

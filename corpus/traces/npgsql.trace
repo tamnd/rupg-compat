@@ -1,0 +1,420 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/npgsql/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "client_encoding" "UTF8" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "y,,n=*,r=AoN1/CLM5RtsWNbSJ4sjrGG3"
+1 B AuthenticationSASLContinue "r=AoN1/CLM5RtsWNbSJ4sjrGG31SHvVkpU5J3G4IVLjf7vhosX,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=eSws,r=AoN1/CLM5RtsWNbSJ4sjrGG31SHvVkpU5J3G4IVLjf7vhosX,p=P7CXUPfvUr5UNwt0v/MxoFG+jpspyQ2nvExsMS3MytM="
+1 B AuthenticationSASLFinal "v=TawHeB7vaHDqM26KwiCmH1mOZcEEOyV7O4abV/2YBRY="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 904204 "Ӷ\x05\x9a"
+1 B ReadyForQuery I
+1 F Query "SELECT version();\n\nSELECT ns.nspname, t.oid, t.typname, t.typtype, t.typnotnull, t.elemtypoid\nFROM (\n    -- Arrays have typtype=b - this subquery identifies them by their typreceive and converts their typtype to a\n    -- We first do this for the type (innerest-most subquery), and then for its element type\n    -- This also returns the array element, range subtype and domain base type as elemtypoid\n    SELECT\n        typ.oid, typ.typnamespace, typ.typname, typ.typtype, typ.typrelid, typ.typnotnull, typ.relkind,\n        elemtyp.oid AS elemtypoid, elemtyp.typname AS elemtypname, elemcls.relkind AS elemrelkind,\n        CASE WHEN elemproc.proname='array_recv' THEN 'a' ELSE elemtyp.typtype END AS elemtyptype\n        , typ.typcategory\n    FROM (\n        SELECT typ.oid, typnamespace, typname, typrelid, typnotnull, relkind, typelem AS elemoid,\n            CASE WHEN proc.proname='array_recv' THEN 'a' ELSE typ.typtype END AS typtype,\n            CASE\n                WHEN proc.proname='array_recv' THEN typ.typelem\n                WHEN typ.typtype='r' THEN rngsubtype\n                WHEN typ.typtype='m' THEN (SELECT rngtypid FROM pg_range WHERE rngmultitypid = typ.oid)\n                WHEN typ.typtype='d' THEN typ.typbasetype\n            END AS elemtypoid\n            , typ.typcategory\n        FROM pg_type AS typ\n        LEFT JOIN pg_class AS cls ON (cls.oid = typ.typrelid)\n        LEFT JOIN pg_proc AS proc ON proc.oid = typ.typreceive\n        LEFT JOIN pg_range ON (pg_range.rngtypid = typ.oid)\n    ) AS typ\n    LEFT JOIN pg_type AS elemtyp ON elemtyp.oid = elemtypoid\n    LEFT JOIN pg_class AS elemcls ON (elemcls.oid = elemtyp.typrelid)\n    LEFT JOIN pg_proc AS elemproc ON elemproc.oid = elemtyp.typreceive\n) AS t\nJOIN pg_namespace AS ns ON (ns.oid = typnamespace)\nWHERE\n    \n    (typtype IN ('b', 'r', 'm', 'e', 'd') OR -- Base, range, multirange, enum, domain\n    (typtype = 'c' AND relkind='c') OR -- User-defined free-standing composites (not table composites) by default\n    (typtype = 'p' AND typname IN ('record', 'void', 'unknown')) OR -- Some special supported pseudo-types\n    (typtype = 'a' AND (  -- Array of...\n        elemtyptype IN ('b', 'r', 'm', 'e', 'd') OR -- Array of base, range, multirange, enum, domain\n        (elemtyptype = 'p' AND elemtypname IN ('record', 'void')) OR -- Arrays of special supported pseudo-types\n        (elemtyptype = 'c' AND elemrelkind='c') -- Array of user-defined free-standing composites (not table composites) by default\n    )))\nORDER BY CASE\n       WHEN typtype IN ('b', 'e', 'p') THEN 0           -- First base types, enums, pseudo-types\n       WHEN typtype = 'c' THEN 1                        -- Composites after (fields loaded later in 2nd pass)\n       WHEN typtype = 'r' THEN 2                        -- Ranges after\n       WHEN typtype = 'm' THEN 3                        -- Multiranges after\n       WHEN typtype = 'd' AND elemtyptype <> 'a' THEN 4 -- Domains over non-arrays after\n       WHEN typtype = 'a' THEN 5                        -- Arrays after\n       WHEN typtype = 'd' AND elemtyptype = 'a' THEN 6  -- Domains over arrays last\nEND;\n\n-- Load field definitions for (free-standing) composite types\nSELECT typ.oid, att.attname, att.atttypid\nFROM pg_type AS typ\nJOIN pg_namespace AS ns ON (ns.oid = typ.typnamespace)\nJOIN pg_class AS cls ON (cls.oid = typ.typrelid)\nJOIN pg_attribute AS att ON (att.attrelid = typ.typrelid)\nWHERE\n  (typ.typtype = 'c' AND cls.relkind='c') AND\n  \n  attnum > 0 AND     -- Don't load system attributes\n  NOT attisdropped\nORDER BY typ.oid, att.attnum;\n\n-- Load enum fields\nSELECT typ.oid, enumlabel\nFROM pg_enum\nJOIN pg_type AS typ ON typ.oid = enumtypid\nJOIN pg_namespace AS ns ON ns.oid = typ.typnamespace\n\nORDER BY oid, enumsortorder;\n"
+1 B RowDescription [("version" 0 0 25 -1 -1 0)]
+1 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+1 B CommandComplete "SELECT 1"
+1 B RowDescription [("nspname" 2615 2 19 64 -1 0) ("oid" 1247 1 26 4 -1 0) ("typname" 1247 2 19 64 -1 0) ("typtype" 0 0 18 1 -1 0) ("typnotnull" 1247 25 16 1 -1 0) ("elemtypoid" 1247 1 26 4 -1 0)]
+1 B DataRow ["pg_catalog" "6490" "regdatabase" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2950" "uuid" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3220" "pg_lsn" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3614" "tsvector" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3642" "gtsvector" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3615" "tsquery" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3734" "regconfig" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3769" "regdictionary" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3802" "jsonb" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "4072" "jsonpath" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2970" "txid_snapshot" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "5038" "pg_snapshot" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2249" "record" "p" "f" NULL]
+1 B DataRow ["pg_catalog" "2278" "void" "p" "f" NULL]
+1 B DataRow ["pg_catalog" "4600" "pg_brin_bloom_summary" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "4601" "pg_brin_minmax_multi_summary" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "6437" "oid8" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "16" "bool" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "17" "bytea" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "18" "char" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "19" "name" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "20" "int8" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "21" "int2" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "22" "int2vector" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "23" "int4" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "24" "regproc" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "25" "text" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "26" "oid" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "27" "tid" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "28" "xid" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "29" "cid" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "30" "oidvector" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "114" "json" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "142" "xml" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "194" "pg_node_tree" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3361" "pg_ndistinct" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3402" "pg_dependencies" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "5017" "pg_mcv_list" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "5069" "xid8" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "600" "point" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "601" "lseg" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "602" "path" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "603" "box" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "604" "polygon" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "628" "line" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "700" "float4" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "701" "float8" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "705" "unknown" "p" "f" NULL]
+1 B DataRow ["pg_catalog" "718" "circle" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "790" "money" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "829" "macaddr" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "869" "inet" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "650" "cidr" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "774" "macaddr8" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1033" "aclitem" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1042" "bpchar" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1043" "varchar" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1082" "date" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1083" "time" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1114" "timestamp" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1184" "timestamptz" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1186" "interval" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1266" "timetz" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1560" "bit" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1562" "varbit" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1700" "numeric" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "1790" "refcursor" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2202" "regprocedure" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2203" "regoper" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2204" "regoperator" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2205" "regclass" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "4089" "regnamespace" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "4191" "regcollation" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "2206" "regtype" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "4096" "regrole" "b" "f" NULL]
+1 B DataRow ["pg_catalog" "3904" "int4range" "r" "f" "23"]
+1 B DataRow ["pg_catalog" "3906" "numrange" "r" "f" "1700"]
+1 B DataRow ["pg_catalog" "3908" "tsrange" "r" "f" "1114"]
+1 B DataRow ["pg_catalog" "3910" "tstzrange" "r" "f" "1184"]
+1 B DataRow ["pg_catalog" "3912" "daterange" "r" "f" "1082"]
+1 B DataRow ["pg_catalog" "3926" "int8range" "r" "f" "20"]
+1 B DataRow ["pg_catalog" "4451" "int4multirange" "m" "f" "3904"]
+1 B DataRow ["pg_catalog" "4532" "nummultirange" "m" "f" "3906"]
+1 B DataRow ["pg_catalog" "4533" "tsmultirange" "m" "f" "3908"]
+1 B DataRow ["pg_catalog" "4534" "tstzmultirange" "m" "f" "3910"]
+1 B DataRow ["pg_catalog" "4535" "datemultirange" "m" "f" "3912"]
+1 B DataRow ["pg_catalog" "4536" "int8multirange" "m" "f" "3926"]
+1 B DataRow ["information_schema" "13354" "cardinal_number" "d" "f" "23"]
+1 B DataRow ["information_schema" "13365" "time_stamp" "d" "f" "1184"]
+1 B DataRow ["information_schema" "13367" "yes_or_no" "d" "f" "1043"]
+1 B DataRow ["information_schema" "13357" "character_data" "d" "f" "1043"]
+1 B DataRow ["information_schema" "13359" "sql_identifier" "d" "f" "19"]
+1 B DataRow ["pg_catalog" "2287" "_record" "a" "f" "2249"]
+1 B DataRow ["pg_catalog" "1000" "_bool" "a" "f" "16"]
+1 B DataRow ["pg_catalog" "1001" "_bytea" "a" "f" "17"]
+1 B DataRow ["pg_catalog" "1002" "_char" "a" "f" "18"]
+1 B DataRow ["pg_catalog" "1003" "_name" "a" "f" "19"]
+1 B DataRow ["pg_catalog" "1016" "_int8" "a" "f" "20"]
+1 B DataRow ["pg_catalog" "1005" "_int2" "a" "f" "21"]
+1 B DataRow ["pg_catalog" "1006" "_int2vector" "a" "f" "22"]
+1 B DataRow ["pg_catalog" "1007" "_int4" "a" "f" "23"]
+1 B DataRow ["pg_catalog" "1008" "_regproc" "a" "f" "24"]
+1 B DataRow ["pg_catalog" "1009" "_text" "a" "f" "25"]
+1 B DataRow ["pg_catalog" "1028" "_oid" "a" "f" "26"]
+1 B DataRow ["pg_catalog" "1010" "_tid" "a" "f" "27"]
+1 B DataRow ["pg_catalog" "1011" "_xid" "a" "f" "28"]
+1 B DataRow ["pg_catalog" "1012" "_cid" "a" "f" "29"]
+1 B DataRow ["pg_catalog" "1013" "_oidvector" "a" "f" "30"]
+1 B DataRow ["pg_catalog" "199" "_json" "a" "f" "114"]
+1 B DataRow ["pg_catalog" "143" "_xml" "a" "f" "142"]
+1 B DataRow ["pg_catalog" "271" "_xid8" "a" "f" "5069"]
+1 B DataRow ["pg_catalog" "1017" "_point" "a" "f" "600"]
+1 B DataRow ["pg_catalog" "1018" "_lseg" "a" "f" "601"]
+1 B DataRow ["pg_catalog" "1019" "_path" "a" "f" "602"]
+1 B DataRow ["pg_catalog" "1020" "_box" "a" "f" "603"]
+1 B DataRow ["pg_catalog" "1027" "_polygon" "a" "f" "604"]
+1 B DataRow ["pg_catalog" "629" "_line" "a" "f" "628"]
+1 B DataRow ["pg_catalog" "1021" "_float4" "a" "f" "700"]
+1 B DataRow ["pg_catalog" "1022" "_float8" "a" "f" "701"]
+1 B DataRow ["pg_catalog" "719" "_circle" "a" "f" "718"]
+1 B DataRow ["pg_catalog" "791" "_money" "a" "f" "790"]
+1 B DataRow ["pg_catalog" "1040" "_macaddr" "a" "f" "829"]
+1 B DataRow ["pg_catalog" "1041" "_inet" "a" "f" "869"]
+1 B DataRow ["pg_catalog" "651" "_cidr" "a" "f" "650"]
+1 B DataRow ["pg_catalog" "775" "_macaddr8" "a" "f" "774"]
+1 B DataRow ["pg_catalog" "1034" "_aclitem" "a" "f" "1033"]
+1 B DataRow ["pg_catalog" "1014" "_bpchar" "a" "f" "1042"]
+1 B DataRow ["pg_catalog" "1015" "_varchar" "a" "f" "1043"]
+1 B DataRow ["pg_catalog" "1182" "_date" "a" "f" "1082"]
+1 B DataRow ["pg_catalog" "1183" "_time" "a" "f" "1083"]
+1 B DataRow ["pg_catalog" "1115" "_timestamp" "a" "f" "1114"]
+1 B DataRow ["pg_catalog" "1185" "_timestamptz" "a" "f" "1184"]
+1 B DataRow ["pg_catalog" "1187" "_interval" "a" "f" "1186"]
+1 B DataRow ["pg_catalog" "1270" "_timetz" "a" "f" "1266"]
+1 B DataRow ["pg_catalog" "1561" "_bit" "a" "f" "1560"]
+1 B DataRow ["pg_catalog" "1563" "_varbit" "a" "f" "1562"]
+1 B DataRow ["pg_catalog" "1231" "_numeric" "a" "f" "1700"]
+1 B DataRow ["pg_catalog" "2201" "_refcursor" "a" "f" "1790"]
+1 B DataRow ["pg_catalog" "2207" "_regprocedure" "a" "f" "2202"]
+1 B DataRow ["pg_catalog" "2208" "_regoper" "a" "f" "2203"]
+1 B DataRow ["pg_catalog" "2209" "_regoperator" "a" "f" "2204"]
+1 B DataRow ["pg_catalog" "2210" "_regclass" "a" "f" "2205"]
+1 B DataRow ["pg_catalog" "4192" "_regcollation" "a" "f" "4191"]
+1 B DataRow ["pg_catalog" "2211" "_regtype" "a" "f" "2206"]
+1 B DataRow ["pg_catalog" "4097" "_regrole" "a" "f" "4096"]
+1 B DataRow ["pg_catalog" "4090" "_regnamespace" "a" "f" "4089"]
+1 B DataRow ["pg_catalog" "6491" "_regdatabase" "a" "f" "6490"]
+1 B DataRow ["pg_catalog" "2951" "_uuid" "a" "f" "2950"]
+1 B DataRow ["pg_catalog" "3221" "_pg_lsn" "a" "f" "3220"]
+1 B DataRow ["pg_catalog" "3643" "_tsvector" "a" "f" "3614"]
+1 B DataRow ["pg_catalog" "3644" "_gtsvector" "a" "f" "3642"]
+1 B DataRow ["pg_catalog" "3645" "_tsquery" "a" "f" "3615"]
+1 B DataRow ["pg_catalog" "3735" "_regconfig" "a" "f" "3734"]
+1 B DataRow ["pg_catalog" "3770" "_regdictionary" "a" "f" "3769"]
+1 B DataRow ["pg_catalog" "3807" "_jsonb" "a" "f" "3802"]
+1 B DataRow ["pg_catalog" "6153" "_tstzmultirange" "a" "f" "4534"]
+1 B DataRow ["pg_catalog" "6155" "_datemultirange" "a" "f" "4535"]
+1 B DataRow ["pg_catalog" "6157" "_int8multirange" "a" "f" "4536"]
+1 B DataRow ["pg_catalog" "6442" "_oid8" "a" "f" "6437"]
+1 B DataRow ["information_schema" "13364" "_time_stamp" "a" "f" "13365"]
+1 B DataRow ["information_schema" "13366" "_yes_or_no" "a" "f" "13367"]
+1 B DataRow ["pg_catalog" "5039" "_pg_snapshot" "a" "f" "5038"]
+1 B DataRow ["pg_catalog" "3905" "_int4range" "a" "f" "3904"]
+1 B DataRow ["pg_catalog" "3907" "_numrange" "a" "f" "3906"]
+1 B DataRow ["pg_catalog" "3909" "_tsrange" "a" "f" "3908"]
+1 B DataRow ["pg_catalog" "3911" "_tstzrange" "a" "f" "3910"]
+1 B DataRow ["pg_catalog" "3913" "_daterange" "a" "f" "3912"]
+1 B DataRow ["pg_catalog" "3927" "_int8range" "a" "f" "3926"]
+1 B DataRow ["pg_catalog" "6150" "_int4multirange" "a" "f" "4451"]
+1 B DataRow ["pg_catalog" "6151" "_nummultirange" "a" "f" "4532"]
+1 B DataRow ["pg_catalog" "6152" "_tsmultirange" "a" "f" "4533"]
+1 B DataRow ["information_schema" "13353" "_cardinal_number" "a" "f" "13354"]
+1 B DataRow ["information_schema" "13356" "_character_data" "a" "f" "13357"]
+1 B DataRow ["information_schema" "13358" "_sql_identifier" "a" "f" "13359"]
+1 B DataRow ["pg_catalog" "4073" "_jsonpath" "a" "f" "4072"]
+1 B DataRow ["pg_catalog" "2949" "_txid_snapshot" "a" "f" "2970"]
+1 B CommandComplete "SELECT 176"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("attname" 1249 2 19 64 -1 0) ("atttypid" 1249 3 26 4 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B RowDescription [("oid" 1247 1 26 4 -1 0) ("enumlabel" 3501 4 19 64 -1 0)]
+1 B CommandComplete "SELECT 0"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT 1" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("?column?" 0 0 23 4 -1 1)]
+1 B DataRow ["\x00\x00\x00\x01"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT $1::int4 + 1, $2::text" [23 25]
+1 F Bind "" "" [1 0] ["\x00\x00\x00)" "abc"] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("?column?" 0 0 23 4 -1 1) ("text" 0 0 25 -1 -1 1)]
+1 B DataRow ["\x00\x00\x00*" "abc"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B RowDescription [("int2" 0 0 21 2 -1 1) ("int4" 0 0 23 4 -1 1) ("int8" 0 0 20 8 -1 1) ("float8" 0 0 701 8 -1 1) ("numeric" 0 0 1700 -1 -1 1) ("?column?" 0 0 16 1 -1 1) ("text" 0 0 25 -1 -1 1) ("bytea" 0 0 17 -1 -1 1) ("timestamptz" 0 0 1184 8 -1 1) ("date" 0 0 1082 4 -1 1) ("array" 0 0 1007 -1 -1 1) ("jsonb" 0 0 3802 -1 -1 1) ("uuid" 0 0 2950 16 -1 1) ("text" 0 0 25 -1 -1 1)]
+1 B DataRow ["\x00*" "\x00\x00\x00*" "\x00 \x00\x00\x00\x00\x00\x01" "?\xf8\x00\x00\x00\x00\x00\x00" "\x00\x02\x00\x00\x00\x00\x00\x03\x00\x0c\rz" "\x01" "x" "\x01\x02" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x00%\x1a" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x17\x00\x00\x00\x03\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00\x04\x00\x00\x00\x03" "\x01{\"a\": 1}" "z<\x8fN\r\x1bL*\x9e_kz\x8c\x9d\x0e\x1f" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "" "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2))" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED"
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3)" [23 25 1700]
+1 F Bind "" "" [1 0 1] ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x01\x00\x01\x13\x88"] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3)" [23 25 1700]
+1 F Bind "" "" [1 0 1] ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x01\x00\x02\x13\x88"] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3)" [23 25 1700]
+1 F Bind "" "" [1 0 1] ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x01\x00\x03\x13\x88"] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED"
+1 F Parse "" "INSERT INTO compat_items VALUES ($1, $2, $3)" [23 25 1700]
+1 F Bind "" "" [1 0 1] ["\x00\x00\x00\x04" "four" "\x00\x02\x00\x00\x00\x00\x00\x01\x00\x04\x13\x88"] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "_p1" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id" [23]
+1 F Describe S "_p1"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [23]
+1 B RowDescription [("id" 269600 1 23 4 -1 0) ("name" 269600 2 25 -1 -1 0) ("price" 269600 3 1700 -1 655366 0)]
+1 B ReadyForQuery I
+1 F Bind "" "_p1" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "_p1" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "_p1" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "_p1" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "_p1" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "_p1" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Close S "_p1"
+1 F Sync
+1 B CloseComplete
+1 B ReadyForQuery I
+1 F Parse "" "UPDATE compat_items SET price = price * 2 WHERE id = $1" [23]
+1 F Bind "" "" [1] ["\x00\x00\x00\x02"] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+1 F Parse "" "SELECT 1 / 0" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED"
+1 F Parse "" "SELECT 1 / 0" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 B ParseComplete
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Query "ROLLBACK"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "" "DROP TABLE compat_items" []
+1 F Bind "" "" [] [] [1]
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B ParseComplete
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
