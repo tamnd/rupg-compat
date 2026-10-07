@@ -1,0 +1,933 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/metabase/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=NtNe3KA5PIUCCARSn0cSENDi"
+1 B AuthenticationSASLContinue "r=NtNe3KA5PIUCCARSn0cSENDioAwt1qumQ+eykrCyg0jLaOYx,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=NtNe3KA5PIUCCARSn0cSENDioAwt1qumQ+eykrCyg0jLaOYx,p=2sXh9bNBpC1zbhkw8MK+fdR5g6aNk4hM+X5LX7T5+9k="
+1 B AuthenticationSASLFinal "v=g5hTvM1OuR2xA7yHSSaY/YkHQU87dddHG+R1dq8jvbw="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "psql"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 974155 "\x087\xfc\x0c"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL UNIQUE, price numeric(10, 2), mood text NOT NULL, created_at timestamptz NOT NULL);"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_orders (id int4 PRIMARY KEY, item_id int4 NOT NULL REFERENCES compat_items, qty int4 NOT NULL);"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO compat_items SELECT i, 'item ' || i, i * 1.5, CASE WHEN i % 3 = 0 THEN 'sad' ELSE 'happy' END, '2026-01-02 03:00:00+00'::timestamptz + i * interval '1 hour' FROM generate_series(1, 30) AS i;"
+1 B CommandComplete "INSERT 0 30"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO compat_orders SELECT i, i % 30 + 1, i % 4 + 1 FROM generate_series(1, 60) AS i;"
+1 B CommandComplete "INSERT 0 60"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
+# 2 F SSLRequest: the proxy answered N
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "UTC"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=yc1#}[<]VF<xvk]r[>6=-9q@"
+3 B AuthenticationSASLContinue "r=yc1#}[<]VF<xvk]r[>6=-9q@37rFUmlpJjAYL/cfkXr1v/JS,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+3 F SASLResponse "c=biws,r=yc1#}[<]VF<xvk]r[>6=-9q@37rFUmlpJjAYL/cfkXr1v/JS,p=69M6BV/cRM5dKwZqtt7q0r4fXVCISErGWGBE+hxQDi0="
+3 B AuthenticationSASLFinal "v=9FdrmFompKFqRjo3yvwXMkMcoP/ZPeOwVqdg7ALQPfI="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" ""
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 974972 "=#,a"
+3 B ReadyForQuery I
+3 F Query "SET application_name = 'Metabase v0.64.1 [7dec90b3-0d45-4314-85ae-b9d3484f6505]'"
+3 B CommandComplete "SET"
+3 B ParameterStatus "application_name" "Metabase v0.64.1 [7dec90b3-0d45-4314-85ae-b9d3484f6505]"
+3 B ReadyForQuery I
+3 F Parse "" "SELECT 1" []
+3 F Bind "" "" [] [] []
+3 F Describe P ""
+3 F Execute "" 0
+3 F Sync
+3 B ParseComplete
+3 B BindComplete
+3 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+3 B DataRow ["1"]
+3 B CommandComplete "SELECT 1"
+3 B ReadyForQuery I
+3 F Terminate
+3 F End
+3 B End
+4 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "UTC"
+4 B AuthenticationSASL "SCRAM-SHA-256"
+4 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=_$F'^E({39er}j^2xMR'U*Uy"
+4 B AuthenticationSASLContinue "r=_$F'^E({39er}j^2xMR'U*UyRQUac/piHZoGdW4Zx/ahgmDr,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F SASLResponse "c=biws,r=_$F'^E({39er}j^2xMR'U*UyRQUac/piHZoGdW4Zx/ahgmDr,p=KrfT0j68jSFPS75U0QIv2Nfvp0oPS++G7wPe+D8lQ1E="
+4 B AuthenticationSASLFinal "v=L8eHK2wuGEFUraTP4/f/PoDhCuvHAtrb1Ka66N+liTw="
+4 B AuthenticationOk
+4 B ParameterStatus "IntervalStyle" "postgres"
+4 B ParameterStatus "search_path" "\"$user\", public"
+4 B ParameterStatus "is_superuser" "on"
+4 B ParameterStatus "standard_conforming_strings" "on"
+4 B ParameterStatus "session_authorization" "postgres"
+4 B ParameterStatus "client_encoding" "UTF8"
+4 B ParameterStatus "server_version" "19beta4"
+4 B ParameterStatus "server_encoding" "UTF8"
+4 B ParameterStatus "in_hot_standby" "off"
+4 B ParameterStatus "integer_datetimes" "on"
+4 B ParameterStatus "TimeZone" "UTC"
+4 B ParameterStatus "application_name" ""
+4 B ParameterStatus "default_transaction_read_only" "off"
+4 B ParameterStatus "scram_iterations" "4096"
+4 B ParameterStatus "DateStyle" "ISO, MDY"
+4 B BackendKeyData 974984 "\x8f\xbe\x1d\xfe"
+4 B ReadyForQuery I
+4 F Query "SET application_name = 'Metabase v0.64.1 [7dec90b3-0d45-4314-85ae-b9d3484f6505]'"
+4 B CommandComplete "SET"
+4 B ParameterStatus "application_name" "Metabase v0.64.1 [7dec90b3-0d45-4314-85ae-b9d3484f6505]"
+4 B ReadyForQuery I
+4 F Parse "" "SHOW TRANSACTION ISOLATION LEVEL" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+4 B DataRow ["read committed"]
+4 B CommandComplete "SHOW"
+4 B ReadyForQuery I
+4 F Parse "" "select current_catalog" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("current_catalog" 0 0 19 64 -1 0)]
+4 B DataRow ["compat"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Query ""
+5 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8" "DateStyle" "ISO" "TimeZone" "UTC"
+5 B AuthenticationSASL "SCRAM-SHA-256"
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+5 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=VIv}\"f=|b<02#bm(v\\r!9k?}"
+5 B AuthenticationSASLContinue "r=VIv}\"f=|b<02#bm(v\\r!9k?}RitJQZP3IfbY1VKdcrWH6ike,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+5 F SASLResponse "c=biws,r=VIv}\"f=|b<02#bm(v\\r!9k?}RitJQZP3IfbY1VKdcrWH6ike,p=tcaxli7hT1eYUvjAMWOQ9sb7taMM8kcXYFOaFkOQp+E="
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+5 B AuthenticationSASLFinal "v=sanXrzraToacJ4bTUgEol2n8MVbRZgp8eIwyg0G5zxk="
+5 B AuthenticationOk
+5 B ParameterStatus "IntervalStyle" "postgres"
+5 B ParameterStatus "search_path" "\"$user\", public"
+5 B ParameterStatus "is_superuser" "on"
+5 B ParameterStatus "standard_conforming_strings" "on"
+5 B ParameterStatus "session_authorization" "postgres"
+5 B ParameterStatus "client_encoding" "UTF8"
+5 B ParameterStatus "server_version" "19beta4"
+5 B ParameterStatus "server_encoding" "UTF8"
+5 B ParameterStatus "in_hot_standby" "off"
+5 B ParameterStatus "integer_datetimes" "on"
+5 B ParameterStatus "TimeZone" "UTC"
+5 B ParameterStatus "application_name" ""
+5 B ParameterStatus "default_transaction_read_only" "off"
+5 B ParameterStatus "scram_iterations" "4096"
+5 B ParameterStatus "DateStyle" "ISO, MDY"
+5 B BackendKeyData 974988 "BA~\xa4"
+5 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+5 F Query "SET application_name = 'Metabase v0.64.1 [7dec90b3-0d45-4314-85ae-b9d3484f6505]'"
+5 B CommandComplete "SET"
+5 B ParameterStatus "application_name" "Metabase v0.64.1 [7dec90b3-0d45-4314-85ae-b9d3484f6505]"
+5 B ReadyForQuery I
+5 F Parse "" "SHOW TRANSACTION ISOLATION LEVEL" []
+5 F Bind "" "" [] [] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("transaction_isolation" 0 0 25 -1 -1 0)]
+5 B DataRow ["read committed"]
+5 B CommandComplete "SHOW"
+5 B ReadyForQuery I
+5 F Parse "" "select current_catalog" []
+5 F Bind "" "" [] [] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("current_catalog" 0 0 19 64 -1 0)]
+5 B DataRow ["compat"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Query ""
+5 B EmptyQueryResponse
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Parse "" "show timezone" []
+5 F Bind "" "" [] [] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("TimeZone" 0 0 25 -1 -1 0)]
+5 B DataRow ["UTC"]
+5 B CommandComplete "SHOW"
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Query ""
+5 B EmptyQueryResponse
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SELECT nspname AS \"TABLE_SCHEM\", current_database() AS \"TABLE_CATALOG\" FROM pg_catalog.pg_namespace  WHERE nspname <> 'pg_toast' AND (nspname !~ '^pg_temp_'  OR nspname = (pg_catalog.current_schemas(true))[1]) AND (nspname !~ '^pg_toast_temp_'  OR nspname = replace((pg_catalog.current_schemas(true))[1], 'pg_temp_', 'pg_toast_temp_'))  ORDER BY \"TABLE_SCHEM\"" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("TABLE_SCHEM" 2615 2 19 64 -1 0) ("TABLE_CATALOG" 0 0 19 64 -1 0)]
+4 B DataRow ["information_schema" "compat"]
+4 B DataRow ["pg_catalog" "compat"]
+4 B DataRow ["public" "compat"]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+5 F Parse "" "with table_privileges as (\n select\n   NULL as role,\n   t.schemaname as schema,\n   t.objectname as table,\n   pg_catalog.has_any_column_privilege(current_user, '\"' || replace(t.schemaname, '\"', '\"\"') || '\"' || '.' || '\"' || replace(t.objectname, '\"', '\"\"') || '\"',  'update') as update,\n   pg_catalog.has_any_column_privilege(current_user, '\"' || replace(t.schemaname, '\"', '\"\"') || '\"' || '.' || '\"' || replace(t.objectname, '\"', '\"\"') || '\"',  'select') as select,\n   pg_catalog.has_any_column_privilege(current_user, '\"' || replace(t.schemaname, '\"', '\"\"') || '\"' || '.' || '\"' || replace(t.objectname, '\"', '\"\"') || '\"',  'insert') as insert,\n   pg_catalog.has_table_privilege(     current_user, '\"' || replace(t.schemaname, '\"', '\"\"') || '\"' || '.' || '\"' || replace(t.objectname, '\"', '\"\"') || '\"',  'delete') as delete\n from (\n   select schemaname, tablename as objectname from pg_catalog.pg_tables\n   union\n   select schemaname, viewname as objectname from pg_catalog.pg_views\n   union\n   select schemaname, matviewname as objectname from pg_catalog.pg_matviews\n ) t\n where t.schemaname !~ '^pg_'\n   and t.schemaname <> 'information_schema'\n   and pg_catalog.has_schema_privilege(current_user, t.schemaname, 'usage')\n)\nselect t.*\nfrom table_privileges t" []
+5 F Bind "" "" [] [] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("role" 0 0 25 -1 -1 0) ("schema" 0 0 19 64 -1 0) ("table" 0 0 19 64 -1 0) ("update" 0 0 16 1 -1 0) ("select" 0 0 16 1 -1 0) ("insert" 0 0 16 1 -1 0) ("delete" 0 0 16 1 -1 0)]
+5 B DataRow [NULL "public" "compat_orders" "t" "t" "t" "t"]
+5 B DataRow [NULL "public" "compat_items" "t" "t" "t" "t"]
+5 B CommandComplete "SELECT 2"
+5 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SELECT \"n\".\"nspname\" AS \"schema\", \"c\".\"relname\" AS \"name\", CASE \"c\".\"relkind\" WHEN 'r' THEN 'TABLE' WHEN 'p' THEN 'PARTITIONED TABLE' WHEN 'v' THEN 'VIEW' WHEN 'f' THEN 'FOREIGN TABLE' WHEN 'm' THEN 'MATERIALIZED VIEW' ELSE NULL END AS \"type\", \"d\".\"description\" AS \"description\", NULLIF(\"stat\".\"n_live_tup\", $1) AS \"estimated_row_count\" FROM \"pg_catalog\".\"pg_class\" AS \"c\" INNER JOIN \"pg_catalog\".\"pg_namespace\" AS \"n\" ON \"c\".\"relnamespace\" = \"n\".\"oid\" LEFT JOIN \"pg_catalog\".\"pg_description\" AS \"d\" ON (\"c\".\"oid\" = \"d\".\"objoid\") AND (\"d\".\"objsubid\" = $2) AND (\"d\".\"classoid\" = 'pg_class'::regclass) LEFT JOIN \"pg_stat_user_tables\" AS \"stat\" ON (\"n\".\"nspname\" = \"stat\".\"schemaname\") AND (\"c\".\"relname\" = \"stat\".\"relname\") WHERE (\"c\".\"relnamespace\" = \"n\".\"oid\") AND (\"n\".\"nspname\" !~ $3) AND (\"n\".\"nspname\" <> $4) AND c.relkind in ('r', 'p', 'v', 'f', 'm') AND (\"n\".\"nspname\" IN ($5)) ORDER BY \"type\" ASC, \"schema\" ASC, \"name\" ASC" [0 0 0 0 0]
+4 F Describe S ""
+4 F Sync
+4 B ParseComplete
+4 B ParameterDescription [20 23 25 19 19]
+4 B RowDescription [("schema" 2615 2 19 64 -1 0) ("name" 1259 2 19 64 -1 0) ("type" 0 0 25 -1 -1 0) ("description" 2609 4 25 -1 -1 0) ("estimated_row_count" 0 0 20 8 -1 0)]
+4 B ReadyForQuery I
+4 F Sync
+4 B ReadyForQuery I
+4 F Parse "" "SELECT \"n\".\"nspname\" AS \"schema\", \"c\".\"relname\" AS \"name\", CASE \"c\".\"relkind\" WHEN 'r' THEN 'TABLE' WHEN 'p' THEN 'PARTITIONED TABLE' WHEN 'v' THEN 'VIEW' WHEN 'f' THEN 'FOREIGN TABLE' WHEN 'm' THEN 'MATERIALIZED VIEW' ELSE NULL END AS \"type\", \"d\".\"description\" AS \"description\", NULLIF(\"stat\".\"n_live_tup\", $1) AS \"estimated_row_count\" FROM \"pg_catalog\".\"pg_class\" AS \"c\" INNER JOIN \"pg_catalog\".\"pg_namespace\" AS \"n\" ON \"c\".\"relnamespace\" = \"n\".\"oid\" LEFT JOIN \"pg_catalog\".\"pg_description\" AS \"d\" ON (\"c\".\"oid\" = \"d\".\"objoid\") AND (\"d\".\"objsubid\" = $2) AND (\"d\".\"classoid\" = 'pg_class'::regclass) LEFT JOIN \"pg_stat_user_tables\" AS \"stat\" ON (\"n\".\"nspname\" = \"stat\".\"schemaname\") AND (\"c\".\"relname\" = \"stat\".\"relname\") WHERE (\"c\".\"relnamespace\" = \"n\".\"oid\") AND (\"n\".\"nspname\" !~ $3) AND (\"n\".\"nspname\" <> $4) AND c.relkind in ('r', 'p', 'v', 'f', 'm') AND (\"n\".\"nspname\" IN ($5)) ORDER BY \"type\" ASC, \"schema\" ASC, \"name\" ASC" [20 20 1043 1043 1043]
+4 F Bind "" "" [1 1 0 0 0] ["\x00\x00\x00\x00\x00\x00\x00\x00" "\x00\x00\x00\x00\x00\x00\x00\x00" "^pg_" "information_schema" "public"] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("schema" 2615 2 19 64 -1 0) ("name" 1259 2 19 64 -1 0) ("type" 0 0 25 -1 -1 0) ("description" 2609 4 25 -1 -1 0) ("estimated_row_count" 0 0 20 8 -1 0)]
+4 B DataRow ["public" "compat_items" "TABLE" NULL "30"]
+4 B DataRow ["public" "compat_orders" "TABLE" NULL "60"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Query ""
+5 B EmptyQueryResponse
+5 B ReadyForQuery I
+5 F Parse "" "SELECT nspname, typname FROM pg_type t JOIN pg_namespace n ON n.oid = t.typnamespace WHERE t.oid IN (SELECT DISTINCT enumtypid FROM pg_enum e)" []
+5 F Bind "" "" [] [] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("nspname" 2615 2 19 64 -1 0) ("typname" 1247 2 19 64 -1 0)]
+5 B CommandComplete "SELECT 0"
+5 B ReadyForQuery I
+5 F Query ""
+5 B EmptyQueryResponse
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Parse "" "SELECT \"c\".\"column_name\" AS \"name\", CASE WHEN \"c\".\"udt_schema\" IN ('public', 'pg_catalog') THEN FORMAT('%s', \"c\".\"udt_name\") ELSE FORMAT('\"%s\".\"%s\"', \"c\".\"udt_schema\", \"c\".\"udt_name\") END AS \"database-type\", \"c\".\"ordinal_position\" - 1 AS \"database-position\", \"c\".\"table_schema\" AS \"table-schema\", \"c\".\"table_name\" AS \"table-name\", \"pk\".\"column_name\" IS NOT NULL AS \"pk?\", COL_DESCRIPTION(CAST(CAST(FORMAT('%I.%I', CAST(\"c\".\"table_schema\" AS TEXT), CAST(\"c\".\"table_name\" AS TEXT)) AS REGCLASS) AS OID), \"c\".\"ordinal_position\") AS \"field-comment\", ((\"column_default\" IS NULL) OR (LOWER(\"column_default\") = 'null')) AND (\"is_nullable\" = 'NO') AND NOT (((\"column_default\" IS NOT NULL) AND (\"column_default\" LIKE '%nextval(%')) OR (\"is_identity\" <> 'NO')) AS \"database-required\", \"column_default\" AS \"database-default\", ((\"column_default\" IS NOT NULL) AND (\"column_default\" LIKE '%nextval(%')) OR (\"is_identity\" <> 'NO') AS \"database-is-auto-increment\", \"is_generated\" = $1 AS \"database-is-generated\", \"is_nullable\" = 'YES' AS \"database-is-nullable\" FROM \"information_schema\".\"columns\" AS \"c\" LEFT JOIN (SELECT \"tc\".\"table_schema\", \"tc\".\"table_name\", \"kc\".\"column_name\" FROM \"information_schema\".\"table_constraints\" AS \"tc\" INNER JOIN \"information_schema\".\"key_column_usage\" AS \"kc\" ON (\"tc\".\"constraint_name\" = \"kc\".\"constraint_name\") AND (\"tc\".\"table_schema\" = \"kc\".\"table_schema\") AND (\"tc\".\"table_name\" = \"kc\".\"table_name\") WHERE \"tc\".\"constraint_type\" = 'PRIMARY KEY') AS \"pk\" ON (\"c\".\"table_schema\" = \"pk\".\"table_schema\") AND (\"c\".\"table_name\" = \"pk\".\"table_name\") AND (\"c\".\"column_name\" = \"pk\".\"column_name\") WHERE c.table_schema !~ '^information_schema|catalog_history|pg_' AND (\"c\".\"table_schema\" IN ($2)) UNION ALL SELECT \"pa\".\"attname\" AS \"name\", CASE WHEN \"ptn\".\"nspname\" IN ('public', 'pg_catalog') THEN FORMAT('%s', \"pt\".\"typname\") ELSE FORMAT('\"%s\".\"%s\"', \"ptn\".\"nspname\", \"pt\".\"typname\") END AS \"database-type\", \"pa\".\"attnum\" - 1 AS \"database-position\", \"pn\".\"nspname\" AS \"table-schema\", \"pc\".\"relname\" AS \"table-name\", FALSE AS \"pk?\", NULL AS \"field-comment\", FALSE AS \"database-required\", NULL AS \"database-default\", FALSE AS \"database-is-auto-increment\", FALSE AS \"database-is-generated\", FALSE AS \"database-is-nullable\" FROM \"pg_catalog\".\"pg_class\" AS \"pc\" INNER JOIN \"pg_catalog\".\"pg_namespace\" AS \"pn\" ON \"pn\".\"oid\" = \"pc\".\"relnamespace\" INNER JOIN \"pg_catalog\".\"pg_attribute\" AS \"pa\" ON \"pa\".\"attrelid\" = \"pc\".\"oid\" INNER JOIN \"pg_catalog\".\"pg_type\" AS \"pt\" ON \"pt\".\"oid\" = \"pa\".\"atttypid\" INNER JOIN \"pg_catalog\".\"pg_namespace\" AS \"ptn\" ON \"ptn\".\"oid\" = \"pt\".\"typnamespace\" WHERE (\"pc\".\"relkind\" = 'm') AND (\"pa\".\"attnum\" >= 1) AND (\"pn\".\"nspname\" IN ($3)) ORDER BY \"table-schema\" ASC, \"table-name\" ASC, \"database-position\" ASC" [0 0 0]
+5 F Describe S ""
+5 F Sync
+5 B ParseComplete
+5 B ParameterDescription [25 19 19]
+5 B RowDescription [("name" 0 0 19 64 -1 0) ("database-type" 0 0 25 -1 -1 0) ("database-position" 0 0 23 4 -1 0) ("table-schema" 0 0 19 64 -1 0) ("table-name" 0 0 19 64 -1 0) ("pk?" 0 0 16 1 -1 0) ("field-comment" 0 0 25 -1 -1 0) ("database-required" 0 0 16 1 -1 0) ("database-default" 0 0 1043 -1 -1 0) ("database-is-auto-increment" 0 0 16 1 -1 0) ("database-is-generated" 0 0 16 1 -1 0) ("database-is-nullable" 0 0 16 1 -1 0)]
+5 B ReadyForQuery I
+5 F Query "BEGIN READ ONLY"
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+5 F Sync
+5 B ReadyForQuery T
+5 F Parse "" "SELECT \"c\".\"column_name\" AS \"name\", CASE WHEN \"c\".\"udt_schema\" IN ('public', 'pg_catalog') THEN FORMAT('%s', \"c\".\"udt_name\") ELSE FORMAT('\"%s\".\"%s\"', \"c\".\"udt_schema\", \"c\".\"udt_name\") END AS \"database-type\", \"c\".\"ordinal_position\" - 1 AS \"database-position\", \"c\".\"table_schema\" AS \"table-schema\", \"c\".\"table_name\" AS \"table-name\", \"pk\".\"column_name\" IS NOT NULL AS \"pk?\", COL_DESCRIPTION(CAST(CAST(FORMAT('%I.%I', CAST(\"c\".\"table_schema\" AS TEXT), CAST(\"c\".\"table_name\" AS TEXT)) AS REGCLASS) AS OID), \"c\".\"ordinal_position\") AS \"field-comment\", ((\"column_default\" IS NULL) OR (LOWER(\"column_default\") = 'null')) AND (\"is_nullable\" = 'NO') AND NOT (((\"column_default\" IS NOT NULL) AND (\"column_default\" LIKE '%nextval(%')) OR (\"is_identity\" <> 'NO')) AS \"database-required\", \"column_default\" AS \"database-default\", ((\"column_default\" IS NOT NULL) AND (\"column_default\" LIKE '%nextval(%')) OR (\"is_identity\" <> 'NO') AS \"database-is-auto-increment\", \"is_generated\" = $1 AS \"database-is-generated\", \"is_nullable\" = 'YES' AS \"database-is-nullable\" FROM \"information_schema\".\"columns\" AS \"c\" LEFT JOIN (SELECT \"tc\".\"table_schema\", \"tc\".\"table_name\", \"kc\".\"column_name\" FROM \"information_schema\".\"table_constraints\" AS \"tc\" INNER JOIN \"information_schema\".\"key_column_usage\" AS \"kc\" ON (\"tc\".\"constraint_name\" = \"kc\".\"constraint_name\") AND (\"tc\".\"table_schema\" = \"kc\".\"table_schema\") AND (\"tc\".\"table_name\" = \"kc\".\"table_name\") WHERE \"tc\".\"constraint_type\" = 'PRIMARY KEY') AS \"pk\" ON (\"c\".\"table_schema\" = \"pk\".\"table_schema\") AND (\"c\".\"table_name\" = \"pk\".\"table_name\") AND (\"c\".\"column_name\" = \"pk\".\"column_name\") WHERE c.table_schema !~ '^information_schema|catalog_history|pg_' AND (\"c\".\"table_schema\" IN ($2)) UNION ALL SELECT \"pa\".\"attname\" AS \"name\", CASE WHEN \"ptn\".\"nspname\" IN ('public', 'pg_catalog') THEN FORMAT('%s', \"pt\".\"typname\") ELSE FORMAT('\"%s\".\"%s\"', \"ptn\".\"nspname\", \"pt\".\"typname\") END AS \"database-type\", \"pa\".\"attnum\" - 1 AS \"database-position\", \"pn\".\"nspname\" AS \"table-schema\", \"pc\".\"relname\" AS \"table-name\", FALSE AS \"pk?\", NULL AS \"field-comment\", FALSE AS \"database-required\", NULL AS \"database-default\", FALSE AS \"database-is-auto-increment\", FALSE AS \"database-is-generated\", FALSE AS \"database-is-nullable\" FROM \"pg_catalog\".\"pg_class\" AS \"pc\" INNER JOIN \"pg_catalog\".\"pg_namespace\" AS \"pn\" ON \"pn\".\"oid\" = \"pc\".\"relnamespace\" INNER JOIN \"pg_catalog\".\"pg_attribute\" AS \"pa\" ON \"pa\".\"attrelid\" = \"pc\".\"oid\" INNER JOIN \"pg_catalog\".\"pg_type\" AS \"pt\" ON \"pt\".\"oid\" = \"pa\".\"atttypid\" INNER JOIN \"pg_catalog\".\"pg_namespace\" AS \"ptn\" ON \"ptn\".\"oid\" = \"pt\".\"typnamespace\" WHERE (\"pc\".\"relkind\" = 'm') AND (\"pa\".\"attnum\" >= 1) AND (\"pn\".\"nspname\" IN ($3)) ORDER BY \"table-schema\" ASC, \"table-name\" ASC, \"database-position\" ASC" [1043 1043 1043]
+5 F Bind "C_1" "" [0 0 0] ["ALWAYS" "public" "public"] []
+5 F Describe P "C_1"
+5 F Execute "C_1" 500
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("name" 0 0 19 64 -1 0) ("database-type" 0 0 25 -1 -1 0) ("database-position" 0 0 23 4 -1 0) ("table-schema" 0 0 19 64 -1 0) ("table-name" 0 0 19 64 -1 0) ("pk?" 0 0 16 1 -1 0) ("field-comment" 0 0 25 -1 -1 0) ("database-required" 0 0 16 1 -1 0) ("database-default" 0 0 1043 -1 -1 0) ("database-is-auto-increment" 0 0 16 1 -1 0) ("database-is-generated" 0 0 16 1 -1 0) ("database-is-nullable" 0 0 16 1 -1 0)]
+5 B DataRow ["id" "int4" "0" "public" "compat_items" "t" NULL "t" NULL "f" "f" "f"]
+5 B DataRow ["name" "text" "1" "public" "compat_items" "f" NULL "t" NULL "f" "f" "f"]
+5 B DataRow ["price" "numeric" "2" "public" "compat_items" "f" NULL "f" NULL "f" "f" "t"]
+5 B DataRow ["mood" "text" "3" "public" "compat_items" "f" NULL "t" NULL "f" "f" "f"]
+5 B DataRow ["created_at" "timestamptz" "4" "public" "compat_items" "f" NULL "t" NULL "f" "f" "f"]
+5 B DataRow ["id" "int4" "0" "public" "compat_orders" "t" NULL "t" NULL "f" "f" "f"]
+5 B DataRow ["item_id" "int4" "1" "public" "compat_orders" "f" NULL "t" NULL "f" "f" "f"]
+5 B DataRow ["qty" "int4" "2" "public" "compat_orders" "f" NULL "t" NULL "f" "f" "f"]
+5 B CommandComplete "SELECT 8"
+5 B ReadyForQuery T
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SELECT * FROM (SELECT current_database() AS current_database, n.nspname,c.relname,a.attname,a.atttypid,a.attnotnull  OR (t.typtype = 'd' AND t.typnotnull) AS attnotnull,a.atttypmod,a.attlen,t.typtypmod,row_number() OVER (PARTITION BY a.attrelid ORDER BY a.attnum) AS attnum, nullif(a.attidentity, '') as attidentity,nullif(a.attgenerated, '') as attgenerated,pg_catalog.pg_get_expr(def.adbin, def.adrelid) AS adsrc,dsc.description,t.typbasetype,t.typtype  FROM pg_catalog.pg_namespace n  JOIN pg_catalog.pg_class c ON (c.relnamespace = n.oid)  JOIN pg_catalog.pg_attribute a ON (a.attrelid=c.oid)  JOIN pg_catalog.pg_type t ON (a.atttypid = t.oid)  LEFT JOIN pg_catalog.pg_attrdef def ON (a.attrelid=def.adrelid AND a.attnum = def.adnum)  LEFT JOIN pg_catalog.pg_description dsc ON (c.oid=dsc.objoid AND a.attnum = dsc.objsubid)  LEFT JOIN pg_catalog.pg_class dc ON (dc.oid=dsc.classoid AND dc.relname='pg_class')  LEFT JOIN pg_catalog.pg_namespace dn ON (dc.relnamespace=dn.oid AND dn.nspname='pg_catalog')  WHERE c.relkind in ('r','p','v','f','m') and a.attnum > 0 AND NOT a.attisdropped  AND n.nspname LIKE $1 AND c.relname LIKE $2) c WHERE true  ORDER BY nspname,c.relname,attnum " [1043 1043]
+4 F Bind "" "" [0 0] ["public" "compat_items"] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("current_database" 0 0 19 64 -1 0) ("nspname" 2615 2 19 64 -1 0) ("relname" 1259 2 19 64 -1 0) ("attname" 1249 2 19 64 -1 0) ("atttypid" 1249 3 26 4 -1 0) ("attnotnull" 0 0 16 1 -1 0) ("atttypmod" 1249 6 23 4 -1 0) ("attlen" 1249 4 21 2 -1 0) ("typtypmod" 1247 27 23 4 -1 0) ("attnum" 0 0 20 8 -1 0) ("attidentity" 0 0 18 1 -1 0) ("attgenerated" 0 0 18 1 -1 0) ("adsrc" 0 0 25 -1 -1 0) ("description" 2609 4 25 -1 -1 0) ("typbasetype" 1247 26 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0)]
+4 B DataRow ["compat" "public" "compat_items" "id" "23" "t" "-1" "4" "-1" "1" NULL NULL NULL NULL "0" "b"]
+4 B DataRow ["compat" "public" "compat_items" "name" "25" "t" "-1" "-1" "-1" "2" NULL NULL NULL NULL "0" "b"]
+4 B DataRow ["compat" "public" "compat_items" "price" "1700" "f" "655366" "-1" "-1" "3" NULL NULL NULL NULL "0" "b"]
+4 B DataRow ["compat" "public" "compat_items" "mood" "25" "t" "-1" "-1" "-1" "4" NULL NULL NULL NULL "0" "b"]
+4 B DataRow ["compat" "public" "compat_items" "created_at" "1184" "t" "-1" "8" "-1" "5" NULL NULL NULL NULL "0" "b"]
+4 B CommandComplete "SELECT 5"
+4 B ReadyForQuery I
+4 F Parse "" "SELECT        result.TABLE_CAT AS \"TABLE_CAT\",        result.TABLE_SCHEM AS \"TABLE_SCHEM\",        result.TABLE_NAME AS \"TABLE_NAME\",        result.COLUMN_NAME AS \"COLUMN_NAME\",        result.KEY_SEQ AS \"KEY_SEQ\",        result.PK_NAME AS \"PK_NAME\"FROM      (SELECT current_database() AS TABLE_CAT, n.nspname AS TABLE_SCHEM,   ct.relname AS TABLE_NAME, a.attname AS COLUMN_NAME,   (information_schema._pg_expandarray(i.indkey)).n AS KEY_SEQ, ci.relname AS PK_NAME,   information_schema._pg_expandarray(i.indkey) AS KEYS, a.attnum AS A_ATTNUM, i.indnkeyatts as KEY_COUNT FROM pg_catalog.pg_class ct   JOIN pg_catalog.pg_attribute a ON (ct.oid = a.attrelid)   JOIN pg_catalog.pg_namespace n ON (ct.relnamespace = n.oid)   JOIN pg_catalog.pg_index i ON ( a.attrelid = i.indrelid)   JOIN pg_catalog.pg_class ci ON (ci.oid = i.indexrelid) WHERE true  AND n.nspname = $1 AND ct.relname = $2 AND i.indisprimary  ) result where  result.A_ATTNUM = (result.KEYS).x AND result.KEY_SEQ <= KEY_COUNT  ORDER BY result.table_name, result.pk_name, result.key_seq" [1043 1043]
+4 F Bind "" "" [0 0] ["public" "compat_items"] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("TABLE_CAT" 0 0 19 64 -1 0) ("TABLE_SCHEM" 2615 2 19 64 -1 0) ("TABLE_NAME" 1259 2 19 64 -1 0) ("COLUMN_NAME" 1249 2 19 64 -1 0) ("KEY_SEQ" 0 0 23 4 -1 0) ("PK_NAME" 1259 2 19 64 -1 0)]
+4 B DataRow ["compat" "public" "compat_items" "id" "1" "compat_items_pkey"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+5 F Close P "C_1"
+5 F Parse "S_2" "ROLLBACK" []
+5 F Bind "" "S_2" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B CloseComplete
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "ROLLBACK"
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Query ""
+5 B EmptyQueryResponse
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Parse "" "SELECT * FROM (SELECT current_database() AS current_database, n.nspname,c.relname,a.attname,a.atttypid,a.attnotnull  OR (t.typtype = 'd' AND t.typnotnull) AS attnotnull,a.atttypmod,a.attlen,t.typtypmod,row_number() OVER (PARTITION BY a.attrelid ORDER BY a.attnum) AS attnum, nullif(a.attidentity, '') as attidentity,nullif(a.attgenerated, '') as attgenerated,pg_catalog.pg_get_expr(def.adbin, def.adrelid) AS adsrc,dsc.description,t.typbasetype,t.typtype  FROM pg_catalog.pg_namespace n  JOIN pg_catalog.pg_class c ON (c.relnamespace = n.oid)  JOIN pg_catalog.pg_attribute a ON (a.attrelid=c.oid)  JOIN pg_catalog.pg_type t ON (a.atttypid = t.oid)  LEFT JOIN pg_catalog.pg_attrdef def ON (a.attrelid=def.adrelid AND a.attnum = def.adnum)  LEFT JOIN pg_catalog.pg_description dsc ON (c.oid=dsc.objoid AND a.attnum = dsc.objsubid)  LEFT JOIN pg_catalog.pg_class dc ON (dc.oid=dsc.classoid AND dc.relname='pg_class')  LEFT JOIN pg_catalog.pg_namespace dn ON (dc.relnamespace=dn.oid AND dn.nspname='pg_catalog')  WHERE c.relkind in ('r','p','v','f','m') and a.attnum > 0 AND NOT a.attisdropped  AND n.nspname LIKE $1 AND c.relname LIKE $2) c WHERE true  ORDER BY nspname,c.relname,attnum " [1043 1043]
+5 F Bind "" "" [0 0] ["public" "compat_orders"] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("current_database" 0 0 19 64 -1 0) ("nspname" 2615 2 19 64 -1 0) ("relname" 1259 2 19 64 -1 0) ("attname" 1249 2 19 64 -1 0) ("atttypid" 1249 3 26 4 -1 0) ("attnotnull" 0 0 16 1 -1 0) ("atttypmod" 1249 6 23 4 -1 0) ("attlen" 1249 4 21 2 -1 0) ("typtypmod" 1247 27 23 4 -1 0) ("attnum" 0 0 20 8 -1 0) ("attidentity" 0 0 18 1 -1 0) ("attgenerated" 0 0 18 1 -1 0) ("adsrc" 0 0 25 -1 -1 0) ("description" 2609 4 25 -1 -1 0) ("typbasetype" 1247 26 26 4 -1 0) ("typtype" 1247 7 18 1 -1 0)]
+5 B DataRow ["compat" "public" "compat_orders" "id" "23" "t" "-1" "4" "-1" "1" NULL NULL NULL NULL "0" "b"]
+5 B DataRow ["compat" "public" "compat_orders" "item_id" "23" "t" "-1" "4" "-1" "2" NULL NULL NULL NULL "0" "b"]
+5 B DataRow ["compat" "public" "compat_orders" "qty" "23" "t" "-1" "4" "-1" "3" NULL NULL NULL NULL "0" "b"]
+5 B CommandComplete "SELECT 3"
+5 B ReadyForQuery I
+5 F Parse "" "SELECT        result.TABLE_CAT AS \"TABLE_CAT\",        result.TABLE_SCHEM AS \"TABLE_SCHEM\",        result.TABLE_NAME AS \"TABLE_NAME\",        result.COLUMN_NAME AS \"COLUMN_NAME\",        result.KEY_SEQ AS \"KEY_SEQ\",        result.PK_NAME AS \"PK_NAME\"FROM      (SELECT current_database() AS TABLE_CAT, n.nspname AS TABLE_SCHEM,   ct.relname AS TABLE_NAME, a.attname AS COLUMN_NAME,   (information_schema._pg_expandarray(i.indkey)).n AS KEY_SEQ, ci.relname AS PK_NAME,   information_schema._pg_expandarray(i.indkey) AS KEYS, a.attnum AS A_ATTNUM, i.indnkeyatts as KEY_COUNT FROM pg_catalog.pg_class ct   JOIN pg_catalog.pg_attribute a ON (ct.oid = a.attrelid)   JOIN pg_catalog.pg_namespace n ON (ct.relnamespace = n.oid)   JOIN pg_catalog.pg_index i ON ( a.attrelid = i.indrelid)   JOIN pg_catalog.pg_class ci ON (ci.oid = i.indexrelid) WHERE true  AND n.nspname = $1 AND ct.relname = $2 AND i.indisprimary  ) result where  result.A_ATTNUM = (result.KEYS).x AND result.KEY_SEQ <= KEY_COUNT  ORDER BY result.table_name, result.pk_name, result.key_seq" [1043 1043]
+5 F Bind "" "" [0 0] ["public" "compat_orders"] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("TABLE_CAT" 0 0 19 64 -1 0) ("TABLE_SCHEM" 2615 2 19 64 -1 0) ("TABLE_NAME" 1259 2 19 64 -1 0) ("COLUMN_NAME" 1249 2 19 64 -1 0) ("KEY_SEQ" 0 0 23 4 -1 0) ("PK_NAME" 1259 2 19 64 -1 0)]
+5 B DataRow ["compat" "public" "compat_orders" "id" "1" "compat_orders_pkey"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Query ""
+5 B EmptyQueryResponse
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Parse "" "SELECT \"fk_ns\".\"nspname\" AS \"fk-table-schema\", \"fk_table\".\"relname\" AS \"fk-table-name\", \"fk_column\".\"attname\" AS \"fk-column-name\", \"pk_ns\".\"nspname\" AS \"pk-table-schema\", \"pk_table\".\"relname\" AS \"pk-table-name\", \"pk_column\".\"attname\" AS \"pk-column-name\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_class\" AS \"fk_table\" ON \"c\".\"conrelid\" = \"fk_table\".\"oid\" INNER JOIN \"pg_namespace\" AS \"fk_ns\" ON \"c\".\"connamespace\" = \"fk_ns\".\"oid\" INNER JOIN \"pg_attribute\" AS \"fk_column\" ON \"c\".\"conrelid\" = \"fk_column\".\"attrelid\" INNER JOIN \"pg_class\" AS \"pk_table\" ON \"c\".\"confrelid\" = \"pk_table\".\"oid\" INNER JOIN \"pg_namespace\" AS \"pk_ns\" ON \"pk_table\".\"relnamespace\" = \"pk_ns\".\"oid\" INNER JOIN \"pg_attribute\" AS \"pk_column\" ON \"c\".\"confrelid\" = \"pk_column\".\"attrelid\" WHERE fk_ns.nspname !~ '^information_schema|catalog_history|pg_' AND (\"c\".\"contype\" = 'f'::char) AND (\"fk_column\".\"attnum\" = ANY(c.conkey)) AND (\"pk_column\".\"attnum\" = ANY(c.confkey)) AND (\"fk_ns\".\"nspname\" IN ($1)) ORDER BY \"fk-table-schema\" ASC, \"fk-table-name\" ASC" [0]
+5 F Describe S ""
+5 F Sync
+5 B ParseComplete
+5 B ParameterDescription [19]
+5 B RowDescription [("fk-table-schema" 2615 2 19 64 -1 0) ("fk-table-name" 1259 2 19 64 -1 0) ("fk-column-name" 1249 2 19 64 -1 0) ("pk-table-schema" 2615 2 19 64 -1 0) ("pk-table-name" 1259 2 19 64 -1 0) ("pk-column-name" 1249 2 19 64 -1 0)]
+5 B ReadyForQuery I
+5 F Query "BEGIN READ ONLY"
+5 F Parse "" "SELECT \"fk_ns\".\"nspname\" AS \"fk-table-schema\", \"fk_table\".\"relname\" AS \"fk-table-name\", \"fk_column\".\"attname\" AS \"fk-column-name\", \"pk_ns\".\"nspname\" AS \"pk-table-schema\", \"pk_table\".\"relname\" AS \"pk-table-name\", \"pk_column\".\"attname\" AS \"pk-column-name\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_class\" AS \"fk_table\" ON \"c\".\"conrelid\" = \"fk_table\".\"oid\" INNER JOIN \"pg_namespace\" AS \"fk_ns\" ON \"c\".\"connamespace\" = \"fk_ns\".\"oid\" INNER JOIN \"pg_attribute\" AS \"fk_column\" ON \"c\".\"conrelid\" = \"fk_column\".\"attrelid\" INNER JOIN \"pg_class\" AS \"pk_table\" ON \"c\".\"confrelid\" = \"pk_table\".\"oid\" INNER JOIN \"pg_namespace\" AS \"pk_ns\" ON \"pk_table\".\"relnamespace\" = \"pk_ns\".\"oid\" INNER JOIN \"pg_attribute\" AS \"pk_column\" ON \"c\".\"confrelid\" = \"pk_column\".\"attrelid\" WHERE fk_ns.nspname !~ '^information_schema|catalog_history|pg_' AND (\"c\".\"contype\" = 'f'::char) AND (\"fk_column\".\"attnum\" = ANY(c.conkey)) AND (\"pk_column\".\"attnum\" = ANY(c.confkey)) AND (\"fk_ns\".\"nspname\" IN ($1)) ORDER BY \"fk-table-schema\" ASC, \"fk-table-name\" ASC" [1043]
+5 F Bind "C_3" "" [0] ["public"] []
+5 F Describe P "C_3"
+5 F Execute "C_3" 500
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("fk-table-schema" 2615 2 19 64 -1 0) ("fk-table-name" 1259 2 19 64 -1 0) ("fk-column-name" 1249 2 19 64 -1 0) ("pk-table-schema" 2615 2 19 64 -1 0) ("pk-table-name" 1259 2 19 64 -1 0) ("pk-column-name" 1249 2 19 64 -1 0)]
+5 B DataRow ["public" "compat_orders" "item_id" "public" "compat_items" "id"]
+5 B CommandComplete "SELECT 1"
+5 B ReadyForQuery T
+5 F Close P "C_3"
+5 F Bind "" "S_2" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B CloseComplete
+5 B BindComplete
+5 B CommandComplete "ROLLBACK"
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Query ""
+5 B EmptyQueryResponse
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+5 F Query "BEGIN READ ONLY"
+5 F Parse "" "-- Metabase\nSELECT SUBSTRING(\"public\".\"compat_items\".\"name\", 1, 1234) AS \"substring1106\", \"public\".\"compat_items\".\"price\" AS \"price\", SUBSTRING(\"public\".\"compat_items\".\"mood\", 1, 1234) AS \"substring1107\", \"public\".\"compat_items\".\"created_at\" AS \"created_at\" FROM \"public\".\"compat_items\" LIMIT 10000" []
+5 F Bind "C_4" "" [] [] []
+5 F Describe P "C_4"
+5 F Execute "C_4" 500
+5 F Sync
+5 B CommandComplete "BEGIN"
+5 B ReadyForQuery T
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("substring1106" 0 0 25 -1 -1 0) ("price" 279668 3 1700 -1 655366 0) ("substring1107" 0 0 25 -1 -1 0) ("created_at" 279668 5 1184 8 -1 0)]
+5 B DataRow ["item 1" "1.50" "happy" "2026-01-02 04:00:00+00"]
+5 B DataRow ["item 2" "3.00" "happy" "2026-01-02 05:00:00+00"]
+5 B DataRow ["item 3" "4.50" "sad" "2026-01-02 06:00:00+00"]
+5 B DataRow ["item 4" "6.00" "happy" "2026-01-02 07:00:00+00"]
+5 B DataRow ["item 5" "7.50" "happy" "2026-01-02 08:00:00+00"]
+5 B DataRow ["item 6" "9.00" "sad" "2026-01-02 09:00:00+00"]
+5 B DataRow ["item 7" "10.50" "happy" "2026-01-02 10:00:00+00"]
+5 B DataRow ["item 8" "12.00" "happy" "2026-01-02 11:00:00+00"]
+5 B DataRow ["item 9" "13.50" "sad" "2026-01-02 12:00:00+00"]
+5 B DataRow ["item 10" "15.00" "happy" "2026-01-02 13:00:00+00"]
+5 B DataRow ["item 11" "16.50" "happy" "2026-01-02 14:00:00+00"]
+5 B DataRow ["item 12" "18.00" "sad" "2026-01-02 15:00:00+00"]
+5 B DataRow ["item 13" "19.50" "happy" "2026-01-02 16:00:00+00"]
+5 B DataRow ["item 14" "21.00" "happy" "2026-01-02 17:00:00+00"]
+5 B DataRow ["item 15" "22.50" "sad" "2026-01-02 18:00:00+00"]
+5 B DataRow ["item 16" "24.00" "happy" "2026-01-02 19:00:00+00"]
+5 B DataRow ["item 17" "25.50" "happy" "2026-01-02 20:00:00+00"]
+5 B DataRow ["item 18" "27.00" "sad" "2026-01-02 21:00:00+00"]
+5 B DataRow ["item 19" "28.50" "happy" "2026-01-02 22:00:00+00"]
+5 B DataRow ["item 20" "30.00" "happy" "2026-01-02 23:00:00+00"]
+5 B DataRow ["item 21" "31.50" "sad" "2026-01-03 00:00:00+00"]
+5 B DataRow ["item 22" "33.00" "happy" "2026-01-03 01:00:00+00"]
+5 B DataRow ["item 23" "34.50" "happy" "2026-01-03 02:00:00+00"]
+5 B DataRow ["item 24" "36.00" "sad" "2026-01-03 03:00:00+00"]
+5 B DataRow ["item 25" "37.50" "happy" "2026-01-03 04:00:00+00"]
+5 B DataRow ["item 26" "39.00" "happy" "2026-01-03 05:00:00+00"]
+5 B DataRow ["item 27" "40.50" "sad" "2026-01-03 06:00:00+00"]
+5 B DataRow ["item 28" "42.00" "happy" "2026-01-03 07:00:00+00"]
+5 B DataRow ["item 29" "43.50" "happy" "2026-01-03 08:00:00+00"]
+5 B DataRow ["item 30" "45.00" "sad" "2026-01-03 09:00:00+00"]
+5 B CommandComplete "SELECT 30"
+5 B ReadyForQuery T
+5 F Close P "C_4"
+5 F Parse "" "SELECT c.oid, a.attnum, a.attname, c.relname, n.nspname, a.attnotnull OR (t.typtype = 'd' AND t.typnotnull), a.attidentity != '' OR pg_catalog.pg_get_expr(d.adbin, d.adrelid) LIKE '%nextval(%' FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON (c.relnamespace = n.oid) JOIN pg_catalog.pg_attribute a ON (c.oid = a.attrelid) JOIN pg_catalog.pg_type t ON (a.atttypid = t.oid) LEFT JOIN pg_catalog.pg_attrdef d ON (d.adrelid = a.attrelid AND d.adnum = a.attnum) JOIN (SELECT 279668 AS oid , 3 AS attnum UNION ALL SELECT 279668, 5) vals ON (c.oid = vals.oid AND a.attnum = vals.attnum) where c.oid in (279668)" []
+5 F Bind "" "" [] [] []
+5 F Describe P ""
+5 F Execute "" 0
+5 F Sync
+5 B CloseComplete
+5 B ParseComplete
+5 B BindComplete
+5 B RowDescription [("oid" 1259 1 26 4 -1 0) ("attnum" 1249 5 21 2 -1 0) ("attname" 1249 2 19 64 -1 0) ("relname" 1259 2 19 64 -1 0) ("nspname" 2615 2 19 64 -1 0) ("?column?" 0 0 16 1 -1 0) ("?column?" 0 0 16 1 -1 0)]
+5 B DataRow ["279668" "3" "price" "compat_items" "public" "f" NULL]
+5 B DataRow ["279668" "5" "created_at" "compat_items" "public" "t" NULL]
+5 B CommandComplete "SELECT 2"
+5 B ReadyForQuery T
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "-- Metabase:: userID: 1 queryType: native queryHash: 2ab722f09e2d1516475388a6d86ba934ed2256f3f7be33d5e8e21ae01753ebce\nSELECT name, price, mood FROM compat_items WHERE price > 30 ORDER BY id" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 2000
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("name" 279668 2 25 -1 -1 0) ("price" 279668 3 1700 -1 655366 0) ("mood" 279668 4 25 -1 -1 0)]
+4 B DataRow ["item 21" "31.50" "sad"]
+4 B DataRow ["item 22" "33.00" "happy"]
+4 B DataRow ["item 23" "34.50" "happy"]
+4 B DataRow ["item 24" "36.00" "sad"]
+4 B DataRow ["item 25" "37.50" "happy"]
+4 B DataRow ["item 26" "39.00" "happy"]
+4 B DataRow ["item 27" "40.50" "sad"]
+4 B DataRow ["item 28" "42.00" "happy"]
+4 B DataRow ["item 29" "43.50" "happy"]
+4 B DataRow ["item 30" "45.00" "sad"]
+4 B CommandComplete "SELECT 10"
+4 B ReadyForQuery I
+4 F Parse "" "SELECT c.oid, a.attnum, a.attname, c.relname, n.nspname, a.attnotnull OR (t.typtype = 'd' AND t.typnotnull), a.attidentity != '' OR pg_catalog.pg_get_expr(d.adbin, d.adrelid) LIKE '%nextval(%' FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON (c.relnamespace = n.oid) JOIN pg_catalog.pg_attribute a ON (c.oid = a.attrelid) JOIN pg_catalog.pg_type t ON (a.atttypid = t.oid) LEFT JOIN pg_catalog.pg_attrdef d ON (d.adrelid = a.attrelid AND d.adnum = a.attnum) JOIN (SELECT 279668 AS oid , 2 AS attnum UNION ALL SELECT 279668, 3 UNION ALL SELECT 279668, 4) vals ON (c.oid = vals.oid AND a.attnum = vals.attnum) where c.oid in (279668)" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("oid" 1259 1 26 4 -1 0) ("attnum" 1249 5 21 2 -1 0) ("attname" 1249 2 19 64 -1 0) ("relname" 1259 2 19 64 -1 0) ("nspname" 2615 2 19 64 -1 0) ("?column?" 0 0 16 1 -1 0) ("?column?" 0 0 16 1 -1 0)]
+4 B DataRow ["279668" "2" "name" "compat_items" "public" "t" NULL]
+4 B DataRow ["279668" "3" "price" "compat_items" "public" "f" NULL]
+4 B DataRow ["279668" "4" "mood" "compat_items" "public" "t" NULL]
+4 B CommandComplete "SELECT 3"
+4 B ReadyForQuery I
+5 F Bind "" "S_2" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B BindComplete
+5 B CommandComplete "ROLLBACK"
+5 B ReadyForQuery I
+5 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+5 F Bind "" "" [] [] []
+5 F Execute "" 1
+5 F Sync
+5 B ParseComplete
+5 B BindComplete
+5 B CommandComplete "SET"
+5 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Query "BEGIN READ ONLY"
+4 F Parse "" "-- Metabase\nSELECT \"public\".\"compat_orders\".\"item_id\" AS \"item_id\", \"public\".\"compat_orders\".\"qty\" AS \"qty\" FROM \"public\".\"compat_orders\" LIMIT 10000" []
+4 F Bind "C_1" "" [] [] []
+4 F Describe P "C_1"
+4 F Execute "C_1" 500
+4 F Sync
+4 B CommandComplete "BEGIN"
+4 B ReadyForQuery T
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("item_id" 279681 2 23 4 -1 0) ("qty" 279681 3 23 4 -1 0)]
+4 B DataRow ["2" "2"]
+4 B DataRow ["3" "3"]
+4 B DataRow ["4" "4"]
+4 B DataRow ["5" "1"]
+4 B DataRow ["6" "2"]
+4 B DataRow ["7" "3"]
+4 B DataRow ["8" "4"]
+4 B DataRow ["9" "1"]
+4 B DataRow ["10" "2"]
+4 B DataRow ["11" "3"]
+4 B DataRow ["12" "4"]
+4 B DataRow ["13" "1"]
+4 B DataRow ["14" "2"]
+4 B DataRow ["15" "3"]
+4 B DataRow ["16" "4"]
+4 B DataRow ["17" "1"]
+4 B DataRow ["18" "2"]
+4 B DataRow ["19" "3"]
+4 B DataRow ["20" "4"]
+4 B DataRow ["21" "1"]
+4 B DataRow ["22" "2"]
+4 B DataRow ["23" "3"]
+4 B DataRow ["24" "4"]
+4 B DataRow ["25" "1"]
+4 B DataRow ["26" "2"]
+4 B DataRow ["27" "3"]
+4 B DataRow ["28" "4"]
+4 B DataRow ["29" "1"]
+4 B DataRow ["30" "2"]
+4 B DataRow ["1" "3"]
+4 B DataRow ["2" "4"]
+4 B DataRow ["3" "1"]
+4 B DataRow ["4" "2"]
+4 B DataRow ["5" "3"]
+4 B DataRow ["6" "4"]
+4 B DataRow ["7" "1"]
+4 B DataRow ["8" "2"]
+4 B DataRow ["9" "3"]
+4 B DataRow ["10" "4"]
+4 B DataRow ["11" "1"]
+4 B DataRow ["12" "2"]
+4 B DataRow ["13" "3"]
+4 B DataRow ["14" "4"]
+4 B DataRow ["15" "1"]
+4 B DataRow ["16" "2"]
+4 B DataRow ["17" "3"]
+4 B DataRow ["18" "4"]
+4 B DataRow ["19" "1"]
+4 B DataRow ["20" "2"]
+4 B DataRow ["21" "3"]
+4 B DataRow ["22" "4"]
+4 B DataRow ["23" "1"]
+4 B DataRow ["24" "2"]
+4 B DataRow ["25" "3"]
+4 B DataRow ["26" "4"]
+4 B DataRow ["27" "1"]
+4 B DataRow ["28" "2"]
+4 B DataRow ["29" "3"]
+4 B DataRow ["30" "4"]
+4 B DataRow ["1" "1"]
+4 B CommandComplete "SELECT 60"
+4 B ReadyForQuery T
+4 F Close P "C_1"
+4 F Parse "" "SELECT c.oid, a.attnum, a.attname, c.relname, n.nspname, a.attnotnull OR (t.typtype = 'd' AND t.typnotnull), a.attidentity != '' OR pg_catalog.pg_get_expr(d.adbin, d.adrelid) LIKE '%nextval(%' FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON (c.relnamespace = n.oid) JOIN pg_catalog.pg_attribute a ON (c.oid = a.attrelid) JOIN pg_catalog.pg_type t ON (a.atttypid = t.oid) LEFT JOIN pg_catalog.pg_attrdef d ON (d.adrelid = a.attrelid AND d.adnum = a.attnum) JOIN (SELECT 279681 AS oid , 2 AS attnum UNION ALL SELECT 279681, 3) vals ON (c.oid = vals.oid AND a.attnum = vals.attnum) where c.oid in (279681)" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B CloseComplete
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("oid" 1259 1 26 4 -1 0) ("attnum" 1249 5 21 2 -1 0) ("attname" 1249 2 19 64 -1 0) ("relname" 1259 2 19 64 -1 0) ("nspname" 2615 2 19 64 -1 0) ("?column?" 0 0 16 1 -1 0) ("?column?" 0 0 16 1 -1 0)]
+4 B DataRow ["279681" "2" "item_id" "compat_orders" "public" "t" NULL]
+4 B DataRow ["279681" "3" "qty" "compat_orders" "public" "t" NULL]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery T
+4 F Parse "S_2" "ROLLBACK" []
+4 F Bind "" "S_2" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "ROLLBACK"
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "-- Metabase:: userID: 1 queryType: native queryHash: 088b03805f713752df698f25f8d928c66de27dd7fc1ee18c5a6e46579b9fc13b\nSELECT * FROM compat_items WHERE id = 2" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 2000
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("id" 279668 1 23 4 -1 0) ("name" 279668 2 25 -1 -1 0) ("price" 279668 3 1700 -1 655366 0) ("mood" 279668 4 25 -1 -1 0) ("created_at" 279668 5 1184 8 -1 0)]
+4 B DataRow ["2" "item 2" "3.00" "happy" "2026-01-02 05:00:00+00"]
+4 B CommandComplete "SELECT 1"
+4 B ReadyForQuery I
+4 F Parse "" "SELECT c.oid, a.attnum, a.attname, c.relname, n.nspname, a.attnotnull OR (t.typtype = 'd' AND t.typnotnull), a.attidentity != '' OR pg_catalog.pg_get_expr(d.adbin, d.adrelid) LIKE '%nextval(%' FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON (c.relnamespace = n.oid) JOIN pg_catalog.pg_attribute a ON (c.oid = a.attrelid) JOIN pg_catalog.pg_type t ON (a.atttypid = t.oid) LEFT JOIN pg_catalog.pg_attrdef d ON (d.adrelid = a.attrelid AND d.adnum = a.attnum) JOIN (SELECT 279668 AS oid , 1 AS attnum UNION ALL SELECT 279668, 5) vals ON (c.oid = vals.oid AND a.attnum = vals.attnum) where c.oid in (279668)" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 0
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("oid" 1259 1 26 4 -1 0) ("attnum" 1249 5 21 2 -1 0) ("attname" 1249 2 19 64 -1 0) ("relname" 1259 2 19 64 -1 0) ("nspname" 2615 2 19 64 -1 0) ("?column?" 0 0 16 1 -1 0) ("?column?" 0 0 16 1 -1 0)]
+4 B DataRow ["279668" "1" "id" "compat_items" "public" "t" NULL]
+4 B DataRow ["279668" "5" "created_at" "compat_items" "public" "t" NULL]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "-- Metabase:: userID: 1 queryType: MBQL queryHash: 63880530d8adb7e87b7c675b707621f5e16516313932f6f177fd9d5015cc8028\nSELECT \"public\".\"compat_items\".\"mood\" AS \"mood\", COUNT(*) AS \"count\" FROM \"public\".\"compat_items\" GROUP BY \"public\".\"compat_items\".\"mood\" ORDER BY \"public\".\"compat_items\".\"mood\" ASC" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 10000
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("mood" 279668 4 25 -1 -1 0) ("count" 0 0 20 8 -1 0)]
+4 B DataRow ["happy" "20"]
+4 B DataRow ["sad" "10"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "-- Metabase:: userID: 1 queryType: MBQL queryHash: 759454e59c6978be926502945758e6f1b25dd9119608722ac1bcddd574d957b0\nSELECT CAST(CAST(\"public\".\"compat_items\".\"created_at\" AS date) AS timestamptz) AS \"created_at\", SUM(\"public\".\"compat_items\".\"price\") AS \"sum\" FROM \"public\".\"compat_items\" WHERE \"public\".\"compat_items\".\"price\" > 10 GROUP BY CAST(CAST(\"public\".\"compat_items\".\"created_at\" AS date) AS timestamptz) ORDER BY CAST(CAST(\"public\".\"compat_items\".\"created_at\" AS date) AS timestamptz) ASC" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 10000
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B RowDescription [("created_at" 0 0 1184 8 -1 0) ("sum" 0 0 1700 -1 -1 0)]
+4 B DataRow ["2026-01-02 00:00:00+00" "283.50"]
+4 B DataRow ["2026-01-03 00:00:00+00" "382.50"]
+4 B CommandComplete "SELECT 2"
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+4 F Parse "" "-- Metabase:: userID: 1 queryType: native queryHash: 7121cd298a5bec1d878b951b4b1460a2251ae8587457ec574d569c9bc4601dcd\nSELECT 1 / 0" []
+4 F Bind "" "" [] [] []
+4 F Describe P ""
+4 F Execute "" 2000
+4 F Sync
+4 B ParseComplete
+4 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+4 B ReadyForQuery I
+4 F Query ""
+4 B EmptyQueryResponse
+4 B ReadyForQuery I
+4 F Parse "" "SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED" []
+4 F Bind "" "" [] [] []
+4 F Execute "" 1
+4 F Sync
+4 B ParseComplete
+4 B BindComplete
+4 B CommandComplete "SET"
+4 B ReadyForQuery I
+5 F End
+4 F End
+5 B End
+4 B End
+6 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+6 B AuthenticationSASL "SCRAM-SHA-256"
+6 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=/c80Yex4eQ6YK9UPt7gdqie5"
+6 B AuthenticationSASLContinue "r=/c80Yex4eQ6YK9UPt7gdqie5Sp7KHZJg6ZMT18mmFnWP1zVt,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+6 F SASLResponse "c=biws,r=/c80Yex4eQ6YK9UPt7gdqie5Sp7KHZJg6ZMT18mmFnWP1zVt,p=eKtKuq7SHq4sS6SUKITrc2tnhUnLJPJ3CH1FKbFsZ6I="
+6 B AuthenticationSASLFinal "v=TZsQdtB/ahooxEL+wl0fUSJSMriu793lgd6wbDme3Vc="
+6 B AuthenticationOk
+6 B ParameterStatus "IntervalStyle" "postgres"
+6 B ParameterStatus "search_path" "\"$user\", public"
+6 B ParameterStatus "is_superuser" "on"
+6 B ParameterStatus "standard_conforming_strings" "on"
+6 B ParameterStatus "session_authorization" "postgres"
+6 B ParameterStatus "client_encoding" "UTF8"
+6 B ParameterStatus "server_version" "19beta4"
+6 B ParameterStatus "server_encoding" "UTF8"
+6 B ParameterStatus "in_hot_standby" "off"
+6 B ParameterStatus "integer_datetimes" "on"
+6 B ParameterStatus "TimeZone" "UTC"
+6 B ParameterStatus "application_name" "psql"
+6 B ParameterStatus "default_transaction_read_only" "off"
+6 B ParameterStatus "scram_iterations" "4096"
+6 B ParameterStatus "DateStyle" "ISO, MDY"
+6 B BackendKeyData 975037 "\xcb9\xc9\x03"
+6 B ReadyForQuery I
+6 F Query "DROP TABLE compat_orders, compat_items"
+6 B CommandComplete "DROP TABLE"
+6 B ReadyForQuery I
+6 F Terminate
+6 F End
+6 B End
