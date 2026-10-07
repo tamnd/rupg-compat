@@ -333,8 +333,9 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         let mut o = compare::compare(&t.lines, &r.lines, &Default::default());
         o.items[1].applied += r.oids.applied;
         o.items[1].differed += r.oids.applied;
+        let (pairs, gaps) = r.oids.gaps();
         println!(
-            "{file}: {} groups, {} backend messages, {} groups differ; {} OIDs mapped, {} SCRAM exchanges, {} cancel keys rewritten",
+            "{file}: {} groups, {} backend messages, {} groups differ; {} OIDs mapped, {gaps} of {pairs} OID gaps differ, {} SCRAM exchanges, {} cancel keys rewritten",
             o.groups,
             o.messages,
             o.diffs.len(),
@@ -349,7 +350,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             println!("  {n}");
         }
         total.add(&o);
-        failed |= !o.diffs.is_empty() || !r.notes.is_empty();
+        failed |= !o.diffs.is_empty() || !r.notes.is_empty() || gaps > 0;
         if let Some(out) = args.get("out") {
             let replayed = trace::Trace { header: t.header.clone(), lines: r.lines };
             std::fs::write(out, replayed.to_text()).map_err(|e| format!("{out}: {e}"))?;
