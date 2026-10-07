@@ -421,6 +421,58 @@ mod tests {
     }
 
     #[test]
+    fn a_small_tree_is_imported_and_checked() {
+        let src = std::env::temp_dir().join(format!("rupg-compat-import-{}", std::process::id()));
+        let put = |rel: &str, text: &str| {
+            let path = src.join(rel);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        put(&format!("{REGRESS}/parallel_schedule"), "test: a b\n");
+        put(&format!("{REGRESS}/resultmap"), "");
+        put(&format!("{REGRESS}/sql/a.sql"), "SELECT 1;\n");
+        put(&format!("{REGRESS}/sql/b.sql"), "SELECT x;\n");
+        put(&format!("{REGRESS}/expected/a.out"), "SELECT 1;\n 1\n");
+        put(
+            &format!("{REGRESS}/expected/b.out"),
+            "SELECT x;\nERROR:  column \"x\" does not exist\n",
+        );
+        put(&format!("{REGRESS}/expected/b_1.out"), "SELECT x;\nERROR:  other\n");
+        put(&format!("{ISOLATION}/isolation_schedule"), "test: s\n");
+        put(&format!("{ISOLATION}/specs/s.spec"), "session s1\n");
+        put(&format!("{ISOLATION}/expected/s.out"), "");
+        put(&format!("{PIPELINE}/libpq_pipeline.c"), "");
+        put(&format!("{PIPELINE}/traces/simple.trace"), "");
+        put(SYSTEM_VIEWS, "CREATE VIEW pg_roles AS\n");
+        put(INFORMATION_SCHEMA, "CREATE VIEW tables AS\n");
+        put(
+            &format!("{CATALOG_HEADERS}/pg_class.h"),
+            "CATALOG(pg_class,1259,RelationRelationId)\n",
+        );
+        let imp = import(&src, 19, "abc").unwrap();
+        let get = |key: &str| imp.counts.iter().find(|c| c.key == key).unwrap().value;
+        assert_eq!(get("scheduled_tests"), 2);
+        assert_eq!(get("expected_files"), 3);
+        assert_eq!(get("primary_expected_files"), 2);
+        assert_eq!(get("expected_lines"), 4);
+        assert_eq!((get("error_lines"), get("error_files")), (1, 1));
+        assert_eq!((get("specs"), get("traces"), get("catalogs")), (1, 1, 1));
+        assert_eq!(imp.outputs[0].1.lines().count(), 15);
+        let dir = src.join("corpus");
+        fs::create_dir_all(&dir).unwrap();
+        for (name, text) in &imp.outputs {
+            fs::write(dir.join(name), text).unwrap();
+        }
+        assert!(check(&dir, &imp).is_empty());
+        put(&format!("{REGRESS}/expected/a.out"), "changed\n");
+        assert_eq!(
+            check(&dir, &import(&src, 19, "abc").unwrap()),
+            ["manifest.sha256", "counts.toml"]
+        );
+        fs::remove_dir_all(&src).unwrap();
+    }
+
+    #[test]
     fn lines_count_newlines() {
         assert_eq!(lines(b"a\nb\n"), 2);
         assert_eq!(lines(b"a\nb"), 1);
