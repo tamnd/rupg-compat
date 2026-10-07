@@ -1,0 +1,603 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/sequelize/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=DB9HZH73r6WQt3FaV4/OFaUL"
+1 B AuthenticationSASLContinue "r=DB9HZH73r6WQt3FaV4/OFaULg7XyQUZkZikdVo7ls2+lwUJA,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=DB9HZH73r6WQt3FaV4/OFaULg7XyQUZkZikdVo7ls2+lwUJA,p=BSJHYVp5/Eh3K7XhohkSYdbYFM0L+BgUpyLUNY4vVGE="
+1 B AuthenticationSASLFinal "v=rGF97ZAGqz7gMh0HXgqV/kPCDkusCHEcr1koILubdo0="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 796819 "N\xc7\xf8J"
+1 B ReadyForQuery I
+1 F Query "SET client_min_messages TO warning;SET TIME ZONE INTERVAL '+00:00' HOUR TO MINUTE;"
+1 B CommandComplete "SET"
+1 B CommandComplete "SET"
+1 B ParameterStatus "TimeZone" "<+00>-00"
+1 B ReadyForQuery I
+1 F Query "WITH ranges AS (  SELECT pg_range.rngtypid, pg_type.typname AS rngtypname,         pg_type.typarray AS rngtyparray, pg_range.rngsubtype    FROM pg_range LEFT OUTER JOIN pg_type ON pg_type.oid = pg_range.rngtypid)SELECT pg_type.typname, pg_type.typtype, pg_type.oid, pg_type.typarray,       ranges.rngtypname, ranges.rngtypid, ranges.rngtyparray  FROM pg_type LEFT OUTER JOIN ranges ON pg_type.oid = ranges.rngsubtype WHERE (pg_type.typtype IN('b', 'e'));"
+1 B RowDescription [("typname" 1247 2 19 64 -1 0) ("typtype" 1247 7 18 1 -1 0) ("oid" 1247 1 26 4 -1 0) ("typarray" 1247 15 26 4 -1 0) ("rngtypname" 1247 2 19 64 -1 0) ("rngtypid" 3541 1 26 4 -1 0) ("rngtyparray" 1247 15 26 4 -1 0)]
+1 B DataRow ["bool" "b" "16" "1000" NULL NULL NULL]
+1 B DataRow ["bytea" "b" "17" "1001" NULL NULL NULL]
+1 B DataRow ["char" "b" "18" "1002" NULL NULL NULL]
+1 B DataRow ["name" "b" "19" "1003" NULL NULL NULL]
+1 B DataRow ["int8" "b" "20" "1016" "int8range" "3926" "3927"]
+1 B DataRow ["int2" "b" "21" "1005" NULL NULL NULL]
+1 B DataRow ["int2vector" "b" "22" "1006" NULL NULL NULL]
+1 B DataRow ["int4" "b" "23" "1007" "int4range" "3904" "3905"]
+1 B DataRow ["regproc" "b" "24" "1008" NULL NULL NULL]
+1 B DataRow ["text" "b" "25" "1009" NULL NULL NULL]
+1 B DataRow ["oid" "b" "26" "1028" NULL NULL NULL]
+1 B DataRow ["tid" "b" "27" "1010" NULL NULL NULL]
+1 B DataRow ["xid" "b" "28" "1011" NULL NULL NULL]
+1 B DataRow ["cid" "b" "29" "1012" NULL NULL NULL]
+1 B DataRow ["oidvector" "b" "30" "1013" NULL NULL NULL]
+1 B DataRow ["json" "b" "114" "199" NULL NULL NULL]
+1 B DataRow ["xml" "b" "142" "143" NULL NULL NULL]
+1 B DataRow ["pg_node_tree" "b" "194" "0" NULL NULL NULL]
+1 B DataRow ["pg_ndistinct" "b" "3361" "0" NULL NULL NULL]
+1 B DataRow ["pg_dependencies" "b" "3402" "0" NULL NULL NULL]
+1 B DataRow ["pg_mcv_list" "b" "5017" "0" NULL NULL NULL]
+1 B DataRow ["xid8" "b" "5069" "271" NULL NULL NULL]
+1 B DataRow ["point" "b" "600" "1017" NULL NULL NULL]
+1 B DataRow ["lseg" "b" "601" "1018" NULL NULL NULL]
+1 B DataRow ["path" "b" "602" "1019" NULL NULL NULL]
+1 B DataRow ["box" "b" "603" "1020" NULL NULL NULL]
+1 B DataRow ["polygon" "b" "604" "1027" NULL NULL NULL]
+1 B DataRow ["line" "b" "628" "629" NULL NULL NULL]
+1 B DataRow ["float4" "b" "700" "1021" NULL NULL NULL]
+1 B DataRow ["float8" "b" "701" "1022" NULL NULL NULL]
+1 B DataRow ["circle" "b" "718" "719" NULL NULL NULL]
+1 B DataRow ["money" "b" "790" "791" NULL NULL NULL]
+1 B DataRow ["macaddr" "b" "829" "1040" NULL NULL NULL]
+1 B DataRow ["inet" "b" "869" "1041" NULL NULL NULL]
+1 B DataRow ["cidr" "b" "650" "651" NULL NULL NULL]
+1 B DataRow ["macaddr8" "b" "774" "775" NULL NULL NULL]
+1 B DataRow ["aclitem" "b" "1033" "1034" NULL NULL NULL]
+1 B DataRow ["bpchar" "b" "1042" "1014" NULL NULL NULL]
+1 B DataRow ["varchar" "b" "1043" "1015" NULL NULL NULL]
+1 B DataRow ["date" "b" "1082" "1182" "daterange" "3912" "3913"]
+1 B DataRow ["time" "b" "1083" "1183" NULL NULL NULL]
+1 B DataRow ["timestamp" "b" "1114" "1115" "tsrange" "3908" "3909"]
+1 B DataRow ["timestamptz" "b" "1184" "1185" "tstzrange" "3910" "3911"]
+1 B DataRow ["interval" "b" "1186" "1187" NULL NULL NULL]
+1 B DataRow ["timetz" "b" "1266" "1270" NULL NULL NULL]
+1 B DataRow ["bit" "b" "1560" "1561" NULL NULL NULL]
+1 B DataRow ["varbit" "b" "1562" "1563" NULL NULL NULL]
+1 B DataRow ["numeric" "b" "1700" "1231" "numrange" "3906" "3907"]
+1 B DataRow ["refcursor" "b" "1790" "2201" NULL NULL NULL]
+1 B DataRow ["regprocedure" "b" "2202" "2207" NULL NULL NULL]
+1 B DataRow ["regoper" "b" "2203" "2208" NULL NULL NULL]
+1 B DataRow ["regoperator" "b" "2204" "2209" NULL NULL NULL]
+1 B DataRow ["regclass" "b" "2205" "2210" NULL NULL NULL]
+1 B DataRow ["regcollation" "b" "4191" "4192" NULL NULL NULL]
+1 B DataRow ["regtype" "b" "2206" "2211" NULL NULL NULL]
+1 B DataRow ["regrole" "b" "4096" "4097" NULL NULL NULL]
+1 B DataRow ["regnamespace" "b" "4089" "4090" NULL NULL NULL]
+1 B DataRow ["regdatabase" "b" "6490" "6491" NULL NULL NULL]
+1 B DataRow ["uuid" "b" "2950" "2951" NULL NULL NULL]
+1 B DataRow ["pg_lsn" "b" "3220" "3221" NULL NULL NULL]
+1 B DataRow ["tsvector" "b" "3614" "3643" NULL NULL NULL]
+1 B DataRow ["gtsvector" "b" "3642" "3644" NULL NULL NULL]
+1 B DataRow ["tsquery" "b" "3615" "3645" NULL NULL NULL]
+1 B DataRow ["regconfig" "b" "3734" "3735" NULL NULL NULL]
+1 B DataRow ["regdictionary" "b" "3769" "3770" NULL NULL NULL]
+1 B DataRow ["jsonb" "b" "3802" "3807" NULL NULL NULL]
+1 B DataRow ["jsonpath" "b" "4072" "4073" NULL NULL NULL]
+1 B DataRow ["txid_snapshot" "b" "2970" "2949" NULL NULL NULL]
+1 B DataRow ["pg_snapshot" "b" "5038" "5039" NULL NULL NULL]
+1 B DataRow ["pg_brin_bloom_summary" "b" "4600" "0" NULL NULL NULL]
+1 B DataRow ["pg_brin_minmax_multi_summary" "b" "4601" "0" NULL NULL NULL]
+1 B DataRow ["oid8" "b" "6437" "6442" NULL NULL NULL]
+1 B DataRow ["_bool" "b" "1000" "0" NULL NULL NULL]
+1 B DataRow ["_bytea" "b" "1001" "0" NULL NULL NULL]
+1 B DataRow ["_char" "b" "1002" "0" NULL NULL NULL]
+1 B DataRow ["_name" "b" "1003" "0" NULL NULL NULL]
+1 B DataRow ["_int8" "b" "1016" "0" NULL NULL NULL]
+1 B DataRow ["_int2" "b" "1005" "0" NULL NULL NULL]
+1 B DataRow ["_int2vector" "b" "1006" "0" NULL NULL NULL]
+1 B DataRow ["_int4" "b" "1007" "0" NULL NULL NULL]
+1 B DataRow ["_regproc" "b" "1008" "0" NULL NULL NULL]
+1 B DataRow ["_text" "b" "1009" "0" NULL NULL NULL]
+1 B DataRow ["_oid" "b" "1028" "0" NULL NULL NULL]
+1 B DataRow ["_tid" "b" "1010" "0" NULL NULL NULL]
+1 B DataRow ["_xid" "b" "1011" "0" NULL NULL NULL]
+1 B DataRow ["_cid" "b" "1012" "0" NULL NULL NULL]
+1 B DataRow ["_oidvector" "b" "1013" "0" NULL NULL NULL]
+1 B DataRow ["_pg_type" "b" "210" "0" NULL NULL NULL]
+1 B DataRow ["_pg_attribute" "b" "270" "0" NULL NULL NULL]
+1 B DataRow ["_pg_proc" "b" "272" "0" NULL NULL NULL]
+1 B DataRow ["_pg_class" "b" "273" "0" NULL NULL NULL]
+1 B DataRow ["_json" "b" "199" "0" NULL NULL NULL]
+1 B DataRow ["_xml" "b" "143" "0" NULL NULL NULL]
+1 B DataRow ["_xid8" "b" "271" "0" NULL NULL NULL]
+1 B DataRow ["_point" "b" "1017" "0" NULL NULL NULL]
+1 B DataRow ["_lseg" "b" "1018" "0" NULL NULL NULL]
+1 B DataRow ["_path" "b" "1019" "0" NULL NULL NULL]
+1 B DataRow ["_box" "b" "1020" "0" NULL NULL NULL]
+1 B DataRow ["_polygon" "b" "1027" "0" NULL NULL NULL]
+1 B DataRow ["_line" "b" "629" "0" NULL NULL NULL]
+1 B DataRow ["_float4" "b" "1021" "0" NULL NULL NULL]
+1 B DataRow ["_float8" "b" "1022" "0" NULL NULL NULL]
+1 B DataRow ["_circle" "b" "719" "0" NULL NULL NULL]
+1 B DataRow ["_money" "b" "791" "0" NULL NULL NULL]
+1 B DataRow ["_macaddr" "b" "1040" "0" NULL NULL NULL]
+1 B DataRow ["_inet" "b" "1041" "0" NULL NULL NULL]
+1 B DataRow ["_cidr" "b" "651" "0" NULL NULL NULL]
+1 B DataRow ["_macaddr8" "b" "775" "0" NULL NULL NULL]
+1 B DataRow ["_aclitem" "b" "1034" "0" NULL NULL NULL]
+1 B DataRow ["_bpchar" "b" "1014" "0" NULL NULL NULL]
+1 B DataRow ["_varchar" "b" "1015" "0" NULL NULL NULL]
+1 B DataRow ["_date" "b" "1182" "0" NULL NULL NULL]
+1 B DataRow ["_time" "b" "1183" "0" NULL NULL NULL]
+1 B DataRow ["_timestamp" "b" "1115" "0" NULL NULL NULL]
+1 B DataRow ["_timestamptz" "b" "1185" "0" NULL NULL NULL]
+1 B DataRow ["_interval" "b" "1187" "0" NULL NULL NULL]
+1 B DataRow ["_timetz" "b" "1270" "0" NULL NULL NULL]
+1 B DataRow ["_bit" "b" "1561" "0" NULL NULL NULL]
+1 B DataRow ["_varbit" "b" "1563" "0" NULL NULL NULL]
+1 B DataRow ["_numeric" "b" "1231" "0" NULL NULL NULL]
+1 B DataRow ["_refcursor" "b" "2201" "0" NULL NULL NULL]
+1 B DataRow ["_regprocedure" "b" "2207" "0" NULL NULL NULL]
+1 B DataRow ["_regoper" "b" "2208" "0" NULL NULL NULL]
+1 B DataRow ["_regoperator" "b" "2209" "0" NULL NULL NULL]
+1 B DataRow ["_regclass" "b" "2210" "0" NULL NULL NULL]
+1 B DataRow ["_regcollation" "b" "4192" "0" NULL NULL NULL]
+1 B DataRow ["_regtype" "b" "2211" "0" NULL NULL NULL]
+1 B DataRow ["_regrole" "b" "4097" "0" NULL NULL NULL]
+1 B DataRow ["_regnamespace" "b" "4090" "0" NULL NULL NULL]
+1 B DataRow ["_regdatabase" "b" "6491" "0" NULL NULL NULL]
+1 B DataRow ["_uuid" "b" "2951" "0" NULL NULL NULL]
+1 B DataRow ["_pg_lsn" "b" "3221" "0" NULL NULL NULL]
+1 B DataRow ["_tsvector" "b" "3643" "0" NULL NULL NULL]
+1 B DataRow ["_gtsvector" "b" "3644" "0" NULL NULL NULL]
+1 B DataRow ["_tsquery" "b" "3645" "0" NULL NULL NULL]
+1 B DataRow ["_regconfig" "b" "3735" "0" NULL NULL NULL]
+1 B DataRow ["_regdictionary" "b" "3770" "0" NULL NULL NULL]
+1 B DataRow ["_jsonb" "b" "3807" "0" NULL NULL NULL]
+1 B DataRow ["_jsonpath" "b" "4073" "0" NULL NULL NULL]
+1 B DataRow ["_txid_snapshot" "b" "2949" "0" NULL NULL NULL]
+1 B DataRow ["_pg_snapshot" "b" "5039" "0" NULL NULL NULL]
+1 B DataRow ["_int4range" "b" "3905" "0" NULL NULL NULL]
+1 B DataRow ["_numrange" "b" "3907" "0" NULL NULL NULL]
+1 B DataRow ["_tsrange" "b" "3909" "0" NULL NULL NULL]
+1 B DataRow ["_tstzrange" "b" "3911" "0" NULL NULL NULL]
+1 B DataRow ["_daterange" "b" "3913" "0" NULL NULL NULL]
+1 B DataRow ["_int8range" "b" "3927" "0" NULL NULL NULL]
+1 B DataRow ["_int4multirange" "b" "6150" "0" NULL NULL NULL]
+1 B DataRow ["_nummultirange" "b" "6151" "0" NULL NULL NULL]
+1 B DataRow ["_tsmultirange" "b" "6152" "0" NULL NULL NULL]
+1 B DataRow ["_tstzmultirange" "b" "6153" "0" NULL NULL NULL]
+1 B DataRow ["_datemultirange" "b" "6155" "0" NULL NULL NULL]
+1 B DataRow ["_int8multirange" "b" "6157" "0" NULL NULL NULL]
+1 B DataRow ["_cstring" "b" "1263" "0" NULL NULL NULL]
+1 B DataRow ["_oid8" "b" "6442" "0" NULL NULL NULL]
+1 B DataRow ["_pg_attrdef" "b" "10000" "0" NULL NULL NULL]
+1 B DataRow ["_pg_constraint" "b" "10002" "0" NULL NULL NULL]
+1 B DataRow ["_pg_inherits" "b" "10004" "0" NULL NULL NULL]
+1 B DataRow ["_pg_index" "b" "10006" "0" NULL NULL NULL]
+1 B DataRow ["_pg_operator" "b" "10008" "0" NULL NULL NULL]
+1 B DataRow ["_pg_opfamily" "b" "10010" "0" NULL NULL NULL]
+1 B DataRow ["_pg_opclass" "b" "10012" "0" NULL NULL NULL]
+1 B DataRow ["_pg_am" "b" "10014" "0" NULL NULL NULL]
+1 B DataRow ["_pg_amop" "b" "10016" "0" NULL NULL NULL]
+1 B DataRow ["_pg_amproc" "b" "10018" "0" NULL NULL NULL]
+1 B DataRow ["_pg_language" "b" "10020" "0" NULL NULL NULL]
+1 B DataRow ["_pg_largeobject_metadata" "b" "10022" "0" NULL NULL NULL]
+1 B DataRow ["_pg_largeobject" "b" "10024" "0" NULL NULL NULL]
+1 B DataRow ["_pg_aggregate" "b" "10026" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statistic" "b" "10028" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statistic_ext" "b" "10030" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statistic_ext_data" "b" "10032" "0" NULL NULL NULL]
+1 B DataRow ["_pg_rewrite" "b" "10034" "0" NULL NULL NULL]
+1 B DataRow ["_pg_trigger" "b" "10036" "0" NULL NULL NULL]
+1 B DataRow ["_pg_event_trigger" "b" "10038" "0" NULL NULL NULL]
+1 B DataRow ["_pg_description" "b" "10040" "0" NULL NULL NULL]
+1 B DataRow ["_pg_cast" "b" "10042" "0" NULL NULL NULL]
+1 B DataRow ["_pg_enum" "b" "10044" "0" NULL NULL NULL]
+1 B DataRow ["_pg_namespace" "b" "10046" "0" NULL NULL NULL]
+1 B DataRow ["_pg_conversion" "b" "10048" "0" NULL NULL NULL]
+1 B DataRow ["_pg_depend" "b" "10050" "0" NULL NULL NULL]
+1 B DataRow ["_pg_database" "b" "10052" "0" NULL NULL NULL]
+1 B DataRow ["_pg_db_role_setting" "b" "10053" "0" NULL NULL NULL]
+1 B DataRow ["_pg_tablespace" "b" "10055" "0" NULL NULL NULL]
+1 B DataRow ["_pg_authid" "b" "10057" "0" NULL NULL NULL]
+1 B DataRow ["_pg_auth_members" "b" "10058" "0" NULL NULL NULL]
+1 B DataRow ["_pg_shdepend" "b" "10059" "0" NULL NULL NULL]
+1 B DataRow ["_pg_shdescription" "b" "10061" "0" NULL NULL NULL]
+1 B DataRow ["_pg_ts_config" "b" "10063" "0" NULL NULL NULL]
+1 B DataRow ["_pg_ts_config_map" "b" "10065" "0" NULL NULL NULL]
+1 B DataRow ["_pg_ts_dict" "b" "10067" "0" NULL NULL NULL]
+1 B DataRow ["_pg_ts_parser" "b" "10069" "0" NULL NULL NULL]
+1 B DataRow ["_pg_ts_template" "b" "10071" "0" NULL NULL NULL]
+1 B DataRow ["_pg_extension" "b" "10073" "0" NULL NULL NULL]
+1 B DataRow ["_pg_foreign_data_wrapper" "b" "10075" "0" NULL NULL NULL]
+1 B DataRow ["_pg_foreign_server" "b" "10077" "0" NULL NULL NULL]
+1 B DataRow ["_pg_user_mapping" "b" "10079" "0" NULL NULL NULL]
+1 B DataRow ["_pg_foreign_table" "b" "10081" "0" NULL NULL NULL]
+1 B DataRow ["_pg_policy" "b" "10083" "0" NULL NULL NULL]
+1 B DataRow ["_pg_replication_origin" "b" "10085" "0" NULL NULL NULL]
+1 B DataRow ["_pg_default_acl" "b" "10087" "0" NULL NULL NULL]
+1 B DataRow ["_pg_init_privs" "b" "10089" "0" NULL NULL NULL]
+1 B DataRow ["_pg_seclabel" "b" "10091" "0" NULL NULL NULL]
+1 B DataRow ["_pg_shseclabel" "b" "10093" "0" NULL NULL NULL]
+1 B DataRow ["_pg_collation" "b" "10094" "0" NULL NULL NULL]
+1 B DataRow ["_pg_parameter_acl" "b" "10096" "0" NULL NULL NULL]
+1 B DataRow ["_pg_partitioned_table" "b" "10097" "0" NULL NULL NULL]
+1 B DataRow ["_pg_range" "b" "10099" "0" NULL NULL NULL]
+1 B DataRow ["_pg_transform" "b" "10101" "0" NULL NULL NULL]
+1 B DataRow ["_pg_sequence" "b" "10103" "0" NULL NULL NULL]
+1 B DataRow ["_pg_publication" "b" "10105" "0" NULL NULL NULL]
+1 B DataRow ["_pg_publication_namespace" "b" "10107" "0" NULL NULL NULL]
+1 B DataRow ["_pg_publication_rel" "b" "10109" "0" NULL NULL NULL]
+1 B DataRow ["_pg_subscription" "b" "10111" "0" NULL NULL NULL]
+1 B DataRow ["_pg_subscription_rel" "b" "10112" "0" NULL NULL NULL]
+1 B DataRow ["_pg_roles" "b" "12001" "0" NULL NULL NULL]
+1 B DataRow ["_pg_shadow" "b" "12006" "0" NULL NULL NULL]
+1 B DataRow ["_pg_group" "b" "12011" "0" NULL NULL NULL]
+1 B DataRow ["_pg_user" "b" "12015" "0" NULL NULL NULL]
+1 B DataRow ["_pg_policies" "b" "12019" "0" NULL NULL NULL]
+1 B DataRow ["_pg_rules" "b" "12024" "0" NULL NULL NULL]
+1 B DataRow ["_pg_views" "b" "12029" "0" NULL NULL NULL]
+1 B DataRow ["_pg_tables" "b" "12034" "0" NULL NULL NULL]
+1 B DataRow ["_pg_matviews" "b" "12039" "0" NULL NULL NULL]
+1 B DataRow ["_pg_indexes" "b" "12044" "0" NULL NULL NULL]
+1 B DataRow ["_pg_sequences" "b" "12049" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stats" "b" "12054" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stats_ext" "b" "12059" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stats_ext_exprs" "b" "12064" "0" NULL NULL NULL]
+1 B DataRow ["_pg_publication_tables" "b" "12069" "0" NULL NULL NULL]
+1 B DataRow ["_pg_publication_sequences" "b" "12074" "0" NULL NULL NULL]
+1 B DataRow ["_pg_locks" "b" "12079" "0" NULL NULL NULL]
+1 B DataRow ["_pg_cursors" "b" "12083" "0" NULL NULL NULL]
+1 B DataRow ["_pg_available_extensions" "b" "12087" "0" NULL NULL NULL]
+1 B DataRow ["_pg_available_extension_versions" "b" "12091" "0" NULL NULL NULL]
+1 B DataRow ["_pg_prepared_xacts" "b" "12096" "0" NULL NULL NULL]
+1 B DataRow ["_pg_prepared_statements" "b" "12101" "0" NULL NULL NULL]
+1 B DataRow ["_pg_seclabels" "b" "12105" "0" NULL NULL NULL]
+1 B DataRow ["_pg_settings" "b" "12110" "0" NULL NULL NULL]
+1 B DataRow ["_pg_file_settings" "b" "12116" "0" NULL NULL NULL]
+1 B DataRow ["_pg_hba_file_rules" "b" "12120" "0" NULL NULL NULL]
+1 B DataRow ["_pg_ident_file_mappings" "b" "12124" "0" NULL NULL NULL]
+1 B DataRow ["_pg_timezone_abbrevs" "b" "12128" "0" NULL NULL NULL]
+1 B DataRow ["_pg_timezone_names" "b" "12132" "0" NULL NULL NULL]
+1 B DataRow ["_pg_config" "b" "12136" "0" NULL NULL NULL]
+1 B DataRow ["_pg_shmem_allocations" "b" "12140" "0" NULL NULL NULL]
+1 B DataRow ["_pg_shmem_allocations_numa" "b" "12144" "0" NULL NULL NULL]
+1 B DataRow ["_pg_dsm_registry_allocations" "b" "12148" "0" NULL NULL NULL]
+1 B DataRow ["_pg_backend_memory_contexts" "b" "12152" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_all_tables" "b" "12156" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_xact_all_tables" "b" "12161" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_sys_tables" "b" "12166" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_xact_sys_tables" "b" "12171" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_user_tables" "b" "12175" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_xact_user_tables" "b" "12180" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_autovacuum_scores" "b" "12184" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_all_tables" "b" "12189" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_sys_tables" "b" "12194" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_user_tables" "b" "12198" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_all_indexes" "b" "12202" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_sys_indexes" "b" "12207" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_user_indexes" "b" "12211" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_all_indexes" "b" "12215" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_sys_indexes" "b" "12220" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_user_indexes" "b" "12224" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_all_sequences" "b" "12228" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_sys_sequences" "b" "12233" "0" NULL NULL NULL]
+1 B DataRow ["_pg_statio_user_sequences" "b" "12237" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_activity" "b" "12241" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_replication" "b" "12246" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_slru" "b" "12251" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_lock" "b" "12255" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_wal_receiver" "b" "12259" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_recovery" "b" "12263" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_recovery_prefetch" "b" "12267" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_subscription" "b" "12271" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_ssl" "b" "12276" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_gssapi" "b" "12280" "0" NULL NULL NULL]
+1 B DataRow ["_pg_replication_slots" "b" "12284" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_replication_slots" "b" "12289" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_database" "b" "12293" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_database_conflicts" "b" "12298" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_user_functions" "b" "12302" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_xact_user_functions" "b" "12307" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_archiver" "b" "12312" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_bgwriter" "b" "12316" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_checkpointer" "b" "12320" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_io" "b" "12324" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_wal" "b" "12328" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_progress_analyze" "b" "12332" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_progress_vacuum" "b" "12337" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_progress_repack" "b" "12342" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_progress_cluster" "b" "12347" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_progress_create_index" "b" "12352" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_progress_basebackup" "b" "12357" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_progress_copy" "b" "12361" "0" NULL NULL NULL]
+1 B DataRow ["_pg_user_mappings" "b" "12366" "0" NULL NULL NULL]
+1 B DataRow ["_pg_replication_origin_status" "b" "12371" "0" NULL NULL NULL]
+1 B DataRow ["_pg_stat_subscription_stats" "b" "12375" "0" NULL NULL NULL]
+1 B DataRow ["_pg_wait_events" "b" "12379" "0" NULL NULL NULL]
+1 B DataRow ["_pg_aios" "b" "12383" "0" NULL NULL NULL]
+1 B DataRow ["_cardinal_number" "b" "13353" "0" NULL NULL NULL]
+1 B DataRow ["_character_data" "b" "13356" "0" NULL NULL NULL]
+1 B DataRow ["_sql_identifier" "b" "13358" "0" NULL NULL NULL]
+1 B DataRow ["_information_schema_catalog_name" "b" "13361" "0" NULL NULL NULL]
+1 B DataRow ["_time_stamp" "b" "13364" "0" NULL NULL NULL]
+1 B DataRow ["_yes_or_no" "b" "13366" "0" NULL NULL NULL]
+1 B DataRow ["_applicable_roles" "b" "13370" "0" NULL NULL NULL]
+1 B DataRow ["_administrable_role_authorizations" "b" "13375" "0" NULL NULL NULL]
+1 B DataRow ["_attributes" "b" "13379" "0" NULL NULL NULL]
+1 B DataRow ["_character_sets" "b" "13384" "0" NULL NULL NULL]
+1 B DataRow ["_check_constraint_routine_usage" "b" "13389" "0" NULL NULL NULL]
+1 B DataRow ["_check_constraints" "b" "13394" "0" NULL NULL NULL]
+1 B DataRow ["_collations" "b" "13399" "0" NULL NULL NULL]
+1 B DataRow ["_collation_character_set_applicability" "b" "13404" "0" NULL NULL NULL]
+1 B DataRow ["_column_column_usage" "b" "13409" "0" NULL NULL NULL]
+1 B DataRow ["_column_domain_usage" "b" "13414" "0" NULL NULL NULL]
+1 B DataRow ["_column_privileges" "b" "13419" "0" NULL NULL NULL]
+1 B DataRow ["_column_udt_usage" "b" "13424" "0" NULL NULL NULL]
+1 B DataRow ["_columns" "b" "13429" "0" NULL NULL NULL]
+1 B DataRow ["_constraint_column_usage" "b" "13434" "0" NULL NULL NULL]
+1 B DataRow ["_constraint_table_usage" "b" "13439" "0" NULL NULL NULL]
+1 B DataRow ["_domain_constraints" "b" "13444" "0" NULL NULL NULL]
+1 B DataRow ["_domain_udt_usage" "b" "13449" "0" NULL NULL NULL]
+1 B DataRow ["_domains" "b" "13453" "0" NULL NULL NULL]
+1 B DataRow ["_enabled_roles" "b" "13458" "0" NULL NULL NULL]
+1 B DataRow ["_key_column_usage" "b" "13462" "0" NULL NULL NULL]
+1 B DataRow ["_parameters" "b" "13467" "0" NULL NULL NULL]
+1 B DataRow ["_referential_constraints" "b" "13472" "0" NULL NULL NULL]
+1 B DataRow ["_role_column_grants" "b" "13477" "0" NULL NULL NULL]
+1 B DataRow ["_routine_column_usage" "b" "13481" "0" NULL NULL NULL]
+1 B DataRow ["_routine_privileges" "b" "13486" "0" NULL NULL NULL]
+1 B DataRow ["_role_routine_grants" "b" "13491" "0" NULL NULL NULL]
+1 B DataRow ["_routine_routine_usage" "b" "13495" "0" NULL NULL NULL]
+1 B DataRow ["_routine_sequence_usage" "b" "13500" "0" NULL NULL NULL]
+1 B DataRow ["_routine_table_usage" "b" "13505" "0" NULL NULL NULL]
+1 B DataRow ["_routines" "b" "13510" "0" NULL NULL NULL]
+1 B DataRow ["_schemata" "b" "13515" "0" NULL NULL NULL]
+1 B DataRow ["_sequences" "b" "13519" "0" NULL NULL NULL]
+1 B DataRow ["_sql_features" "b" "13524" "0" NULL NULL NULL]
+1 B DataRow ["_sql_implementation_info" "b" "13529" "0" NULL NULL NULL]
+1 B DataRow ["_sql_parts" "b" "13534" "0" NULL NULL NULL]
+1 B DataRow ["_sql_sizing" "b" "13539" "0" NULL NULL NULL]
+1 B DataRow ["_table_constraints" "b" "13544" "0" NULL NULL NULL]
+1 B DataRow ["_table_privileges" "b" "13549" "0" NULL NULL NULL]
+1 B DataRow ["_role_table_grants" "b" "13554" "0" NULL NULL NULL]
+1 B DataRow ["_tables" "b" "13558" "0" NULL NULL NULL]
+1 B DataRow ["_transforms" "b" "13563" "0" NULL NULL NULL]
+1 B DataRow ["_triggered_update_columns" "b" "13568" "0" NULL NULL NULL]
+1 B DataRow ["_triggers" "b" "13573" "0" NULL NULL NULL]
+1 B DataRow ["_udt_privileges" "b" "13578" "0" NULL NULL NULL]
+1 B DataRow ["_role_udt_grants" "b" "13583" "0" NULL NULL NULL]
+1 B DataRow ["_usage_privileges" "b" "13587" "0" NULL NULL NULL]
+1 B DataRow ["_role_usage_grants" "b" "13592" "0" NULL NULL NULL]
+1 B DataRow ["_user_defined_types" "b" "13596" "0" NULL NULL NULL]
+1 B DataRow ["_view_column_usage" "b" "13601" "0" NULL NULL NULL]
+1 B DataRow ["_view_routine_usage" "b" "13606" "0" NULL NULL NULL]
+1 B DataRow ["_view_table_usage" "b" "13611" "0" NULL NULL NULL]
+1 B DataRow ["_views" "b" "13616" "0" NULL NULL NULL]
+1 B DataRow ["_data_type_privileges" "b" "13621" "0" NULL NULL NULL]
+1 B DataRow ["_element_types" "b" "13626" "0" NULL NULL NULL]
+1 B DataRow ["__pg_foreign_table_columns" "b" "13631" "0" NULL NULL NULL]
+1 B DataRow ["_column_options" "b" "13636" "0" NULL NULL NULL]
+1 B DataRow ["__pg_foreign_data_wrappers" "b" "13640" "0" NULL NULL NULL]
+1 B DataRow ["_foreign_data_wrapper_options" "b" "13644" "0" NULL NULL NULL]
+1 B DataRow ["_foreign_data_wrappers" "b" "13648" "0" NULL NULL NULL]
+1 B DataRow ["__pg_foreign_servers" "b" "13652" "0" NULL NULL NULL]
+1 B DataRow ["_foreign_server_options" "b" "13656" "0" NULL NULL NULL]
+1 B DataRow ["_foreign_servers" "b" "13660" "0" NULL NULL NULL]
+1 B DataRow ["__pg_foreign_tables" "b" "13664" "0" NULL NULL NULL]
+1 B DataRow ["_foreign_table_options" "b" "13669" "0" NULL NULL NULL]
+1 B DataRow ["_foreign_tables" "b" "13673" "0" NULL NULL NULL]
+1 B DataRow ["__pg_user_mappings" "b" "13677" "0" NULL NULL NULL]
+1 B DataRow ["_user_mapping_options" "b" "13682" "0" NULL NULL NULL]
+1 B DataRow ["_user_mappings" "b" "13687" "0" NULL NULL NULL]
+1 B CommandComplete "SELECT 375"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=r/1VK0Seq+Vz2j5+/NxO/iyk"
+2 B AuthenticationSASLContinue "r=r/1VK0Seq+Vz2j5+/NxO/iykC4yIguUFT7IkcQFyjtqmaa8g,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+2 F SASLResponse "c=biws,r=r/1VK0Seq+Vz2j5+/NxO/iykC4yIguUFT7IkcQFyjtqmaa8g,p=1+RSxdJ5pT1dKVGDFmPVdQ/BREdnvTnorB6E7/YLLHA="
+2 B AuthenticationSASLFinal "v=JFK0vj7qL9/uVNfeKIBg1/lAfIJezwQOtV4NSz1oy6k="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 796829 "ec\xfdv"
+2 B ReadyForQuery I
+2 F Query "SET client_min_messages TO warning;SET TIME ZONE INTERVAL '+00:00' HOUR TO MINUTE;"
+2 B CommandComplete "SET"
+2 B CommandComplete "SET"
+2 B ParameterStatus "TimeZone" "<+00>-00"
+2 B ReadyForQuery I
+2 F Query "SELECT 1+1 AS result"
+2 B RowDescription [("result" 0 0 23 4 -1 0)]
+2 B DataRow ["2"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'compat_items'"
+2 B RowDescription [("table_name" 13557 3 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "CREATE TABLE IF NOT EXISTS \"compat_items\" (\"id\"   SERIAL , \"name\" TEXT NOT NULL, \"price\" DECIMAL(10,2), \"tags\" TEXT[], \"extra\" JSONB, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
+2 B CommandComplete "CREATE TABLE"
+2 B ReadyForQuery I
+2 F Query "SELECT i.relname AS name, ix.indisprimary AS primary, ix.indisunique AS unique, ix.indkey AS indkey, array_agg(a.attnum) as column_indexes, array_agg(a.attname) AS column_names, pg_get_indexdef(ix.indexrelid) AS definition FROM pg_class t, pg_class i, pg_index ix, pg_attribute a WHERE t.oid = ix.indrelid AND i.oid = ix.indexrelid AND a.attrelid = t.oid AND t.relkind = 'r' and t.relname = 'compat_items' GROUP BY i.relname, ix.indexrelid, ix.indisprimary, ix.indisunique, ix.indkey ORDER BY i.relname;"
+2 B RowDescription [("name" 1259 2 19 64 -1 0) ("primary" 2610 7 16 1 -1 0) ("unique" 2610 5 16 1 -1 0) ("indkey" 2610 16 22 -1 -1 0) ("column_indexes" 0 0 1005 -1 -1 0) ("column_names" 0 0 1003 -1 -1 0) ("definition" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_items_pkey" "t" "t" "1" "{-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7}" "{tableoid,cmax,xmax,cmin,xmin,ctid,id,name,price,tags,extra,createdAt,updatedAt}" "CREATE UNIQUE INDEX compat_items_pkey ON public.compat_items USING btree (id)"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'compat_orders'"
+2 B RowDescription [("table_name" 13557 3 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "CREATE TABLE IF NOT EXISTS \"compat_orders\" (\"id\"   SERIAL , \"qty\" INTEGER NOT NULL DEFAULT 1, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"itemId\" INTEGER NOT NULL REFERENCES \"compat_items\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY (\"id\"));"
+2 B CommandComplete "CREATE TABLE"
+2 B ReadyForQuery I
+2 F Query "SELECT i.relname AS name, ix.indisprimary AS primary, ix.indisunique AS unique, ix.indkey AS indkey, array_agg(a.attnum) as column_indexes, array_agg(a.attname) AS column_names, pg_get_indexdef(ix.indexrelid) AS definition FROM pg_class t, pg_class i, pg_index ix, pg_attribute a WHERE t.oid = ix.indrelid AND i.oid = ix.indexrelid AND a.attrelid = t.oid AND t.relkind = 'r' and t.relname = 'compat_orders' GROUP BY i.relname, ix.indexrelid, ix.indisprimary, ix.indisunique, ix.indkey ORDER BY i.relname;"
+2 B RowDescription [("name" 1259 2 19 64 -1 0) ("primary" 2610 7 16 1 -1 0) ("unique" 2610 5 16 1 -1 0) ("indkey" 2610 16 22 -1 -1 0) ("column_indexes" 0 0 1005 -1 -1 0) ("column_names" 0 0 1003 -1 -1 0) ("definition" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_orders_pkey" "t" "t" "1" "{-6,-5,-4,-3,-2,-1,1,2,3,4,5}" "{tableoid,cmax,xmax,cmin,xmin,ctid,id,qty,createdAt,updatedAt,itemId}" "CREATE UNIQUE INDEX compat_orders_pkey ON public.compat_orders USING btree (id)"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "START TRANSACTION;"
+2 B CommandComplete "START TRANSACTION"
+2 B ReadyForQuery T
+2 F Query "INSERT INTO \"compat_items\" (\"id\",\"name\",\"price\",\"tags\",\"extra\",\"createdAt\",\"updatedAt\") VALUES (DEFAULT,'one','1.50',ARRAY['a']::TEXT[],'{\"n\":1}','2026-10-07 14:44:44.730 +00:00','2026-10-07 14:44:44.730 +00:00'),(DEFAULT,'two','2.50',ARRAY['b','c']::TEXT[],'{\"n\":2}','2026-10-07 14:44:44.730 +00:00','2026-10-07 14:44:44.730 +00:00') RETURNING \"id\",\"name\",\"price\",\"tags\",\"extra\",\"createdAt\",\"updatedAt\";"
+2 B RowDescription [("id" 256861 1 23 4 -1 0) ("name" 256861 2 25 -1 -1 0) ("price" 256861 3 1700 -1 655366 0) ("tags" 256861 4 1009 -1 -1 0) ("extra" 256861 5 3802 -1 -1 0) ("createdAt" 256861 6 1184 8 -1 0) ("updatedAt" 256861 7 1184 8 -1 0)]
+2 B DataRow ["1" "one" "1.50" "{a}" "{\"n\": 1}" "2026-10-07 14:44:44.73+00" "2026-10-07 14:44:44.73+00"]
+2 B DataRow ["2" "two" "2.50" "{b,c}" "{\"n\": 2}" "2026-10-07 14:44:44.73+00" "2026-10-07 14:44:44.73+00"]
+2 B CommandComplete "INSERT 0 2"
+2 B ReadyForQuery T
+2 F Parse "" "INSERT INTO \"compat_orders\" (\"id\",\"qty\",\"createdAt\",\"updatedAt\",\"itemId\") VALUES (DEFAULT,$1,$2,$3,$4) RETURNING \"id\",\"qty\",\"createdAt\",\"updatedAt\",\"itemId\";" []
+2 F Bind "" "" [0 0 0 0] ["2" "2026-10-07 14:44:44.794 +00:00" "2026-10-07 14:44:44.794 +00:00" "1"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("id" 256874 1 23 4 -1 0) ("qty" 256874 2 23 4 -1 0) ("createdAt" 256874 3 1184 8 -1 0) ("updatedAt" 256874 4 1184 8 -1 0) ("itemId" 256874 5 23 4 -1 0)]
+2 B DataRow ["1" "2" "2026-10-07 14:44:44.794+00" "2026-10-07 14:44:44.794+00" "1"]
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Parse "" "INSERT INTO \"compat_orders\" (\"id\",\"qty\",\"createdAt\",\"updatedAt\",\"itemId\") VALUES (DEFAULT,$1,$2,$3,$4) RETURNING \"id\",\"qty\",\"createdAt\",\"updatedAt\",\"itemId\";" []
+2 F Bind "" "" [0 0 0 0] ["1" "2026-10-07 14:44:44.801 +00:00" "2026-10-07 14:44:44.801 +00:00" "2"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("id" 256874 1 23 4 -1 0) ("qty" 256874 2 23 4 -1 0) ("createdAt" 256874 3 1184 8 -1 0) ("updatedAt" 256874 4 1184 8 -1 0) ("itemId" 256874 5 23 4 -1 0)]
+2 B DataRow ["2" "1" "2026-10-07 14:44:44.801+00" "2026-10-07 14:44:44.801+00" "2"]
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Query "COMMIT;"
+2 B CommandComplete "COMMIT"
+2 B ReadyForQuery I
+2 F Query "START TRANSACTION;"
+2 B CommandComplete "START TRANSACTION"
+2 B ReadyForQuery T
+2 F Parse "" "INSERT INTO \"compat_items\" (\"id\",\"name\",\"price\",\"createdAt\",\"updatedAt\") VALUES (DEFAULT,$1,$2,$3,$4) RETURNING \"id\",\"name\",\"price\",\"tags\",\"extra\",\"createdAt\",\"updatedAt\";" []
+2 F Bind "" "" [0 0 0 0] ["three" "3.50" "2026-10-07 14:44:44.810 +00:00" "2026-10-07 14:44:44.810 +00:00"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("id" 256861 1 23 4 -1 0) ("name" 256861 2 25 -1 -1 0) ("price" 256861 3 1700 -1 655366 0) ("tags" 256861 4 1009 -1 -1 0) ("extra" 256861 5 3802 -1 -1 0) ("createdAt" 256861 6 1184 8 -1 0) ("updatedAt" 256861 7 1184 8 -1 0)]
+2 B DataRow ["3" "three" "3.50" NULL NULL "2026-10-07 14:44:44.81+00" "2026-10-07 14:44:44.81+00"]
+2 B CommandComplete "INSERT 0 1"
+2 B ReadyForQuery T
+2 F Query "ROLLBACK;"
+2 B CommandComplete "ROLLBACK"
+2 B ReadyForQuery I
+2 F Query "SELECT \"Item\".\"id\", \"Item\".\"name\", \"Item\".\"price\", \"Item\".\"tags\", \"Item\".\"extra\", \"Item\".\"createdAt\", \"Item\".\"updatedAt\", \"Orders\".\"id\" AS \"Orders.id\", \"Orders\".\"qty\" AS \"Orders.qty\", \"Orders\".\"createdAt\" AS \"Orders.createdAt\", \"Orders\".\"updatedAt\" AS \"Orders.updatedAt\", \"Orders\".\"itemId\" AS \"Orders.itemId\" FROM \"compat_items\" AS \"Item\" LEFT OUTER JOIN \"compat_orders\" AS \"Orders\" ON \"Item\".\"id\" = \"Orders\".\"itemId\" ORDER BY \"Item\".\"id\" ASC;"
+2 B RowDescription [("id" 256861 1 23 4 -1 0) ("name" 256861 2 25 -1 -1 0) ("price" 256861 3 1700 -1 655366 0) ("tags" 256861 4 1009 -1 -1 0) ("extra" 256861 5 3802 -1 -1 0) ("createdAt" 256861 6 1184 8 -1 0) ("updatedAt" 256861 7 1184 8 -1 0) ("Orders.id" 256874 1 23 4 -1 0) ("Orders.qty" 256874 2 23 4 -1 0) ("Orders.createdAt" 256874 3 1184 8 -1 0) ("Orders.updatedAt" 256874 4 1184 8 -1 0) ("Orders.itemId" 256874 5 23 4 -1 0)]
+2 B DataRow ["1" "one" "1.50" "{a}" "{\"n\": 1}" "2026-10-07 14:44:44.73+00" "2026-10-07 14:44:44.73+00" "1" "2" "2026-10-07 14:44:44.794+00" "2026-10-07 14:44:44.794+00" "1"]
+2 B DataRow ["2" "two" "2.50" "{b,c}" "{\"n\": 2}" "2026-10-07 14:44:44.73+00" "2026-10-07 14:44:44.73+00" "2" "1" "2026-10-07 14:44:44.801+00" "2026-10-07 14:44:44.801+00" "2"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery I
+2 F Query "SELECT \"id\", \"name\", \"price\", \"tags\", \"extra\", \"createdAt\", \"updatedAt\" FROM \"compat_items\" AS \"Item\" WHERE \"Item\".\"name\" = 'two' LIMIT 1;"
+2 B RowDescription [("id" 256861 1 23 4 -1 0) ("name" 256861 2 25 -1 -1 0) ("price" 256861 3 1700 -1 655366 0) ("tags" 256861 4 1009 -1 -1 0) ("extra" 256861 5 3802 -1 -1 0) ("createdAt" 256861 6 1184 8 -1 0) ("updatedAt" 256861 7 1184 8 -1 0)]
+2 B DataRow ["2" "two" "2.50" "{b,c}" "{\"n\": 2}" "2026-10-07 14:44:44.73+00" "2026-10-07 14:44:44.73+00"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT count(*) AS \"count\" FROM \"compat_orders\" AS \"Order\" WHERE \"Order\".\"qty\" = 1;"
+2 B RowDescription [("count" 0 0 20 8 -1 0)]
+2 B DataRow ["1"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "UPDATE \"compat_items\" SET \"price\"=$1,\"updatedAt\"=$2 WHERE \"name\" = $3" []
+2 F Bind "" "" [0 0 0] ["5.00" "2026-10-07 14:44:44.864 +00:00" "two"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B NoData
+2 B CommandComplete "UPDATE 1"
+2 B ReadyForQuery I
+2 F Query "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type LIKE '%TABLE' AND table_name != 'spatial_ref_sys';"
+2 B RowDescription [("table_name" 13557 3 19 64 -1 0)]
+2 B DataRow ["compat_items"]
+2 B DataRow ["compat_orders"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery I
+2 F Query "SELECT pk.constraint_type as \"Constraint\",c.column_name as \"Field\", c.column_default as \"Default\",c.is_nullable as \"Null\", (CASE WHEN c.udt_name = 'hstore' THEN c.udt_name ELSE c.data_type END) || (CASE WHEN c.character_maximum_length IS NOT NULL THEN '(' || c.character_maximum_length || ')' ELSE '' END) as \"Type\", (SELECT array_agg(e.enumlabel) FROM pg_catalog.pg_type t JOIN pg_catalog.pg_enum e ON t.oid=e.enumtypid WHERE t.typname=c.udt_name) AS \"special\", (SELECT pgd.description FROM pg_catalog.pg_statio_all_tables AS st INNER JOIN pg_catalog.pg_description pgd on (pgd.objoid=st.relid) WHERE c.ordinal_position=pgd.objsubid AND c.table_name=st.relname) AS \"Comment\" FROM information_schema.columns c LEFT JOIN (SELECT tc.table_schema, tc.table_name, cu.column_name, tc.constraint_type FROM information_schema.TABLE_CONSTRAINTS tc JOIN information_schema.KEY_COLUMN_USAGE  cu ON tc.table_schema=cu.table_schema and tc.table_name=cu.table_name and tc.constraint_name=cu.constraint_name and tc.constraint_type='PRIMARY KEY') pk ON pk.table_schema=c.table_schema AND pk.table_name=c.table_name AND pk.column_name=c.column_name WHERE c.table_name = 'compat_items' AND c.table_schema = 'public'"
+2 B RowDescription [("Constraint" 13543 7 1043 -1 -1 0) ("Field" 13428 4 19 64 -1 0) ("Default" 13428 6 1043 -1 -1 0) ("Null" 13428 7 1043 -1 7 0) ("Type" 0 0 25 -1 -1 0) ("special" 0 0 1003 -1 -1 0) ("Comment" 0 0 25 -1 -1 0)]
+2 B DataRow ["PRIMARY KEY" "id" "nextval('compat_items_id_seq'::regclass)" "NO" "integer" NULL NULL]
+2 B DataRow [NULL "name" NULL "NO" "text" NULL NULL]
+2 B DataRow [NULL "price" NULL "YES" "numeric" NULL NULL]
+2 B DataRow [NULL "tags" NULL "YES" "ARRAY" NULL NULL]
+2 B DataRow [NULL "extra" NULL "YES" "jsonb" NULL NULL]
+2 B DataRow [NULL "createdAt" NULL "NO" "timestamp with time zone" NULL NULL]
+2 B DataRow [NULL "updatedAt" NULL "NO" "timestamp with time zone" NULL NULL]
+2 B CommandComplete "SELECT 7"
+2 B ReadyForQuery I
+2 F Query "SELECT i.relname AS name, ix.indisprimary AS primary, ix.indisunique AS unique, ix.indkey AS indkey, array_agg(a.attnum) as column_indexes, array_agg(a.attname) AS column_names, pg_get_indexdef(ix.indexrelid) AS definition FROM pg_class t, pg_class i, pg_index ix, pg_attribute a WHERE t.oid = ix.indrelid AND i.oid = ix.indexrelid AND a.attrelid = t.oid AND t.relkind = 'r' and t.relname = 'compat_orders' GROUP BY i.relname, ix.indexrelid, ix.indisprimary, ix.indisunique, ix.indkey ORDER BY i.relname;"
+2 B RowDescription [("name" 1259 2 19 64 -1 0) ("primary" 2610 7 16 1 -1 0) ("unique" 2610 5 16 1 -1 0) ("indkey" 2610 16 22 -1 -1 0) ("column_indexes" 0 0 1005 -1 -1 0) ("column_names" 0 0 1003 -1 -1 0) ("definition" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_orders_pkey" "t" "t" "1" "{-6,-5,-4,-3,-2,-1,1,2,3,4,5}" "{tableoid,cmax,xmax,cmin,xmin,ctid,id,qty,createdAt,updatedAt,itemId}" "CREATE UNIQUE INDEX compat_orders_pkey ON public.compat_orders USING btree (id)"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT DISTINCT tc.constraint_name as constraint_name, tc.constraint_schema as constraint_schema, tc.constraint_catalog as constraint_catalog, tc.table_name as table_name,tc.table_schema as table_schema,tc.table_catalog as table_catalog,tc.initially_deferred as initially_deferred,tc.is_deferrable as is_deferrable,kcu.column_name as column_name,ccu.table_schema  AS referenced_table_schema,ccu.table_catalog  AS referenced_table_catalog,ccu.table_name  AS referenced_table_name,ccu.column_name AS referenced_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = 'compat_orders' AND tc.table_catalog = 'compat'"
+2 B RowDescription [("constraint_name" 13543 3 19 64 -1 0) ("constraint_schema" 13543 2 19 64 -1 0) ("constraint_catalog" 13543 1 19 64 -1 0) ("table_name" 13543 6 19 64 -1 0) ("table_schema" 13543 5 19 64 -1 0) ("table_catalog" 13543 4 19 64 -1 0) ("initially_deferred" 13543 9 1043 -1 7 0) ("is_deferrable" 13543 8 1043 -1 7 0) ("column_name" 13461 7 19 64 -1 0) ("referenced_table_schema" 13433 2 19 64 -1 0) ("referenced_table_catalog" 13433 1 19 64 -1 0) ("referenced_table_name" 13433 3 19 64 -1 0) ("referenced_column_name" 13433 4 19 64 -1 0)]
+2 B DataRow ["compat_orders_itemId_fkey" "public" "compat" "compat_orders" "public" "compat" "NO" "NO" "itemId" "public" "compat" "compat_items" "id"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT 1 / 0"
+2 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+2 B ReadyForQuery I
+2 F Query "DROP TABLE IF EXISTS \"compat_orders\";"
+2 B CommandComplete "DROP TABLE"
+2 B ReadyForQuery I
+2 F Query "DROP TABLE IF EXISTS \"compat_items\";"
+2 B CommandComplete "DROP TABLE"
+2 B ReadyForQuery I
+2 F Query "SELECT DISTINCT tc.constraint_name as constraint_name, tc.constraint_schema as constraint_schema, tc.constraint_catalog as constraint_catalog, tc.table_name as table_name,tc.table_schema as table_schema,tc.table_catalog as table_catalog,tc.initially_deferred as initially_deferred,tc.is_deferrable as is_deferrable,kcu.column_name as column_name,ccu.table_schema  AS referenced_table_schema,ccu.table_catalog  AS referenced_table_catalog,ccu.table_name  AS referenced_table_name,ccu.column_name AS referenced_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = 'compat_items' AND tc.table_catalog = 'compat'"
+2 B RowDescription [("constraint_name" 13543 3 19 64 -1 0) ("constraint_schema" 13543 2 19 64 -1 0) ("constraint_catalog" 13543 1 19 64 -1 0) ("table_name" 13543 6 19 64 -1 0) ("table_schema" 13543 5 19 64 -1 0) ("table_catalog" 13543 4 19 64 -1 0) ("initially_deferred" 13543 9 1043 -1 7 0) ("is_deferrable" 13543 8 1043 -1 7 0) ("column_name" 13461 7 19 64 -1 0) ("referenced_table_schema" 13433 2 19 64 -1 0) ("referenced_table_catalog" 13433 1 19 64 -1 0) ("referenced_table_name" 13433 3 19 64 -1 0) ("referenced_column_name" 13433 4 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "SELECT DISTINCT tc.constraint_name as constraint_name, tc.constraint_schema as constraint_schema, tc.constraint_catalog as constraint_catalog, tc.table_name as table_name,tc.table_schema as table_schema,tc.table_catalog as table_catalog,tc.initially_deferred as initially_deferred,tc.is_deferrable as is_deferrable,kcu.column_name as column_name,ccu.table_schema  AS referenced_table_schema,ccu.table_catalog  AS referenced_table_catalog,ccu.table_name  AS referenced_table_name,ccu.column_name AS referenced_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = 'compat_orders' AND tc.table_catalog = 'compat'"
+2 B RowDescription [("constraint_name" 13543 3 19 64 -1 0) ("constraint_schema" 13543 2 19 64 -1 0) ("constraint_catalog" 13543 1 19 64 -1 0) ("table_name" 13543 6 19 64 -1 0) ("table_schema" 13543 5 19 64 -1 0) ("table_catalog" 13543 4 19 64 -1 0) ("initially_deferred" 13543 9 1043 -1 7 0) ("is_deferrable" 13543 8 1043 -1 7 0) ("column_name" 13461 7 19 64 -1 0) ("referenced_table_schema" 13433 2 19 64 -1 0) ("referenced_table_catalog" 13433 1 19 64 -1 0) ("referenced_table_name" 13433 3 19 64 -1 0) ("referenced_column_name" 13433 4 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "DROP TABLE IF EXISTS \"compat_items\";"
+2 B CommandComplete "DROP TABLE"
+2 B ReadyForQuery I
+2 F Query "DROP TABLE IF EXISTS \"compat_orders\";"
+2 B CommandComplete "DROP TABLE"
+2 B ReadyForQuery I
+2 F Terminate
+2 F End
+2 B End
