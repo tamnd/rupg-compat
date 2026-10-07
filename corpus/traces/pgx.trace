@@ -1,0 +1,218 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/pgx/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=qgywJpVrROdSrAVbB5i+94RV"
+1 B AuthenticationSASLContinue "r=qgywJpVrROdSrAVbB5i+94RVRJo2QhmPrQqvBqBbO3hSkM8K,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=qgywJpVrROdSrAVbB5i+94RVRJo2QhmPrQqvBqBbO3hSkM8K,p=oqHMkLr0Yha59xLKwyx/9XUGVLaXfW8W1GX+FZJKItg="
+1 B AuthenticationSASLFinal "v=U/MAHD7TFskBzV4wSOEDqe3DUwCoyr7h/PbqzDT/wUc="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 737177 "fO\xca\xf3"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_e004ebd5b5532a4b85984a62f8ad48a81aa3460c1ca07701" "SELECT 1" []
+1 F Describe S "stmtcache_e004ebd5b5532a4b85984a62f8ad48a81aa3460c1ca07701"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_e004ebd5b5532a4b85984a62f8ad48a81aa3460c1ca07701" [] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_cbb6b41ac3bcecdd8b8c2851bfee0752e2215be35cf1b46a" "SELECT $1::int4 + 1, $2::text" []
+1 F Describe S "stmtcache_cbb6b41ac3bcecdd8b8c2851bfee0752e2215be35cf1b46a"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [23 25]
+1 B RowDescription [("?column?" 0 0 23 4 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_cbb6b41ac3bcecdd8b8c2851bfee0752e2215be35cf1b46a" [1 0] ["\x00\x00\x00)" "abc"] [1 0]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00*" "abc"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_7bb590c8f1ea7b9691908a87382a48f4916b02cca69aa35a" "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text" []
+1 F Describe S "stmtcache_7bb590c8f1ea7b9691908a87382a48f4916b02cca69aa35a"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_7bb590c8f1ea7b9691908a87382a48f4916b02cca69aa35a" [] [] [1 1 1 1 1 1 0 1 1 1 1 0 1 0]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00*" "\x00\x00\x00*" "\x00 \x00\x00\x00\x00\x00\x01" "?\xf8\x00\x00\x00\x00\x00\x00" "\x00\x02\x00\x00\x00\x00\x00\x03\x00\x0c\rz" "\x01" "x" "\x01\x02" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x00%\x1a" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x17\x00\x00\x00\x03\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00\x04\x00\x00\x00\x03" "{\"a\": 1}" "z<\x8fN\r\x1bL*\x9e_kz\x8c\x9d\x0e\x1f" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2))"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "stmtcache_5f4aa9ea5b408d50da2032858ea7241fabd86e8176030860" "INSERT INTO compat_items VALUES ($1, $2, $3)" []
+1 F Describe S "stmtcache_5f4aa9ea5b408d50da2032858ea7241fabd86e8176030860"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [23 25 1700]
+1 B NoData
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_5f4aa9ea5b408d50da2032858ea7241fabd86e8176030860" [1 0 0] ["\x00\x00\x00\x01" "one" "1.50"] []
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_5f4aa9ea5b408d50da2032858ea7241fabd86e8176030860" [1 0 0] ["\x00\x00\x00\x02" "two" "2.50"] []
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_5f4aa9ea5b408d50da2032858ea7241fabd86e8176030860" [1 0 0] ["\x00\x00\x00\x03" "three" "3.50"] []
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "commit"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "stmtcache_5f4aa9ea5b408d50da2032858ea7241fabd86e8176030860" [1 0 0] ["\x00\x00\x00\x04" "four" "4.50"] []
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "rollback"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id" []
+1 F Describe S "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [23]
+1 B RowDescription [("id" 250912 1 23 4 -1 0) ("name" 250912 2 25 -1 -1 0) ("price" 250912 3 1700 -1 655366 0)]
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2" [1] ["\x00\x00\x00\x01"] [1 0 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2" [1] ["\x00\x00\x00\x01"] [1 0 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2" [1] ["\x00\x00\x00\x01"] [1 0 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2" [1] ["\x00\x00\x00\x01"] [1 0 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2" [1] ["\x00\x00\x00\x01"] [1 0 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_af7726c6035b32be778bc0421d9045ab40effa06da7cf0e2" [1] ["\x00\x00\x00\x01"] [1 0 1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Parse "stmtcache_c2a0d20e14737371aaca9f87a68b5ec6be2ca1b6abea7847" "UPDATE compat_items SET price = price * 2 WHERE id = $1" []
+1 F Describe S "stmtcache_c2a0d20e14737371aaca9f87a68b5ec6be2ca1b6abea7847"
+1 F Sync
+1 B ParseComplete
+1 B ParameterDescription [23]
+1 B NoData
+1 B ReadyForQuery I
+1 F Bind "" "stmtcache_c2a0d20e14737371aaca9f87a68b5ec6be2ca1b6abea7847" [1] ["\x00\x00\x00\x02"] []
+1 F Describe P ""
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B NoData
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+1 F Query "SELECT 1 / 0"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "begin"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Query "SELECT 1 / 0"
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Query "rollback"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE compat_items"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End

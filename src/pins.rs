@@ -146,6 +146,35 @@ mod tests {
     }
 
     #[test]
+    fn each_client_has_a_directory_with_its_version() {
+        let pins = Pins::builtin();
+        let reference = pins.postgres.iter().find(|p| p.major == pins.reference).unwrap();
+        let mut names = Vec::new();
+        for c in &pins.clients {
+            let dir = std::path::Path::new("clients").join(&c.name);
+            assert!(dir.join("run.sh").exists(), "{} has no run.sh", c.name);
+            if c.name == "psql" {
+                assert_eq!(c.version, reference.release);
+            } else {
+                let install = ["run.sh", "go.mod"]
+                    .iter()
+                    .filter_map(|f| std::fs::read_to_string(dir.join(f)).ok())
+                    .collect::<String>();
+                assert!(install.contains(&c.version), "{} does not install {}", c.name, c.version);
+            }
+            names.push(c.name.clone());
+        }
+        let mut dirs: Vec<String> = std::fs::read_dir("clients")
+            .unwrap()
+            .flatten()
+            .filter(|e| e.path().is_dir())
+            .map(|e| e.file_name().to_string_lossy().into_owned())
+            .collect();
+        dirs.sort();
+        assert_eq!(dirs, names);
+    }
+
+    #[test]
     fn the_shims_are_on_their_release_tags() {
         for pin in Pins::builtin().postgres.iter().filter(|p| p.major != 19) {
             assert_eq!(pin.git_ref, format!("REL_{}", pin.release.replace('.', "_")));

@@ -45,4 +45,23 @@ commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
 
 [clients]
 # One table for each client whose trace or suite is in corpus/ or clients/, with the version that made it.
-# The clients come in with their traces. See clients/<name>/.
+# The clients come in with their traces. See clients/<name>/. The version is the version that run.sh or go.mod installs.
+
+[clients.asyncpg]
+version = "0.32.0"
+
+[clients.lib-pq]
+version = "1.12.3"
+
+[clients.pgx]
+version = "5.11.0"
+
+[clients.psql]
+# The psql of the oracle build of the reference version.
+version = "19beta4"
+
+[clients.psycopg]
+version = "3.3.6"
+
+[clients.psycopg2]
+version = "2.9.13"
