@@ -1,0 +1,239 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/asyncpg/run.sh
+1 F StartupMessage 3.0 "client_encoding" "'utf-8'" "user" "postgres" "database" "compat"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=postgres,r=sWiZcyVAmiEpmB2OaHD4nPkp6Samto5q"
+1 B AuthenticationSASLContinue "r=sWiZcyVAmiEpmB2OaHD4nPkp6Samto5qTexGNY676xt9xo0MxPh8PZSu,s=aHi69CpnzI2ARRFeacdT+Q==,i=4096"
+1 F SASLResponse "c=biws,r=sWiZcyVAmiEpmB2OaHD4nPkp6Samto5qTexGNY676xt9xo0MxPh8PZSu,p=/e1Fqe+lIkY3LPr2KAaomcNPO7mPhenNxkbVM1jn63M="
+1 B AuthenticationSASLFinal "v=YY10oIWSTxRQEhaROPJ3qSJPUTfAdd9OPUaIKSUt3l4="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" ""
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 735417 "\xcc\x00\xc0\x08"
+1 B ReadyForQuery I
+1 F Parse "__asyncpg_stmt_1__" "SELECT 1" []
+1 F Describe S "__asyncpg_stmt_1__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 F Bind "" "__asyncpg_stmt_1__" [1] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "__asyncpg_stmt_2__" "SELECT $1::int4 + 1, $2::text" []
+1 F Describe S "__asyncpg_stmt_2__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23 25]
+1 B RowDescription [("?column?" 0 0 23 4 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 F Bind "" "__asyncpg_stmt_2__" [1 1] ["\x00\x00\x00)" "abc"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00*" "abc"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "__asyncpg_stmt_3__" "SELECT 42::int2, 42::int4, 9007199254740993::int8, 1.5::float8, 12.345::numeric, true, 'x'::text, '\\x0102'::bytea, '2026-01-02 03:04:05+00'::timestamptz, '2026-01-02'::date, ARRAY[1, 2, 3]::int4[], '{\"a\": 1}'::jsonb, '7a3c8f4e-0d1b-4c2a-9e5f-6b7a8c9d0e1f'::uuid, NULL::text" []
+1 F Describe S "__asyncpg_stmt_3__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("int2" 0 0 21 2 -1 0) ("int4" 0 0 23 4 -1 0) ("int8" 0 0 20 8 -1 0) ("float8" 0 0 701 8 -1 0) ("numeric" 0 0 1700 -1 -1 0) ("?column?" 0 0 16 1 -1 0) ("text" 0 0 25 -1 -1 0) ("bytea" 0 0 17 -1 -1 0) ("timestamptz" 0 0 1184 8 -1 0) ("date" 0 0 1082 4 -1 0) ("array" 0 0 1007 -1 -1 0) ("jsonb" 0 0 3802 -1 -1 0) ("uuid" 0 0 2950 16 -1 0) ("text" 0 0 25 -1 -1 0)]
+1 F Parse "__asyncpg_stmt_4__" "\n                    SELECT\n                        current_setting('jit') AS cur,\n                        set_config('jit', 'off', false) AS new\n                    " []
+1 F Describe S "__asyncpg_stmt_4__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("cur" 0 0 25 -1 -1 0) ("new" 0 0 25 -1 -1 0)]
+1 F Bind "" "__asyncpg_stmt_4__" [1] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["off" "off"]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Parse "__asyncpg_stmt_5__" "WITH RECURSIVE typeinfo_tree(\n    oid, ns, name, kind, basetype, elemtype, elemdelim,\n    range_subtype, attrtypoids, attrnames, depth)\nAS (\n    SELECT\n        ti.oid, ti.ns, ti.name, ti.kind, ti.basetype,\n        ti.elemtype, ti.elemdelim, ti.range_subtype,\n        ti.attrtypoids, ti.attrnames, 0\n    FROM\n            (\n        SELECT\n            t.oid                           AS oid,\n            ns.nspname                      AS ns,\n            t.typname                       AS name,\n            t.typtype                       AS kind,\n            (CASE WHEN t.typtype = 'd' THEN\n                (WITH RECURSIVE typebases(oid, depth) AS (\n                    SELECT\n                        t2.typbasetype      AS oid,\n                        0                   AS depth\n                    FROM\n                        pg_type t2\n                    WHERE\n                        t2.oid = t.oid\n\n                    UNION ALL\n\n                    SELECT\n                        t2.typbasetype      AS oid,\n                        tb.depth + 1        AS depth\n                    FROM\n                        pg_type t2,\n                        typebases tb\n                    WHERE\n                       tb.oid = t2.oid\n                       AND t2.typbasetype != 0\n               ) SELECT oid FROM typebases ORDER BY depth DESC LIMIT 1)\n\n               ELSE NULL\n            END)                            AS basetype,\n            t.typelem                       AS elemtype,\n            elem_t.typdelim                 AS elemdelim,\n            COALESCE(\n                range_t.rngsubtype,\n                multirange_t.rngsubtype)    AS range_subtype,\n            (CASE WHEN t.typtype = 'c' THEN\n                (SELECT\n                    array_agg(ia.atttypid ORDER BY ia.attnum)\n                FROM\n                    pg_attribute ia\n                    INNER JOIN pg_class c\n                        ON (ia.attrelid = c.oid)\n                WHERE\n                    ia.attnum > 0 AND NOT ia.attisdropped\n                    AND c.reltype = t.oid)\n\n                ELSE NULL\n            END)                            AS attrtypoids,\n            (CASE WHEN t.typtype = 'c' THEN\n                (SELECT\n                    array_agg(ia.attname::text ORDER BY ia.attnum)\n                FROM\n                    pg_attribute ia\n                    INNER JOIN pg_class c\n                        ON (ia.attrelid = c.oid)\n                WHERE\n                    ia.attnum > 0 AND NOT ia.attisdropped\n                    AND c.reltype = t.oid)\n\n                ELSE NULL\n            END)                            AS attrnames\n        FROM\n            pg_catalog.pg_type AS t\n            INNER JOIN pg_catalog.pg_namespace ns ON (\n                ns.oid = t.typnamespace)\n            LEFT JOIN pg_type elem_t ON (\n                t.typlen = -1 AND\n                t.typelem != 0 AND\n                t.typelem = elem_t.oid\n            )\n            LEFT JOIN pg_range range_t ON (\n                t.oid = range_t.rngtypid\n            )\n            LEFT JOIN pg_range multirange_t ON (\n                t.oid = multirange_t.rngmultitypid\n            )\n    )\n AS ti\n    WHERE\n        ti.oid = any($1::oid[])\n\n    UNION ALL\n\n    SELECT\n        ti.oid, ti.ns, ti.name, ti.kind, ti.basetype,\n        ti.elemtype, ti.elemdelim, ti.range_subtype,\n        ti.attrtypoids, ti.attrnames, tt.depth + 1\n    FROM\n            (\n        SELECT\n            t.oid                           AS oid,\n            ns.nspname                      AS ns,\n            t.typname                       AS name,\n            t.typtype                       AS kind,\n            (CASE WHEN t.typtype = 'd' THEN\n                (WITH RECURSIVE typebases(oid, depth) AS (\n                    SELECT\n                        t2.typbasetype      AS oid,\n                        0                   AS depth\n                    FROM\n                        pg_type t2\n                    WHERE\n                        t2.oid = t.oid\n\n                    UNION ALL\n\n                    SELECT\n                        t2.typbasetype      AS oid,\n                        tb.depth + 1        AS depth\n                    FROM\n                        pg_type t2,\n                        typebases tb\n                    WHERE\n                       tb.oid = t2.oid\n                       AND t2.typbasetype != 0\n               ) SELECT oid FROM typebases ORDER BY depth DESC LIMIT 1)\n\n               ELSE NULL\n            END)                            AS basetype,\n            t.typelem                       AS elemtype,\n            elem_t.typdelim                 AS elemdelim,\n            COALESCE(\n                range_t.rngsubtype,\n                multirange_t.rngsubtype)    AS range_subtype,\n            (CASE WHEN t.typtype = 'c' THEN\n                (SELECT\n                    array_agg(ia.atttypid ORDER BY ia.attnum)\n                FROM\n                    pg_attribute ia\n                    INNER JOIN pg_class c\n                        ON (ia.attrelid = c.oid)\n                WHERE\n                    ia.attnum > 0 AND NOT ia.attisdropped\n                    AND c.reltype = t.oid)\n\n                ELSE NULL\n            END)                            AS attrtypoids,\n            (CASE WHEN t.typtype = 'c' THEN\n                (SELECT\n                    array_agg(ia.attname::text ORDER BY ia.attnum)\n                FROM\n                    pg_attribute ia\n                    INNER JOIN pg_class c\n                        ON (ia.attrelid = c.oid)\n                WHERE\n                    ia.attnum > 0 AND NOT ia.attisdropped\n                    AND c.reltype = t.oid)\n\n                ELSE NULL\n            END)                            AS attrnames\n        FROM\n            pg_catalog.pg_type AS t\n            INNER JOIN pg_catalog.pg_namespace ns ON (\n                ns.oid = t.typnamespace)\n            LEFT JOIN pg_type elem_t ON (\n                t.typlen = -1 AND\n                t.typelem != 0 AND\n                t.typelem = elem_t.oid\n            )\n            LEFT JOIN pg_range range_t ON (\n                t.oid = range_t.rngtypid\n            )\n            LEFT JOIN pg_range multirange_t ON (\n                t.oid = multirange_t.rngmultitypid\n            )\n    )\n ti,\n        typeinfo_tree tt\n    WHERE\n        (tt.elemtype IS NOT NULL AND ti.oid = tt.elemtype)\n        OR (tt.attrtypoids IS NOT NULL AND ti.oid = any(tt.attrtypoids))\n        OR (tt.range_subtype IS NOT NULL AND ti.oid = tt.range_subtype)\n        OR (tt.basetype IS NOT NULL AND ti.oid = tt.basetype)\n)\n\nSELECT DISTINCT\n    *,\n    basetype::regtype::text AS basetype_name,\n    elemtype::regtype::text AS elemtype_name,\n    range_subtype::regtype::text AS range_subtype_name\nFROM\n    typeinfo_tree\nORDER BY\n    depth DESC\n" []
+1 F Describe S "__asyncpg_stmt_5__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [1028]
+1 B RowDescription [("oid" 0 0 26 4 -1 0) ("ns" 0 0 19 64 -1 0) ("name" 0 0 19 64 -1 0) ("kind" 0 0 18 1 -1 0) ("basetype" 0 0 26 4 -1 0) ("elemtype" 0 0 26 4 -1 0) ("elemdelim" 0 0 18 1 -1 0) ("range_subtype" 0 0 26 4 -1 0) ("attrtypoids" 0 0 1028 -1 -1 0) ("attrnames" 0 0 1009 -1 -1 0) ("depth" 0 0 23 4 -1 0) ("basetype_name" 0 0 25 -1 -1 0) ("elemtype_name" 0 0 25 -1 -1 0) ("range_subtype_name" 0 0 25 -1 -1 0)]
+1 F Bind "" "__asyncpg_stmt_5__" [1] ["\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x1a\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x03\xef"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x17" "pg_catalog" "int4" "b" NULL "\x00\x00\x00\x00" NULL NULL NULL NULL "\x00\x00\x00\x01" NULL "-" NULL]
+1 B DataRow ["\x00\x00\x03\xef" "pg_catalog" "_int4" "b" NULL "\x00\x00\x00\x17" "," NULL NULL NULL "\x00\x00\x00\x00" NULL "integer" NULL]
+1 B CommandComplete "SELECT 2"
+1 B ReadyForQuery I
+1 F Bind "" "__asyncpg_stmt_3__" [1] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00*" "\x00\x00\x00*" "\x00 \x00\x00\x00\x00\x00\x01" "?\xf8\x00\x00\x00\x00\x00\x00" "\x00\x02\x00\x00\x00\x00\x00\x03\x00\x0c\rz" "\x01" "x" "\x01\x02" "\x00\x02\xea]\xbb\x15\x13@" "\x00\x00%\x1a" "\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x17\x00\x00\x00\x03\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00\x04\x00\x00\x00\x03" "\x01{\"a\": 1}" "z<\x8fN\r\x1bL*\x9e_kz\x8c\x9d\x0e\x1f" NULL]
+1 B CommandComplete "SELECT 1"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2))"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Parse "__asyncpg_stmt_6__" "INSERT INTO compat_items VALUES ($1, $2, $3)" []
+1 F Describe S "__asyncpg_stmt_6__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23 25 1700]
+1 B NoData
+1 F Bind "" "__asyncpg_stmt_6__" [1 1 1] ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "__asyncpg_stmt_6__" [1 1 1] ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Bind "" "__asyncpg_stmt_6__" [1 1 1] ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "COMMIT;"
+1 B CommandComplete "COMMIT"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "__asyncpg_stmt_6__" [1 1 1] ["\x00\x00\x00\x04" "four" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x04\x13\x88"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "INSERT 0 1"
+1 B ReadyForQuery T
+1 F Query "ROLLBACK;"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Parse "__asyncpg_stmt_7__" "SELECT id, name, price FROM compat_items WHERE id >= $1 ORDER BY id" []
+1 F Describe S "__asyncpg_stmt_7__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23]
+1 B RowDescription [("id" 250902 1 23 4 -1 0) ("name" 250902 2 25 -1 -1 0) ("price" 250902 3 1700 -1 655366 0)]
+1 F Bind "" "__asyncpg_stmt_7__" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "__asyncpg_stmt_7__" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "__asyncpg_stmt_7__" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "__asyncpg_stmt_7__" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "__asyncpg_stmt_7__" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Bind "" "__asyncpg_stmt_7__" [1] ["\x00\x00\x00\x01"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B DataRow ["\x00\x00\x00\x01" "one" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x01\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x02" "two" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x02\x13\x88"]
+1 B DataRow ["\x00\x00\x00\x03" "three" "\x00\x02\x00\x00\x00\x00\x00\x02\x00\x03\x13\x88"]
+1 B CommandComplete "SELECT 3"
+1 B ReadyForQuery I
+1 F Parse "__asyncpg_stmt_8__" "UPDATE compat_items SET price = price * 2 WHERE id = $1" []
+1 F Describe S "__asyncpg_stmt_8__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription [23]
+1 B NoData
+1 F Bind "" "__asyncpg_stmt_8__" [1] ["\x00\x00\x00\x02"] [1]
+1 F Execute "" 0
+1 F Sync
+1 B BindComplete
+1 B CommandComplete "UPDATE 1"
+1 B ReadyForQuery I
+1 F Parse "__asyncpg_stmt_9__" "SELECT 1 / 0" []
+1 F Describe S "__asyncpg_stmt_9__"
+1 F Flush
+1 B ParseComplete
+1 B ParameterDescription []
+1 B RowDescription [("?column?" 0 0 23 4 -1 0)]
+1 F Bind "" "__asyncpg_stmt_9__" [1] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery I
+1 F Query "BEGIN;"
+1 B CommandComplete "BEGIN"
+1 B ReadyForQuery T
+1 F Bind "" "__asyncpg_stmt_9__" [1] [] [1]
+1 F Execute "" 0
+1 F Sync
+1 B ErrorResponse S "ERROR" V "ERROR" C "22012" M "division by zero" F "int.c" L "870" R "int4div"
+1 B ReadyForQuery E
+1 F Query "ROLLBACK;"
+1 B CommandComplete "ROLLBACK"
+1 B ReadyForQuery I
+1 F Query "DROP TABLE compat_items"
+1 B CommandComplete "DROP TABLE"
+1 B ReadyForQuery I
+1 F Terminate
+1 B End
+1 F End

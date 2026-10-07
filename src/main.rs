@@ -313,6 +313,12 @@ fn record_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     for (k, v) in o.env() {
         cmd.env(k, v);
     }
+    // A client script keeps its installs under the work directory.
+    cmd.env("RUPG_COMPAT_WORK", args.work_dir());
+    // `RUPG_COMPAT_BIN` is the bin directory of the oracle build, for the clients that come with it, such as psql.
+    if let Some(bin) = o.bin("psql").parent() {
+        cmd.env("RUPG_COMPAT_BIN", bin);
+    }
     cmd.env("PGPORT", p.addr.port().to_string())
         .env("PGSSLMODE", "disable")
         .env("PGDATABASE", RECORD_DATABASE);
