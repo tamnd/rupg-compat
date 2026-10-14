@@ -43,7 +43,7 @@ impl Server {
     }
 
     /// The target of the client of the harness, with `rupg.compat_version` for the server under test.
-    fn target(&self, o: &Oracle) -> client::Target {
+    pub(crate) fn target(&self, o: &Oracle) -> client::Target {
         let mut params = Vec::new();
         if !self.oracle {
             params.push(("rupg.compat_version".to_string(), o.pin.major.to_string()));
@@ -57,7 +57,7 @@ impl Server {
     }
 
     /// The libpq environment of a test program. The suites run without TLS, as PostgreSQL runs them on a Unix socket.
-    fn env(&self, o: &Oracle, cmd: &mut Command) {
+    pub(crate) fn env(&self, o: &Oracle, cmd: &mut Command) {
         cmd.env("PGHOST", self.addr.ip().to_string())
             .env("PGPORT", self.addr.port().to_string())
             .env("PGUSER", oracle::USER)
@@ -232,7 +232,7 @@ pub(crate) fn result_file(work: &Path, major: u32, suite: &str, side: &str) -> P
     work.join("results").join(major.to_string()).join(format!("{suite}-{side}.toml"))
 }
 
-fn fresh_dir(dir: &Path) -> Result<(), String> {
+pub(crate) fn fresh_dir(dir: &Path) -> Result<(), String> {
     if dir.exists() {
         fs::remove_dir_all(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
     }

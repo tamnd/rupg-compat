@@ -202,6 +202,7 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
                     put(1, format!("rows of {name}"), "rows", r, None, 0);
                 }
             }
+            "dump" => put(1, "pg_dump round trip".into(), "checks", r, tests, count),
             "regress" => put(2, "regression tests".into(), "tests", r, tests, count),
             "isolation" => put(3, "isolation specs".into(), "specs", r, tests, count),
             "parameters" => put(3, "parameter cases".into(), "cases", r, tests, count),
@@ -557,6 +558,7 @@ mod tests {
             catalog,
             replay,
             record("isolation", "server", 1, 135),
+            record("dump", "server", 6, 7),
         ];
         let got = rows(&recs, 19);
         let find = |key: &str| got.iter().find(|r| r.key == key).unwrap();
@@ -574,6 +576,8 @@ mod tests {
         assert_eq!(find("trace psql").server, Some((9, 10)));
         assert_eq!(find("trace psql").count, Some(13));
         assert_eq!(find("isolation specs").level, 3);
+        assert_eq!(find("pg_dump round trip").level, 1);
+        assert_eq!(find("pg_dump round trip").server, Some((6, 7)));
         assert_eq!(find("Hermitage cases").server, None);
         assert!(got.iter().all(|r| r.key != "client traces"));
         assert!(rows(&recs, 18).iter().all(|r| r.server.is_none() && r.oracle.is_none()));
