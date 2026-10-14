@@ -1,0 +1,19 @@
+-- The gate program of psql: the describe commands for the gate schema. `clients/psql/run.sh gate` runs it. The commands with + that show the size of a relation are not in the list, because the size depends on the storage.
+\dn+ gate
+\d gate.*
+\d+ gate.customers
+\d+ gate.products
+\d+ gate.orders
+\d+ gate.order_lines
+\d+ gate.kinds
+\d+ gate.customer_orders
+\dt gate.*
+\di gate.*
+\ds gate.*
+\dv gate.*
+\dT gate.*
+\dD gate.*
+\df gate.*
+\dd gate.*
+\dC int4
+\sv gate.customer_orders

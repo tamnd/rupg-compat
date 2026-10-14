@@ -22,6 +22,7 @@ mod compare;
 mod diff;
 mod dump;
 mod frame;
+mod gate;
 mod import;
 mod introspect;
 mod levels;
@@ -75,6 +76,9 @@ commands:
   dump                      the pg_dump round trip: run clients/pg_dump/roundtrip.sql in a new database, dump it with
                             pg_dump of the oracle build, restore the dump into the oracle and dump it again, and
                             compare the dumps (--server ADDR for the server under test, else the oracle)
+  gate                      gate G1: run clients/gate.sql in a new database, run the gate program of each of the
+                            seven clients on the oracle and on the server under test, and compare the lists of
+                            the schema (--server ADDR, else the oracle; --clients A,B for some of the clients)
   report                    write reports/<date>/report.md from the result files of the work directory, with one
                             table for each level and version and the exclusions of each run, then check each row
                             of ratchet.toml (--compat-version N for one version, --date YYYY-MM-DD, --out DIR,
@@ -142,6 +146,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("reference") => return reference_command(args, &pins),
         Some(suite @ ("catalog" | "parameters")) => return introspect_command(args, &pins, suite),
         Some("dump") => return dump_command(args, &pins),
+        Some("gate") => return gate_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -667,6 +672,31 @@ fn dump_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     };
     let started = suites::utc_now();
     let run = dump::round_trip(&o, &server, &work)?;
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs gate G1 against the oracle or, with `--server`, against the server under test.
+fn gate_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(1, &["compat-version", "server", "clients"])?;
+    let work = args.work_dir();
+    let o = running_oracle(args, pins)?;
+    let server = match args.get("server") {
+        Some(s) => suites::Server {
+            addr: s.parse().map_err(|e| format!("--server {s}: {e}"))?,
+            oracle: false,
+        },
+        None => suites::Server { addr: oracle_addr(&o), oracle: true },
+    };
+    let clients: Vec<&str> = match args.get("clients") {
+        Some(list) => list.split(',').collect(),
+        None => gate::CLIENTS.to_vec(),
+    };
+    if let Some(bad) = clients.iter().find(|c| !gate::CLIENTS.contains(c)) {
+        return Err(format!("--clients: {bad} is not a client of the gate"));
+    }
+    let started = suites::utc_now();
+    let run = gate::run(&o, &server, &work, &clients)?;
     suites::report_run(&run, &o, &server, &work, &started)?;
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
