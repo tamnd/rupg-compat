@@ -70,7 +70,8 @@ commands:
                             (each suite: --server ADDR for the server under test, else the oracle; --corpus DIR;
                             it writes results/N/<suite>-<oracle|server>.toml in the work directory)
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
-                            in a new database
+                            in a new database (--schema gate: run clients/gate.sql in it first, as the suite
+                            catalog-gate)
   parameters                SHOW ALL, pg_settings, and SET TO DEFAULT, set_config and SHOW of each parameter
                             (both: two runs on the oracle find the unstable cases, then --server ADDR, else
                             the first oracle run, is compared with the rules and the exclusions of spec/05)
@@ -637,7 +638,14 @@ fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, Stri
 
 /// Runs the catalog suite or the parameter suite (spec/05 section 5.6.5).
 fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, String> {
-    args.only(1, &["compat-version", "server", "corpus", "show"])?;
+    args.only(1, &["compat-version", "server", "corpus", "show", "schema"])?;
+    let (name, setup) = match (suite, args.get("schema")) {
+        (_, None) => (suite.to_string(), ""),
+        ("catalog", Some("gate")) => ("catalog-gate".to_string(), gate::SCHEMA),
+        (_, Some(schema)) => {
+            return Err(format!("--schema {schema}: only the catalog suite takes --schema gate"));
+        }
+    };
     let work = args.work_dir();
     let corpus = PathBuf::from(args.get("corpus").unwrap_or("corpus"));
     let o = running_oracle(args, pins)?;
@@ -655,9 +663,10 @@ fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode,
         out!("parameters {}: {} parameters from {source}", o.pin.major, names.len());
         (introspect::parameter_cases(&introspect::show_values(&oracle, &names)?), "postgres")
     };
-    let out = suites::run_dir(&work, o.pin.major, suite, &server);
-    let header = trace_header(&o, suite);
-    let (run, outcome) = introspect::run_suite(suite, &cases, &sides, database, &out, &header)?;
+    let out = suites::run_dir(&work, o.pin.major, &name, &server);
+    let header = trace_header(&o, &name);
+    let (run, outcome) =
+        introspect::run_suite(&name, &cases, &sides, database, setup, &out, &header)?;
     suites::report_run(&run, &o, &server, &work, &started)?;
     for ((_, group), d) in outcome.diffs.iter().take(args.number("show")?.unwrap_or(5)) {
         out!("  {}: {d}", cases[*group].name);

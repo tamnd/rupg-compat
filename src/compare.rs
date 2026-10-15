@@ -374,6 +374,25 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     None
 }
 
+/// The place of a user OID in a name that PostgreSQL makes from the OID, and the item of the rule: the TOAST relation `pg_toast_N` and its index `pg_toast_N_index` (item 11), and the trigger `RI_ConstraintTrigger_a_N` or `RI_ConstraintTrigger_c_N` of a foreign key (item 2). The OID counter of a cluster depends on what the cluster did before, so these names are not equal on two servers.
+fn oid_in_name(text: &[u8]) -> Option<(usize, usize, usize)> {
+    let (start, item) = if text.starts_with(b"pg_toast_") {
+        (9, 11)
+    } else if text.starts_with(b"RI_ConstraintTrigger_a_")
+        || text.starts_with(b"RI_ConstraintTrigger_c_")
+    {
+        (23, 2)
+    } else {
+        return None;
+    };
+    let len = text[start..].iter().take_while(|b| b.is_ascii_digit()).count();
+    let end = start + len;
+    let rest = &text[end..];
+    let oid = std::str::from_utf8(&text[start..end]).ok()?.parse::<u64>().ok()?;
+    let suffix = rest.is_empty() || item == 11 && rest == b"_index";
+    (len > 0 && oid >= 16_384 && suffix).then_some((start, end, item))
+}
+
 /// True when column `c` of a row is the value of `server_version`: the column of `SHOW server_version`, or a value column of the `server_version` row of `SHOW ALL` or `pg_settings`.
 fn server_version_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
     let name = cols.names.get(c).map(String::as_str).unwrap_or("");
@@ -447,6 +466,17 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                                 let mut tail = Val::Str(text.split_off(at));
                                 s.mask(c, Rule::Item(12), &mut tail);
                             }
+                            continue;
+                        }
+                        if [19, 25, 1043].contains(&cols.types.get(c).copied().unwrap_or(0))
+                            && let Val::Str(text) = v
+                            && let Some((start, end, item)) = oid_in_name(text)
+                        {
+                            let tail = text.split_off(end);
+                            let mut oid = Val::Str(text.split_off(start));
+                            s.mask(c, Rule::Item(item), &mut oid);
+                            text.extend_from_slice(oid.bytes().unwrap_or_default());
+                            text.extend_from_slice(&tail);
                             continue;
                         }
                         if let Some(item) = column_rule(ctx, cols, c, &row) {
@@ -876,6 +906,27 @@ mod tests {
         assert!(o.diffs.is_empty());
         let o = run(&q(sql, &d, "\"pg_database\" \"f\""), &q(sql, &d, "\"pg_class\" \"f\""));
         assert_eq!(o.diffs.len(), 1);
+    }
+
+    #[test]
+    fn user_oids_in_names_are_out() {
+        let q = |row: &str| {
+            format!(
+                "1 F Query \"SELECT relname FROM pg_class\"\n1 B RowDescription [(\"relname\" 0 0 19 64 -1 0)]\n1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let o = run(&q("\"pg_toast_16392_index\""), &q("\"pg_toast_16394_index\""));
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[10], Count { applied: 1, differed: 1 });
+        let o = run(&q("\"RI_ConstraintTrigger_a_16442\""), &q("\"RI_ConstraintTrigger_a_16444\""));
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[1], Count { applied: 1, differed: 1 });
+        let o = run(&q("\"RI_ConstraintTrigger_a_16442\""), &q("\"RI_ConstraintTrigger_c_16442\""));
+        assert_eq!(o.diffs.len(), 1);
+        let o = run(&q("\"pg_toast_2619\""), &q("\"pg_toast_2620\""));
+        assert_eq!(o.diffs.len(), 1);
+        assert_eq!(oid_in_name(b"pg_toast_16392x"), None);
+        assert_eq!(oid_in_name(b"RI_ConstraintTrigger_a_16442_index"), None);
     }
 
     #[test]
