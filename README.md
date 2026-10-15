@@ -50,6 +50,7 @@ Every oracle runs with the same fixed configuration: `initdb --no-locale` with `
 | Regression | 239 tests | L3 | M3 tracked, M7 full schedule, M12 at 100 percent |
 | Isolation | 135 specs | L4 | M5 |
 | `libpq_pipeline` | 9 traced tests | L1 | M2 |
+| `pg_dump` round trip | 7 checks for each oracle version | L2 and L5 | M2 |
 | TAP subset | of 294 files | L4 and L5 | M9 |
 | Contrib regression | 61 directories, 55 extensions | L3 | M7 |
 | Client suites | 48 clients | L5 | M2 for the 7 gate clients |
@@ -71,6 +72,7 @@ cargo run --release -- replay corpus/traces/psql.trace
 cargo run --release -- diff "SELECT 1"
 cargo run --release -- regress
 cargo run --release -- isolation
+cargo run --release -- dump --server 127.0.0.1:5432
 cargo run --release -- client pgx
 cargo run --release -- gen --oracle tlp --seed 42
 cargo run --release -- reduce corpus/reduced/case.sql
@@ -82,6 +84,8 @@ cargo run --release -- reference --check
 ```
 
 Every command takes `--compat-version V`, which sets `rupg.compat_version` on rupg and picks the oracle of version V. `up` starts the servers, and `client`, `regress`, `isolation`, `tap` and `jepsen` each run one suite. Replay maps OIDs, runs a new SCRAM exchange for each server, and rewrites the key of each `CancelRequest`.
+
+`dump` runs `clients/pg_dump/roundtrip.sql` in a new database of the server under test and dumps it with `pg_dump` of the oracle build. Then it restores the dump into the oracle with `psql` and with `pg_restore`, dumps the oracle again, and compares the texts. It also compares the dump of the server under test with the dump of the oracle after the same script, and restores the dump of the oracle into the server under test. The comparison ignores the line `-- Dumped from database version` and the random key of `\restrict`.
 
 ## The reporting rules
 

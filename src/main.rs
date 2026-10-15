@@ -20,6 +20,7 @@ mod args;
 mod client;
 mod compare;
 mod diff;
+mod dump;
 mod frame;
 mod import;
 mod introspect;
@@ -71,6 +72,9 @@ commands:
   parameters                SHOW ALL, pg_settings, and SET TO DEFAULT, set_config and SHOW of each parameter
                             (both: two runs on the oracle find the unstable cases, then --server ADDR, else
                             the first oracle run, is compared with the rules and the exclusions of spec/05)
+  dump                      the pg_dump round trip: run clients/pg_dump/roundtrip.sql in a new database, dump it with
+                            pg_dump of the oracle build, restore the dump into the oracle and dump it again, and
+                            compare the dumps (--server ADDR for the server under test, else the oracle)
   report                    write reports/<date>/report.md from the result files of the work directory, with one
                             table for each level and version and the exclusions of each run, then check each row
                             of ratchet.toml (--compat-version N for one version, --date YYYY-MM-DD, --out DIR,
@@ -137,6 +141,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("report") => return report_command(args, &pins),
         Some("reference") => return reference_command(args, &pins),
         Some(suite @ ("catalog" | "parameters")) => return introspect_command(args, &pins, suite),
+        Some("dump") => return dump_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -645,6 +650,24 @@ fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode,
         out!("  {}: {d}", cases[*group].name);
     }
     print_exclusions(&outcome);
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the `pg_dump` round trip against the oracle or, with `--server`, against the server under test.
+fn dump_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(1, &["compat-version", "server"])?;
+    let work = args.work_dir();
+    let o = running_oracle(args, pins)?;
+    let server = match args.get("server") {
+        Some(s) => suites::Server {
+            addr: s.parse().map_err(|e| format!("--server {s}: {e}"))?,
+            oracle: false,
+        },
+        None => suites::Server { addr: oracle_addr(&o), oracle: true },
+    };
+    let started = suites::utc_now();
+    let run = dump::round_trip(&o, &server, &work)?;
+    suites::report_run(&run, &o, &server, &work, &started)?;
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
