@@ -83,11 +83,18 @@ commands:
 options:
   --compat-version N        the oracle of version N (default: the reference of pins.toml); with --server,
                             the startup message also sets rupg.compat_version to N on the server under test
-  --version N               the same as --compat-version N, for the oracle commands only
+  --version N               the same as --compat-version N, for the oracle commands only; without N and a
+                            command, print the version of the harness
   --work DIR                the work directory (default: $RUPG_COMPAT_WORK, then ./work)";
 
 fn main() -> ExitCode {
-    let args = match Args::parse(std::env::args().skip(1)) {
+    let raw: Vec<String> = std::env::args().skip(1).collect();
+    // `--version` alone is the version of the harness. With a command, `--version N` is the version of an oracle.
+    if raw == ["--version"] {
+        out!("rupg-compat {}", env!("CARGO_PKG_VERSION"));
+        return ExitCode::SUCCESS;
+    }
+    let args = match Args::parse(raw) {
         Ok(a) => a,
         Err(e) => {
             eprintln!("rupg-compat: {e}");
