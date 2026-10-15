@@ -202,6 +202,30 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
                     put(1, format!("rows of {name}"), "rows", r, None, 0);
                 }
             }
+            "catalog-gate" => {
+                put(
+                    1,
+                    "catalog relations with the gate schema".into(),
+                    "relations",
+                    r,
+                    tests,
+                    count,
+                );
+                for (name, s) in r.checked.iter().flat_map(|c| &c.cases) {
+                    let n = Some((s.rows_equal, s.rows));
+                    put(
+                        1,
+                        format!("rows of {name} with the gate schema"),
+                        "rows",
+                        r,
+                        n,
+                        s.rows_equal,
+                    );
+                }
+                for name in &r.unstable {
+                    put(1, format!("rows of {name} with the gate schema"), "rows", r, None, 0);
+                }
+            }
             "dump" => put(1, "pg_dump round trip".into(), "checks", r, tests, count),
             "gate" => put(1, "gate G1".into(), "clients", r, tests, count),
             "regress" => put(2, "regression tests".into(), "tests", r, tests, count),
@@ -553,10 +577,16 @@ mod tests {
             },
             ..Checked::default()
         });
+        let mut gate_catalog = record("catalog-gate", "server", 3, 4);
+        gate_catalog.checked = Some(Checked {
+            cases: vec![("pg_class".into(), Share { rows: 5, rows_equal: 5, ..Share::default() })],
+            ..Checked::default()
+        });
         let recs = [
             record("regress", "oracle", 239, 239),
             record("regress", "server", 200, 239),
             catalog,
+            gate_catalog,
             replay,
             record("isolation", "server", 1, 135),
             record("dump", "server", 6, 7),
@@ -582,6 +612,8 @@ mod tests {
         assert_eq!(find("pg_dump round trip").server, Some((6, 7)));
         assert_eq!(find("gate G1").level, 1);
         assert_eq!(find("gate G1").server, Some((5, 8)));
+        assert_eq!(find("catalog relations with the gate schema").server, Some((3, 4)));
+        assert_eq!(find("rows of pg_class with the gate schema").server, Some((5, 5)));
         assert_eq!(find("Hermitage cases").server, None);
         assert!(got.iter().all(|r| r.key != "client traces"));
         assert!(rows(&recs, 18).iter().all(|r| r.server.is_none() && r.oracle.is_none()));

@@ -78,14 +78,13 @@ impl Oracle {
         self.dir.join("stamps").join(step)
     }
 
-    /// What a step depends on. A step runs again when this text changes.
+    /// What a step depends on. A step runs again when this text changes. `initdb` depends on the build too, because the options of the build change the catalog that it makes. For example, PostgreSQL 19 built with lz4 compresses the rules of the system views with lz4, and a rule that does not fit in its row takes a TOAST OID.
     fn stamp_text(&self, step: &str) -> String {
+        let build = format!("{}\n{CONFIGURE}\n{}", self.pin.commit, extra_configure().join("\n"));
         match step {
             "fetch" => self.pin.commit.clone(),
-            "build" => {
-                format!("{}\n{CONFIGURE}\n{}", self.pin.commit, extra_configure().join("\n"))
-            }
-            _ => format!("{}\n{POSTGRESQL_CONF}\n{PG_HBA_CONF}\n{SERVER_CRT}", self.pin.commit),
+            "build" => build,
+            _ => format!("{build}\n{POSTGRESQL_CONF}\n{PG_HBA_CONF}\n{SERVER_CRT}"),
         }
     }
 
@@ -166,12 +165,20 @@ impl Oracle {
 
     fn compile(&self, steps: &mut Steps, jobs: u32) -> Result<(), String> {
         let src = self.src();
+        // The build has no dependency tracking, so a file that an earlier build compiled does not compile again when the options change. `make distclean` removes the files of the earlier build first.
+        if src.join("GNUmakefile").exists() {
+            steps.run(
+                "make distclean",
+                Command::new("make").current_dir(&src).args(["-s", "distclean"]),
+            )?;
+        }
         let mut configure = Command::new("./configure");
         configure.current_dir(&src).arg(format!("--prefix={}", self.install().display()));
         configure.args(configure_options()).args(extra_configure());
-        // configure finds ICU with pkg-config. Without pkg-config, it takes the flags from the environment.
+        // configure finds ICU and lz4 with pkg-config. Without pkg-config, it takes the flags from the environment.
         if Command::new("pkg-config").arg("--version").output().is_err() {
             configure.env("ICU_CFLAGS", " ").env("ICU_LIBS", "-licui18n -licuuc -licudata");
+            configure.env("LZ4_CFLAGS", " ").env("LZ4_LIBS", "-llz4");
         }
         steps.run("configure", &mut configure)?;
         let j = format!("-j{jobs}");

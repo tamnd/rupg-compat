@@ -2,7 +2,7 @@
 //!
 //! Each suite is a list of simple queries. The runner sends the list to the oracle two times and to the server under test one time, and keeps each answer as trace lines. Then it compares the answers with the rules of `compare`, as replay does: the groups that differ between the two oracle runs leave the comparison, and the 15 excluded items and the rules of spec/05 section 5.2 apply.
 //!
-//! - The catalog suite runs `SELECT *` on each catalog, each system view and each `information_schema` view of the import, in a new database.
+//! - The catalog suite runs `SELECT *` on each catalog, each system view and each `information_schema` view of the import, in a new database. With `--schema gate`, the new database first gets the gate schema of `clients/gate.sql`, and the suite is `catalog-gate`.
 //! - The parameter suite runs `SHOW ALL`, `SELECT * FROM pg_settings` and, for each parameter, `SET p TO DEFAULT`, `set_config` with the value of the oracle, and `SHOW p`.
 
 use std::collections::BTreeSet;
@@ -175,26 +175,36 @@ pub(crate) fn verdicts(
     run
 }
 
-/// Runs a suite: two oracle runs, the run under test, and the comparison. It writes the three traces to `out`.
+/// Makes the database new and runs the script `setup` in it, when the script is not empty.
+fn reset(target: &Target, database: &str, setup: &str) -> Result<(), String> {
+    client::reset_database(target, database)?;
+    if !setup.is_empty() {
+        Conn::connect(target, database)?.execute(setup)?;
+    }
+    Ok(())
+}
+
+/// Runs a suite: two oracle runs, the run under test, and the comparison. Before the runs, the database gets the objects of `setup`. It writes the three traces to `out`.
 pub(crate) fn run_suite(
     suite: &str,
     cases: &[Case],
     sides: &Sides,
     database: &str,
+    setup: &str,
     out: &Path,
     header: &[String],
 ) -> Result<(Run, Outcome), String> {
     let started = Instant::now();
     let fresh = database != "postgres";
     if fresh {
-        client::reset_database(&sides.oracle, database)?;
+        reset(&sides.oracle, database, setup)?;
     }
     let first = run_cases(&sides.oracle, database, cases)?;
     let second = run_cases(&sides.oracle, database, cases)?;
     let got = match &sides.server {
         Some(server) => {
             if fresh {
-                client::reset_database(server, database)?;
+                reset(server, database, setup)?;
             }
             Some(run_cases(server, database, cases)?)
         }

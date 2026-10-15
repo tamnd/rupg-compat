@@ -4,4 +4,5 @@
 --with-icu
 --with-readline
 --with-zlib
+--with-lz4
 --without-llvm
