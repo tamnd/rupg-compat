@@ -1,6 +1,6 @@
-//! The lists of the known failures of a client (spec/21 section 21.4.2).
+//! The lists of the known failures of a client or a suite (spec/21 section 21.4.2).
 //!
-//! `clients/<name>/oracle-fail.txt` gives the tests that fail against the oracle. They are not counted. `clients/<name>/expected-fail.txt` gives the tests that pass against the oracle and fail against rupg, each as `<test>: <cause>, <milestone>`. The second file may only get shorter: a test that starts to pass is removed from it in the same change. In both files, an empty line or a line that starts with `#` is not a test.
+//! The lists of a client are in `clients/<name>`, and the lists of a suite are in `suites/<name>`. `oracle-fail.txt` gives the tests that fail against the oracle. They are not counted. `expected-fail.txt` gives the tests that pass against the oracle and fail against rupg, each as `<test>: <cause>, <milestone>`. The second file may only get shorter: a test that starts to pass is removed from it in the same change. In both files, an empty line or a line that starts with `#` is not a test.
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -54,13 +54,37 @@ pub(crate) fn parse(oracle: &str, expected: &str) -> Result<Fails, String> {
 
 /// Reads the two lists of the client in `clients/<name>`.
 pub(crate) fn load(name: &str) -> Result<Fails, String> {
-    let dir = Path::new("clients").join(name);
+    load_dir(&Path::new("clients").join(name))
+}
+
+/// Reads the two lists in a directory.
+pub(crate) fn load_dir(dir: &Path) -> Result<Fails, String> {
     let read = |file: &str| {
         let path = dir.join(file);
         fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))
     };
     parse(&read("oracle-fail.txt")?, &read("expected-fail.txt")?)
-        .map_err(|e| format!("clients/{name}/{e}"))
+        .map_err(|e| format!("{}/{e}", dir.display()))
+}
+
+/// True when the results of a run agree with the lists: each test that fails is in `oracle-fail.txt` or in `expected-fail.txt`, and no test in `expected-fail.txt` passes. A line goes to the output for each test in `expected-fail.txt`, and the list in `dir` is named for a test to remove.
+pub(crate) fn agree(tests: &[(String, bool)], fails: &Fails, dir: &str) -> bool {
+    let mut good = true;
+    for (test, passed) in tests {
+        if fails.oracle.contains(test) {
+            continue;
+        }
+        match (passed, fails.expected.get(test)) {
+            (true, Some(_)) => {
+                out!("  {test}: passes, so remove it from {dir}/expected-fail.txt");
+                good = false;
+            }
+            (false, Some(cause)) => out!("  {test}: fails as expected-fail.txt gives: {cause}"),
+            (false, None) => good = false,
+            (true, None) => {}
+        }
+    }
+    good
 }
 
 #[cfg(test)]
@@ -82,5 +106,21 @@ mod tests {
         assert!(parse("", ": no test, M2\n").is_err());
         assert!(parse("", "gate: a, M2\ngate: b, M3\n").is_err());
         assert!(parse("gate\n", "gate: a, M2\n").is_err());
+    }
+
+    #[test]
+    fn a_run_agrees_when_each_failure_is_in_a_list() {
+        let fails = parse("flaky\n", "insert: INSERT, M3\n").unwrap();
+        let run = |results: &[(&str, bool)]| -> Vec<(String, bool)> {
+            results.iter().map(|(t, p)| (t.to_string(), *p)).collect()
+        };
+        assert!(agree(&run(&[("a", true), ("insert", false), ("flaky", false)]), &fails, "d"));
+        assert!(!agree(&run(&[("a", false), ("insert", false)]), &fails, "d"));
+        assert!(!agree(&run(&[("insert", true)]), &fails, "d"));
+    }
+
+    #[test]
+    fn the_pipeline_suite_has_its_lists() {
+        load_dir(Path::new("suites/pipeline")).unwrap();
     }
 }

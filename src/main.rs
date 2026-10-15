@@ -625,7 +625,14 @@ fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, Stri
         _ => suites::pipeline(&o, &corpus, &server, &work)?,
     };
     suites::report_run(&run, &o, &server, &work, &started)?;
-    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+    // The pipeline suite has the lists of its known failures. They are for rupg, so the oracle must pass each test.
+    let good = if suite == "pipeline" && !server.oracle {
+        let dir = Path::new("suites").join(suite);
+        fails::agree(&run.tests, &fails::load_dir(&dir)?, &dir.display().to_string())
+    } else {
+        run.failed().is_empty()
+    };
+    Ok(if good { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Runs the catalog suite or the parameter suite (spec/05 section 5.6.5).
