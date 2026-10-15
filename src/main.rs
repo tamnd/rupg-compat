@@ -21,6 +21,7 @@ mod client;
 mod compare;
 mod diff;
 mod dump;
+mod fails;
 mod frame;
 mod gate;
 mod import;
@@ -696,9 +697,9 @@ fn gate_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         return Err(format!("--clients: {bad} is not a client of the gate"));
     }
     let started = suites::utc_now();
-    let run = gate::run(&o, &server, &work, &clients)?;
+    let (run, good) = gate::run(&o, &server, &work, &clients)?;
     suites::report_run(&run, &o, &server, &work, &started)?;
-    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+    Ok(if good { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Writes the report and checks the ratchet (spec/21 section 21.15).
