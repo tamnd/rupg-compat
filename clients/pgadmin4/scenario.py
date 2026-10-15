@@ -1,6 +1,8 @@
 """The trace scenario of spec/21 section 21.4.2, with pgAdmin 4.
 
 pgAdmin makes its SQL in its backend from the requests of its web pages. So the scenario starts pgAdmin in desktop mode and sends those requests: the dialog that adds a server and connects to it, the browser tree down to the columns, the properties and the SQL of a table, and the query tool with a query that works and a query that fails. Then it stops pgAdmin.
+
+With a third argument gate, the program is the gate program of spec/21 section 21.4.2. After the dialog, it walks the browser tree of the schema gate and writes the label of each node, and the SQL tab of each table, column, index, constraint, view and sequence. The SQL tab is the definition that pgAdmin makes from the catalog, and it has no OIDs.
 """
 
 import http.cookiejar
@@ -14,6 +16,7 @@ import urllib.error
 import urllib.request
 
 env, home = sys.argv[1], sys.argv[2]
+gate = sys.argv[3:] == ["gate"]
 package = os.path.join(env, "lib", "python%d.%d" % sys.version_info[:2], "site-packages", "pgadmin4")
 
 # A free port on the loopback for the HTTP server of pgAdmin.
@@ -90,6 +93,32 @@ def run(trans, sql):
         time.sleep(0.2)
 
 
+def walk_gate(group, sid):
+    """The gate program: the browser tree of the schema gate with the SQL tab of each object. The SQL endpoints give a JSON string, not an object with data."""
+    did = nodes(f"/browser/database/nodes/{group}/{sid}/")[os.environ["PGDATABASE"]]
+    want("POST", f"/browser/database/connect/{group}/{sid}/{did}")
+    base = f"{group}/{sid}/{did}"
+    scid = nodes(f"/browser/schema/nodes/{base}/")["gate"]
+    print("schema: gate")
+    print(want("GET", f"/browser/schema/sql/{base}/{scid}"))
+    print()
+    for kind in ("table", "view", "sequence", "type", "domain", "function"):
+        for label, oid in sorted(nodes(f"/browser/{kind}/nodes/{base}/{scid}/").items()):
+            print(f"{kind}: {label}")
+            print(want("GET", f"/browser/{kind}/sql/{base}/{scid}/{oid}"))
+            print()
+            if kind != "table":
+                continue
+            children = [("column", n["label"], n["_id"]) for n in want("GET", f"/browser/column/nodes/{base}/{scid}/{oid}/")["data"]]
+            children += [("index", n["label"], n["_id"]) for n in want("GET", f"/browser/index/nodes/{base}/{scid}/{oid}/")["data"]]
+            # The browser gets the constraints from the collection node. The node of one kind of constraint gives an error for a table with no constraint of that kind.
+            children += [(n["_type"], n["label"], n["_id"]) for n in want("GET", f"/browser/constraints/nodes/{base}/{scid}/{oid}/")["data"]]
+            for child, name, cid in sorted(children):
+                print(f"{kind}: {label} {child}: {name}")
+                print(want("GET", f"/browser/{child}/sql/{base}/{scid}/{oid}/{cid}"))
+                print()
+
+
 try:
     for _ in range(300):
         try:
@@ -129,6 +158,10 @@ try:
     }
     sid = want("POST", f"/browser/server/obj/{group}/", form)["node"]["_id"]
     want("POST", f"/browser/server/connect/{group}/{sid}", {"password": os.environ["PGPASSWORD"]})
+
+    if gate:
+        walk_gate(group, sid)
+        sys.exit(0)
 
     # 2. The browser tree: the databases, the schemas, the tables and the columns of a table.
     did = nodes(f"/browser/database/nodes/{group}/{sid}/")[os.environ["PGDATABASE"]]
