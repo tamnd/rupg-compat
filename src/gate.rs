@@ -3,6 +3,8 @@
 //! The runner makes a new database on each server and runs `clients/gate.sql` in it with the psql of the oracle build. Then it runs `clients/<name>/run.sh gate` for each client. That program lists the tables, the columns, the types, the indexes and the constraints of the schema `gate` with the describe command or the object browser of the client, and writes the list to its standard output. The client passes when the list on the server under test is equal to the list on the oracle.
 //!
 //! Without `--server`, the runner checks the oracle against itself, and a client passes when its program exits with 0.
+//!
+//! The test of a client is `gate` in its lists of `src/fails.rs`. A test in `oracle-fail.txt` is not run. A test in `expected-fail.txt` still counts as a failure in the result file, but the run is good when it fails. A run is not good when a test fails that is not in `expected-fail.txt`, or when a test in that list passes.
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -11,6 +13,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::client;
+use crate::fails;
 use crate::oracle::Oracle;
 use crate::suites::{self, Run, Server};
 
@@ -21,6 +24,8 @@ pub(crate) const DATABASE: &str = "compat_gate";
 /// The seven clients of the gate, in the order of spec/21 section 21.4.2.
 pub(crate) const CLIENTS: [&str; 7] =
     ["psql", "pgadmin4", "pgjdbc", "psycopg", "node-postgres", "pgx", "asyncpg"];
+/// The name of the test of the gate in the lists of a client.
+const TEST: &str = "gate";
 /// The time that one client program can take, with the install of the client.
 const LIMIT: Duration = Duration::from_secs(900);
 
@@ -102,13 +107,13 @@ impl Runner<'_> {
     }
 }
 
-/// Runs the gate on `server` for the clients in `clients`.
+/// Runs the gate on `server` for the clients in `clients`. The flag is true when each result agrees with the lists of the clients.
 pub(crate) fn run(
     o: &Oracle,
     server: &Server,
     work: &Path,
     clients: &[&str],
-) -> Result<Run, String> {
+) -> Result<(Run, bool), String> {
     let started = Instant::now();
     let oracle =
         Server { addr: std::net::SocketAddr::from(([127, 0, 0, 1], o.port())), oracle: true };
@@ -126,11 +131,19 @@ pub(crate) fn run(
     }
     let made = server.oracle || r.schema(server)?;
     run.tests.push(("schema".into(), made));
+    let mut good = made;
     for &name in clients {
+        let fails = fails::load(name)?;
+        if fails.oracle.iter().any(|t| t == TEST) {
+            out!("  {name}: not run, the gate is in oracle-fail.txt");
+            continue;
+        }
+        let expected = fails.expected.get(TEST);
         let want = r.client(&oracle, name)?;
         if !want.passed {
             out!("  {name}: the gate program fails on the oracle");
             run.tests.push((name.into(), false));
+            good = false;
             continue;
         }
         if server.oracle {
@@ -146,13 +159,23 @@ pub(crate) fn run(
                 false
             }
         };
-        run.tests.push((name.into(), made && got.passed && same));
+        let passed = made && got.passed && same;
+        match (passed, expected) {
+            (true, Some(_)) => {
+                out!("  {name}: passes, so remove the gate from clients/{name}/expected-fail.txt");
+                good = false;
+            }
+            (false, Some(cause)) => out!("  {name}: fails as expected-fail.txt gives: {cause}"),
+            (false, None) => good = false,
+            (true, None) => {}
+        }
+        run.tests.push((name.into(), passed));
     }
 
     let log = r.out.join("log.txt");
     fs::write(&log, &r.log).map_err(|e| format!("{}: {e}", log.display()))?;
     run.seconds = started.elapsed().as_secs();
-    Ok(run)
+    Ok((run, good))
 }
 
 #[cfg(test)]
@@ -172,6 +195,13 @@ mod tests {
             let script =
                 fs::read_to_string(Path::new("clients").join(name).join("run.sh")).unwrap();
             assert!(script.contains("gate"), "clients/{name}/run.sh has no gate program");
+        }
+    }
+
+    #[test]
+    fn each_client_has_its_lists() {
+        for name in CLIENTS {
+            fails::load(name).unwrap();
         }
     }
 }

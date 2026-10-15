@@ -1,0 +1,1 @@
+# The tests of this client that pass against the oracle and fail against rupg. Give each test on one line as `<test>: <cause>, <milestone>`. This list may only get shorter.
