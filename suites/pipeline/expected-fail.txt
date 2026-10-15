@@ -1,0 +1,7 @@
+# The tests of libpq_pipeline that pass against the oracle and fail against rupg. Give each test on one line as `<test>: <cause>, <milestone>`. This list may only get shorter.
+pipeline_abort: CREATE UNLOGGED TABLE and INSERT, M3
+pipeline_abort trace: CREATE UNLOGGED TABLE and INSERT, M3
+pipelined_insert: INSERT, M3
+transaction: INSERT, M3
+transaction trace: INSERT, M3
+uniqviol: INSERT, M3
