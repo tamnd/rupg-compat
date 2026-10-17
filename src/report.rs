@@ -514,7 +514,7 @@ mod tests {
             seconds: 7,
             checked: Some(Checked {
                 items: std::array::from_fn(|i| Count { applied: i, differed: 0 }),
-                rules: [Count { applied: 2, differed: 1 }; 4],
+                rules: [Count { applied: 2, differed: 1 }; 5],
                 share: Share {
                     messages: 9,
                     messages_equal: 8,

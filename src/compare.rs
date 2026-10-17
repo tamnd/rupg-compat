@@ -29,11 +29,12 @@ pub(crate) const ITEMS: [&str; 15] = [
 ];
 
 /// The rules of section 5.2 that are not items of the closed list.
-pub(crate) const RULES: [&str; 4] = [
+pub(crate) const RULES: [&str; 5] = [
     "row order without ORDER BY (multiset)",
     "CopyData boundaries (joined)",
     "BackendKeyData secret key (length only)",
     "SCRAM nonces, salt, proof, signature and stored keys",
+    "port of the server",
 ];
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -74,7 +75,7 @@ pub(crate) struct Outcome {
     pub(crate) groups: usize,
     pub(crate) messages: usize,
     pub(crate) items: [Count; 15],
-    pub(crate) rules: [Count; 4],
+    pub(crate) rules: [Count; 5],
     /// The share of all groups, and of each group.
     pub(crate) share: Share,
     pub(crate) shares: BTreeMap<Place, Share>,
@@ -182,7 +183,8 @@ const FILE_FUNCTIONS: [&str; 11] = [
     "pg_wal_lsn_diff",
 ];
 
-const PATH_SETTINGS: [&str; 4] = ["data_directory", "config_file", "hba_file", "ident_file"];
+const PATH_SETTINGS: [&str; 5] =
+    ["data_directory", "config_file", "hba_file", "ident_file", "hosts_file"];
 
 /// The names of `pg_config` whose values are directories of the install tree (item 15).
 const CONFIG_PATHS: [&str; 13] = [
@@ -389,9 +391,8 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
         .and_then(|i| row.get(i)?.bytes())
         .map(|b| String::from_utf8_lossy(b).into_owned())
         .unwrap_or_default();
-    if ctx.paths
-        && value_column
-        && (name == "current_setting" || PATH_SETTINGS.contains(&row_name.as_str()))
+    if value_column
+        && (ctx.paths && name == "current_setting" || PATH_SETTINGS.contains(&row_name.as_str()))
     {
         return Some(15);
     }
@@ -448,6 +449,16 @@ fn oid_in_name(text: &[u8]) -> Option<(usize, usize, usize)> {
     let oid = std::str::from_utf8(&text[start..end]).ok()?.parse::<u64>().ok()?;
     let suffix = rest.is_empty() || item == 11 && rest == b"_index";
     (len > 0 && oid >= 16_384 && suffix).then_some((start, end, item))
+}
+
+/// True when column `c` of a row is the port of the server: the column of `SHOW port` and of `inet_server_port()`, or a value column of the `port` row of `SHOW ALL`, `pg_settings` and `pg_file_settings`. Two servers on one machine listen on two ports, so the value is never equal.
+fn port_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
+    let name = cols.names.get(c).map(String::as_str).unwrap_or("");
+    if ["port", "inet_server_port"].contains(&name) {
+        return true;
+    }
+    let row_name = cols.names.iter().position(|n| n == "name").and_then(|i| row.get(i)?.bytes());
+    row_name == Some(b"port") && ["setting", "reset_val"].contains(&name)
 }
 
 /// True when column `c` of a row is the value of `server_version`: the column of `SHOW server_version`, or a value column of the `server_version` row of `SHOW ALL` or `pg_settings`.
@@ -523,6 +534,10 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                                 let mut tail = Val::Str(text.split_off(at));
                                 s.mask(c, Rule::Item(12), &mut tail);
                             }
+                            continue;
+                        }
+                        if port_value(cols, c, &row) {
+                            s.mask(c, Rule::Rule(4), v);
                             continue;
                         }
                         if let Val::Str(text) = v
@@ -951,6 +966,11 @@ mod tests {
         );
         assert!(o.diffs.is_empty());
         assert_eq!(o.items[14].differed, 1);
+        let all = |value: &str| {
+            q("SELECT * FROM pg_settings", &d, &format!("\"config_file\" \"{value}\""))
+        };
+        let o = run(&all("/a/postgresql.conf"), &all("/b/postgresql.conf"));
+        assert!(o.diffs.is_empty());
         let config = |name: &str, value: &str| {
             q("SELECT * FROM pg_config", &d, &format!("\"{name}\" \"{value}\""))
         };
@@ -1048,6 +1068,24 @@ mod tests {
         assert!(o.diffs.is_empty());
         assert_eq!(o.items[4], Count { applied: 3, differed: 3 });
         let o = run(&q("\"a\" \"1\" \"2\" \"2\""), &q("\"b\" \"1\" \"2\" \"2\""));
+        assert_eq!(o.diffs.len(), 1);
+    }
+
+    #[test]
+    fn the_port_of_the_server_is_out() {
+        let q = |row: &str| {
+            format!(
+                "1 F Query \"SELECT name, setting, applied FROM pg_catalog.pg_file_settings\"\n\
+                 1 B RowDescription [(\"name\" 0 0 25 -1 -1 0) (\"setting\" 0 0 25 -1 -1 0) (\"applied\" 0 0 16 1 -1 0)]\n\
+                 1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let o = run(&q("\"port\" \"54319\" \"t\""), &q("\"port\" \"55442\" \"t\""));
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.rules[4], Count { applied: 1, differed: 1 });
+        let o = run(&q("\"work_mem\" \"1\" \"t\""), &q("\"work_mem\" \"2\" \"t\""));
+        assert_eq!(o.diffs.len(), 1);
+        let o = run(&q("\"port\" \"54319\" \"t\""), &q("\"port\" \"55442\" \"f\""));
         assert_eq!(o.diffs.len(), 1);
     }
 

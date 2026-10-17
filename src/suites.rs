@@ -77,7 +77,7 @@ impl Server {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Checked {
     pub(crate) items: [Count; 15],
-    pub(crate) rules: [Count; 4],
+    pub(crate) rules: [Count; 5],
     pub(crate) share: Share,
     /// The share of each case, by name.
     pub(crate) cases: Vec<(String, Share)>,
