@@ -33,7 +33,7 @@ pub(crate) const RULES: [&str; 4] = [
     "row order without ORDER BY (multiset)",
     "CopyData boundaries (joined)",
     "BackendKeyData secret key (length only)",
-    "SCRAM nonces, salt, proof and signature",
+    "SCRAM nonces, salt, proof, signature and stored keys",
 ];
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -312,6 +312,24 @@ const TIME_TYPES: [i64; 6] = [1082, 1083, 1114, 1184, 1186, 1266];
 const PID_COLUMNS: [&str; 3] = ["pid", "leader_pid", "pg_backend_pid"];
 const ROW_IDENTITY: [&str; 5] = ["ctid", "xmin", "xmax", "cmin", "cmax"];
 
+/// The shape of a stored SCRAM secret `SCRAM-SHA-256$iterations:salt$StoredKey:ServerKey`: the iteration count stays and the random parts go.
+fn scram_secret(text: &[u8]) -> Option<Vec<u8>> {
+    let rest = std::str::from_utf8(text.strip_prefix(b"SCRAM-SHA-256$")?).ok()?;
+    let (head, keys) = rest.split_once('$')?;
+    let (count, salt) = head.split_once(':')?;
+    let (stored, server) = keys.split_once(':')?;
+    let base64 = |p: &str| {
+        !p.is_empty() && p.bytes().all(|b| b.is_ascii_alphanumeric() || b"+/=".contains(&b))
+    };
+    if count.is_empty() || !count.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    if !(base64(salt) && base64(stored) && base64(server)) {
+        return None;
+    }
+    Some(format!("SCRAM-SHA-256${count}:...$...:...").into_bytes())
+}
+
 /// The rule that takes out column `c` of a `DataRow`, if one does.
 fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<usize> {
     let name = cols.names.get(c).map(String::as_str).unwrap_or("");
@@ -466,6 +484,14 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                                 let mut tail = Val::Str(text.split_off(at));
                                 s.mask(c, Rule::Item(12), &mut tail);
                             }
+                            continue;
+                        }
+                        if let Val::Str(text) = v
+                            && let Some(shape) = scram_secret(text)
+                        {
+                            // A stored SCRAM secret has a random salt, so its keys change on each run.
+                            s.mask(c, Rule::Rule(3), v);
+                            *v = Val::Str(shape);
                             continue;
                         }
                         if [19, 25, 1043].contains(&cols.types.get(c).copied().unwrap_or(0))
@@ -776,6 +802,24 @@ mod tests {
         assert_eq!(o.rules[3], Count { applied: 1, differed: 1 });
         let c = a.replace("\"key1\"", "\"longer key\"");
         assert_eq!(run(&a, &c).diffs.len(), 1);
+    }
+
+    #[test]
+    fn a_stored_scram_secret_keeps_its_iteration_count() {
+        let row = |s: &str| {
+            format!(
+                "1 F Query \"SELECT rolpassword FROM pg_authid\"\n1 B DataRow [\"{s}\"]\n1 B ReadyForQuery I"
+            )
+        };
+        let a = row("SCRAM-SHA-256$4096:c2FsdA==$c3RvcmVk:c2VydmVy");
+        let b = row("SCRAM-SHA-256$4096:b3RoZXI=$a2V5MQ==:a2V5Mg==");
+        let o = run(&a, &b);
+        assert!(o.diffs.is_empty(), "{:?}", o.diffs);
+        assert_eq!(o.rules[3], Count { applied: 1, differed: 1 });
+        let c = row("SCRAM-SHA-256$8192:b3RoZXI=$a2V5MQ==:a2V5Mg==");
+        assert_eq!(run(&a, &c).diffs.len(), 1);
+        assert_eq!(scram_secret(b"md5d6a35858d61d8a3ad7c5a03ac3e5f3b1"), None);
+        assert_eq!(scram_secret(b"SCRAM-SHA-256$x:c2FsdA==$a:b"), None);
     }
 
     #[test]
