@@ -20,7 +20,7 @@ pub(crate) const ITEMS: [&str; 15] = [
     "physical streaming replication",
     "data directory files and WAL positions",
     "time",
-    "platform text of version() and the F, L, R error fields",
+    "platform text of version() and pg_config, and the F, L, R error fields",
     "pg_node_tree and TOAST relations",
     "suffix of server_version",
     "process ID",
@@ -148,6 +148,8 @@ struct Context {
     files: bool,
     version: bool,
     paths: bool,
+    /// The query reads `pg_config`, whose values are facts of the build of the server.
+    config: bool,
     ordered: bool,
     replication: bool,
 }
@@ -182,6 +184,27 @@ const FILE_FUNCTIONS: [&str; 11] = [
 
 const PATH_SETTINGS: [&str; 4] = ["data_directory", "config_file", "hba_file", "ident_file"];
 
+/// The names of `pg_config` whose values are directories of the install tree (item 15).
+const CONFIG_PATHS: [&str; 13] = [
+    "BINDIR",
+    "DOCDIR",
+    "HTMLDIR",
+    "INCLUDEDIR",
+    "PKGINCLUDEDIR",
+    "INCLUDEDIR-SERVER",
+    "LIBDIR",
+    "PKGLIBDIR",
+    "LOCALEDIR",
+    "MANDIR",
+    "SHAREDIR",
+    "SYSCONFDIR",
+    "PGXS",
+];
+
+/// The parameters whose values are the size of the shared memory, which `InitializeShmemGUCs` works out from the structures of the server (item 5).
+const SHARED_MEMORY_SETTINGS: [&str; 2] =
+    ["shared_memory_size", "shared_memory_size_in_huge_pages"];
+
 /// True when a statement says `LANGUAGE C` or `LANGUAGE 'c'`. The text is in lower case.
 fn language_c(text: &str) -> bool {
     text.match_indices("language").any(|(i, w)| {
@@ -208,6 +231,7 @@ impl Context {
             files: FILE_FUNCTIONS.iter().any(|f| s.contains(f)),
             version: s.contains("version()"),
             paths: PATH_SETTINGS.iter().any(|p| s.contains(p)),
+            config: s.contains("pg_config"),
             ordered: s.contains("order by") || first == "fetch",
             replication,
         }
@@ -359,16 +383,31 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     if ["sourcefile", "file_name"].contains(&name) || PATH_SETTINGS.contains(&name) {
         return Some(15);
     }
-    if ctx.paths && ["setting", "reset_val", "boot_val", "current_setting"].contains(&name) {
-        let names = cols.names.iter().position(|n| n == "name");
-        let row_name = names
-            .and_then(|i| row.get(i)?.bytes())
-            .map(|b| String::from_utf8_lossy(b).into_owned());
-        if name == "current_setting"
-            || row_name.is_some_and(|n| PATH_SETTINGS.contains(&n.as_str()))
-        {
+    let value_column = ["setting", "reset_val", "boot_val", "current_setting"].contains(&name);
+    let names = cols.names.iter().position(|n| n == "name");
+    let row_name = names
+        .and_then(|i| row.get(i)?.bytes())
+        .map(|b| String::from_utf8_lossy(b).into_owned())
+        .unwrap_or_default();
+    if ctx.paths
+        && value_column
+        && (name == "current_setting" || PATH_SETTINGS.contains(&row_name.as_str()))
+    {
+        return Some(15);
+    }
+    // The install tree of `pg_config` is item 15. The compiler, its flags and the options of `configure` are the platform text of item 10. `VERSION` stays in the comparison.
+    if ctx.config && name == "setting" {
+        if CONFIG_PATHS.contains(&row_name.as_str()) {
             return Some(15);
         }
+        if !row_name.is_empty() && row_name != "VERSION" {
+            return Some(10);
+        }
+    }
+    if SHARED_MEMORY_SETTINGS.contains(&name)
+        || value_column && SHARED_MEMORY_SETTINGS.contains(&row_name.as_str())
+    {
+        return Some(5);
     }
     if ["relpages", "relallvisible", "relallfrozen"].contains(&name)
         || ctx.sizes && (NUMERIC_TYPES.contains(&ty) || name.contains("size"))
@@ -912,6 +951,26 @@ mod tests {
         );
         assert!(o.diffs.is_empty());
         assert_eq!(o.items[14].differed, 1);
+        let config = |name: &str, value: &str| {
+            q("SELECT * FROM pg_config", &d, &format!("\"{name}\" \"{value}\""))
+        };
+        let o = run(&config("BINDIR", "/a/bin"), &config("BINDIR", "not recorded"));
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[14].differed, 1);
+        let o = run(&config("CC", "gcc"), &config("CC", "not recorded"));
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[9].differed, 1);
+        assert_eq!(
+            run(&config("VERSION", "PostgreSQL 19"), &config("VERSION", "x")).diffs.len(),
+            1
+        );
+        let sql = "SELECT name, setting FROM pg_settings";
+        let o = run(
+            &q(sql, &d, "\"shared_memory_size\" \"154\""),
+            &q(sql, &d, "\"shared_memory_size\" \"0\""),
+        );
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[4].differed, 1);
         let s = col("seq_scan", 20);
         let o = run(
             &q("SELECT seq_scan FROM pg_stat_user_tables", &s, "\"1\""),
