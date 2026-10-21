@@ -55,6 +55,7 @@ Every oracle runs with the same fixed configuration: `initdb --no-locale` with `
 | Contrib regression | 61 directories, 55 extensions | L3 | M7 |
 | Client suites | 48 clients | L5 | M2 for the 7 gate clients |
 | Gate G1 | 7 clients show the gate schema | L1 and L2 | M2 |
+| Version forms | 8 checks | L1 | M2 |
 | Hermitage | at three isolation levels | L4 | M5 |
 | sqllogictest | the SQLite corpus, answers from the oracle | L3 | M3 |
 | Generated queries | 3,476 `gram.y` productions, five oracles | L3 | M3 |
@@ -75,6 +76,7 @@ cargo run --release -- regress
 cargo run --release -- isolation
 cargo run --release -- dump --server 127.0.0.1:5432
 cargo run --release -- gate --server 127.0.0.1:5432
+cargo run --release -- version --server 127.0.0.1:5432
 cargo run --release -- client pgx
 cargo run --release -- gen --oracle tlp --seed 42
 cargo run --release -- reduce corpus/reduced/case.sql
@@ -94,6 +96,8 @@ The oracles are built with lz4, because PostgreSQL 19 then makes lz4 the default
 `dump` runs `clients/pg_dump/roundtrip.sql` in a new database of the server under test and dumps it with `pg_dump` of the oracle build. Then it restores the dump into the oracle with `psql` and with `pg_restore`, dumps the oracle again, and compares the texts. It also compares the dump of the server under test with the dump of the oracle after the same script, and restores the dump of the oracle into the server under test. The comparison ignores the line `-- Dumped from database version` and the random key of `\restrict`.
 
 `gate` runs `clients/gate.sql` in a new database of the oracle and of the server under test. Then it runs `clients/<name>/run.sh gate` for psql, pgAdmin 4, pgjdbc, psycopg, node-postgres, pgx and asyncpg. Each gate program lists the tables, the columns, the types, the indexes and the constraints of the schema `gate`. psql uses its describe commands, pgAdmin 4 walks its browser tree and writes the SQL tab of each object, and pgjdbc writes the results of `DatabaseMetaData`. The other drivers have no describe command, so they run the catalog queries of `clients/gate-queries.sql` and write the columns that they describe for a query of each table. A client passes when its list on the server under test is equal to its list on the oracle. The test of each client is `gate` in its `oracle-fail.txt` and `expected-fail.txt`. The gate does not run a client whose test is in `oracle-fail.txt`. The command exits with 1 when a client fails that is not in `expected-fail.txt`, or when a client in that list passes. `pipeline --server` uses the lists in `suites/pipeline` in the same way, with the name of each test and each trace as the test.
+
+`version` connects to the server under test and checks the four places where rupg gives its version, as spec/05 section 5.7 says. `server_version` at startup and `SHOW server_version` must be `N.M (rupg X.Y.Z)`, where N is the compat version. `server_version_num` must be `N0M` in the PostgreSQL form, and `version()` must be `PostgreSQL N.M (rupg X.Y.Z) on <target>, compiled by rustc <version>, 64-bit`. `rupg.version` at startup and `SHOW rupg.version` must be `X.Y.Z`, and `SET rupg.version` must fail with `55P02`, as for a parameter with the context `internal`. The server must send `rupg.version` after the standard parameters of version N, and it must not send `crdb_version`, `mz_version` or `questdb_version`. The oracle does not have these forms, so the command needs `--server`.
 
 ## The reporting rules
 

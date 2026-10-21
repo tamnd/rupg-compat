@@ -112,6 +112,8 @@ pub(crate) fn add_params(msg: &mut Msg, params: &[(String, String)]) {
 #[derive(Debug)]
 pub(crate) struct Conn {
     stream: TcpStream,
+    /// The `ParameterStatus` messages of the startup, in the order of the server.
+    pub(crate) status: Vec<(String, String)>,
 }
 
 impl Conn {
@@ -120,7 +122,7 @@ impl Conn {
             .map_err(|e| format!("connect to {}: {e}", target.addr))?;
         stream.set_nodelay(true).map_err(|e| e.to_string())?;
         stream.set_read_timeout(Some(Duration::from_secs(300))).map_err(|e| e.to_string())?;
-        let mut c = Conn { stream };
+        let mut c = Conn { stream, status: Vec::new() };
         c.send(&startup(target, database))?;
         let mut auth = Auth::default();
         loop {
@@ -132,6 +134,12 @@ impl Conn {
             match msg.name() {
                 "ErrorResponse" => return Err(error_text(&msg)),
                 "ReadyForQuery" => return Ok(c),
+                "ParameterStatus" => {
+                    let text = |v: &Val| {
+                        String::from_utf8_lossy(v.bytes().unwrap_or_default()).into_owned()
+                    };
+                    c.status.push((text(&msg.vals[0]), text(&msg.vals[1])));
+                }
                 _ => {}
             }
         }
