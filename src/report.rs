@@ -192,6 +192,7 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
         let count = r.passed + r.unstable.len();
         match r.suite.as_str() {
             "pipeline" => put(0, "libpq_pipeline".into(), "tests", r, tests, count),
+            "version" => put(0, "version forms".into(), "checks", r, tests, count),
             "catalog" => {
                 put(1, "catalog relations".into(), "relations", r, tests, count);
                 for (name, s) in r.checked.iter().flat_map(|c| &c.cases) {
@@ -591,6 +592,7 @@ mod tests {
             record("isolation", "server", 1, 135),
             record("dump", "server", 6, 7),
             record("gate", "server", 5, 8),
+            record("version", "server", 8, 8),
         ];
         let got = rows(&recs, 19);
         let find = |key: &str| got.iter().find(|r| r.key == key).unwrap();
@@ -612,6 +614,8 @@ mod tests {
         assert_eq!(find("pg_dump round trip").server, Some((6, 7)));
         assert_eq!(find("gate G1").level, 1);
         assert_eq!(find("gate G1").server, Some((5, 8)));
+        assert_eq!(find("version forms").level, 0);
+        assert_eq!(find("version forms").server, Some((8, 8)));
         assert_eq!(find("catalog relations with the gate schema").server, Some((3, 4)));
         assert_eq!(find("rows of pg_class with the gate schema").server, Some((5, 5)));
         assert_eq!(find("Hermitage cases").server, None);

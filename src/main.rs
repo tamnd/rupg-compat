@@ -38,6 +38,7 @@ mod scram;
 mod suites;
 mod toml;
 mod trace;
+mod version;
 
 use args::Args;
 use oracle::Oracle;
@@ -81,6 +82,8 @@ commands:
   gate                      gate G1: run clients/gate.sql in a new database, run the gate program of each of the
                             seven clients on the oracle and on the server under test, and compare the lists of
                             the schema (--server ADDR, else the oracle; --clients A,B for some of the clients)
+  version --server ADDR     check that server_version, server_version_num, version() and rupg.version of the
+                            server under test have the forms of spec/05 section 5.7
   report                    write reports/<date>/report.md from the result files of the work directory, with one
                             table for each level and version and the exclusions of each run, then check each row
                             of ratchet.toml (--compat-version N for one version, --date YYYY-MM-DD, --out DIR,
@@ -149,6 +152,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some(suite @ ("catalog" | "parameters")) => return introspect_command(args, &pins, suite),
         Some("dump") => return dump_command(args, &pins),
         Some("gate") => return gate_command(args, &pins),
+        Some("version") => return version_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -716,6 +720,25 @@ fn gate_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     let (run, good) = gate::run(&o, &server, &work, &clients)?;
     suites::report_run(&run, &o, &server, &work, &started)?;
     Ok(if good { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Checks the version forms of the server under test (spec/05 section 5.7).
+fn version_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(1, &["compat-version", "server"])?;
+    let work = args.work_dir();
+    let s = args.get("server").ok_or("version: give the server under test with --server ADDR")?;
+    let server = suites::Server {
+        addr: s.parse().map_err(|e| format!("--server {s}: {e}"))?,
+        oracle: false,
+    };
+    let o = Oracle::new(pins, args.compat_version(pins.reference)?, &work)?;
+    let started = suites::utc_now();
+    let (run, checks) = version::run(&o, &server)?;
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    for c in checks.iter().filter(|c| !c.ok) {
+        out!("  {}: {}", c.name, c.got);
+    }
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Writes the report and checks the ratchet (spec/21 section 21.15).

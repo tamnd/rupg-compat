@@ -97,7 +97,7 @@ pub(crate) fn parameter_names(
 }
 
 /// The text values of the `DataRow` messages of an answer.
-fn values(msgs: &[Msg]) -> Vec<Vec<Option<String>>> {
+pub(crate) fn values(msgs: &[Msg]) -> Vec<Vec<Option<String>>> {
     msgs.iter()
         .filter(|m| m.name() == "DataRow")
         .map(|m| {
