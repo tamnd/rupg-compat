@@ -471,10 +471,34 @@ fn server_version_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
     row_name == Some(b"server_version") && ["setting", "reset_val", "boot_val"].contains(&name)
 }
 
+/// The release form of a version number in the test form: `19beta4`, `19rc1` and `19devel` are `19.0`. Other numbers give `None`.
+fn release_form(number: &[u8]) -> Option<Vec<u8>> {
+    let major = number.iter().take_while(|b| b.is_ascii_digit()).count();
+    let rest = &number[major..];
+    let digits = |n: &[u8]| !n.is_empty() && n.iter().all(u8::is_ascii_digit);
+    let test = rest == b"devel"
+        || [&b"beta"[..], b"rc"].iter().any(|p| rest.strip_prefix(*p).is_some_and(digits));
+    (major > 0 && test).then(|| [&number[..major], b".0"].concat())
+}
+
+/// Item 12 on a value of `server_version`. The text after the version number names the server. The oracle of a version that is not released yet gives the number in the test form, such as `19beta4`, and rupg gives the release form of spec/05 section 5.7, such as `19.0`. The value keeps the number in the release form, and the mask keeps the full text. The text after the number is empty on PostgreSQL, so the rule counts each value.
+fn mask_server_version(s: &mut Shown, slot: usize, text: &mut Vec<u8>) {
+    let at = text.iter().position(|&b| b == b' ').unwrap_or(text.len());
+    let number = release_form(&text[..at]).unwrap_or_else(|| text[..at].to_vec());
+    let mut full = Val::Str(std::mem::replace(text, number));
+    s.mask(slot, Rule::Item(12), &mut full);
+}
+
 /// Applies the rules to the backend messages of one group.
 fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
     let mut out: Vec<Shown> = Vec::new();
     for &m in &group.back {
+        // Item 12: rupg sends the parameter `rupg.version` after the standard parameters (spec/05 section 5.7), and PostgreSQL does not have it.
+        if m.name() == "ParameterStatus"
+            && m.vals.first().and_then(Val::bytes) == Some(b"rupg.version")
+        {
+            continue;
+        }
         let mut s = Shown { msg: m.clone(), masks: Vec::new() };
         if ctx.replication {
             let mut v = Val::Str(format_msg(m).into_bytes());
@@ -523,16 +547,18 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                             {
                                 let mut tail = Val::Str(text.split_off(at));
                                 s.mask(c, Rule::Item(10), &mut tail);
+                                // The text before the platform is `PostgreSQL` and the value of `server_version`.
+                                if let Some(version) = text.strip_prefix(b"PostgreSQL ") {
+                                    let mut version = version.to_vec();
+                                    mask_server_version(&mut s, c, &mut version);
+                                    *text = [&b"PostgreSQL "[..], &version].concat();
+                                }
                             }
                             continue;
                         }
                         if server_version_value(cols, c, &row) {
-                            // Item 12: the text after the version number names the server.
-                            // The tail is empty on PostgreSQL, so the rule counts each value.
                             if let Val::Str(text) = v {
-                                let at = text.iter().position(|&b| b == b' ').unwrap_or(text.len());
-                                let mut tail = Val::Str(text.split_off(at));
-                                s.mask(c, Rule::Item(12), &mut tail);
+                                mask_server_version(&mut s, c, text);
                             }
                             continue;
                         }
@@ -583,9 +609,7 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                 if vals[0].bytes() == Some(b"server_version")
                     && let Val::Str(text) = &mut vals[1]
                 {
-                    let at = text.iter().position(|&b| b == b' ').unwrap_or(text.len());
-                    let mut tail = Val::Str(text.split_off(at));
-                    s.mask(1, Rule::Item(12), &mut tail);
+                    mask_server_version(&mut s, 1, text);
                 }
             }
             "BackendKeyData" => {
@@ -918,6 +942,35 @@ mod tests {
                 .len(),
             1
         );
+    }
+
+    #[test]
+    fn a_beta_oracle_has_the_release_form_of_its_version() {
+        assert_eq!(release_form(b"19beta4"), Some(b"19.0".to_vec()));
+        assert_eq!(release_form(b"19rc1"), Some(b"19.0".to_vec()));
+        assert_eq!(release_form(b"20devel"), Some(b"20.0".to_vec()));
+        assert_eq!(release_form(b"19.0"), None);
+        assert_eq!(release_form(b"19beta"), None);
+        assert_eq!(release_form(b"beta4"), None);
+        let status = |v: &str| {
+            format!(
+                "{START}1 B AuthenticationSASLContinue \"r=abcdef,s=c2FsdA==,i=4096\"\n1 B ParameterStatus \"server_version\" \"{v}\"\n1 B ReadyForQuery I"
+            )
+        };
+        let rupg = status("19.0 (rupg 0.1.60)\"\n1 B ParameterStatus \"rupg.version\" \"0.1.60");
+        let o = run(&status("19beta4"), &rupg);
+        assert!(o.diffs.is_empty(), "{:?}", o.diffs);
+        assert_eq!(o.items[11], Count { applied: 1, differed: 1 });
+        assert_eq!(run(&status("19beta4"), &status("18.0 (rupg 0.1.60)")).diffs.len(), 1);
+        let version = |v: &str| {
+            format!(
+                "1 F Query \"SELECT version()\"\n1 B RowDescription [(\"version\" 0 0 25 -1 -1 0)]\n1 B DataRow [\"PostgreSQL {v} on aarch64-apple-darwin, 64-bit\"]\n1 B ReadyForQuery I"
+            )
+        };
+        let o = run(&version("19beta4"), &version("19.0 (rupg 0.1.60)"));
+        assert!(o.diffs.is_empty(), "{:?}", o.diffs);
+        assert_eq!(o.items[11], Count { applied: 1, differed: 1 });
+        assert_eq!(run(&version("19beta4"), &version("19.1 (rupg 0.1.60)")).diffs.len(), 1);
     }
 
     #[test]
