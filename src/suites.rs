@@ -76,7 +76,7 @@ impl Server {
 /// The counts of a run that compares answers with the rules of `compare`: replay, the catalog suite and the parameter suite.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Checked {
-    pub(crate) items: [Count; 15],
+    pub(crate) items: [Count; 16],
     pub(crate) rules: [Count; 5],
     pub(crate) share: Share,
     /// The share of each case, by name.

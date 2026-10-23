@@ -4,7 +4,7 @@
 //!
 //! Replay solves the three problems of section 21.3.5:
 //!
-//! 1. OIDs differ. Replay learns a map from the OIDs of the trace to the OIDs of the server. It reads them from the table and type OIDs of `RowDescription`, the types of `ParameterDescription` and the columns of type `oid` in `DataRow` (in text or binary format), for user objects only (OID 16384 and up). It rewrites the OIDs in `Query`, `Parse`, `Bind` and `FunctionCall` before it sends them, and maps the answers back to the OIDs of the trace. In `Bind`, it maps text parameters and binary parameters of 4 or 8 bytes.
+//! 1. OIDs differ. Replay learns a map from the OIDs of the trace to the OIDs of the server. It reads them from the table and type OIDs of `RowDescription`, the types of `ParameterDescription` and the columns of type `oid` in `DataRow` (in text or binary format), for user objects (OID 16384 and up) and for the objects that `initdb` makes after the bootstrap (OID 12000 to 16383), whose OIDs depend on the locales of the host. It rewrites the OIDs in `Query`, `Parse`, `Bind` and `FunctionCall` before it sends them, and maps the answers back to the OIDs of the trace. In `Bind`, it maps text parameters and binary parameters of 4 or 8 bytes.
 //! 2. SCRAM has new nonces each time. Replay makes a new SCRAM exchange with each server.
 //! 3. Cancel keys differ. Replay rewrites each `CancelRequest` to the process ID and the key that the server sent on the connection that the trace cancels. The key keeps the length that the server sent, so it works for protocol 3.0 and 3.2.
 
@@ -21,6 +21,9 @@ use crate::trace::{Event, Line, Trace};
 
 /// The first OID that PostgreSQL gives to a user object.
 pub(crate) const FIRST_NORMAL_OID: u32 = 16_384;
+
+/// `FirstUnpinnedObjectId`: the first OID that `initdb` gives after the bootstrap. The system collations and the objects that `initdb` makes after them get OIDs from here to [`FIRST_NORMAL_OID`]. These OIDs depend on the locales of the host (spec/05 section 5.3 item 16).
+const FIRST_UNPINNED_OID: u32 = 12_000;
 
 /// The type OID of `oid`.
 const OID_TYPE: i64 = 26;
@@ -40,8 +43,10 @@ pub(crate) struct OidMap {
     labels: BTreeSet<u32>,
     /// How many statements of the trace make enum labels: `CREATE TYPE ... AS ENUM` and `ALTER TYPE ... ADD VALUE`.
     enums: usize,
-    /// How many values replay changed with the map, in both directions.
+    /// How many values of user OIDs replay changed with the map, in both directions.
     pub(crate) applied: usize,
+    /// How many values of OIDs of `initdb` replay changed with the map, in both directions.
+    pub(crate) initdb: usize,
 }
 
 impl OidMap {
@@ -55,8 +60,11 @@ impl OidMap {
     /// - the gap before a label may differ by 1 when the label is even on both sides;
     /// - the other gaps may differ by 1 for each statement of the trace that makes enum labels, when the trace does not show the labels. The sum of these differences is at most the number of such statements.
     pub(crate) fn gaps(&self) -> (usize, usize) {
-        let pairs: Vec<(i64, i64)> =
-            self.to_server.iter().map(|(&t, &s)| (i64::from(t), i64::from(s))).collect();
+        let pairs: Vec<(i64, i64)> = self
+            .to_server
+            .range(FIRST_NORMAL_OID..)
+            .map(|(&t, &s)| (i64::from(t), i64::from(s)))
+            .collect();
         let mut slack = self.enums;
         let mut differ = 0;
         for w in pairs.windows(2) {
@@ -90,9 +98,11 @@ impl OidMap {
         }
     }
 
-    /// Learns that `trace` in the trace is `server` on the server. The first pair for an OID wins.
+    /// Learns that `trace` in the trace is `server` on the server. The first pair for an OID wins. Both OIDs must be user OIDs, or both must be OIDs that `initdb` gave after the bootstrap.
     pub(crate) fn learn(&mut self, trace: u32, server: u32) {
-        if trace < FIRST_NORMAL_OID || server < FIRST_NORMAL_OID {
+        let user = |oid: u32| oid >= FIRST_NORMAL_OID;
+        let initdb = |oid: u32| (FIRST_UNPINNED_OID..FIRST_NORMAL_OID).contains(&oid);
+        if !(user(trace) && user(server) || initdb(trace) && initdb(server)) {
             return;
         }
         if self.to_server.contains_key(&trace) || self.to_trace.contains_key(&server) {
@@ -106,7 +116,11 @@ impl OidMap {
         let table = if back { &self.to_trace } else { &self.to_server };
         match table.get(&oid) {
             Some(&o) if o != oid => {
-                self.applied += 1;
+                if oid < FIRST_NORMAL_OID {
+                    self.initdb += 1;
+                } else {
+                    self.applied += 1;
+                }
                 o
             }
             _ => oid,
@@ -239,6 +253,30 @@ fn learn_labels(map: &mut OidMap, trace: &Msg, columns: &[usize]) {
         if let Some(oid) = trace.vals[0].list().get(i).and_then(Val::bytes).and_then(oid_column) {
             map.label(oid);
         }
+    }
+}
+
+/// The message of the trace that replay learns the OIDs of message `i` of the server from. This is the message at the same place, but for a `DataRow` it is the only row of the trace with the same values in the columns that are not of type `oid`, when there is one. A query without `ORDER BY` can give its rows in another order, for example the rows of `pg_type` of a domain and its array type.
+fn partner<'a>(pending: &'a [Msg], i: usize, server: &Msg, types: &[i64]) -> Option<&'a Msg> {
+    let same = pending.get(i);
+    if server.name() != "DataRow" {
+        return same;
+    }
+    fn plain<'m>(m: &'m Msg, types: &[i64]) -> Option<Vec<&'m Val>> {
+        if m.name() != "DataRow" {
+            return None;
+        }
+        let cols = m.vals[0].list().iter().zip(types);
+        Some(cols.filter(|(_, ty)| **ty != OID_TYPE).map(|(v, _)| v).collect())
+    }
+    let key = plain(server, types);
+    if same.and_then(|m| plain(m, types)) == key {
+        return same;
+    }
+    let mut found = pending.iter().filter(|m| plain(m, types) == key);
+    match (found.next(), found.next()) {
+        (Some(m), None) => Some(m),
+        _ => same,
     }
 }
 
@@ -675,8 +713,10 @@ impl Runner<'_> {
                 _ => {}
             }
             let types = s.types.clone();
-            if let Some(t) = pending.get(i) {
+            if let Some(t) = partner(pending, i, &msg, &types) {
                 learn(&mut self.out.oids, t, &msg, &types);
+            }
+            if let Some(t) = pending.get(i) {
                 learn_labels(&mut self.out.oids, t, &s.labels);
             }
             let mut shown = msg;
@@ -854,6 +894,39 @@ mod tests {
         let mut map = enums(b"CREATE TYPE m AS ENUM ('a')");
         map.learn(16_430, 20_050);
         assert_eq!(map.gaps(), (3, 1));
+    }
+
+    #[test]
+    fn the_oids_of_initdb_are_mapped_and_their_gaps_are_not_compared() {
+        let mut m = OidMap::default();
+        m.learn(13_354, 13_364);
+        m.learn(12_160, 12_160);
+        m.learn(11_000, 11_010);
+        m.learn(13_340, 16_400);
+        m.learn(16_400, 16_420);
+        m.learn(16_402, 16_422);
+        assert_eq!(m.len(), 4);
+        assert_eq!(m.gaps(), (1, 0));
+        assert_eq!(
+            m.map_sql(b"SELECT 13354, 12160, 11000, 16400", false),
+            b"SELECT 13364, 12160, 11000, 16420"
+        );
+        assert_eq!((m.applied, m.initdb), (1, 1));
+    }
+
+    #[test]
+    fn rows_in_another_order_are_paired_by_their_other_columns() {
+        let row = |oid: &str, name: &str| {
+            Msg::new(Dir::B, "DataRow", vec![Val::List(vec![str_val(oid), str_val(name)])])
+        };
+        let types = [OID_TYPE, 19];
+        let pending = [row("13354", "cardinal_number"), row("13353", "_cardinal_number")];
+        let server = row("13363", "_cardinal_number");
+        assert_eq!(partner(&pending, 0, &server, &types), Some(&pending[1]));
+        let server = row("13364", "cardinal_number");
+        assert_eq!(partner(&pending, 0, &server, &types), Some(&pending[0]));
+        let server = row("13365", "other");
+        assert_eq!(partner(&pending, 1, &server, &types), Some(&pending[1]));
     }
 
     #[test]

@@ -10,7 +10,7 @@ use crate::message::{Dir, Msg, Val};
 use crate::trace::{Event, Line, format_msg};
 
 /// The closed list of spec/05 section 5.3, in its order.
-pub(crate) const ITEMS: [&str; 15] = [
+pub(crate) const ITEMS: [&str; 16] = [
     "EXPLAIN output",
     "values of user OIDs",
     "values of statistics counters",
@@ -26,6 +26,7 @@ pub(crate) const ITEMS: [&str; 15] = [
     "process ID",
     "server log lines",
     "file system paths",
+    "values of initdb OIDs that depend on the locales of the host",
 ];
 
 /// The rules of section 5.2 that are not items of the closed list.
@@ -74,7 +75,7 @@ pub(crate) struct Outcome {
     /// The groups that the comparison looked at, and the backend messages in them.
     pub(crate) groups: usize,
     pub(crate) messages: usize,
-    pub(crate) items: [Count; 15],
+    pub(crate) items: [Count; 16],
     pub(crate) rules: [Count; 5],
     /// The share of all groups, and of each group.
     pub(crate) share: Share,
@@ -218,6 +219,52 @@ fn language_c(text: &str) -> bool {
     })
 }
 
+/// True when the rows of the statements have an order: a statement has `ORDER BY` outside of parentheses, and each statement that starts with `SELECT`, `WITH`, `VALUES` or `TABLE` has one. An `ORDER BY` in a subquery, in an aggregate or in a window does not give an order to the rows of the statement. The text is in lower case.
+fn ordered(text: &str) -> bool {
+    let mut statements = vec![(String::new(), false)];
+    let (mut depth, mut quote) = (0usize, None);
+    let bytes = text.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        let c = bytes[i];
+        let (words, top) = statements.last_mut().expect("one statement");
+        match quote {
+            Some(q) if c == q => quote = None,
+            Some(_) => {}
+            None => match c {
+                b'\'' | b'"' => quote = Some(c),
+                b'-' if bytes.get(i + 1) == Some(&b'-') => {
+                    while i < bytes.len() && bytes[i] != b'\n' {
+                        i += 1;
+                    }
+                }
+                b'(' => depth += 1,
+                b')' => depth = depth.saturating_sub(1),
+                b';' if depth == 0 => statements.push((String::new(), false)),
+                _ if depth == 0 && c.is_ascii_whitespace() => {
+                    if !words.ends_with(' ') {
+                        words.push(' ');
+                    }
+                }
+                _ if depth == 0 => {
+                    words.push(c as char);
+                    if words.ends_with("order by") {
+                        *top = true;
+                    }
+                }
+                _ => {}
+            },
+        }
+        i += 1;
+    }
+    let first = |w: &str| w.split_whitespace().next().unwrap_or("").to_string();
+    statements.iter().any(|(_, top)| *top)
+        && statements
+            .iter()
+            .filter(|(w, _)| matches!(first(w).as_str(), "select" | "with" | "values" | "table"))
+            .all(|(_, top)| *top)
+}
+
 impl Context {
     fn new(sql: String, replication: bool) -> Context {
         let s = sql.to_ascii_lowercase();
@@ -234,7 +281,7 @@ impl Context {
             version: s.contains("version()"),
             paths: PATH_SETTINGS.iter().any(|p| s.contains(p)),
             config: s.contains("pg_config"),
-            ordered: s.contains("order by") || first == "fetch",
+            ordered: ordered(&s) || first == "fetch",
             replication,
         }
     }
@@ -917,6 +964,21 @@ mod tests {
             run(want, want).share,
             Share { messages: 5, messages_equal: 5, rows: 3, rows_equal: 3, unstable_messages: 0 }
         );
+    }
+
+    #[test]
+    fn an_order_by_in_parentheses_gives_no_order() {
+        assert!(ordered("select x from t order by x"));
+        assert!(ordered("select x from t\norder  by x"));
+        assert!(!ordered("select array(select a from b order by a) from t"));
+        assert!(!ordered(
+            "select string_agg(x, ',' order by x), row_number() over (order by x) from t"
+        ));
+        assert!(!ordered("select 'order by' from t"));
+        assert!(!ordered("select x from t -- order by x"));
+        assert!(ordered("set a = 1; select x from t order by x"));
+        assert!(!ordered("select x from t order by x; select y from u"));
+        assert!(ordered("declare c cursor for select x from t order by x"));
     }
 
     #[test]
