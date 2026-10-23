@@ -187,6 +187,33 @@ impl Drop for Conn {
     }
 }
 
+/// The names of the databases of a server that allow connections, in name order.
+pub(crate) fn databases(target: &Target) -> Result<Vec<String>, String> {
+    let mut c = Conn::connect(target, "template1")?;
+    let sql = "SELECT datname FROM pg_catalog.pg_database WHERE datallowconn ORDER BY datname";
+    let rows = c.query(sql)?;
+    if let Some(e) = rows.iter().find(|m| m.name() == "ErrorResponse") {
+        return Err(format!("{sql}: {}", error_text(e)));
+    }
+    Ok(rows
+        .iter()
+        .filter(|m| m.name() == "DataRow")
+        .filter_map(|m| m.vals[0].list().first()?.bytes())
+        .map(|b| String::from_utf8_lossy(b).into_owned())
+        .collect())
+}
+
+/// Makes each database of `oracle` that `target` does not have, so that a query of `pg_database` gives the same rows on the two servers (spec/05 section 5.2).
+pub(crate) fn same_databases(oracle: &Target, target: &Target) -> Result<(), String> {
+    let have = databases(target)?;
+    let mut c = Conn::connect(target, "template1")?;
+    for name in databases(oracle)?.iter().filter(|n| !have.contains(n)) {
+        let quoted = format!("\"{}\"", name.replace('"', "\"\""));
+        c.execute(&format!("CREATE DATABASE {quoted} TEMPLATE template0"))?;
+    }
+    Ok(())
+}
+
 /// The severity, the SQLSTATE and the message of an `ErrorResponse`.
 pub(crate) fn error_text(msg: &Msg) -> String {
     let fields = msg.vals.first().map(Val::list).unwrap_or_default();
