@@ -1,6 +1,6 @@
 //! The catalog suite and the parameter suite (spec/05 section 5.6.5).
 //!
-//! Each suite is a list of simple queries. The runner sends the list to the oracle two times and to the server under test one time, and keeps each answer as trace lines. Then it compares the answers with the rules of `compare`, as replay does: the groups that differ between the two oracle runs leave the comparison, and the 15 excluded items and the rules of spec/05 section 5.2 apply.
+//! Each suite is a list of simple queries. The runner sends the list to the oracle two times and to the server under test one time, and keeps each answer as trace lines. Then it compares the answers with the rules of `compare`, as replay does: the groups that differ between the two oracle runs leave the comparison, and the excluded items and the rules of spec/05 section 5.2 apply.
 //!
 //! - The catalog suite runs `SELECT *` on each catalog, each system view and each `information_schema` view of the import, in a new database. With `--schema gate`, the new database first gets the gate schema of `clients/gate.sql`, and the suite is `catalog-gate`.
 //! - The parameter suite runs `SHOW ALL`, `SELECT * FROM pg_settings` and, for each parameter, `SET p TO DEFAULT`, `set_config` with the value of the oracle, and `SHOW p`.
@@ -14,6 +14,7 @@ use crate::client::{self, Conn, Target};
 use crate::compare::{self, Outcome};
 use crate::import;
 use crate::message::{Dir, Msg, Val};
+use crate::replay;
 use crate::suites::{Checked, Run};
 use crate::trace::{Event, Line, Trace};
 
@@ -184,6 +185,24 @@ fn reset(target: &Target, database: &str, setup: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// The first OID of the system collations that `initdb` made on `target`, if it made any. The objects that `initdb` makes after them get OIDs that depend on the locales of the host (spec/05 section 5.3 item 16).
+fn first_collation(target: &Target, database: &str) -> Result<Option<u32>, String> {
+    let sql = format!(
+        "SELECT min(oid) FROM pg_catalog.pg_collation WHERE oid >= {} AND oid < {}",
+        replay::FIRST_UNPINNED_OID,
+        replay::FIRST_NORMAL_OID
+    );
+    let rows = Conn::connect(target, database)?.query(&sql)?;
+    if let Some(e) = rows.iter().find(|m| m.name() == "ErrorResponse") {
+        return Err(format!("{sql}: {}", client::error_text(e)));
+    }
+    Ok(rows
+        .iter()
+        .find(|m| m.name() == "DataRow")
+        .and_then(|m| m.vals[0].list().first()?.bytes())
+        .and_then(|b| std::str::from_utf8(b).ok()?.parse().ok()))
+}
+
 /// Runs a suite: two oracle runs, the run under test, and the comparison. Before the runs, the database gets the objects of `setup`. It writes the three traces to `out`.
 pub(crate) fn run_suite(
     suite: &str,
@@ -210,8 +229,15 @@ pub(crate) fn run_suite(
         }
         None => None,
     };
+    let mut collations = first_collation(&sides.oracle, database)?;
+    if let Some(server) = &sides.server
+        && let Some(oid) = first_collation(server, database)?
+    {
+        collations = Some(collations.map_or(oid, |o| o.min(oid)));
+    }
     let unstable = compare::unstable(&first, &second);
-    let outcome = compare::compare(&first, got.as_ref().unwrap_or(&first), &unstable);
+    let outcome =
+        compare::compare_with(&first, got.as_ref().unwrap_or(&first), &unstable, collations);
     fs::create_dir_all(out).map_err(|e| format!("{}: {e}", out.display()))?;
     let write = |name: &str, lines: &[Line]| {
         let t = Trace { header: header.to_vec(), lines: lines.to_vec() };
