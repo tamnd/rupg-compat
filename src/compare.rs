@@ -542,7 +542,7 @@ fn oid_in_name(text: &[u8], collations: Option<u32>) -> Option<(usize, usize, us
     {
         (23, 2)
     } else {
-        return None;
+        return specific_name(text, collations?);
     };
     let len = text[start..].iter().take_while(|b| b.is_ascii_digit()).count();
     let end = start + len;
@@ -553,6 +553,25 @@ fn oid_in_name(text: &[u8], collations: Option<u32>) -> Option<(usize, usize, us
         return (len > 0 && suffix).then_some((start, end, 16));
     }
     (len > 0 && oid >= 16_384 && suffix).then_some((start, end, item))
+}
+
+/// The OID at the end of a specific name of `information_schema`, such as `_pg_char_max_length_13745`. The view makes the name from the name of the function and its OID, so the OID is out under item 16 or item 2. The rule applies only when the caller knows the first OID of the collations, that is, in the catalog suite.
+fn specific_name(text: &[u8], from: u32) -> Option<(usize, usize, usize)> {
+    let start = text.iter().rposition(|&b| b == b'_')? + 1;
+    let digits = &text[start..];
+    if start < 2 || digits.is_empty() || digits[0] == b'0' || !digits.iter().all(u8::is_ascii_digit)
+    {
+        return None;
+    }
+    let oid = std::str::from_utf8(digits).ok()?.parse::<u64>().ok()?;
+    let item = if oid >= 16_384 {
+        2
+    } else if oid >= u64::from(from) {
+        16
+    } else {
+        return None;
+    };
+    Some((start, text.len(), item))
 }
 
 /// True when column `c` of a row is the port of the server: the column of `SHOW port` and of `inet_server_port()`, or a value column of the `port` row of `SHOW ALL`, `pg_settings` and `pg_file_settings`. Two servers on one machine listen on two ports, so the value is never equal.
@@ -1311,6 +1330,31 @@ mod tests {
         let o = run(&q("\"13760\" \"a\""), &q("\"13370\" \"a\""));
         assert_eq!(o.diffs.len(), 1);
         assert_eq!(oid_in_name(b"pg_toast_13925_index", Some(12386)), Some((9, 14, 16)));
+    }
+
+    #[test]
+    fn oids_in_specific_names_are_out() {
+        let q = |row: &str| {
+            format!(
+                "1 F Query \"SELECT specific_name FROM information_schema.routines\"\n1 B RowDescription [(\"specific_name\" 0 0 19 64 -1 0)]\n1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let run16 = |want: &str, got: &str| {
+            compare_with(&lines(&q(want)), &lines(&q(got)), &BTreeSet::new(), Some(12386))
+        };
+        let o = run16("\"_pg_char_max_length_13745\"", "\"_pg_char_max_length_13355\"");
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[15], Count { applied: 1, differed: 1 });
+        let o = run16("\"f_16420\"", "\"f_16424\"");
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[1], Count { applied: 1, differed: 1 });
+        let o = run16("\"f_13745\"", "\"g_13355\"");
+        assert_eq!(o.diffs.len(), 1);
+        let o = run(&q("\"_pg_char_max_length_13745\""), &q("\"_pg_char_max_length_13355\""));
+        assert_eq!(o.diffs.len(), 1);
+        assert_eq!(oid_in_name(b"f_12385", Some(12386)), None);
+        assert_eq!(oid_in_name(b"f_013745", Some(12386)), None);
+        assert_eq!(oid_in_name(b"_13745", Some(12386)), None);
     }
 
     #[test]
