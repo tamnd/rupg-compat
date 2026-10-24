@@ -222,6 +222,8 @@ pub(crate) fn run_suite(
     let second = run_cases(&sides.oracle, database, cases)?;
     let got = match &sides.server {
         Some(server) => {
+            // The oracle has the work database of the harness, so the server gets the same databases before a query of `pg_database`. The reset comes after, so the order of the OIDs is the same as on the oracle.
+            client::same_databases(&sides.oracle, server)?;
             if fresh {
                 reset(server, database, setup)?;
             }
