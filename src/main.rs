@@ -459,6 +459,8 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         let mut o = compare::compare(&t.lines, &r.lines, &unstable);
         o.items[1].applied += r.oids.applied;
         o.items[1].differed += r.oids.applied;
+        o.items[15].applied += r.oids.initdb;
+        o.items[15].differed += r.oids.initdb;
         let (pairs, gaps) = r.oids.gaps();
         out!(
             "{file}: {} groups, {} backend messages, {} unstable groups, {} groups differ; {} OIDs mapped, {gaps} of {pairs} OID gaps differ, {} SCRAM exchanges, {} cancel keys rewritten",
