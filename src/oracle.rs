@@ -175,10 +175,11 @@ impl Oracle {
         let mut configure = Command::new("./configure");
         configure.current_dir(&src).arg(format!("--prefix={}", self.install().display()));
         configure.args(configure_options()).args(extra_configure());
-        // configure finds ICU and lz4 with pkg-config. Without pkg-config, it takes the flags from the environment.
+        // configure finds ICU, lz4 and zstd with pkg-config. Without pkg-config, it takes the flags from the environment.
         if Command::new("pkg-config").arg("--version").output().is_err() {
             configure.env("ICU_CFLAGS", " ").env("ICU_LIBS", "-licui18n -licuuc -licudata");
             configure.env("LZ4_CFLAGS", " ").env("LZ4_LIBS", "-llz4");
+            configure.env("ZSTD_CFLAGS", " ").env("ZSTD_LIBS", "-lzstd");
         }
         steps.run("configure", &mut configure)?;
         let j = format!("-j{jobs}");
