@@ -454,6 +454,9 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             first
         } else {
             reset(&target);
+            if let Err(e) = client::same_databases(&oracle, &target) {
+                out!("{file}: {e}");
+            }
             replay::replay(&t, &target, timeout)
         };
         let mut o = compare::compare(&t.lines, &r.lines, &unstable);
