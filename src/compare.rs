@@ -457,7 +457,7 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     {
         return Some(5);
     }
-    if ["relpages", "relallvisible", "relallfrozen"].contains(&name)
+    if ["relpages", "relallvisible", "relallfrozen", "toastpages"].contains(&name)
         || ctx.sizes && (NUMERIC_TYPES.contains(&ty) || name.contains("size"))
         || ctx.shared_memory && (name == "off" || name.contains("size"))
     {
