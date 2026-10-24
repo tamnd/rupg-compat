@@ -153,6 +153,8 @@ struct Context {
     /// The query reads `pg_config`, whose values are facts of the build of the server.
     config: bool,
     ordered: bool,
+    /// The columns of an `ORDER BY` that names each key by its place, from 0. Rows with the same keys can come in any order.
+    keys: Option<Vec<usize>>,
     replication: bool,
 }
 
@@ -265,6 +267,50 @@ fn ordered(text: &str) -> bool {
             .all(|(_, top)| *top)
 }
 
+/// The keys of the `ORDER BY` of a statement when each key is the place of a column, such as `ORDER BY 1, 2 DESC`, from 0. `None` for more than one statement, for a key that is an expression or a name, and for no `ORDER BY`. The text is in lower case.
+fn order_keys(text: &str) -> Option<Vec<usize>> {
+    // The text outside of parentheses and quotes.
+    let mut top = String::new();
+    let (mut depth, mut quote) = (0usize, None);
+    for c in text.chars() {
+        match quote {
+            Some(q) if c == q => quote = None,
+            Some(_) => {}
+            None if c == '\'' || c == '"' => quote = Some(c),
+            None if c == '(' => depth += 1,
+            None if c == ')' => depth = depth.saturating_sub(1),
+            None if depth == 0 => top.push(if c.is_ascii_whitespace() { ' ' } else { c }),
+            None => {}
+        }
+    }
+    let top = top.trim().trim_end_matches(';');
+    if top.contains(';') || top.contains("--") {
+        return None;
+    }
+    let (_, list) = top.rsplit_once("order by")?;
+    let end = [" limit ", " offset ", " fetch ", " for "]
+        .iter()
+        .filter_map(|w| list.find(w))
+        .min()
+        .unwrap_or(list.len());
+    let mut keys = Vec::new();
+    for item in list[..end].split(',') {
+        let mut words = item.split_whitespace();
+        let place: usize = words.next()?.parse().ok()?;
+        let rest: Vec<&str> = words.collect();
+        if !matches!(
+            rest.as_slice(),
+            [] | ["asc" | "desc"]
+                | ["nulls", "first" | "last"]
+                | ["asc" | "desc", "nulls", "first" | "last"]
+        ) {
+            return None;
+        }
+        keys.push(place.checked_sub(1)?);
+    }
+    Some(keys)
+}
+
 impl Context {
     fn new(sql: String, replication: bool) -> Context {
         let s = sql.to_ascii_lowercase();
@@ -282,6 +328,7 @@ impl Context {
             paths: PATH_SETTINGS.iter().any(|p| s.contains(p)),
             config: s.contains("pg_config"),
             ordered: ordered(&s) || first == "fetch",
+            keys: order_keys(&s),
             replication,
         }
     }
@@ -689,6 +736,8 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
     join_copy(&mut out);
     if !ctx.ordered {
         sort_rows(&mut out);
+    } else if let Some(keys) = &ctx.keys {
+        sort_ties(&mut out, keys);
     }
     if ctx.explain {
         // Item 1: the number of plan lines is part of the plan shape.
@@ -736,6 +785,30 @@ fn sort_rows(out: &mut [Shown]) {
             out[start].masks.push(Mask { slot: usize::MAX, rule: Rule::Rule(0), orig: Val::Null });
         }
         i = i.max(start + 1);
+    }
+}
+
+/// Sorts each run of `DataRow` with the same values in the columns `keys`, so the rows that the `ORDER BY` does not order compare as a multiset. The sort of PostgreSQL is not stable, so these rows can come in another order on another server, also from the same input.
+fn sort_ties(out: &mut [Shown], keys: &[usize]) {
+    let key = |s: &Shown| -> Option<Vec<Val>> {
+        let row = s.msg.vals.first()?.list();
+        keys.iter().map(|&k| row.get(k).cloned()).collect()
+    };
+    let mut i = 0;
+    while i < out.len() {
+        let start = i;
+        let first = (out[i].msg.name() == "DataRow").then(|| key(&out[i])).flatten();
+        i += 1;
+        if first.is_none() {
+            continue;
+        }
+        while i < out.len() && out[i].msg.name() == "DataRow" && key(&out[i]) == first {
+            i += 1;
+        }
+        if i - start > 1 {
+            out[start..i].sort_by(|a, b| a.msg.vals.cmp(&b.msg.vals));
+            out[start].masks.push(Mask { slot: usize::MAX, rule: Rule::Rule(0), orig: Val::Null });
+        }
     }
 }
 
@@ -1004,6 +1077,36 @@ mod tests {
                 .len(),
             1
         );
+    }
+
+    #[test]
+    fn order_keys_are_places_of_columns() {
+        assert_eq!(order_keys("select a, b from t order by 1,2"), Some(vec![0, 1]));
+        assert_eq!(
+            order_keys("select a, b from t order by 2 desc nulls last, 1 asc limit 3"),
+            Some(vec![1, 0])
+        );
+        assert_eq!(order_keys("select a from t order by 1;"), Some(vec![0]));
+        assert_eq!(order_keys("select a from t order by a"), None);
+        assert_eq!(order_keys("select a from t order by 1 + 1"), None);
+        assert_eq!(order_keys("select a from t order by 0"), None);
+        assert_eq!(order_keys("select a from t"), None);
+        assert_eq!(order_keys("select (select b from u order by 1) from t"), None);
+        assert_eq!(order_keys("select a from t order by 1; select b from u order by 1"), None);
+    }
+
+    #[test]
+    fn rows_with_equal_keys_are_a_multiset() {
+        let q = |sql: &str, rows: &str| format!("1 F Query \"{sql}\"\n{rows}1 B ReadyForQuery I");
+        let row = |a: &str, b: &str| format!("1 B DataRow [\"{a}\" \"{b}\"]\n");
+        let sql = "SELECT a, b FROM t ORDER BY 1";
+        let want = [row("1", "x"), row("2", "y"), row("2", "z"), row("3", "w")].concat();
+        let ties = [row("1", "x"), row("2", "z"), row("2", "y"), row("3", "w")].concat();
+        let keys = [row("2", "y"), row("1", "x"), row("2", "z"), row("3", "w")].concat();
+        assert!(run(&q(sql, &want), &q(sql, &ties)).diffs.is_empty());
+        assert!(!run(&q(sql, &want), &q(sql, &keys)).diffs.is_empty());
+        let by_name = "SELECT a, b FROM t ORDER BY a";
+        assert!(!run(&q(by_name, &want), &q(by_name, &ties)).diffs.is_empty());
     }
 
     #[test]
