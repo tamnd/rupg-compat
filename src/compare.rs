@@ -591,7 +591,11 @@ fn server_version_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
         return true;
     }
     let row_name = cols.names.iter().position(|n| n == "name").and_then(|i| row.get(i)?.bytes());
-    row_name == Some(b"server_version") && ["setting", "reset_val", "boot_val"].contains(&name)
+    match row_name {
+        Some(b"server_version") => ["setting", "reset_val", "boot_val"].contains(&name),
+        Some(b"VERSION") => name == "setting",
+        _ => false,
+    }
 }
 
 /// The release form of a version number in the test form: `19beta4`, `19rc1` and `19devel` are `19.0`. Other numbers give `None`.
@@ -681,7 +685,15 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                         }
                         if server_version_value(cols, c, &row) {
                             if let Val::Str(text) = v {
-                                mask_server_version(&mut s, c, text);
+                                // The `VERSION` row of `pg_config` has `PostgreSQL` before the version.
+                                match text.strip_prefix(b"PostgreSQL ") {
+                                    Some(version) => {
+                                        let mut version = version.to_vec();
+                                        mask_server_version(&mut s, c, &mut version);
+                                        *text = [&b"PostgreSQL "[..], &version].concat();
+                                    }
+                                    None => mask_server_version(&mut s, c, text),
+                                }
                             }
                             continue;
                         }
@@ -1412,6 +1424,16 @@ mod tests {
         let o = run(
             &q("SHOW ALL", &d, "\"server_version\" \"19.0\""),
             &q("SHOW ALL", &d, "\"server_version\" \"18.0\""),
+        );
+        assert_eq!(o.diffs.len(), 1);
+        let o = run(
+            &q("SELECT * FROM pg_config", &d, "\"VERSION\" \"PostgreSQL 19beta4\""),
+            &q("SELECT * FROM pg_config", &d, "\"VERSION\" \"PostgreSQL 19.0 (rupg 0.1.0)\""),
+        );
+        assert!(o.diffs.is_empty());
+        let o = run(
+            &q("SELECT * FROM pg_config", &d, "\"VERSION\" \"PostgreSQL 19.0\""),
+            &q("SELECT * FROM pg_config", &d, "\"VERSION\" \"PostgreSQL 18.0\""),
         );
         assert_eq!(o.diffs.len(), 1);
     }
