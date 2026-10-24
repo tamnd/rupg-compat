@@ -5,4 +5,5 @@
 --with-readline
 --with-zlib
 --with-lz4
+--with-zstd
 --without-llvm
