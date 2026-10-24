@@ -23,7 +23,7 @@ use crate::trace::{Event, Line, Trace};
 pub(crate) const FIRST_NORMAL_OID: u32 = 16_384;
 
 /// `FirstUnpinnedObjectId`: the first OID that `initdb` gives after the bootstrap. The system collations and the objects that `initdb` makes after them get OIDs from here to [`FIRST_NORMAL_OID`]. These OIDs depend on the locales of the host (spec/05 section 5.3 item 16).
-const FIRST_UNPINNED_OID: u32 = 12_000;
+pub(crate) const FIRST_UNPINNED_OID: u32 = 12_000;
 
 /// The type OID of `oid`.
 const OID_TYPE: i64 = 26;

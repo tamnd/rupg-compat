@@ -156,6 +156,8 @@ struct Context {
     /// The columns of an `ORDER BY` that names each key by its place, from 0. Rows with the same keys can come in any order.
     keys: Option<Vec<usize>>,
     replication: bool,
+    /// The first OID of the system collations of `initdb`, the lower of the two servers. An OID from here to 16384 depends on the locales of the host (item 16).
+    collations: Option<u32>,
 }
 
 const TIME_FUNCTIONS: [&str; 10] = [
@@ -330,6 +332,7 @@ impl Context {
             ordered: ordered(&s) || first == "fetch",
             keys: order_keys(&s),
             replication,
+            collations: None,
         }
     }
 }
@@ -460,15 +463,19 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     if ty == 194 || name == "reltoastrelid" {
         return Some(11);
     }
+    let oid = (ty == 26)
+        .then(|| row.get(c)?.bytes())
+        .flatten()
+        .and_then(|b| std::str::from_utf8(b).ok()?.parse::<u64>().ok());
     // Item 2: an OID at or above FirstNormalObjectId (16384) names a user object.
-    if ty == 26
-        && row
-            .get(c)
-            .and_then(Val::bytes)
-            .and_then(|b| std::str::from_utf8(b).ok()?.parse::<u64>().ok())
-            .is_some_and(|oid| oid >= 16_384)
-    {
+    if oid.is_some_and(|oid| oid >= 16_384) {
         return Some(2);
+    }
+    // Item 16: `initdb` gives the system collations and the objects after them OIDs that depend on the locales of the host.
+    if let (Some(oid), Some(from)) = (oid, ctx.collations)
+        && (u64::from(from)..16_384).contains(&oid)
+    {
+        return Some(16);
     }
     if ty == 3220 || ctx.files {
         return Some(8);
@@ -526,8 +533,8 @@ fn column_rule(ctx: &Context, cols: &Columns, c: usize, row: &[Val]) -> Option<u
     None
 }
 
-/// The place of a user OID in a name that PostgreSQL makes from the OID, and the item of the rule: the TOAST relation `pg_toast_N` and its index `pg_toast_N_index` (item 11), and the trigger `RI_ConstraintTrigger_a_N` or `RI_ConstraintTrigger_c_N` of a foreign key (item 2). The OID counter of a cluster depends on what the cluster did before, so these names are not equal on two servers.
-fn oid_in_name(text: &[u8]) -> Option<(usize, usize, usize)> {
+/// The place of a user OID in a name that PostgreSQL makes from the OID, and the item of the rule: the TOAST relation `pg_toast_N` and its index `pg_toast_N_index` (item 11), and the trigger `RI_ConstraintTrigger_a_N` or `RI_ConstraintTrigger_c_N` of a foreign key (item 2). The OID counter of a cluster depends on what the cluster did before, so these names are not equal on two servers. The TOAST relation of a table that `initdb` made after the system collations, from `collations` to 16384, is item 16.
+fn oid_in_name(text: &[u8], collations: Option<u32>) -> Option<(usize, usize, usize)> {
     let (start, item) = if text.starts_with(b"pg_toast_") {
         (9, 11)
     } else if text.starts_with(b"RI_ConstraintTrigger_a_")
@@ -542,6 +549,9 @@ fn oid_in_name(text: &[u8]) -> Option<(usize, usize, usize)> {
     let rest = &text[end..];
     let oid = std::str::from_utf8(&text[start..end]).ok()?.parse::<u64>().ok()?;
     let suffix = rest.is_empty() || item == 11 && rest == b"_index";
+    if item == 11 && collations.is_some_and(|from| (u64::from(from)..16_384).contains(&oid)) {
+        return (len > 0 && suffix).then_some((start, end, 16));
+    }
     (len > 0 && oid >= 16_384 && suffix).then_some((start, end, item))
 }
 
@@ -670,7 +680,7 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                         }
                         if [19, 25, 1043].contains(&cols.types.get(c).copied().unwrap_or(0))
                             && let Val::Str(text) = v
-                            && let Some((start, end, item)) = oid_in_name(text)
+                            && let Some((start, end, item)) = oid_in_name(text, ctx.collations)
                         {
                             let tail = text.split_off(end);
                             let mut oid = Val::Str(text.split_off(start));
@@ -857,6 +867,16 @@ fn startup_has_replication(gs: &[Group<'_>]) -> bool {
 
 /// Compares the backend messages of `got` with those of `want`. The groups in `skip` are left out.
 pub(crate) fn compare(want: &[Line], got: &[Line], skip: &BTreeSet<Place>) -> Outcome {
+    compare_with(want, got, skip, None)
+}
+
+/// [`compare`], where `collations` is the first OID of the system collations of `initdb`. An OID from there to 16384 in a column of type `oid` is item 16 of the exclusions.
+pub(crate) fn compare_with(
+    want: &[Line],
+    got: &[Line],
+    skip: &BTreeSet<Place>,
+    collations: Option<u32>,
+) -> Outcome {
     let mut out = Outcome::default();
     let (want, got) = (groups(want), groups(got));
     let empty = Vec::new();
@@ -869,8 +889,9 @@ pub(crate) fn compare(want: &[Line], got: &[Line], skip: &BTreeSet<Place>) -> Ou
             let blank = Group::default();
             let wg = wgs.get(i).unwrap_or(&blank);
             let gg = ggs.get(i).unwrap_or(&blank);
-            let ctx =
+            let mut ctx =
                 context(if wg.front.is_empty() { gg } else { wg }, &mut prepared, replication);
+            ctx.collations = collations;
             if skip.contains(&(conn, i)) {
                 out.unstable += 1;
                 // The messages of an unstable group are not a difference. The ratchet counts them, so that more unstable groups do not lower its number. A copy of the column state keeps the comparison of the next groups as it is.
@@ -1266,8 +1287,30 @@ mod tests {
         assert_eq!(o.diffs.len(), 1);
         let o = run(&q("\"pg_toast_2619\""), &q("\"pg_toast_2620\""));
         assert_eq!(o.diffs.len(), 1);
-        assert_eq!(oid_in_name(b"pg_toast_16392x"), None);
-        assert_eq!(oid_in_name(b"RI_ConstraintTrigger_a_16442_index"), None);
+        assert_eq!(oid_in_name(b"pg_toast_16392x", None), None);
+        assert_eq!(oid_in_name(b"RI_ConstraintTrigger_a_16442_index", None), None);
+    }
+
+    #[test]
+    fn initdb_oids_after_the_collations_are_out() {
+        let q = |row: &str| {
+            format!(
+                "1 F Query \"SELECT oid, relname FROM pg_class\"\n1 B RowDescription [(\"oid\" 0 0 26 4 -1 0) (\"relname\" 0 0 19 64 -1 0)]\n1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let run16 = |want: &str, got: &str| {
+            compare_with(&lines(&q(want)), &lines(&q(got)), &BTreeSet::new(), Some(12386))
+        };
+        let o = run16("\"13760\" \"pg_toast_13925\"", "\"13370\" \"pg_toast_13535\"");
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[15], Count { applied: 2, differed: 2 });
+        let o = run16("\"12385\" \"a\"", "\"12384\" \"a\"");
+        assert_eq!(o.diffs.len(), 1);
+        let o = run16("\"11\" \"pg_toast_12385\"", "\"11\" \"pg_toast_12384\"");
+        assert_eq!(o.diffs.len(), 1);
+        let o = run(&q("\"13760\" \"a\""), &q("\"13370\" \"a\""));
+        assert_eq!(o.diffs.len(), 1);
+        assert_eq!(oid_in_name(b"pg_toast_13925_index", Some(12386)), Some((9, 14, 16)));
     }
 
     #[test]
