@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 /// The options that take no value.
-const FLAGS: [&str; 5] = ["--all", "--check", "--force", "--help", "--keep"];
+const FLAGS: [&str; 6] = ["--all", "--check", "--force", "--help", "--keep", "--raise"];
 
 /// A parsed command line.
 #[derive(Debug, Default, PartialEq, Eq)]
@@ -105,6 +105,9 @@ mod tests {
         assert!(a.flag("all"));
         assert_eq!(a.number::<u32>("jobs"), Ok(Some(4)));
         assert_eq!(a.rest, ["psql", "-c", "x"]);
+        let a = parse("report --raise").unwrap();
+        assert_eq!(a.words, ["report"]);
+        assert!(a.flag("raise"));
         assert_eq!(parse("x").unwrap().compat_version(19), Ok(19));
     }
 
