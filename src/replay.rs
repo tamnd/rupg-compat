@@ -56,6 +56,8 @@ pub(crate) struct OidMap {
     databases: BTreeSet<u32>,
     /// How many statements of the trace make enum labels: `CREATE TYPE ... AS ENUM` and `ALTER TYPE ... ADD VALUE`.
     enums: usize,
+    /// How many statements of the trace store a rule: `CREATE VIEW` and `CREATE RULE`.
+    rules: usize,
     /// How many values of user OIDs replay changed with the map, in both directions.
     pub(crate) applied: usize,
     /// How many values of OIDs of `initdb` replay changed with the map, in both directions.
@@ -73,6 +75,8 @@ impl OidMap {
     /// - the gap before a label may differ by 1 when the label is even on both sides;
     /// - the other gaps may differ by 1 for each statement of the trace that makes enum labels, when the trace does not show the labels. The sum of these differences is at most the number of such statements.
     ///
+    /// PostgreSQL keeps the rule of a view or of `CREATE RULE` in `pg_rewrite` as a `pg_node_tree`. When the value stays longer than `TOAST_TUPLE_THRESHOLD` after `pglz` compresses it, `heap_toast_insert_or_update` moves it to the TOAST table of `pg_rewrite`, and the value takes an OID there. A view with a join and an aggregate is long enough. A server that does not keep node trees cannot know this, so a gap of the trace may be larger by 1 for each statement of the trace that stores a rule.
+    ///
     /// The OIDs of databases are not in the pairs. The runner makes the databases before the trace starts, and their OIDs depend on the earlier databases of the cluster.
     pub(crate) fn gaps(&self) -> (usize, usize) {
         let pairs: Vec<(i64, i64)> = self
@@ -82,6 +86,7 @@ impl OidMap {
             .map(|(&t, &s)| (i64::from(t), i64::from(s)))
             .collect();
         let mut slack = self.enums;
+        let mut rules = self.rules;
         let mut differ = 0;
         for w in pairs.windows(2) {
             let (trace, server) = (w[1].0 - w[0].0, w[1].1 - w[0].1);
@@ -95,6 +100,9 @@ impl OidMap {
                 slack = slack.saturating_sub(1);
             } else if off <= slack {
                 slack -= off;
+            } else if trace > server && off <= slack + rules {
+                rules -= off - slack;
+                slack = 0;
             } else {
                 differ += 1;
             }
@@ -105,6 +113,7 @@ impl OidMap {
     /// Counts the statements in `sql` that make enum labels.
     fn count_enums(&mut self, sql: &[u8]) {
         self.enums += enum_statements(sql);
+        self.rules += rule_statements(sql);
     }
 
     /// Notes that `trace` is the OID of an enum label in the trace.
@@ -224,6 +233,22 @@ fn enum_statements(sql: &[u8]) -> usize {
     words
         .windows(2)
         .filter(|w| matches!((&w[0][..], &w[1][..]), (b"AS", b"ENUM") | (b"ADD", b"VALUE")))
+        .count()
+}
+
+/// The number of statements that start with `CREATE` and have `VIEW` or `RULE` in their first six words, in any case. A statement in a string or a comment counts too, so the count can only be too high.
+fn rule_statements(sql: &[u8]) -> usize {
+    sql.split(|b| *b == b';')
+        .filter(|stmt| {
+            let words: Vec<Vec<u8>> = stmt
+                .split(|b| !(b.is_ascii_alphanumeric() || *b == b'_'))
+                .filter(|w| !w.is_empty())
+                .take(6)
+                .map(<[u8]>::to_ascii_uppercase)
+                .collect();
+            words.first().is_some_and(|w| w == b"CREATE")
+                && words.iter().any(|w| w == b"VIEW" || w == b"RULE")
+        })
         .count()
 }
 
@@ -994,6 +1019,33 @@ mod tests {
             map.learn(t, s);
         }
         assert_eq!(map.gaps(), (1, 1));
+    }
+
+    #[test]
+    fn a_statement_that_stores_a_rule_may_make_one_gap_of_the_trace_larger_by_one() {
+        assert_eq!(
+            rule_statements(b"CREATE OR REPLACE TEMP VIEW v AS SELECT 1; create materialized\nview m as select 2"),
+            2
+        );
+        assert_eq!(rule_statements(b"CREATE RULE r AS ON INSERT TO t DO NOTHING"), 1);
+        assert_eq!(
+            rule_statements(b"DROP VIEW v; SELECT * FROM pg_views; REFRESH MATERIALIZED VIEW m"),
+            0
+        );
+        let gaps = |pairs: &[(u32, u32)], rules: usize| {
+            let mut map = OidMap { rules, ..OidMap::default() };
+            for &(t, s) in pairs {
+                map.learn(t, s);
+            }
+            map.gaps()
+        };
+        // The rule of the view took an OID in the TOAST table of the trace.
+        let larger = [(16_384, 20_000), (16_419, 20_034)];
+        assert_eq!(gaps(&larger, 0), (1, 1));
+        assert_eq!(gaps(&larger, 1), (1, 0));
+        // The server never takes an OID that the trace does not take.
+        let smaller = [(16_384, 20_000), (16_419, 20_036)];
+        assert_eq!(gaps(&smaller, 1), (1, 1));
     }
 
     #[test]
