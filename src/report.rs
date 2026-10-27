@@ -240,6 +240,7 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
             "dump" => put(1, "pg_dump round trip".into(), "checks", r, tests, count),
             "gate" => put(1, "gate G1".into(), "clients", r, tests, count),
             "regress" => put(2, "regression tests".into(), "tests", r, tests, count),
+            "types" => put(2, "type input and output cases".into(), "cases", r, tests, count),
             "isolation" => put(3, "isolation specs".into(), "specs", r, tests, count),
             "parameters" => put(3, "parameter cases".into(), "cases", r, tests, count),
             s => {

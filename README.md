@@ -95,6 +95,8 @@ Six of the 48 clients are closed source or run only as a hosted service: DataGri
 
 `catalog` runs `SELECT *` on each catalog and each view of L2 in a new database, two times on the oracle and one time on the server under test, and compares the rows. With `--schema gate`, it first runs `clients/gate.sql` in the new database of each server, so the rows of the gate schema are compared too. That run is the suite `catalog-gate`.
 
+`types` checks the four functions of each type (spec/07 section 7.9 of rupg). For each value of `suites/types/values.txt`, it runs three cases: `SELECT 'v'::T` as a simple query for the text output, the same query with a binary result for the send function, and `SELECT $1` with the binary value of the oracle as a parameter of type T for the receive function. A value that the oracle rejects has only the first two cases, so the error is compared too. The report shows the suite in L3.
+
 The oracles are built with lz4, because PostgreSQL 19 then makes lz4 the default of `default_toast_compression`, as the spec of rupg gives. The compression changes which rules of the system views take a TOAST value, so it changes the OIDs of the objects that `initdb` makes.
 
 The oracles are also built with zstd, because rupg has zstd. With zstd, `wal_compression` accepts `zstd`, and `pg_settings` shows it in `enumvals`.

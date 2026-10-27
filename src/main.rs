@@ -76,7 +76,9 @@ commands:
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
   parameters                SHOW ALL, pg_settings, and SET TO DEFAULT, set_config and SHOW of each parameter
-                            (both: two runs on the oracle find the unstable cases, then --server ADDR, else
+  types                     for each value of suites/types/values.txt: the text output, the binary output, and the
+                            text output of the binary value of the oracle after the receive function
+                            (all three: two runs on the oracle find the unstable cases, then --server ADDR, else
                             the first oracle run, is compared with the rules and the exclusions of spec/05)
   dump                      the pg_dump round trip: run clients/pg_dump/roundtrip.sql in a new database, dump it with
                             pg_dump of the oracle build, restore the dump into the oracle and dump it again, and
@@ -151,7 +153,9 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("import") => return import_command(args, &pins),
         Some("report") => return report_command(args, &pins),
         Some("reference") => return reference_command(args, &pins),
-        Some(suite @ ("catalog" | "parameters")) => return introspect_command(args, &pins, suite),
+        Some(suite @ ("catalog" | "parameters" | "types")) => {
+            return introspect_command(args, &pins, suite);
+        }
         Some("dump") => return dump_command(args, &pins),
         Some("gate") => return gate_command(args, &pins),
         Some("version") => return version_command(args, &pins),
@@ -676,6 +680,10 @@ fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode,
     let started = suites::utc_now();
     let (cases, database) = if suite == "catalog" {
         (introspect::catalog_cases(&dir)?, introspect::CATALOG_DATABASE)
+    } else if suite == "types" {
+        let list = introspect::type_values(&Path::new("suites").join("types"))?;
+        out!("types {}: {} values from suites/types/values.txt", o.pin.major, list.len());
+        (introspect::type_cases(&list, &introspect::binary_values(&oracle, &list)?), "postgres")
     } else {
         let (names, source) = introspect::parameter_names(&dir, &oracle)?;
         out!("parameters {}: {} parameters from {source}", o.pin.major, names.len());

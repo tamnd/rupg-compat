@@ -1,9 +1,10 @@
-//! The catalog suite and the parameter suite (spec/05 section 5.6.5).
+//! The catalog suite, the parameter suite (spec/05 section 5.6.5) and the types suite.
 //!
-//! Each suite is a list of simple queries. The runner sends the list to the oracle two times and to the server under test one time, and keeps each answer as trace lines. Then it compares the answers with the rules of `compare`, as replay does: the groups that differ between the two oracle runs leave the comparison, and the excluded items and the rules of spec/05 section 5.2 apply.
+//! Each suite is a list of cases. Most cases are simple queries, and a case of the types suite can use the extended query protocol. The runner sends the list to the oracle two times and to the server under test one time, and keeps each answer as trace lines. Then it compares the answers with the rules of `compare`, as replay does: the groups that differ between the two oracle runs leave the comparison, and the excluded items and the rules of spec/05 section 5.2 apply.
 //!
 //! - The catalog suite runs `SELECT *` on each catalog, each system view and each `information_schema` view of the import, in a new database. With `--schema gate`, the new database first gets the gate schema of `clients/gate.sql`, and the suite is `catalog-gate`.
 //! - The parameter suite runs `SHOW ALL`, `SELECT * FROM pg_settings` and, for each parameter, `SET p TO DEFAULT`, `set_config` with the value of the oracle, and `SHOW p`.
+//! - The types suite runs three cases for each value of `suites/types/values.txt` (spec/07 section 7.9): the text output of the value, its binary output from the send function, and the text output of the binary value of the oracle after the receive function of the server.
 
 use std::collections::BTreeSet;
 use std::fs;
@@ -29,6 +30,15 @@ const CONN: u32 = 1;
 pub(crate) struct Case {
     pub(crate) name: String,
     pub(crate) sql: String,
+    /// The messages that the case sends, up to `Sync`. When the list is empty, the case sends `sql` as a simple query.
+    pub(crate) front: Vec<Msg>,
+}
+
+impl Case {
+    /// A case that sends `sql` as a simple query.
+    pub(crate) fn query(name: impl Into<String>, sql: impl Into<String>) -> Case {
+        Case { name: name.into(), sql: sql.into(), front: Vec::new() }
+    }
 }
 
 /// The catalog suite: `SELECT *` on the relations of the lists of the import.
@@ -41,10 +51,10 @@ pub(crate) fn catalog_cases(dir: &Path) -> Result<Vec<Case>, String> {
     ] {
         for words in import::list(dir, file)? {
             if let Some(name) = words.first() {
-                cases.push(Case {
-                    name: format!("{schema}.{name}"),
-                    sql: format!("SELECT * FROM {schema}.{name}"),
-                });
+                cases.push(Case::query(
+                    format!("{schema}.{name}"),
+                    format!("SELECT * FROM {schema}.{name}"),
+                ));
             }
         }
     }
@@ -59,22 +69,117 @@ fn literal(s: &str) -> String {
 /// The parameter suite. `values` has the value that `SHOW` gives on the oracle for each parameter, or None when `SHOW` fails.
 pub(crate) fn parameter_cases(values: &[(String, Option<String>)]) -> Vec<Case> {
     let mut cases = vec![
-        Case { name: "SHOW ALL".into(), sql: "SHOW ALL".into() },
-        Case { name: "pg_settings".into(), sql: "SELECT * FROM pg_catalog.pg_settings".into() },
+        Case::query("SHOW ALL", "SHOW ALL"),
+        Case::query("pg_settings", "SELECT * FROM pg_catalog.pg_settings"),
     ];
     for (name, value) in values {
-        cases.push(Case { name: format!("{name} default"), sql: format!("SET {name} TO DEFAULT") });
+        cases.push(Case::query(format!("{name} default"), format!("SET {name} TO DEFAULT")));
         if let Some(v) = value {
-            cases.push(Case {
-                name: format!("{name} set"),
-                sql: format!(
-                    "SELECT pg_catalog.set_config({}, {}, false)",
-                    literal(name),
-                    literal(v)
-                ),
-            });
+            cases.push(Case::query(
+                format!("{name} set"),
+                format!("SELECT pg_catalog.set_config({}, {}, false)", literal(name), literal(v)),
+            ));
         }
-        cases.push(Case { name: format!("{name} show"), sql: format!("SHOW {name}") });
+        cases.push(Case::query(format!("{name} show"), format!("SHOW {name}")));
+    }
+    cases
+}
+
+/// The values of the types suite: the pairs of type and value of `values.txt` in `dir`. A line that starts with `#` is a comment. The value is the rest of the line after the first space, so it can start with spaces. A line with only a type has the empty value.
+pub(crate) fn type_values(dir: &Path) -> Result<Vec<(String, String)>, String> {
+    let path = dir.join("values.txt");
+    let text = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let mut out = Vec::new();
+    for (n, line) in text.lines().enumerate() {
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let (ty, value) = line.split_once(' ').unwrap_or((line, ""));
+        if ty.is_empty() {
+            return Err(format!("{}:{}: no type", path.display(), n + 1));
+        }
+        out.push((ty.to_string(), value.to_string()));
+    }
+    Ok(out)
+}
+
+/// The messages of one run of `sql` with the extended query protocol, with the formats of the parameters and of the result. `Describe` adds the `RowDescription`, so the types and the formats of the columns are compared too.
+fn extended(sql: &str, types: &[u32], formats: &[i64], params: Vec<Val>, result: i64) -> Vec<Msg> {
+    let ints = |v: &[i64]| Val::List(v.iter().map(|&i| Val::Int(i)).collect());
+    let types = types.iter().map(|&t| Val::Int(i64::from(t))).collect();
+    vec![
+        Msg::new(
+            Dir::F,
+            "Parse",
+            vec![client::str_val(""), client::str_val(sql), Val::List(types)],
+        ),
+        Msg::new(
+            Dir::F,
+            "Bind",
+            vec![
+                client::str_val(""),
+                client::str_val(""),
+                ints(formats),
+                Val::List(params),
+                ints(&[result]),
+            ],
+        ),
+        Msg::new(Dir::F, "Describe", vec![Val::Byte(b'P'), client::str_val("")]),
+        Msg::new(Dir::F, "Execute", vec![client::str_val(""), Val::Int(0)]),
+        Msg::new(Dir::F, "Sync", vec![]),
+    ]
+}
+
+/// The type OID of a value of the types suite and the binary value that the oracle gives for it. The binary value is None when the oracle rejects the value.
+pub(crate) type Binary = (u32, Option<Vec<u8>>);
+
+/// The type OID and the binary value of the oracle for each value of the types suite.
+pub(crate) fn binary_values(
+    oracle: &Target,
+    list: &[(String, String)],
+) -> Result<Vec<Binary>, String> {
+    let mut c = Conn::connect(oracle, "postgres")?;
+    let mut out = Vec::new();
+    for (ty, value) in list {
+        let sql = format!("SELECT {}::regtype::oid", literal(ty));
+        let oid = values(&c.query(&sql)?)
+            .first()
+            .and_then(|r| r.first().cloned().flatten())
+            .and_then(|o| o.parse().ok())
+            .ok_or_else(|| format!("{sql}: the oracle does not know the type"))?;
+        for m in extended(&format!("SELECT {}::{ty}", literal(value)), &[], &[], vec![], 1) {
+            c.send(&m)?;
+        }
+        let mut bytes = None;
+        loop {
+            let m = c.recv()?;
+            match m.name() {
+                "DataRow" => {
+                    bytes = m.vals[0].list().first().and_then(Val::bytes).map(<[u8]>::to_vec)
+                }
+                "ReadyForQuery" => break,
+                _ => {}
+            }
+        }
+        out.push((oid, bytes));
+    }
+    Ok(out)
+}
+
+/// The types suite. For each value it has the case `text`, a simple query, and the case `send`, the same query with a binary result. When the oracle gave a binary value, the case `receive` binds that value as a binary parameter of the type and reads it back as text.
+pub(crate) fn type_cases(list: &[(String, String)], binary: &[Binary]) -> Vec<Case> {
+    let mut cases = Vec::new();
+    for ((ty, value), (oid, bytes)) in list.iter().zip(binary) {
+        let name = format!("{ty} {value:?}");
+        let sql = format!("SELECT {}::{ty}", literal(value));
+        cases.push(Case::query(format!("{name} text"), sql.clone()));
+        let front = extended(&sql, &[], &[], vec![], 1);
+        cases.push(Case { name: format!("{name} send"), sql, front });
+        if let Some(b) = bytes {
+            let sql = "SELECT $1".to_string();
+            let front = extended(&sql, &[*oid], &[1], vec![Val::Str(b.clone())], 0);
+            cases.push(Case { name: format!("{name} receive"), sql, front });
+        }
     }
     cases
 }
@@ -135,10 +240,19 @@ pub(crate) fn run_cases(
     let mut c = Conn::connect(target, database)?;
     let mut lines = Vec::new();
     for case in cases {
-        let q = Msg::new(Dir::F, "Query", vec![Val::Str(case.sql.clone().into_bytes())]);
-        lines.push(Line { conn: CONN, dir: Dir::F, event: Event::Msg(q) });
-        for m in c.query(&case.sql)? {
+        let query = [Msg::new(Dir::F, "Query", vec![client::str_val(&case.sql)])];
+        let front = if case.front.is_empty() { &query[..] } else { &case.front[..] };
+        for m in front {
+            c.send(m)?;
+            lines.push(Line { conn: CONN, dir: Dir::F, event: Event::Msg(m.clone()) });
+        }
+        loop {
+            let m = c.recv()?;
+            let done = m.name() == "ReadyForQuery";
             lines.push(Line { conn: CONN, dir: Dir::B, event: Event::Msg(m) });
+            if done {
+                break;
+            }
         }
     }
     Ok(lines)
@@ -308,11 +422,50 @@ mod tests {
     }
 
     #[test]
+    fn each_type_value_has_three_cases() {
+        let dir = std::env::temp_dir().join(format!("rupg-compat-types-{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join("values.txt"), "# comment\nint4 1\nbool  off\nint4 x\ntext\n").unwrap();
+        let list = type_values(&dir).unwrap();
+        fs::write(dir.join("values.txt"), " 1\n").unwrap();
+        assert!(type_values(&dir).unwrap_err().ends_with(":1: no type"));
+        fs::remove_dir_all(&dir).unwrap();
+        assert_eq!(list[1], ("bool".to_string(), " off".to_string()));
+        assert_eq!(list[3], ("text".to_string(), String::new()));
+        let binary = [(23, Some(vec![0, 0, 0, 1])), (16, Some(vec![0])), (23, None)];
+        let cases = type_cases(&list, &binary);
+        let names: Vec<&str> = cases.iter().map(|c| c.name.as_str()).collect();
+        assert_eq!(
+            names,
+            [
+                "int4 \"1\" text",
+                "int4 \"1\" send",
+                "int4 \"1\" receive",
+                "bool \" off\" text",
+                "bool \" off\" send",
+                "bool \" off\" receive",
+                "int4 \"x\" text",
+                "int4 \"x\" send"
+            ]
+        );
+        assert_eq!(cases[0].sql, "SELECT '1'::int4");
+        assert!(cases[0].front.is_empty());
+        let front: Vec<&str> = cases[1].front.iter().map(Msg::name).collect();
+        assert_eq!(front, ["Parse", "Bind", "Describe", "Execute", "Sync"]);
+        assert_eq!(cases[1].front[1].vals[4], Val::List(vec![Val::Int(1)]));
+        let receive = &cases[2].front;
+        assert_eq!(receive[0].vals[2], Val::List(vec![Val::Int(23)]));
+        assert_eq!(receive[1].vals[2], Val::List(vec![Val::Int(1)]));
+        assert_eq!(receive[1].vals[3], Val::List(vec![Val::Str(vec![0, 0, 0, 1])]));
+        assert_eq!(receive[1].vals[4], Val::List(vec![Val::Int(0)]));
+    }
+
+    #[test]
     fn unstable_cases_leave_the_pass_set() {
         let cases = vec![
-            Case { name: "a".into(), sql: "SELECT 1".into() },
-            Case { name: "b".into(), sql: "SELECT 2".into() },
-            Case { name: "c".into(), sql: "SELECT 3".into() },
+            Case::query("a", "SELECT 1"),
+            Case::query("b", "SELECT 2"),
+            Case::query("c", "SELECT 3"),
         ];
         let mut outcome = Outcome::default();
         outcome.diffs.insert((CONN, 2), "want x".into());
