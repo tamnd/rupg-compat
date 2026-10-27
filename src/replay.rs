@@ -31,6 +31,7 @@ const TEXT_TYPE: i64 = 25;
 
 /// The OID of the catalog `pg_enum`.
 const PG_ENUM: i64 = 3501;
+const PG_DATABASE: i64 = 1262;
 
 /// How long replay waits for a server that is quiet after a group without a terminator.
 const IDLE: Duration = Duration::from_millis(500);
@@ -51,6 +52,8 @@ pub(crate) struct OidMap {
     to_trace: BTreeMap<u32, u32>,
     /// The OIDs of the trace that are enum labels, from the `oid` column of `pg_enum`.
     labels: BTreeSet<u32>,
+    /// The OIDs of the trace that are databases, from the `oid` column of `pg_database`.
+    databases: BTreeSet<u32>,
     /// How many statements of the trace make enum labels: `CREATE TYPE ... AS ENUM` and `ALTER TYPE ... ADD VALUE`.
     enums: usize,
     /// How many values of user OIDs replay changed with the map, in both directions.
@@ -69,10 +72,13 @@ impl OidMap {
     /// PostgreSQL gives only even OIDs to enum labels (`EnumValuesCreate` and `AddEnumLabel` in `pg_enum.c` skip the odd ones). So a statement that makes enum labels uses one more OID when the next OID is odd. The parity of the next OID is not the same in the trace and in the replay, so:
     /// - the gap before a label may differ by 1 when the label is even on both sides;
     /// - the other gaps may differ by 1 for each statement of the trace that makes enum labels, when the trace does not show the labels. The sum of these differences is at most the number of such statements.
+    ///
+    /// The OIDs of databases are not in the pairs. The runner makes the databases before the trace starts, and their OIDs depend on the earlier databases of the cluster.
     pub(crate) fn gaps(&self) -> (usize, usize) {
         let pairs: Vec<(i64, i64)> = self
             .to_server
             .range(FIRST_NORMAL_OID..)
+            .filter(|(t, _)| !self.databases.contains(t))
             .map(|(&t, &s)| (i64::from(t), i64::from(s)))
             .collect();
         let mut slack = self.enums;
@@ -247,28 +253,37 @@ fn row_types(msg: &Msg) -> Vec<i64> {
     msg.vals[0].list().iter().map(ty).collect()
 }
 
-/// The places of the columns of a `RowDescription` that are the `oid` column of `pg_enum`.
-fn label_columns(msg: &Msg) -> Vec<usize> {
+/// The places of the columns of a `RowDescription` that are the `oid` column of the catalog `table`.
+fn oid_columns(msg: &Msg, table: i64) -> Vec<usize> {
     let field = |f: &Val, i: usize| f.list().get(i).and_then(Val::int);
     msg.vals[0]
         .list()
         .iter()
         .enumerate()
-        .filter(|(_, f)| field(f, 1) == Some(PG_ENUM) && field(f, 2) == Some(1))
+        .filter(|(_, f)| field(f, 1) == Some(table) && field(f, 2) == Some(1))
         .map(|(i, _)| i)
         .collect()
 }
 
 /// Notes the enum labels of a `DataRow` of the trace.
 fn learn_labels(map: &mut OidMap, trace: &Msg, columns: &[usize]) {
-    if trace.name() != "DataRow" {
-        return;
+    for oid in row_oids(trace, columns) {
+        map.label(oid);
     }
-    for &i in columns {
-        if let Some(oid) = trace.vals[0].list().get(i).and_then(Val::bytes).and_then(oid_column) {
-            map.label(oid);
-        }
+}
+
+/// Notes the databases of a `DataRow` of the trace.
+fn learn_databases(map: &mut OidMap, trace: &Msg, columns: &[usize]) {
+    map.databases.extend(row_oids(trace, columns));
+}
+
+/// The OIDs in the `columns` of a `DataRow`.
+fn row_oids(msg: &Msg, columns: &[usize]) -> Vec<u32> {
+    if msg.name() != "DataRow" {
+        return Vec::new();
     }
+    let row = msg.vals[0].list();
+    columns.iter().filter_map(|&i| row.get(i).and_then(Val::bytes).and_then(oid_column)).collect()
 }
 
 /// The message of the trace that replay learns the OIDs of message `i` of the server from. This is the message at the same place, but for a `DataRow` it is the only row of the trace with the same values in the columns that are not of type `oid`, when there is one. A query without `ORDER BY` can give its rows in another order, for example the rows of `pg_type` of a domain and its array type.
@@ -529,6 +544,8 @@ struct Session {
     types: Vec<i64>,
     /// The columns of the last `RowDescription` of the server that hold enum labels.
     labels: Vec<usize>,
+    /// The columns of the last `RowDescription` of the server that hold databases.
+    databases: Vec<usize>,
     end_written: bool,
     trace_key: Option<(i64, Vec<u8>)>,
     key: Option<(i64, Vec<u8>)>,
@@ -802,7 +819,8 @@ impl Runner<'_> {
                 "BackendKeyData" => s.key = key_of(&msg),
                 "RowDescription" => {
                     s.types = row_types(&msg);
-                    s.labels = label_columns(&msg);
+                    s.labels = oid_columns(&msg, PG_ENUM);
+                    s.databases = oid_columns(&msg, PG_DATABASE);
                 }
                 _ => {}
             }
@@ -812,6 +830,7 @@ impl Runner<'_> {
             }
             if let Some(t) = pending.get(i) {
                 learn_labels(&mut self.out.oids, t, &s.labels);
+                learn_databases(&mut self.out.oids, t, &s.databases);
             }
             let mut shown = msg;
             map_backend(&mut self.out.oids, &mut shown, &types);
@@ -925,6 +944,19 @@ mod tests {
     }
 
     #[test]
+    fn the_gaps_of_databases_are_not_compared() {
+        let mut map = OidMap::default();
+        let dr =
+            Msg::new(Dir::B, "DataRow", vec![Val::List(vec![str_val("16421"), str_val("compat")])]);
+        learn_databases(&mut map, &dr, &[0]);
+        // The runner made the database 16421 in the trace and 16384 on the server, before other databases.
+        for (t, s) in [(16_421, 16_384), (16_424, 16_389), (16_425, 16_390)] {
+            map.learn(t, s);
+        }
+        assert_eq!(map.gaps(), (1, 0));
+    }
+
+    #[test]
     fn the_gap_before_an_even_enum_label_may_differ_by_one() {
         let field = |table: i64, column: i64| {
             Val::Tuple(vec![
@@ -938,9 +970,9 @@ mod tests {
             ])
         };
         let rd = Msg::new(Dir::B, "RowDescription", vec![Val::List(vec![field(3501, 1)])]);
-        assert_eq!(label_columns(&rd), [0]);
+        assert_eq!(oid_columns(&rd, PG_ENUM), [0]);
         let other = Msg::new(Dir::B, "RowDescription", vec![Val::List(vec![field(1247, 1)])]);
-        assert!(label_columns(&other).is_empty());
+        assert!(oid_columns(&other, PG_ENUM).is_empty());
         let mut map = OidMap::default();
         let dr = Msg::new(Dir::B, "DataRow", vec![Val::List(vec![str_val("16388")])]);
         learn_labels(&mut map, &dr, &[0]);
