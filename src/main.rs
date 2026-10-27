@@ -465,6 +465,13 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
                 }
             }
         };
+        // A trace keeps the databases of the oracle when the recording started, and a client can list them, so each run starts with them.
+        if let Some(list) = t.header_value(DATABASES)
+            && let Err(e) =
+                client::set_databases(&oracle, &list.split_whitespace().collect::<Vec<_>>())
+        {
+            out!("{file}: {e}");
+        }
         reset(&oracle);
         // The unstable filter (spec/21 section 21.1): two runs on the oracle, and the groups that differ between them leave the comparison.
         let first = replay::replay(&t, &oracle, timeout);
