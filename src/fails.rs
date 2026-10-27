@@ -67,29 +67,29 @@ pub(crate) fn load_dir(dir: &Path) -> Result<Fails, String> {
         .map_err(|e| format!("{}/{e}", dir.display()))
 }
 
-/// Reads the excluded tests of a suite from its text: one test on each line as `<test>: <reason>`. The reason gives the item of spec/05 section 5.3 or the section of spec/16 that excludes the test.
-pub(crate) fn parse_excluded(text: &str) -> Result<Vec<(String, String)>, String> {
+/// Reads a list of tests with a reason for each from the text of `file`: one test on each line as `<test>: <reason>`. `excluded.txt` gives the tests that leave the counts, and the reason gives the item of spec/05 section 5.3 or the section of spec/16 that excludes the test. `explain.txt` gives the tests whose `EXPLAIN` lines are filtered.
+pub(crate) fn parse_reasons(file: &str, text: &str) -> Result<Vec<(String, String)>, String> {
     let mut out: Vec<(String, String)> = Vec::new();
     for (n, line) in tests(text) {
-        let bad = || format!("excluded.txt line {n}: give the test as `<test>: <reason>`");
+        let bad = || format!("{file} line {n}: give the test as `<test>: <reason>`");
         let (test, reason) = line.split_once(':').ok_or_else(bad)?;
         let (test, reason) = (test.trim(), reason.trim());
         if test.is_empty() || reason.is_empty() {
             return Err(bad());
         }
         if out.iter().any(|(t, _)| t == test) {
-            return Err(format!("excluded.txt line {n}: {test} is in the list two times"));
+            return Err(format!("{file} line {n}: {test} is in the list two times"));
         }
         out.push((test.to_string(), reason.to_string()));
     }
     Ok(out)
 }
 
-/// Reads `excluded.txt` in a directory. A directory with no such file excludes no test.
-pub(crate) fn load_excluded(dir: &Path) -> Result<Vec<(String, String)>, String> {
-    let path = dir.join("excluded.txt");
+/// Reads the list `file` in a directory. A directory with no such file gives no test.
+pub(crate) fn load_reasons(dir: &Path, file: &str) -> Result<Vec<(String, String)>, String> {
+    let path = dir.join(file);
     match fs::read_to_string(&path) {
-        Ok(text) => parse_excluded(&text).map_err(|e| format!("{}/{e}", dir.display())),
+        Ok(text) => parse_reasons(file, &text).map_err(|e| format!("{}/{e}", dir.display())),
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Vec::new()),
         Err(e) => Err(format!("{}: {e}", path.display())),
     }
@@ -184,14 +184,15 @@ mod tests {
 
     #[test]
     fn each_excluded_test_has_a_reason() {
-        let list = parse_excluded("# a comment\n\nexplain: the plan, item 1\n").unwrap();
+        let list =
+            parse_reasons("excluded.txt", "# a comment\n\nexplain: the plan, item 1\n").unwrap();
         assert_eq!(list, [("explain".to_string(), "the plan, item 1".to_string())]);
-        assert!(parse_excluded("explain\n").is_err());
-        assert!(parse_excluded("explain:\n").is_err());
-        assert!(parse_excluded("a: x\na: y\n").is_err());
-        let regress = load_excluded(Path::new("suites/regress")).unwrap();
+        assert!(parse_reasons("excluded.txt", "explain\n").is_err());
+        assert!(parse_reasons("excluded.txt", "explain:\n").is_err());
+        assert!(parse_reasons("excluded.txt", "a: x\na: y\n").is_err());
+        let regress = load_reasons(Path::new("suites/regress"), "excluded.txt").unwrap();
         assert!(regress.iter().any(|(t, _)| t == "explain"));
-        assert_eq!(load_excluded(Path::new("suites/types")).unwrap(), []);
+        assert_eq!(load_reasons(Path::new("suites/types"), "excluded.txt").unwrap(), []);
     }
 
     #[test]
@@ -202,8 +203,10 @@ mod tests {
         assert!(parse_milestones("int4: 3\n").is_err());
         assert!(parse_milestones("int4: M3\nint4: M5\n").is_err());
         let regress = load_milestones(Path::new("suites/regress")).unwrap();
-        let excluded = load_excluded(Path::new("suites/regress")).unwrap();
+        let excluded = load_reasons(Path::new("suites/regress"), "excluded.txt").unwrap();
         assert!(regress.iter().any(|(t, m)| t == "boolean" && *m == 3));
         assert!(regress.iter().all(|(t, _)| !excluded.iter().any(|(e, _)| e == t)));
+        let explain = load_reasons(Path::new("suites/regress"), "explain.txt").unwrap();
+        assert!(explain.iter().all(|(t, _)| regress.iter().any(|(m, _)| m == t)));
     }
 }
