@@ -41,7 +41,7 @@ commit = "6b3806732b7c5df06bdd0ed150e8a07b4ad62315"
 [rupg]
 # The rupg commit under test. The harness does not link rupg. It talks to a rupg server through a socket.
 repository = "https://github.com/tamnd/rupg"
-commit = "ead90a6b89c373d927dabcfefbee755b886d9a50"
+commit = "a591a45de72187a6d798bdf3666fbb5940867237"
 
 [clients]
 # One table for each client whose trace or suite is in corpus/ or clients/, with the version that made it.
