@@ -1,0 +1,20 @@
+# The connect program of the connect suite, with tokio-postgres and postgres-openssl. It is a crate of its own, so the trace scenario keeps its lock file and builds without TLS.
+[package]
+name = "compat-client-tokio-postgres-connect"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+# The crate is the root of its own workspace, so a Cargo.toml in a directory above it has no effect.
+[workspace]
+
+[[bin]]
+name = "compat-client-tokio-postgres-connect"
+path = "main.rs"
+
+[dependencies]
+tokio = { version = "=1.53.2", features = ["rt", "macros"] }
+tokio-postgres = "=0.7.18"
+postgres-openssl = "0.5"
+openssl = "0.10"

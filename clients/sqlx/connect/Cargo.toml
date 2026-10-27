@@ -1,0 +1,18 @@
+# The connect program of the connect suite, with sqlx and native TLS. It is a crate of its own, so the trace scenario keeps its lock file and builds without TLS.
+[package]
+name = "compat-client-sqlx-connect"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+# The crate is the root of its own workspace, so a Cargo.toml in a directory above it has no effect.
+[workspace]
+
+[[bin]]
+name = "compat-client-sqlx-connect"
+path = "main.rs"
+
+[dependencies]
+tokio = { version = "=1.53.2", features = ["rt", "macros"] }
+sqlx = { version = "=0.9.0", default-features = false, features = ["runtime-tokio", "postgres", "tls-native-tls"] }

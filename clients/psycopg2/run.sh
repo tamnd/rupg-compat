@@ -1,5 +1,6 @@
 #!/bin/sh
 # The trace scenario for psycopg2. `rupg-compat record psycopg2` runs this script through the proxy.
+# With the argument connect, it runs the connect program in place of the scenario, and `rupg-compat connect` runs it.
 # It installs the pinned version in a virtual environment under the work directory.
 set -eu
 dir=$(cd "$(dirname "$0")" && pwd)
@@ -8,4 +9,4 @@ if [ ! -x "$env/bin/python" ]; then
     python3 -m venv "$env"
     "$env/bin/pip" install --quiet psycopg2-binary==2.9.13
 fi
-"$env/bin/python" "$dir/scenario.py"
+"$env/bin/python" "$dir/${1:-scenario}.py"

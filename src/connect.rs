@@ -14,8 +14,25 @@ pub(crate) const SUITE: Suite =
 const QUERY: &str =
     "SELECT system_user, ssl, version FROM pg_stat_ssl WHERE pid = pg_backend_pid()";
 /// psql, libpq and the drivers of the connect matrix.
-pub(crate) const CLIENTS: [&str; 7] =
-    ["psql", "libpq", "pgjdbc", "psycopg", "node-postgres", "pgx", "asyncpg"];
+pub(crate) const CLIENTS: [&str; 17] = [
+    "psql",
+    "libpq",
+    "pgjdbc",
+    "psycopg",
+    "node-postgres",
+    "pgx",
+    "asyncpg",
+    "psycopg2",
+    "postgres-js",
+    "lib-pq",
+    "npgsql",
+    "tokio-postgres",
+    "sqlx",
+    "ruby-pg",
+    "postgrex",
+    "r2dbc-postgresql",
+    "psqlodbc",
+];
 
 #[cfg(test)]
 mod tests {
