@@ -35,26 +35,40 @@ incg() {
         sh "$cg" "$(id -un)" env PATH="$PATH" HOME="$HOME" RUPG_COMPAT_WORK="$work" "$@"
 }
 
+# stop_rupg: stops each process in the cgroup of rupg, then waits until the port is free.
 stop_rupg() {
-    if [ -n "${rupg_pid:-}" ]; then
-        kill "$rupg_pid" 2> /dev/null
-        wait "$rupg_pid" 2> /dev/null
-        rupg_pid=
-    fi
+    if [ -z "${rupg_cg:-}" ]; then return 0; fi
+    sudo sh -c 'kill $(cat "$1/cgroup.procs") 2> /dev/null' sh "$rupg_cg"
+    i=0
+    while [ -s "$rupg_cg/cgroup.procs" ] && [ $i -lt 100 ]; do
+        sleep 0.2
+        i=$((i + 1))
+    done
+    if [ -s "$rupg_cg/cgroup.procs" ]; then echo 1 | sudo tee "$rupg_cg/cgroup.kill" > /dev/null; fi
+    wait 2> /dev/null
+    rupg_cg=
+}
+
+# port_free: true when nothing listens on the port of rupg.
+port_free() {
+    ! (echo > /dev/tcp/127.0.0.1/$port) 2> /dev/null
 }
 
 # fresh_rupg CGROUP: starts rupg with a new database in CGROUP.
 fresh_rupg() {
     stop_rupg
+    if ! port_free; then
+        echo "port $port is in use, so rupg cannot start"
+        return 1
+    fi
     rm -rf "$work/rupg-conf"
     "$rc" oracle conf "$work/rupg-conf" --port $port --compat-version 19 > /dev/null || return 1
     echo rupg-compat > "$work/rupg-pw"
+    rupg_cg=$1
     incg "$1" "$rupg" serve -D "$work/rupg-conf" --pwfile "$work/rupg-pw" >> "$logs/rupg.log" 2>&1 &
-    rupg_pid=$!
     i=0
     while [ $i -lt 300 ]; do
-        if (echo > /dev/tcp/127.0.0.1/$port) 2> /dev/null; then return 0; fi
-        if ! kill -0 "$rupg_pid" 2> /dev/null; then break; fi
+        if ! port_free; then return 0; fi
         sleep 0.2
         i=$((i + 1))
     done
