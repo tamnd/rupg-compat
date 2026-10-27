@@ -214,6 +214,24 @@ pub(crate) fn same_databases(oracle: &Target, target: &Target) -> Result<(), Str
     Ok(())
 }
 
+/// Makes the databases of `target` the same as `names`: it makes each database that is missing and drops each other database, but not `postgres` and `template1`. A trace keeps the databases of the oracle when the recording started, and a client can list them.
+pub(crate) fn set_databases(target: &Target, names: &[&str]) -> Result<(), String> {
+    let have = databases(target)?;
+    let mut c = Conn::connect(target, "template1")?;
+    for name in names.iter().filter(|n| !have.iter().any(|h| h == *n)) {
+        let quoted = format!("\"{}\"", name.replace('"', "\"\""));
+        c.execute(&format!("CREATE DATABASE {quoted} TEMPLATE template0"))?;
+    }
+    for name in have.iter().filter(|h| !names.contains(&h.as_str())) {
+        if ["postgres", "template1"].contains(&name.as_str()) {
+            continue;
+        }
+        let quoted = format!("\"{}\"", name.replace('"', "\"\""));
+        c.execute(&format!("DROP DATABASE {quoted} WITH (FORCE)"))?;
+    }
+    Ok(())
+}
+
 /// The severity, the SQLSTATE and the message of an `ErrorResponse`.
 pub(crate) fn error_text(msg: &Msg) -> String {
     let fields = msg.vals.first().map(Val::list).unwrap_or_default();

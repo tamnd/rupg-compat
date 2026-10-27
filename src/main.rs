@@ -271,6 +271,9 @@ fn oracle_addr(o: &Oracle) -> SocketAddr {
 /// The database that `record` gives to a client.
 const RECORD_DATABASE: &str = "compat";
 
+/// The header line of a trace with the databases of the oracle when the recording started.
+const DATABASES: &str = "databases";
+
 fn oracle_target(o: &Oracle) -> client::Target {
     client::Target {
         addr: oracle_addr(o),
@@ -344,7 +347,10 @@ fn record_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         if args.rest.is_empty() { format!("clients/{name}/run.sh") } else { args.rest.join(" ") };
     // Each recording starts from a new database, and replay makes the same database again.
     client::reset_database(&oracle_target(&o), RECORD_DATABASE)?;
-    let p = proxy::Proxy::start("127.0.0.1:0", oracle_addr(&o), &out, &trace_header(&o, &what))?;
+    // A client can list the databases, so the trace keeps the databases of the oracle, and replay makes the same databases on the server.
+    let mut header = trace_header(&o, &what);
+    header.push(format!("{DATABASES}: {}", client::databases(&oracle_target(&o))?.join(" ")));
+    let p = proxy::Proxy::start("127.0.0.1:0", oracle_addr(&o), &out, &header)?;
     // The proxy does not speak TLS, so the client must not require it.
     for (k, v) in o.env() {
         cmd.env(k, v);
@@ -467,7 +473,13 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             first
         } else {
             reset(&target);
-            if let Err(e) = client::same_databases(&oracle, &target) {
+            let made = match t.header_value(DATABASES) {
+                Some(list) => {
+                    client::set_databases(&target, &list.split_whitespace().collect::<Vec<_>>())
+                }
+                None => client::same_databases(&oracle, &target),
+            };
+            if let Err(e) = made {
                 out!("{file}: {e}");
             }
             replay::replay(&t, &target, timeout)
