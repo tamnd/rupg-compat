@@ -176,6 +176,50 @@ const DRIVER_TRACES: [(&str, &str); 6] = [
     ("tableplus", "libpq"),
 ];
 
+/// The catalogs of L2 tier 1 (spec/05 section 5.1). `version()`, `format_type` and the `reg*` casts of tier 1 are functions, and the gate and type suites check them.
+const TIER_1: [&str; 4] = ["pg_type", "pg_namespace", "pg_class", "pg_attribute"];
+
+/// The catalogs of L2 tier 2 (spec/05 section 5.1). Each relation of `information_schema` is in tier 2 too.
+const TIER_2: [&str; 7] =
+    ["pg_index", "pg_constraint", "pg_attrdef", "pg_description", "pg_enum", "pg_range", "pg_proc"];
+
+/// The tier of a relation of the catalog suite, or `None` when the relation is in no tier.
+fn tier(name: &str) -> Option<usize> {
+    let (schema, table) = name.split_once('.').unwrap_or(("pg_catalog", name));
+    if schema == "information_schema" {
+        return Some(2);
+    }
+    if schema != "pg_catalog" {
+        return None;
+    }
+    if TIER_1.contains(&table) {
+        Some(1)
+    } else if TIER_2.contains(&table) {
+        Some(2)
+    } else {
+        None
+    }
+}
+
+/// The rows of each tier of a catalog run, with the key suffix of the suite. The number is the sum of the equal rows of the relations of the tier, of the sum of their rows. An unstable relation of a tier makes the tier unstable.
+fn tier_rows(r: &Record, suffix: &str) -> Vec<(String, Option<Number>)> {
+    let mut out = Vec::new();
+    for t in [1, 2] {
+        let key = format!("L2 tier {t} rows{suffix}");
+        if r.unstable.iter().any(|n| tier(n) == Some(t)) {
+            out.push((key, None));
+            continue;
+        }
+        let mut n = (0, 0);
+        for (_, s) in r.checked.iter().flat_map(|c| &c.cases).filter(|(n, _)| tier(n) == Some(t)) {
+            n.0 += s.rows_equal;
+            n.1 += s.rows;
+        }
+        out.push((key, Some(n)));
+    }
+    out
+}
+
 /// The rows of one version.
 pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
     let mut rows: BTreeMap<(usize, String), Row> = BTreeMap::new();
@@ -205,6 +249,9 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
             "version" => put(0, "version forms".into(), "checks", r, tests, count),
             "catalog" => {
                 put(1, "catalog relations".into(), "relations", r, tests, count);
+                for (key, n) in tier_rows(r, "") {
+                    put(1, key, "rows", r, n, n.map_or(0, |n| n.0));
+                }
                 for (name, s) in r.checked.iter().flat_map(|c| &c.cases) {
                     let n = Some((s.rows_equal, s.rows));
                     put(1, format!("rows of {name}"), "rows", r, n, s.rows_equal);
@@ -222,6 +269,9 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
                     tests,
                     count,
                 );
+                for (key, n) in tier_rows(r, " with the gate schema") {
+                    put(1, key, "rows", r, n, n.map_or(0, |n| n.0));
+                }
                 for (name, s) in r.checked.iter().flat_map(|c| &c.cases) {
                     let n = Some((s.rows_equal, s.rows));
                     put(
@@ -601,7 +651,16 @@ mod tests {
         let mut catalog = record("catalog", "server", 1, 2);
         catalog.unstable = vec!["pg_locks".into()];
         catalog.checked = Some(Checked {
-            cases: vec![("pg_class".into(), Share { rows: 3, rows_equal: 2, ..Share::default() })],
+            cases: vec![
+                ("pg_class".into(), Share { rows: 3, rows_equal: 2, ..Share::default() }),
+                ("pg_catalog.pg_type".into(), Share { rows: 4, rows_equal: 4, ..Share::default() }),
+                ("pg_catalog.pg_proc".into(), Share { rows: 6, rows_equal: 5, ..Share::default() }),
+                (
+                    "information_schema.tables".into(),
+                    Share { rows: 2, rows_equal: 2, ..Share::default() },
+                ),
+                ("pg_catalog.pg_am".into(), Share { rows: 9, rows_equal: 1, ..Share::default() }),
+            ],
             ..Checked::default()
         });
         let mut replay = record("replay-psql", "server", 1, 1);
@@ -654,9 +713,25 @@ mod tests {
         assert_eq!(find("version forms").server, Some((8, 8)));
         assert_eq!(find("catalog relations with the gate schema").server, Some((3, 4)));
         assert_eq!(find("rows of pg_class with the gate schema").server, Some((5, 5)));
+        assert_eq!(find("L2 tier 1 rows").server, Some((6, 7)));
+        assert_eq!(find("L2 tier 1 rows").count, Some(6));
+        assert_eq!(find("L2 tier 2 rows").server, Some((7, 8)));
+        assert_eq!(find("L2 tier 1 rows with the gate schema").server, Some((5, 5)));
+        assert_eq!(find("L2 tier 2 rows with the gate schema").server, Some((0, 0)));
         assert_eq!(find("Hermitage cases").server, None);
         assert!(got.iter().all(|r| r.key != "client traces"));
         assert!(rows(&recs, 18).iter().all(|r| r.server.is_none() && r.oracle.is_none()));
+    }
+
+    #[test]
+    fn an_unstable_relation_makes_its_tier_unstable() {
+        let mut catalog = record("catalog", "server", 1, 2);
+        catalog.unstable = vec!["pg_catalog.pg_class".into()];
+        let got = rows(&[catalog], 19);
+        let find = |key: &str| got.iter().find(|r| r.key == key).unwrap();
+        assert!(find("L2 tier 1 rows").unstable);
+        assert_eq!(find("L2 tier 1 rows").count, None);
+        assert_eq!(find("L2 tier 2 rows").server, Some((0, 0)));
     }
 
     #[test]
