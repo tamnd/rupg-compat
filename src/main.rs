@@ -19,6 +19,7 @@ macro_rules! out {
 mod args;
 mod client;
 mod compare;
+mod connect;
 mod diff;
 mod dump;
 mod fails;
@@ -86,6 +87,9 @@ commands:
   gate                      gate G1: run clients/gate.sql in a new database, run the gate program of each of the
                             seven clients on the oracle and on the server under test, and compare the lists of
                             the schema (--server ADDR, else the oracle; --clients A,B for some of the clients)
+  connect                   L1 with TLS: run the connect program of psql, libpq and each driver of the connect
+                            matrix on the oracle and on the server under test, with TLS, the certificate of the
+                            oracle and SCRAM, and compare the lines (--server ADDR, else the oracle; --clients A,B)
   version --server ADDR     check that server_version, server_version_num, version() and rupg.version of the
                             server under test have the forms of spec/05 section 5.7
   report                    write reports/<date>/report.md from the result files of the work directory, with one
@@ -157,7 +161,8 @@ fn run(args: &Args) -> Result<ExitCode, String> {
             return introspect_command(args, &pins, suite);
         }
         Some("dump") => return dump_command(args, &pins),
-        Some("gate") => return gate_command(args, &pins),
+        Some("gate") => return gate_command(args, &pins, &gate::SUITE, &gate::CLIENTS),
+        Some("connect") => return gate_command(args, &pins, &connect::SUITE, &connect::CLIENTS),
         Some("version") => return version_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
@@ -731,8 +736,13 @@ fn dump_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
-/// Runs gate G1 against the oracle or, with `--server`, against the server under test.
-fn gate_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+/// Runs gate G1 or the connect suite against the oracle or, with `--server`, against the server under test.
+fn gate_command(
+    args: &Args,
+    pins: &Pins,
+    suite: &gate::Suite,
+    all: &[&'static str],
+) -> Result<ExitCode, String> {
     args.only(1, &["compat-version", "server", "clients"])?;
     let work = args.work_dir();
     let o = running_oracle(args, pins)?;
@@ -745,13 +755,13 @@ fn gate_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     };
     let clients: Vec<&str> = match args.get("clients") {
         Some(list) => list.split(',').collect(),
-        None => gate::CLIENTS.to_vec(),
+        None => all.to_vec(),
     };
-    if let Some(bad) = clients.iter().find(|c| !gate::CLIENTS.contains(c)) {
-        return Err(format!("--clients: {bad} is not a client of the gate"));
+    if let Some(bad) = clients.iter().find(|c| !all.contains(c)) {
+        return Err(format!("--clients: {bad} is not a client of {}", suite.name));
     }
     let started = suites::utc_now();
-    let (run, good) = gate::run(&o, &server, &work, &clients)?;
+    let (run, good) = gate::run(&o, suite, &server, &work, &clients)?;
     suites::report_run(&run, &o, &server, &work, &started)?;
     Ok(if good { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }

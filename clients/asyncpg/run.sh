@@ -1,6 +1,7 @@
 #!/bin/sh
 # The trace scenario for asyncpg. `rupg-compat record asyncpg` runs this script through the proxy.
 # With the argument gate, it runs the gate program in place of the scenario, and `rupg-compat gate` runs it.
+# With the argument connect, it runs the connect program in place of the scenario, and `rupg-compat connect` runs it.
 # It installs the pinned version in a virtual environment under the work directory.
 set -eu
 dir=$(cd "$(dirname "$0")" && pwd)

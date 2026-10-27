@@ -19,7 +19,7 @@ const POSTGRESQL_CONF: &str = include_str!("../oracle/postgresql.conf");
 /// The host rules of every oracle.
 const PG_HBA_CONF: &str = include_str!("../oracle/pg_hba.conf");
 /// The fixed test certificate and its key.
-const SERVER_CRT: &str = include_str!("../oracle/server.crt");
+pub(crate) const SERVER_CRT: &str = include_str!("../oracle/server.crt");
 const SERVER_KEY: &str = include_str!("../oracle/server.key");
 
 /// The superuser of every oracle.
