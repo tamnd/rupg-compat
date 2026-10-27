@@ -37,6 +37,7 @@ mod replay;
 mod report;
 mod resources;
 mod scram;
+mod statements;
 mod suites;
 mod toml;
 mod trace;
@@ -536,6 +537,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             tests: vec![(name, !bad)],
             unstable: Vec::new(),
             seconds: clock.elapsed().as_secs(),
+            statements: None,
             checked: Some(suites::Checked::new(&o, Vec::new())),
         };
         let path = suites::result_file(&work, pg.pin.major, &run.suite, server.side());

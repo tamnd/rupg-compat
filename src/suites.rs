@@ -12,6 +12,7 @@ use crate::client;
 use crate::compare::{Count, Outcome, Share};
 use crate::import::{self, ISOLATION, PIPELINE, REGRESS};
 use crate::oracle::{self, Oracle};
+use crate::statements;
 
 /// The tests of `libpq_pipeline` whose libpq trace the TAP test compares with `traces/T.trace`.
 pub(crate) const TRACED: [&str; 9] = [
@@ -135,6 +136,8 @@ pub(crate) struct Run {
     /// The cases that the unstable filter took out. They are in neither list.
     pub(crate) unstable: Vec<String>,
     pub(crate) seconds: u64,
+    /// The statement count of the regression suite: the statements whose output is equal to the output of the oracle, and the statements of the oracle (spec/05 section 5.8).
+    pub(crate) statements: Option<(usize, usize)>,
     /// The counts of the comparison, for the runs that use `compare`.
     pub(crate) checked: Option<Checked>,
 }
@@ -167,7 +170,11 @@ impl Run {
             list(true),
             list(false),
             suite = self.suite,
-        ) + &self.checked.as_ref().map(Checked::to_toml).unwrap_or_default()
+        ) + &self
+            .statements
+            .map(|(equal, total)| format!("statements = {total}\nstatements_equal = {equal}\n"))
+            .unwrap_or_default()
+            + &self.checked.as_ref().map(Checked::to_toml).unwrap_or_default()
     }
 }
 
@@ -330,10 +337,16 @@ fn run_suite(
         scheduled.extend(unscheduled.iter().cloned());
         all_ok &= ok;
     }
+    // The statement count compares the output of each statement with the last run of the oracle in the work directory. The run of the oracle compares with itself.
+    let oracle_out = run_dir(work, o.pin.major, s.name, &Server { oracle: true, ..server.clone() })
+        .join("schedule");
+    let statements = (s.name == REGRESS_SUITE.name && oracle_out.join("results").is_dir())
+        .then(|| statements::suite_count(&cwd, &oracle_out, &out.join("schedule"), &scheduled));
     let run = Run {
         suite: s.name.into(),
         tests: pass_set(&scheduled, &results),
         seconds: started.elapsed().as_secs(),
+        statements,
         ..Run::default()
     };
     if run.passed() == run.tests.len() && !all_ok {
@@ -488,6 +501,9 @@ pub(crate) fn report_run(
         run.seconds,
         path.display()
     );
+    if let Some((equal, total)) = run.statements {
+        out!("  {equal} of {total} statements give the output of the oracle");
+    }
     if !run.unstable.is_empty() {
         out!(
             "  {} unstable on the oracle, not counted: {}",
@@ -557,6 +573,7 @@ mod tests {
             tests: vec![("a".into(), true), ("b\"".into(), false)],
             unstable: vec!["c".into()],
             seconds: 3,
+            statements: Some((31, 40)),
             checked: None,
         };
         let pins = crate::pins::Pins::builtin();
@@ -568,5 +585,9 @@ mod tests {
         let one = |s: &str| crate::toml::Value::Array(vec![crate::toml::Value::Str(s.into())]);
         assert_eq!(t["fail"], one("b\""));
         assert_eq!(t["unstable"], one("c"));
+        assert_eq!(
+            (t["statements"].as_int(), t["statements_equal"].as_int()),
+            (Some(40), Some(31))
+        );
     }
 }
