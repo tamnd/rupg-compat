@@ -76,6 +76,8 @@ commands:
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
+  catalog-corpus            the queries of the client traces in corpus/traces that read the catalog and have
+                            no parameters, in a new database with clients/gate.sql
   parameters                SHOW ALL, pg_settings, and SET TO DEFAULT, set_config and SHOW of each parameter
   types                     for each value of suites/types/values.txt: the text output, the binary output, and the
                             text output of the binary value of the oracle after the receive function
@@ -157,7 +159,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("import") => return import_command(args, &pins),
         Some("report") => return report_command(args, &pins),
         Some("reference") => return reference_command(args, &pins),
-        Some(suite @ ("catalog" | "parameters" | "types")) => {
+        Some(suite @ ("catalog" | "catalog-corpus" | "parameters" | "types")) => {
             return introspect_command(args, &pins, suite);
         }
         Some("dump") => return dump_command(args, &pins),
@@ -686,6 +688,7 @@ fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, Stri
 fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, String> {
     args.only(1, &["compat-version", "server", "corpus", "show", "schema"])?;
     let (name, setup) = match (suite, args.get("schema")) {
+        ("catalog-corpus", None) => (suite.to_string(), gate::SCHEMA),
         (_, None) => (suite.to_string(), ""),
         ("catalog", Some("gate")) => ("catalog-gate".to_string(), gate::SCHEMA),
         (_, Some(schema)) => {
@@ -704,6 +707,11 @@ fn introspect_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode,
     let started = suites::utc_now();
     let (cases, database) = if suite == "catalog" {
         (introspect::catalog_cases(&dir)?, introspect::CATALOG_DATABASE)
+    } else if suite == "catalog-corpus" {
+        let traces = corpus.join("traces");
+        let cases = introspect::corpus_cases(&traces)?;
+        out!("catalog-corpus {}: {} queries from {}", o.pin.major, cases.len(), traces.display());
+        (cases, introspect::CATALOG_DATABASE)
     } else if suite == "types" {
         let list = introspect::type_values(&Path::new("suites").join("types"))?;
         out!("types {}: {} values from suites/types/values.txt", o.pin.major, list.len());
