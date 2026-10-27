@@ -35,6 +35,9 @@ const PG_ENUM: i64 = 3501;
 /// How long replay waits for a server that is quiet after a group without a terminator.
 const IDLE: Duration = Duration::from_millis(500);
 
+/// How long a connection whose server runs a statement holds back the lines of the other connections. A slow statement, such as an `INSERT` of 100000 rows, must end before the next line of another connection, as in the trace. A statement that waits for a lock of another connection ends this wait.
+const BUSY: Duration = Duration::from_secs(5);
+
 /// The map between the OIDs of a trace and the OIDs of one server.
 #[derive(Debug, Default)]
 pub(crate) struct OidMap {
@@ -508,6 +511,8 @@ struct Session {
     eof: bool,
     /// The time of the last message to or from the server.
     last: Option<Instant>,
+    /// True after a `Query`, a `Sync` or a `CopyDone` until the server sends a terminator: the server runs a statement.
+    busy: bool,
     auth: Auth,
     server_first: Vec<u8>,
     /// The column types of the last `RowDescription` of the server.
@@ -522,6 +527,12 @@ struct Session {
 impl Session {
     fn quiet(&self, now: Instant) -> Duration {
         self.last.map_or(Duration::MAX, |t| now.duration_since(t))
+    }
+
+    /// True when the connection holds back the lines of the other connections: its server sent a message a moment ago, or it runs a statement.
+    fn holds(&self, now: Instant) -> bool {
+        let quiet = self.quiet(now);
+        !self.eof && (quiet < IDLE || self.busy && quiet < BUSY)
     }
 
     /// The key that the server sent. Replay takes the messages of a server when the next line of the connection runs, so a connection that is idle until another connection cancels it still holds its `BackendKeyData` in `got`.
@@ -619,7 +630,7 @@ pub(crate) fn replay(trace: &Trace, target: &Target, timeout: Duration) -> Repla
     loop {
         r.drain(TICK);
         let now = Instant::now();
-        if r.sessions.values().filter(|s| !s.eof).all(|s| s.quiet(now) >= IDLE) {
+        if r.sessions.values().all(|s| !s.holds(now)) {
             break;
         }
     }
@@ -634,11 +645,11 @@ pub(crate) fn replay(trace: &Trace, target: &Target, timeout: Duration) -> Repla
     r.out
 }
 
-/// True when the other connections got the backend messages that come before the line of `step` in the trace. A connection whose server is quiet does not hold the step back: its server can send fewer messages than the trace has, or wait for a lock.
+/// True when the other connections got the backend messages that come before the line of `step` in the trace. A connection that does not hold (`Session::holds`) lets the step go: its server can send fewer messages than the trace has, or wait for a lock.
 fn in_order(sessions: &BTreeMap<u32, Session>, step: &Step, now: Instant) -> bool {
-    step.after.iter().all(|&(conn, n)| {
-        sessions.get(&conn).is_none_or(|s| s.received >= n || s.eof || s.quiet(now) >= IDLE)
-    })
+    step.after
+        .iter()
+        .all(|&(conn, n)| sessions.get(&conn).is_none_or(|s| s.received >= n || !s.holds(now)))
 }
 
 /// How long replay waits for a message before it looks at the connections again.
@@ -676,6 +687,7 @@ impl Runner<'_> {
             let s = self.sessions.entry(conn).or_default();
             match msg {
                 Some(m) => {
+                    s.busy &= !is_terminator(&m);
                     s.got.push_back(m);
                     s.received += 1;
                     s.last = Some(Instant::now());
@@ -774,6 +786,7 @@ impl Runner<'_> {
         };
         let s = self.sessions.entry(conn).or_default();
         s.last = Some(Instant::now());
+        s.busy |= matches!(msg.name(), "Query" | "Sync" | "CopyDone");
         let Some(stream) = s.stream.as_mut() else { return };
         if let Err(e) = msg.encode().write_to(stream) {
             let text = format!("connection {conn}: send {}: {e}", msg.name());
@@ -1135,6 +1148,15 @@ mod tests {
         assert!(
             in_order(&sessions, &steps[1], now + IDLE),
             "a quiet server does not hold the step back"
+        );
+        sessions.get_mut(&1).unwrap().busy = true;
+        assert!(
+            !in_order(&sessions, &steps[1], now + IDLE),
+            "a server that runs a statement holds the step back"
+        );
+        assert!(
+            in_order(&sessions, &steps[1], now + BUSY),
+            "a statement that waits for a lock does not hold the step back for ever"
         );
         sessions.get_mut(&1).unwrap().received = 2;
         assert!(in_order(&sessions, &steps[1], now));
