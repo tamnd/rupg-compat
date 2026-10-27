@@ -1,0 +1,212 @@
+# The values of the types suite. Each line is a type and a value, with one space between them. The value is the text that the suite casts to the type, with no quotes. A line with only a type has the empty value. A line that starts with # is a comment.
+# For each value, the suite compares the text output, the binary output of the send function and the text output of the binary value that the oracle sent, after the receive function of the server under test.
+# The values have no xml, because the oracle is built without libxml. They have no regconfig or other OID of initdb above the first collation, because these OIDs change with the locales of the host (item 16 of the exclusions).
+bool t
+bool false
+bool yes
+bool  off
+bool maybe
+bytea \xdeadbeef
+bytea \x
+bytea abc\000def
+bytea \xzz
+char a
+char ab
+char \001
+name pg_class
+name a_name_that_is_longer_than_sixty_three_bytes_and_so_the_server_cuts_it
+int2 0
+int2 -32768
+int2 32767
+int2 32768
+int2  +42
+int2 0x1F
+int2 1_000
+int4 -2147483648
+int4 2147483647
+int4 2147483648
+int4 0o17
+int4 0b101
+int4 12abc
+int8 -9223372036854775808
+int8 9223372036854775807
+int8 9223372036854775808
+int2vector 1 2 3
+int2vector
+oidvector 23 25 1043
+oid 0
+oid 4294967295
+oid -1
+oid 4294967296
+xid 0
+xid 4294967295
+xid8 18446744073709551615
+cid 7
+tid (0,1)
+tid (4294967295,65535)
+tid (1,65536)
+text hello
+text
+text café
+varchar a b c
+bpchar ab
+bpchar  ab
+json {"b": 1, "a": [1, 2.50, null]}
+json [1,
+jsonb {"b": 1, "a": [1, 2.50, null], "a": 3}
+jsonb {"aa": 1, "b": {"c": "d"}, "": true}
+jsonb 1.0e+10
+jsonb "é"
+jsonb {"a": 1
+jsonpath $.a[*] ? (@ > 1)
+jsonpath strict $.**{1 to last}.b
+jsonpath $.a +
+point (1,2)
+point (1.5e300, -0)
+point 1,
+lseg [(1,2),(3,4)]
+line {1,-1,0}
+line {0,0,1}
+box (3,4),(1,2)
+path [(1,2),(3,4),(5,6)]
+path ((0,0),(1,1))
+polygon ((0,0),(1,0),(1,1))
+circle <(1,2),3>
+circle <(1,2),-1>
+float4 1.1
+float4 3.4028235e38
+float4 1e-45
+float4 -0
+float4 NaN
+float4 -Infinity
+float4 1e39
+float8 0.1
+float8 1e15
+float8 1e-5
+float8 123456789012345678
+float8 2.2250738585072014e-308
+float8 4.9e-324
+float8 inf
+float8 1e309
+float8 abc
+money 12.34
+money -1234567.891
+money $1,000.00
+macaddr 08:00:2b:01:02:03
+macaddr 0800.2b01.0203
+macaddr 08:00:2b:01:02
+macaddr8 08:00:2b:01:02:03:04:05
+macaddr8 08:00:2b:01:02:03
+inet 192.168.1.5/24
+inet ::ffff:1.2.3.4
+inet 2001:db8::1/64
+inet 300.1.1.1
+cidr 192.168.1.0/24
+cidr 10.1
+cidr 192.168.1.5/24
+date 2026-10-27
+date 4713-01-01 BC
+date 5874897-12-31
+date infinity
+date epoch
+date 2026-02-30
+time 23:59:59.999999
+time 24:00:00
+time 12:34:56.7890123
+time 25:00
+timetz 12:34:56+05:30
+timetz 00:00:00-15:59:59
+timestamp 2026-10-27 12:34:56.123456
+timestamp 0001-01-01 00:00:00 BC
+timestamp 294276-12-31 23:59:59.999999
+timestamp -infinity
+timestamp 2026-13-01 00:00
+timestamptz 2026-10-27 12:34:56+07
+timestamptz 2000-01-01 00:00:00 UTC
+timestamptz 1900-06-01 12:00 Europe/Amsterdam
+interval 1 year 2 mons 3 days 04:05:06.789
+interval -1 day +02:03
+interval P1Y2M3DT4H5M6S
+interval @ 1 minute ago
+interval 178000000 years
+interval infinity
+interval 1 fortnight
+bit 101
+bit
+varbit 1010101010101010101
+varbit 10a
+numeric 0
+numeric 1.50
+numeric -0.000001
+numeric 123456789012345678901234567890.123456789
+numeric 1e-20
+numeric 9.99e300
+numeric NaN
+numeric Infinity
+numeric 1_000.000_1
+numeric 0x1A
+numeric 1e100000
+numeric 1.2.3
+refcursor my_cursor
+regproc now
+regproc pg_catalog.abs
+regprocedure abs(integer)
+regoper ||/
+regoperator +(integer,integer)
+regclass pg_class
+regclass pg_catalog.pg_type
+regclass no_such_table
+regtype integer
+regtype character varying(10)
+regtype double precision[]
+regdictionary simple
+regnamespace pg_catalog
+regrole postgres
+regcollation "C"
+regdatabase postgres
+uuid a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+uuid {A0EEBC99-9C0B4EF8-BB6D6BB9-BD380A11}
+uuid a0eebc999c0b4ef8bb6d6bb9bd380a1
+txid_snapshot 10:20:10,14,15
+pg_snapshot 10:20:10,14,15
+pg_snapshot 20:10:
+pg_lsn 16/B374D848
+pg_lsn FFFFFFFF/FFFFFFFF
+pg_lsn 0/0x
+tsvector a fat cat:1,3A sat:2B on mat:6
+tsvector 'a b':1 'c\'d'
+tsquery fat & (rat | !cat)
+tsquery a <-> b <2> c:*AB
+tsquery &
+oid8 18446744073709551615
+oid8 0
+int4range [1,10)
+int4range (1,10]
+int4range empty
+int4range [10,1)
+int8range (,5]
+numrange [1.5,2.50]
+tsrange [2026-01-01,2026-02-01)
+tstzrange [2026-01-01 00:00+00,infinity)
+daterange [2026-01-01,2026-01-05]
+int4multirange {[1,3), [2,5), [7,8]}
+int4multirange {}
+int8multirange {(,0), [10,)}
+nummultirange {[1.0,2.0]}
+datemultirange {[2026-01-01,2026-01-03), [2026-01-03,2026-01-05)}
+tsmultirange {[2026-01-01,2026-01-02)}
+tstzmultirange {[2026-01-01 00:00+00,2026-01-02 00:00+00)}
+int4[] {1,2,NULL,4}
+int4[] [0:2]={1,2,3}
+int4[] {{1,2},{3,4}}
+int4[] {{1,2},{3}}
+text[] {"a b",c,"",NULL,"NULL"}
+float8[] {1.5,NaN,-Infinity}
+numeric[] {1.50,-2}
+bool[] {t,f}
+date[] {2026-01-01,infinity}
+jsonb[] {"{\"a\": 1}",null}
+int4range[] {"[1,2)","empty"}
+point[] {"(1,2)","(3,4)"}
+bytea[] {"\\x01",NULL}
+varchar[] {}
