@@ -57,6 +57,7 @@ The server under test runs with the same configuration files as the oracle. `rup
 | Contrib regression | 61 directories, 55 extensions | L3 | M7 |
 | Client suites | 48 clients | L5 | M2 for the 7 gate clients |
 | Gate G1 | 7 clients show the gate schema | L1 and L2 | M2 |
+| Connect | psql, libpq and 5 drivers with SCRAM over TLS | L1 | M2 |
 | Version forms | 8 checks | L1 | M2 |
 | Hermitage | at three isolation levels | L4 | M5 |
 | sqllogictest | the SQLite corpus, answers from the oracle | L3 | M3 |
@@ -78,6 +79,7 @@ cargo run --release -- regress
 cargo run --release -- isolation
 cargo run --release -- dump --server 127.0.0.1:5432
 cargo run --release -- gate --server 127.0.0.1:5432
+cargo run --release -- connect --server 127.0.0.1:5432
 cargo run --release -- version --server 127.0.0.1:5432
 cargo run --release -- client pgx
 cargo run --release -- gen --oracle tlp --seed 42
@@ -105,6 +107,8 @@ The oracles are also built with zstd, because rupg has zstd. With zstd, `wal_com
 
 `gate` runs `clients/gate.sql` in a new database of the oracle and of the server under test. Then it runs `clients/<name>/run.sh gate` for psql, pgAdmin 4, pgjdbc, psycopg, node-postgres, pgx and asyncpg. Each gate program lists the tables, the columns, the types, the indexes and the constraints of the schema `gate`. psql uses its describe commands, pgAdmin 4 walks its browser tree and writes the SQL tab of each object, and pgjdbc writes the results of `DatabaseMetaData`. The other drivers have no describe command, so they run the catalog queries of `clients/gate-queries.sql` and write the columns that they describe for a query of each table. A client passes when its list on the server under test is equal to its list on the oracle. The test of each client is `gate` in its `oracle-fail.txt` and `expected-fail.txt`. The gate does not run a client whose test is in `oracle-fail.txt`. The command exits with 1 when a client fails that is not in `expected-fail.txt`, or when a client in that list passes. `pipeline --server` uses the lists in `suites/pipeline` in the same way, with the name of each test and each trace as the test.
 
+`connect` runs `clients/<name>/run.sh connect` for psql, libpq, pgjdbc, psycopg, node-postgres, pgx and asyncpg. The proxy has no TLS, so the traces cannot show the TLS handshake. This suite does that check. Each program connects to the database `postgres` with TLS, checks the certificate of the oracle and requires channel binding where the client can do it. Then it runs one query that gives `system_user`, the TLS flag and the TLS version of its own connection, writes one line and disconnects. The runner writes the certificate of the oracle to `root.crt` in the run directory and sets `PGSSLMODE=verify-full`, `PGSSLROOTCERT` and `PGCHANNELBINDING=require`. A client passes when its line on the server under test is equal to its line on the oracle. The test of each client is `connect` in its lists.
+
 `version` connects to the server under test and checks the four places where rupg gives its version, as spec/05 section 5.7 says. `server_version` at startup and `SHOW server_version` must be `N.M (rupg X.Y.Z)`, where N is the compat version. `server_version_num` must be `N0M` in the PostgreSQL form, and `version()` must be `PostgreSQL N.M (rupg X.Y.Z) on <target>, compiled by rustc <version>, 64-bit`. `rupg.version` at startup and `SHOW rupg.version` must be `X.Y.Z`, and `SET rupg.version` must fail with `55P02`, as for a parameter with the context `internal`. The server must send `rupg.version` after the standard parameters of version N, and it must not send `crdb_version`, `mz_version` or `questdb_version`. The oracle does not have these forms, so the command needs `--server`.
 
 ## The reporting rules
@@ -124,7 +128,7 @@ The oracles are also built with zstd, because rupg has zstd. With zstd, `wal_com
 pins.toml          PostgreSQL commits, client versions, the rupg commit
 oracle/            build scripts for the six oracles
 src/               the runner, the proxy, the comparison, the generator
-clients/<name>/    run.sh, oracle-fail.txt, expected-fail.txt
+clients/<name>/    run.sh, the gate and connect programs, oracle-fail.txt, expected-fail.txt
 suites/pipeline/   oracle-fail.txt, expected-fail.txt for libpq_pipeline
 corpus/            traces, the differential corpus, reduced cases
 shim/<N>/          divergences.toml, and the reference output of the oracle of N in reference/

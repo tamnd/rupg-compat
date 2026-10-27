@@ -14,7 +14,7 @@ use std::time::{Duration, Instant};
 
 use crate::client;
 use crate::fails;
-use crate::oracle::Oracle;
+use crate::oracle::{self, Oracle};
 use crate::suites::{self, Run, Server};
 
 /// The gate schema.
@@ -24,8 +24,9 @@ pub(crate) const DATABASE: &str = "compat_gate";
 /// The seven clients of the gate, in the order of spec/21 section 21.4.2.
 pub(crate) const CLIENTS: [&str; 7] =
     ["psql", "pgadmin4", "pgjdbc", "psycopg", "node-postgres", "pgx", "asyncpg"];
-/// The name of the test of the gate in the lists of a client.
-const TEST: &str = "gate";
+/// The gate as a suite of client programs.
+pub(crate) const SUITE: Suite =
+    Suite { name: "gate", database: DATABASE, schema: Some(SCHEMA), tls: false };
 /// The time that one client program can take, with the install of the client.
 const LIMIT: Duration = Duration::from_secs(900);
 
@@ -40,6 +41,17 @@ pub(crate) fn difference(want: &str, got: &str) -> Option<String> {
     Some(format!("line {}: want {}, got {}", n + 1, line(&want), line(&got)))
 }
 
+/// A suite of client programs: gate G1 or the connect suite. Each client has the program `clients/<name>/run.sh <suite>`, and the name of the suite is also the name of the test in the lists of the client.
+#[derive(Debug)]
+pub(crate) struct Suite {
+    pub(crate) name: &'static str,
+    /// The database of the programs. When the suite has a schema, the runner makes the database new on each server and runs the schema in it.
+    pub(crate) database: &'static str,
+    pub(crate) schema: Option<&'static str>,
+    /// When set, the programs must connect with TLS and check the certificate of the oracle in `PGSSLROOTCERT`. libpq also gets `PGCHANNELBINDING=require`.
+    pub(crate) tls: bool,
+}
+
 /// The output of one client program on one server.
 struct Listing {
     passed: bool,
@@ -49,6 +61,7 @@ struct Listing {
 /// The state of one run.
 struct Runner<'a> {
     o: &'a Oracle,
+    suite: &'a Suite,
     /// The work directory, where the client programs keep their installs.
     work: PathBuf,
     out: PathBuf,
@@ -59,7 +72,14 @@ impl Runner<'_> {
     /// Runs a command with the environment of a server, logs it and stops it after `LIMIT`. The result is the exit status and the standard output.
     fn run(&mut self, server: &Server, what: &str, mut cmd: Command) -> Result<Listing, String> {
         server.env(self.o, &mut cmd);
-        cmd.env("PGDATABASE", DATABASE).env("TZ", "UTC").env("RUPG_COMPAT_WORK", &self.work);
+        cmd.env("PGDATABASE", self.suite.database)
+            .env("TZ", "UTC")
+            .env("RUPG_COMPAT_WORK", &self.work);
+        if self.suite.tls {
+            cmd.env("PGSSLMODE", "verify-full")
+                .env("PGSSLROOTCERT", self.out.join("root.crt"))
+                .env("PGCHANNELBINDING", "require");
+        }
         if let Some(bin) = self.o.bin("psql").parent() {
             cmd.env("RUPG_COMPAT_BIN", bin);
         }
@@ -87,29 +107,31 @@ impl Runner<'_> {
         Ok(Listing { passed, text })
     }
 
-    /// Makes the database of the gate on a server and runs the schema in it.
+    /// Makes the database of the suite on a server and runs the schema in it.
     fn schema(&mut self, server: &Server) -> Result<bool, String> {
-        client::reset_database(&server.target(self.o), DATABASE)?;
+        client::reset_database(&server.target(self.o), self.suite.database)?;
         let mut cmd = Command::new(self.o.bin("psql"));
-        let file = self.out.join("gate.sql");
+        let file = self.out.join("schema.sql");
         cmd.args(["-X", "-q", "-v", "ON_ERROR_STOP=1", "-f"]).arg(&file);
-        Ok(self.run(server, "psql -f gate.sql", cmd)?.passed)
+        Ok(self.run(server, "psql -f schema.sql", cmd)?.passed)
     }
 
-    /// Runs the gate program of a client on a server and keeps its list in `<side>-<client>.txt`.
+    /// Runs the program of the suite for a client on a server and keeps its output in `<side>-<client>.txt`.
     fn client(&mut self, server: &Server, name: &str) -> Result<Listing, String> {
+        let suite = self.suite.name;
         let mut cmd = Command::new("sh");
-        cmd.arg(Path::new("clients").join(name).join("run.sh")).arg("gate");
-        let listing = self.run(server, &format!("clients/{name}/run.sh gate"), cmd)?;
+        cmd.arg(Path::new("clients").join(name).join("run.sh")).arg(suite);
+        let listing = self.run(server, &format!("clients/{name}/run.sh {suite}"), cmd)?;
         let path = self.out.join(format!("{}-{name}.txt", server.side()));
         fs::write(&path, &listing.text).map_err(|e| format!("{}: {e}", path.display()))?;
         Ok(listing)
     }
 }
 
-/// Runs the gate on `server` for the clients in `clients`. The flag is true when each result agrees with the lists of the clients.
+/// Runs `suite` on `server` for the clients in `clients`. The flag is true when each result agrees with the lists of the clients.
 pub(crate) fn run(
     o: &Oracle,
+    suite: &Suite,
     server: &Server,
     work: &Path,
     clients: &[&str],
@@ -117,31 +139,39 @@ pub(crate) fn run(
     let started = Instant::now();
     let oracle =
         Server { addr: std::net::SocketAddr::from(([127, 0, 0, 1], o.port())), oracle: true };
-    let out = suites::run_dir(work, o.pin.major, "gate", server);
+    let out = suites::run_dir(work, o.pin.major, suite.name, server);
     suites::fresh_dir(&out)?;
-    fs::write(out.join("gate.sql"), SCHEMA).map_err(|e| e.to_string())?;
-    let mut r = Runner { o, work: work.to_path_buf(), out, log: String::new() };
-    let mut run = Run { suite: "gate".into(), ..Run::default() };
-
-    if !r.schema(&oracle)? {
-        return Err(format!(
-            "the gate schema fails on the oracle, see {}",
-            r.out.join("log.txt").display()
-        ));
+    if suite.tls {
+        fs::write(out.join("root.crt"), oracle::SERVER_CRT).map_err(|e| e.to_string())?;
     }
-    let made = server.oracle || r.schema(server)?;
-    run.tests.push(("schema".into(), made));
+    let mut r = Runner { o, suite, work: work.to_path_buf(), out, log: String::new() };
+    let mut run = Run { suite: suite.name.into(), ..Run::default() };
+
+    let mut made = true;
+    if let Some(schema) = suite.schema {
+        fs::write(r.out.join("schema.sql"), schema).map_err(|e| e.to_string())?;
+        if !r.schema(&oracle)? {
+            return Err(format!(
+                "the schema of {} fails on the oracle, see {}",
+                suite.name,
+                r.out.join("log.txt").display()
+            ));
+        }
+        made = server.oracle || r.schema(server)?;
+        run.tests.push(("schema".into(), made));
+    }
     let mut good = made;
+    let test = suite.name;
     for &name in clients {
         let fails = fails::load(name)?;
-        if fails.oracle.iter().any(|t| t == TEST) {
-            out!("  {name}: not run, the gate is in oracle-fail.txt");
+        if fails.oracle.iter().any(|t| t == test) {
+            out!("  {name}: not run, {test} is in oracle-fail.txt");
             continue;
         }
-        let expected = fails.expected.get(TEST);
+        let expected = fails.expected.get(test);
         let want = r.client(&oracle, name)?;
         if !want.passed {
-            out!("  {name}: the gate program fails on the oracle");
+            out!("  {name}: the {test} program fails on the oracle");
             run.tests.push((name.into(), false));
             good = false;
             continue;
@@ -162,7 +192,7 @@ pub(crate) fn run(
         let passed = made && got.passed && same;
         match (passed, expected) {
             (true, Some(_)) => {
-                out!("  {name}: passes, so remove the gate from clients/{name}/expected-fail.txt");
+                out!("  {name}: passes, so remove {test} from clients/{name}/expected-fail.txt");
                 good = false;
             }
             (false, Some(cause)) => out!("  {name}: fails as expected-fail.txt gives: {cause}"),
