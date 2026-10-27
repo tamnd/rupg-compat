@@ -1,0 +1,634 @@
+# rupg-compat trace
+# compat-version: 19
+# server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
+# recorded: clients/beekeeper/run.sh
+1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+1 B AuthenticationSASL "SCRAM-SHA-256"
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=uWMOENsnK9SAdjK6z+f9iGYg"
+1 B AuthenticationSASLContinue "r=uWMOENsnK9SAdjK6z+f9iGYg1Od+Ms7nR/hssjpc5onj8xGf,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
+1 F SASLResponse "c=biws,r=uWMOENsnK9SAdjK6z+f9iGYg1Od+Ms7nR/hssjpc5onj8xGf,p=JZjnud7dKcQt3l3L/k8XhiCXwlPHRavUldGc40t/dKY="
+1 B AuthenticationSASLFinal "v=lwlvlBorPBemry3FXTxZxYiTxao/hIirdmi7Hsxopms="
+1 B AuthenticationOk
+1 B ParameterStatus "IntervalStyle" "postgres"
+1 B ParameterStatus "search_path" "\"$user\", public"
+1 B ParameterStatus "is_superuser" "on"
+1 B ParameterStatus "standard_conforming_strings" "on"
+1 B ParameterStatus "session_authorization" "postgres"
+1 B ParameterStatus "client_encoding" "UTF8"
+1 B ParameterStatus "server_version" "19beta4"
+1 B ParameterStatus "server_encoding" "UTF8"
+1 B ParameterStatus "in_hot_standby" "off"
+1 B ParameterStatus "integer_datetimes" "on"
+1 B ParameterStatus "TimeZone" "UTC"
+1 B ParameterStatus "application_name" "psql"
+1 B ParameterStatus "default_transaction_read_only" "off"
+1 B ParameterStatus "scram_iterations" "4096"
+1 B ParameterStatus "DateStyle" "ISO, MDY"
+1 B BackendKeyData 3380727 "L\xd7\x03*"
+1 B ReadyForQuery I
+1 F Query "CREATE SCHEMA compat_beekeeper;"
+1 B CommandComplete "CREATE SCHEMA"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_beekeeper.compat_items (id int4 PRIMARY KEY, name text NOT NULL, price numeric(10, 2) NOT NULL, created_at timestamptz NOT NULL);"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "CREATE SEQUENCE compat_beekeeper.compat_orders_code_seq START 1000;"
+1 B CommandComplete "CREATE SEQUENCE"
+1 B ReadyForQuery I
+1 F Query "CREATE TABLE compat_beekeeper.compat_orders (id int4 PRIMARY KEY, code int8 NOT NULL DEFAULT nextval('compat_beekeeper.compat_orders_code_seq'), item_id int4 NOT NULL REFERENCES compat_beekeeper.compat_items ON DELETE CASCADE, qty int4 NOT NULL CONSTRAINT compat_orders_qty_check CHECK (qty > 0));"
+1 B CommandComplete "CREATE TABLE"
+1 B ReadyForQuery I
+1 F Query "CREATE UNIQUE INDEX compat_orders_code_key ON compat_beekeeper.compat_orders (code);"
+1 B CommandComplete "CREATE INDEX"
+1 B ReadyForQuery I
+1 F Query "CREATE VIEW compat_beekeeper.compat_item_totals AS SELECT i.id, i.name, sum(o.qty) AS qty FROM compat_beekeeper.compat_items AS i JOIN compat_beekeeper.compat_orders AS o ON o.item_id = i.id GROUP BY i.id, i.name;"
+1 B CommandComplete "CREATE VIEW"
+1 B ReadyForQuery I
+1 F Query "CREATE FUNCTION compat_beekeeper.compat_item_qty(p_item int4) RETURNS int8 LANGUAGE sql STABLE AS $$ SELECT sum(qty) FROM compat_beekeeper.compat_orders WHERE item_id = p_item $$;"
+1 B CommandComplete "CREATE FUNCTION"
+1 B ReadyForQuery I
+1 F Query "COMMENT ON TABLE compat_beekeeper.compat_orders IS 'The orders of the Beekeeper Studio scenario.';"
+1 B CommandComplete "COMMENT"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO compat_beekeeper.compat_items SELECT i, 'item ' || i, i * 1.5, '2026-01-02 03:00:00+00'::timestamptz + i * interval '1 hour' FROM generate_series(1, 30) AS i;"
+1 B CommandComplete "INSERT 0 30"
+1 B ReadyForQuery I
+1 F Query "INSERT INTO compat_beekeeper.compat_orders (id, item_id, qty) SELECT i, i % 30 + 1, i % 4 + 1 FROM generate_series(1, 60) AS i;"
+1 B CommandComplete "INSERT 0 60"
+1 B ReadyForQuery I
+1 F Terminate
+1 F End
+1 B End
+2 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
+2 B AuthenticationSASL "SCRAM-SHA-256"
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=F7b3f+RifTKr2HBiDS7ONur3"
+2 B AuthenticationSASLContinue "r=F7b3f+RifTKr2HBiDS7ONur3S205bkyarxO8P+sujaF09AaB,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
+2 F SASLResponse "c=biws,r=F7b3f+RifTKr2HBiDS7ONur3S205bkyarxO8P+sujaF09AaB,p=vSbwR+TIUU0MSxGMDXr0cfMTPxp9FD4So8m5G55xwfk="
+2 B AuthenticationSASLFinal "v=bGarbXw039v07otxJWrZQZYCW7dh6qHnjsi6YK2AJUg="
+2 B AuthenticationOk
+2 B ParameterStatus "IntervalStyle" "postgres"
+2 B ParameterStatus "search_path" "\"$user\", public"
+2 B ParameterStatus "is_superuser" "on"
+2 B ParameterStatus "standard_conforming_strings" "on"
+2 B ParameterStatus "session_authorization" "postgres"
+2 B ParameterStatus "client_encoding" "UTF8"
+2 B ParameterStatus "server_version" "19beta4"
+2 B ParameterStatus "server_encoding" "UTF8"
+2 B ParameterStatus "in_hot_standby" "off"
+2 B ParameterStatus "integer_datetimes" "on"
+2 B ParameterStatus "TimeZone" "UTC"
+2 B ParameterStatus "application_name" ""
+2 B ParameterStatus "default_transaction_read_only" "off"
+2 B ParameterStatus "scram_iterations" "4096"
+2 B ParameterStatus "DateStyle" "ISO, MDY"
+2 B BackendKeyData 3380740 "\x9f\x11\x04,"
+2 B ReadyForQuery I
+2 F Query "SELECT CURRENT_SCHEMA() AS schema"
+2 B RowDescription [("schema" 0 0 19 64 -1 0)]
+2 B DataRow ["public"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "select version()"
+2 B RowDescription [("version" 0 0 25 -1 -1 0)]
+2 B DataRow ["PostgreSQL 19beta4 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT      n.nspname as schema, t.typname as typename, t.oid::integer as typeid\n      FROM        pg_type t\n        LEFT JOIN   pg_catalog.pg_namespace n ON n.oid = t.typnamespace\n      WHERE       (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid))\n        AND     n.nspname NOT IN ('pg_catalog', 'information_schema')\n     AND     NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid);"
+2 B RowDescription [("schema" 2615 2 19 64 -1 0) ("typename" 1247 2 19 64 -1 0) ("typeid" 0 0 23 4 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT datname\n      FROM pg_database\n      WHERE datistemplate = $1\n        \n      ORDER BY datname\n    " []
+2 F Bind "" "" [0] ["false"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("datname" 1262 2 19 64 -1 0)]
+2 B DataRow ["compat"]
+2 B DataRow ["postgres"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT schema_name\n      FROM information_schema.schemata\n             \n      ORDER BY schema_name\n    "
+2 B RowDescription [("schema_name" 13491 2 19 64 -1 0)]
+2 B DataRow ["compat_beekeeper"]
+2 B DataRow ["information_schema"]
+2 B DataRow ["pg_catalog"]
+2 B DataRow ["pg_toast"]
+2 B DataRow ["public"]
+2 B CommandComplete "SELECT 5"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT\n        t.table_schema as schema,\n        t.table_name as name,\n    \n          pc.relkind as tabletype,\n          parent_pc.relkind as parenttype\n        FROM information_schema.tables AS t\n        JOIN pg_class AS pc\n          ON t.table_name = pc.relname AND quote_ident(t.table_schema) = pc.relnamespace::regnamespace::text\n        LEFT OUTER JOIN pg_inherits AS i\n          ON pc.oid = i.inhrelid\n        LEFT OUTER JOIN pg_class AS parent_pc\n          ON parent_pc.oid = i.inhparent\n        WHERE t.table_type NOT LIKE '%VIEW%'\n      \n      \n      ORDER BY t.table_schema, t.table_name\n    "
+2 B RowDescription [("schema" 13535 2 19 64 -1 0) ("name" 13535 3 19 64 -1 0) ("tabletype" 1259 18 18 1 -1 0) ("parenttype" 1259 18 18 1 -1 0)]
+2 B DataRow ["compat_beekeeper" "compat_items" "r" NULL]
+2 B DataRow ["compat_beekeeper" "compat_orders" "r" NULL]
+2 B DataRow ["information_schema" "sql_features" "r" NULL]
+2 B DataRow ["information_schema" "sql_implementation_info" "r" NULL]
+2 B DataRow ["information_schema" "sql_parts" "r" NULL]
+2 B DataRow ["information_schema" "sql_sizing" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_aggregate" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_am" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_amop" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_amproc" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_attrdef" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_attribute" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_auth_members" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_authid" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_cast" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_class" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_collation" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_constraint" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_conversion" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_database" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_db_role_setting" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_default_acl" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_depend" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_description" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_enum" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_event_trigger" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_extension" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_foreign_data_wrapper" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_foreign_server" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_foreign_table" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_index" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_inherits" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_init_privs" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_language" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_largeobject" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_largeobject_metadata" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_namespace" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_opclass" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_operator" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_opfamily" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_parameter_acl" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_partitioned_table" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_policy" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_proc" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_publication" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_publication_namespace" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_publication_rel" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_range" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_replication_origin" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_rewrite" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_seclabel" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_sequence" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_shdepend" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_shdescription" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_shseclabel" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_statistic" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_statistic_ext" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_statistic_ext_data" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_subscription" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_subscription_rel" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_tablespace" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_transform" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_trigger" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_ts_config" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_ts_config_map" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_ts_dict" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_ts_parser" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_ts_template" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_type" "r" NULL]
+2 B DataRow ["pg_catalog" "pg_user_mapping" "r" NULL]
+2 B CommandComplete "SELECT 70"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT\n        table_schema as schema,\n        table_name as name\n      FROM information_schema.views\n        \n      ORDER BY table_schema, table_name\n    "
+2 B RowDescription [("schema" 13593 2 19 64 -1 0) ("name" 13593 3 19 64 -1 0)]
+2 B DataRow ["compat_beekeeper" "compat_item_totals"]
+2 B DataRow ["information_schema" "_pg_foreign_data_wrappers"]
+2 B DataRow ["information_schema" "_pg_foreign_servers"]
+2 B DataRow ["information_schema" "_pg_foreign_table_columns"]
+2 B DataRow ["information_schema" "_pg_foreign_tables"]
+2 B DataRow ["information_schema" "_pg_user_mappings"]
+2 B DataRow ["information_schema" "administrable_role_authorizations"]
+2 B DataRow ["information_schema" "applicable_roles"]
+2 B DataRow ["information_schema" "attributes"]
+2 B DataRow ["information_schema" "character_sets"]
+2 B DataRow ["information_schema" "check_constraint_routine_usage"]
+2 B DataRow ["information_schema" "check_constraints"]
+2 B DataRow ["information_schema" "collation_character_set_applicability"]
+2 B DataRow ["information_schema" "collations"]
+2 B DataRow ["information_schema" "column_column_usage"]
+2 B DataRow ["information_schema" "column_domain_usage"]
+2 B DataRow ["information_schema" "column_options"]
+2 B DataRow ["information_schema" "column_privileges"]
+2 B DataRow ["information_schema" "column_udt_usage"]
+2 B DataRow ["information_schema" "columns"]
+2 B DataRow ["information_schema" "constraint_column_usage"]
+2 B DataRow ["information_schema" "constraint_table_usage"]
+2 B DataRow ["information_schema" "data_type_privileges"]
+2 B DataRow ["information_schema" "domain_constraints"]
+2 B DataRow ["information_schema" "domain_udt_usage"]
+2 B DataRow ["information_schema" "domains"]
+2 B DataRow ["information_schema" "element_types"]
+2 B DataRow ["information_schema" "enabled_roles"]
+2 B DataRow ["information_schema" "foreign_data_wrapper_options"]
+2 B DataRow ["information_schema" "foreign_data_wrappers"]
+2 B DataRow ["information_schema" "foreign_server_options"]
+2 B DataRow ["information_schema" "foreign_servers"]
+2 B DataRow ["information_schema" "foreign_table_options"]
+2 B DataRow ["information_schema" "foreign_tables"]
+2 B DataRow ["information_schema" "information_schema_catalog_name"]
+2 B DataRow ["information_schema" "key_column_usage"]
+2 B DataRow ["information_schema" "parameters"]
+2 B DataRow ["information_schema" "referential_constraints"]
+2 B DataRow ["information_schema" "role_column_grants"]
+2 B DataRow ["information_schema" "role_routine_grants"]
+2 B DataRow ["information_schema" "role_table_grants"]
+2 B DataRow ["information_schema" "role_udt_grants"]
+2 B DataRow ["information_schema" "role_usage_grants"]
+2 B DataRow ["information_schema" "routine_column_usage"]
+2 B DataRow ["information_schema" "routine_privileges"]
+2 B DataRow ["information_schema" "routine_routine_usage"]
+2 B DataRow ["information_schema" "routine_sequence_usage"]
+2 B DataRow ["information_schema" "routine_table_usage"]
+2 B DataRow ["information_schema" "routines"]
+2 B DataRow ["information_schema" "schemata"]
+2 B DataRow ["information_schema" "sequences"]
+2 B DataRow ["information_schema" "table_constraints"]
+2 B DataRow ["information_schema" "table_privileges"]
+2 B DataRow ["information_schema" "tables"]
+2 B DataRow ["information_schema" "transforms"]
+2 B DataRow ["information_schema" "triggered_update_columns"]
+2 B DataRow ["information_schema" "triggers"]
+2 B DataRow ["information_schema" "udt_privileges"]
+2 B DataRow ["information_schema" "usage_privileges"]
+2 B DataRow ["information_schema" "user_defined_types"]
+2 B DataRow ["information_schema" "user_mapping_options"]
+2 B DataRow ["information_schema" "user_mappings"]
+2 B DataRow ["information_schema" "view_column_usage"]
+2 B DataRow ["information_schema" "view_routine_usage"]
+2 B DataRow ["information_schema" "view_table_usage"]
+2 B DataRow ["information_schema" "views"]
+2 B DataRow ["pg_catalog" "pg_aios"]
+2 B DataRow ["pg_catalog" "pg_available_extension_versions"]
+2 B DataRow ["pg_catalog" "pg_available_extensions"]
+2 B DataRow ["pg_catalog" "pg_backend_memory_contexts"]
+2 B DataRow ["pg_catalog" "pg_config"]
+2 B DataRow ["pg_catalog" "pg_cursors"]
+2 B DataRow ["pg_catalog" "pg_dsm_registry_allocations"]
+2 B DataRow ["pg_catalog" "pg_file_settings"]
+2 B DataRow ["pg_catalog" "pg_group"]
+2 B DataRow ["pg_catalog" "pg_hba_file_rules"]
+2 B DataRow ["pg_catalog" "pg_ident_file_mappings"]
+2 B DataRow ["pg_catalog" "pg_indexes"]
+2 B DataRow ["pg_catalog" "pg_locks"]
+2 B DataRow ["pg_catalog" "pg_matviews"]
+2 B DataRow ["pg_catalog" "pg_policies"]
+2 B DataRow ["pg_catalog" "pg_prepared_statements"]
+2 B DataRow ["pg_catalog" "pg_prepared_xacts"]
+2 B DataRow ["pg_catalog" "pg_publication_sequences"]
+2 B DataRow ["pg_catalog" "pg_publication_tables"]
+2 B DataRow ["pg_catalog" "pg_replication_origin_status"]
+2 B DataRow ["pg_catalog" "pg_replication_slots"]
+2 B DataRow ["pg_catalog" "pg_roles"]
+2 B DataRow ["pg_catalog" "pg_rules"]
+2 B DataRow ["pg_catalog" "pg_seclabels"]
+2 B DataRow ["pg_catalog" "pg_sequences"]
+2 B DataRow ["pg_catalog" "pg_settings"]
+2 B DataRow ["pg_catalog" "pg_shadow"]
+2 B DataRow ["pg_catalog" "pg_shmem_allocations"]
+2 B DataRow ["pg_catalog" "pg_shmem_allocations_numa"]
+2 B DataRow ["pg_catalog" "pg_stat_activity"]
+2 B DataRow ["pg_catalog" "pg_stat_all_indexes"]
+2 B DataRow ["pg_catalog" "pg_stat_all_tables"]
+2 B DataRow ["pg_catalog" "pg_stat_archiver"]
+2 B DataRow ["pg_catalog" "pg_stat_autovacuum_scores"]
+2 B DataRow ["pg_catalog" "pg_stat_bgwriter"]
+2 B DataRow ["pg_catalog" "pg_stat_checkpointer"]
+2 B DataRow ["pg_catalog" "pg_stat_database"]
+2 B DataRow ["pg_catalog" "pg_stat_database_conflicts"]
+2 B DataRow ["pg_catalog" "pg_stat_gssapi"]
+2 B DataRow ["pg_catalog" "pg_stat_io"]
+2 B DataRow ["pg_catalog" "pg_stat_lock"]
+2 B DataRow ["pg_catalog" "pg_stat_progress_analyze"]
+2 B DataRow ["pg_catalog" "pg_stat_progress_basebackup"]
+2 B DataRow ["pg_catalog" "pg_stat_progress_cluster"]
+2 B DataRow ["pg_catalog" "pg_stat_progress_copy"]
+2 B DataRow ["pg_catalog" "pg_stat_progress_create_index"]
+2 B DataRow ["pg_catalog" "pg_stat_progress_repack"]
+2 B DataRow ["pg_catalog" "pg_stat_progress_vacuum"]
+2 B DataRow ["pg_catalog" "pg_stat_recovery"]
+2 B DataRow ["pg_catalog" "pg_stat_recovery_prefetch"]
+2 B DataRow ["pg_catalog" "pg_stat_replication"]
+2 B DataRow ["pg_catalog" "pg_stat_replication_slots"]
+2 B DataRow ["pg_catalog" "pg_stat_slru"]
+2 B DataRow ["pg_catalog" "pg_stat_ssl"]
+2 B DataRow ["pg_catalog" "pg_stat_subscription"]
+2 B DataRow ["pg_catalog" "pg_stat_subscription_stats"]
+2 B DataRow ["pg_catalog" "pg_stat_sys_indexes"]
+2 B DataRow ["pg_catalog" "pg_stat_sys_tables"]
+2 B DataRow ["pg_catalog" "pg_stat_user_functions"]
+2 B DataRow ["pg_catalog" "pg_stat_user_indexes"]
+2 B DataRow ["pg_catalog" "pg_stat_user_tables"]
+2 B DataRow ["pg_catalog" "pg_stat_wal"]
+2 B DataRow ["pg_catalog" "pg_stat_wal_receiver"]
+2 B DataRow ["pg_catalog" "pg_stat_xact_all_tables"]
+2 B DataRow ["pg_catalog" "pg_stat_xact_sys_tables"]
+2 B DataRow ["pg_catalog" "pg_stat_xact_user_functions"]
+2 B DataRow ["pg_catalog" "pg_stat_xact_user_tables"]
+2 B DataRow ["pg_catalog" "pg_statio_all_indexes"]
+2 B DataRow ["pg_catalog" "pg_statio_all_sequences"]
+2 B DataRow ["pg_catalog" "pg_statio_all_tables"]
+2 B DataRow ["pg_catalog" "pg_statio_sys_indexes"]
+2 B DataRow ["pg_catalog" "pg_statio_sys_sequences"]
+2 B DataRow ["pg_catalog" "pg_statio_sys_tables"]
+2 B DataRow ["pg_catalog" "pg_statio_user_indexes"]
+2 B DataRow ["pg_catalog" "pg_statio_user_sequences"]
+2 B DataRow ["pg_catalog" "pg_statio_user_tables"]
+2 B DataRow ["pg_catalog" "pg_stats"]
+2 B DataRow ["pg_catalog" "pg_stats_ext"]
+2 B DataRow ["pg_catalog" "pg_stats_ext_exprs"]
+2 B DataRow ["pg_catalog" "pg_tables"]
+2 B DataRow ["pg_catalog" "pg_timezone_abbrevs"]
+2 B DataRow ["pg_catalog" "pg_timezone_names"]
+2 B DataRow ["pg_catalog" "pg_user"]
+2 B DataRow ["pg_catalog" "pg_user_mappings"]
+2 B DataRow ["pg_catalog" "pg_views"]
+2 B DataRow ["pg_catalog" "pg_wait_events"]
+2 B CommandComplete "SELECT 152"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT\n        schemaname as schema,\n        matviewname as name\n      FROM pg_matviews\n        \n      order by schemaname, matviewname;\n    "
+2 B RowDescription [("schema" 12038 1 19 64 -1 0) ("name" 12038 2 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT\n        r.specific_name as id,\n        r.routine_schema as routine_schema,\n        r.routine_name as name,\n        r.routine_type as routine_type,\n        r.data_type as data_type,\n        p.oid::text as oid\n      FROM INFORMATION_SCHEMA.ROUTINES r\n      LEFT JOIN pg_catalog.pg_proc p\n        ON r.specific_name::text = p.proname || '_' || p.oid::text\n      where r.routine_schema not in ('sys', 'information_schema',\n                                     'pg_catalog', 'performance_schema')\n        \n      ORDER BY routine_schema, routine_name\n    "
+2 B RowDescription [("id" 13486 3 19 64 -1 0) ("routine_schema" 13486 5 19 64 -1 0) ("name" 13486 6 19 64 -1 0) ("routine_type" 13486 7 1043 -1 -1 0) ("data_type" 13486 14 1043 -1 -1 0) ("oid" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_item_qty_16420" "compat_beekeeper" "compat_item_qty" "FUNCTION" "bigint" "16420"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "\n      select\n        r.routine_schema as routine_schema,\n        r.specific_name as specific_name,\n        p.parameter_name as parameter_name,\n        p.character_maximum_length as char_length,\n          p.data_type as data_type\n      from information_schema.routines r\n        left join information_schema.parameters p\n      on p.specific_schema = r.routine_schema\n        and p.specific_name = r.specific_name\n      where r.routine_schema not in ('sys', 'information_schema',\n        'pg_catalog', 'performance_schema')\n        \n\n        AND p.parameter_mode = 'IN'\n      order by r.routine_schema,\n        r.specific_name,\n        p.ordinal_position;\n\n    "
+2 B RowDescription [("routine_schema" 13486 5 19 64 -1 0) ("specific_name" 13486 3 19 64 -1 0) ("parameter_name" 13443 8 19 64 -1 0) ("char_length" 13443 10 23 4 -1 0) ("data_type" 13443 9 1043 -1 -1 0)]
+2 B DataRow ["compat_beekeeper" "compat_item_qty_16420" "p_item" NULL "integer"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT\n        table_schema,\n        table_name,\n        column_name,\n        is_nullable,\n        is_generated,\n          ordinal_position,\n        column_default,\n        CASE\n          WHEN character_maximum_length is not null  and udt_name != 'text'\n            THEN udt_name || '(' || character_maximum_length::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is not null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ',' || numeric_scale::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ')'\n          WHEN datetime_precision is not null AND udt_name != 'date' THEN\n            udt_name || '(' || datetime_precision::varchar(255) || ')'\n          ELSE udt_name\n      END as data_type,\n        udt_schema,\n        CASE\n          WHEN data_type = 'ARRAY' THEN 'YES'\n          ELSE 'NO'\n      END as is_array,\n        pg_catalog.col_description(format('%I.%I', table_schema, table_name)::regclass::oid, ordinal_position) as column_comment\n      FROM information_schema.columns\n      WHERE table_schema = $1 AND table_name = $2\n      ORDER BY table_schema, table_name, ordinal_position\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_orders"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("table_schema" 13404 2 19 64 -1 0) ("table_name" 13404 3 19 64 -1 0) ("column_name" 13404 4 19 64 -1 0) ("is_nullable" 13404 7 1043 -1 7 0) ("is_generated" 13404 42 1043 -1 -1 0) ("ordinal_position" 13404 5 23 4 -1 0) ("column_default" 13404 6 1043 -1 -1 0) ("data_type" 0 0 19 64 -1 0) ("udt_schema" 13404 27 19 64 -1 0) ("is_array" 0 0 25 -1 -1 0) ("column_comment" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_beekeeper" "compat_orders" "id" "NO" "NEVER" "1" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_orders" "code" "NO" "NEVER" "2" "nextval('compat_beekeeper.compat_orders_code_seq'::regclass)" "int8(64,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_orders" "item_id" "NO" "NEVER" "3" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_orders" "qty" "NO" "NEVER" "4" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B CommandComplete "SELECT 4"
+2 B ReadyForQuery I
+2 F Parse "" "\n        SELECT n.nspname AS schema, t.typname AS typename, e.enumlabel AS label\n        FROM pg_enum e\n        JOIN pg_type t ON t.oid = e.enumtypid\n        JOIN pg_namespace n ON n.oid = t.typnamespace\n        WHERE t.oid IN (\n             SELECT COALESCE(NULLIF(et.typelem, 0), et.oid)\n             FROM pg_attribute a\n             JOIN pg_class c ON c.oid = a.attrelid\n             JOIN pg_namespace cn ON cn.oid = c.relnamespace\n             JOIN pg_type et ON et.oid = a.atttypid\n             WHERE c.relname = $1 AND cn.nspname = $2\n               AND a.attnum > 0 AND NOT a.attisdropped\n           )\n        ORDER BY n.nspname, t.typname, e.enumsortorder\n      " []
+2 F Bind "" "" [0 0] ["compat_orders" "compat_beekeeper"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("schema" 2615 2 19 64 -1 0) ("typename" 1247 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT\n        table_schema,\n        table_name,\n        column_name,\n        is_nullable,\n        is_generated,\n          ordinal_position,\n        column_default,\n        CASE\n          WHEN character_maximum_length is not null  and udt_name != 'text'\n            THEN udt_name || '(' || character_maximum_length::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is not null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ',' || numeric_scale::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ')'\n          WHEN datetime_precision is not null AND udt_name != 'date' THEN\n            udt_name || '(' || datetime_precision::varchar(255) || ')'\n          ELSE udt_name\n      END as data_type,\n        udt_schema,\n        CASE\n          WHEN data_type = 'ARRAY' THEN 'YES'\n          ELSE 'NO'\n      END as is_array,\n        pg_catalog.col_description(format('%I.%I', table_schema, table_name)::regclass::oid, ordinal_position) as column_comment\n      FROM information_schema.columns\n      WHERE table_schema = $1 AND table_name = $2\n      ORDER BY table_schema, table_name, ordinal_position\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_orders"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("table_schema" 13404 2 19 64 -1 0) ("table_name" 13404 3 19 64 -1 0) ("column_name" 13404 4 19 64 -1 0) ("is_nullable" 13404 7 1043 -1 7 0) ("is_generated" 13404 42 1043 -1 -1 0) ("ordinal_position" 13404 5 23 4 -1 0) ("column_default" 13404 6 1043 -1 -1 0) ("data_type" 0 0 19 64 -1 0) ("udt_schema" 13404 27 19 64 -1 0) ("is_array" 0 0 25 -1 -1 0) ("column_comment" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_beekeeper" "compat_orders" "id" "NO" "NEVER" "1" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_orders" "code" "NO" "NEVER" "2" "nextval('compat_beekeeper.compat_orders_code_seq'::regclass)" "int8(64,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_orders" "item_id" "NO" "NEVER" "3" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_orders" "qty" "NO" "NEVER" "4" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B CommandComplete "SELECT 4"
+2 B ReadyForQuery I
+2 F Parse "" "\n        SELECT n.nspname AS schema, t.typname AS typename, e.enumlabel AS label\n        FROM pg_enum e\n        JOIN pg_type t ON t.oid = e.enumtypid\n        JOIN pg_namespace n ON n.oid = t.typnamespace\n        WHERE t.oid IN (\n             SELECT COALESCE(NULLIF(et.typelem, 0), et.oid)\n             FROM pg_attribute a\n             JOIN pg_class c ON c.oid = a.attrelid\n             JOIN pg_namespace cn ON cn.oid = c.relnamespace\n             JOIN pg_type et ON et.oid = a.atttypid\n             WHERE c.relname = $1 AND cn.nspname = $2\n               AND a.attnum > 0 AND NOT a.attisdropped\n           )\n        ORDER BY n.nspname, t.typname, e.enumsortorder\n      " []
+2 F Bind "" "" [0 0] ["compat_orders" "compat_beekeeper"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("schema" 2615 2 19 64 -1 0) ("typename" 1247 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT\n        a.attname as column_name,\n        format_type(a.atttypid, a.atttypmod) AS data_type,\n        a.attnum as position\n      FROM   pg_index i\n        JOIN   pg_attribute a ON a.attrelid = i.indrelid\n        AND a.attnum = ANY(i.indkey)\n      WHERE  i.indrelid = '\"compat_beekeeper\".\"compat_orders\"'::regclass\n        AND    i.indisprimary\n      ORDER BY a.attnum\n    "
+2 B RowDescription [("column_name" 1249 2 19 64 -1 0) ("data_type" 0 0 25 -1 -1 0) ("position" 1249 5 21 2 -1 0)]
+2 B DataRow ["id" "integer" "1"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "SELECT pg_indexes_size('\"compat_beekeeper\".\"compat_orders\"') as index_size,pg_relation_size('\"compat_beekeeper\".\"compat_orders\"') as table_size,obj_description('\"compat_beekeeper\".\"compat_orders\"'::regclass) as description"
+2 B RowDescription [("index_size" 0 0 20 8 -1 0) ("table_size" 0 0 20 8 -1 0) ("description" 0 0 25 -1 -1 0)]
+2 B DataRow ["32768" "8192" "The orders of the Beekeeper Studio scenario."]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT (SELECT relname FROM pg_class c WHERE c.oid = i.indexrelid) as indexname,\n             k.i AS index_order,\n             i.indexrelid as id,\n             i.indisunique,\n             i.indisprimary,\n             i.indnullsnotdistinct,\n        coalesce(a.attname, pg_get_indexdef(i.indexrelid, k.i, false)) AS index_column,\n        i.indoption[k.i - 1] = 0 AS ascending\n      FROM pg_index i\n        CROSS JOIN LATERAL (SELECT unnest(i.indkey), generate_subscripts(i.indkey, 1) + 1) AS k(attnum, i)\n        LEFT JOIN pg_attribute AS a\n      ON i.indrelid = a.attrelid AND k.attnum = a.attnum\n        JOIN pg_class t on t.oid = i.indrelid\n        JOIN pg_namespace c on c.oid = t.relnamespace\n      WHERE\n        c.nspname = $1 AND\n        t.relname = $2\n\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_orders"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("indexname" 0 0 19 64 -1 0) ("index_order" 0 0 23 4 -1 0) ("id" 2610 1 26 4 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indisprimary" 2610 7 16 1 -1 0) ("indnullsnotdistinct" 2610 6 16 1 -1 0) ("index_column" 0 0 19 64 -1 0) ("ascending" 0 0 16 1 -1 0)]
+2 B DataRow ["compat_orders_pkey" "1" "16407" "t" "t" "f" "id" "t"]
+2 B DataRow ["compat_orders_code_key" "1" "16414" "t" "f" "f" "code" "t"]
+2 B CommandComplete "SELECT 2"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT\n        c.conname AS constraint_name,\n        a.attname AS column_name,\n        n.nspname AS from_schema,\n        t.relname AS from_table,\n        af.attname AS to_column,\n        tf.relname AS to_table,\n        nf.nspname AS to_schema,\n        CASE c.confupdtype::text\n          WHEN 'a' THEN 'NO ACTION'\n          WHEN 'r' THEN 'RESTRICT'\n          WHEN 'c' THEN 'CASCADE'\n          WHEN 'n' THEN 'SET NULL'\n          WHEN 'd' THEN 'SET DEFAULT'\n          ELSE c.confupdtype::text\n        END AS update_rule,\n        CASE c.confdeltype::text\n          WHEN 'a' THEN 'NO ACTION'\n          WHEN 'r' THEN 'RESTRICT'\n          WHEN 'c' THEN 'CASCADE'\n          WHEN 'n' THEN 'SET NULL'\n          WHEN 'd' THEN 'SET DEFAULT'\n          ELSE c.confdeltype::text\n        END AS delete_rule,\n        pos AS ordinal_position\n      FROM\n        pg_constraint c\n        JOIN pg_class t ON c.conrelid = t.oid\n        JOIN pg_namespace n ON t.relnamespace = n.oid\n        JOIN generate_subscripts(c.conkey, 1) pos ON true\n        JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = c.conkey[pos]\n        JOIN pg_class tf ON c.confrelid = tf.oid\n        JOIN pg_namespace nf ON tf.relnamespace = nf.oid\n        JOIN pg_attribute af ON af.attrelid = tf.oid AND af.attnum = c.confkey[pos]\n      WHERE\n        c.contype = 'f'\n        AND n.nspname = $1\n        AND t.relname = $2\n      ORDER BY\n        c.conname,\n        pos;\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_orders"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("constraint_name" 2606 2 19 64 -1 0) ("column_name" 1249 2 19 64 -1 0) ("from_schema" 2615 2 19 64 -1 0) ("from_table" 1259 2 19 64 -1 0) ("to_column" 1249 2 19 64 -1 0) ("to_table" 1259 2 19 64 -1 0) ("to_schema" 2615 2 19 64 -1 0) ("update_rule" 0 0 25 -1 -1 0) ("delete_rule" 0 0 25 -1 -1 0) ("ordinal_position" 0 0 23 4 -1 0)]
+2 B DataRow ["compat_orders_item_id_fkey" "item_id" "compat_beekeeper" "compat_orders" "id" "compat_items" "compat_beekeeper" "NO ACTION" "CASCADE" "1"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT\n        trigger_name,\n        action_timing as timing,\n        event_manipulation as manipulation,\n        action_statement as action,\n        action_condition as condition\n      FROM information_schema.triggers\n      WHERE event_object_schema = $1\n        AND event_object_table = $2\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_orders"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("trigger_name" 13550 3 19 64 -1 0) ("timing" 13550 12 1043 -1 -1 0) ("manipulation" 13550 4 1043 -1 -1 0) ("action" 13550 10 1043 -1 -1 0) ("condition" 13550 9 1043 -1 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT\n        ps.schemaname AS schema,\n          ps.relname AS name,\n          pg_get_expr(pt.relpartbound, pt.oid, true) AS expression\n      FROM pg_class base_tb\n        JOIN pg_inherits i              ON i.inhparent = base_tb.oid\n        JOIN pg_class pt                ON pt.oid = i.inhrelid\n        JOIN pg_stat_all_tables ps      ON ps.relid = i.inhrelid\n        JOIN pg_namespace nmsp_parent   ON nmsp_parent.oid = base_tb.relnamespace\n      WHERE nmsp_parent.nspname = 'compat_beekeeper' AND base_tb.relname = 'compat_orders' AND base_tb.relkind = 'p';\n    "
+2 B RowDescription [("schema" 12156 2 19 64 -1 0) ("name" 12156 3 19 64 -1 0) ("expression" 0 0 25 -1 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Parse "" "select tableowner from pg_catalog.pg_tables where tablename = $1 and schemaname = $2" []
+2 F Bind "" "" [0 0] ["compat_orders" "compat_beekeeper"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("tableowner" 12033 3 19 64 -1 0)]
+2 B DataRow ["postgres"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "\n  SELECT\n  'CREATE TABLE ' || quote_ident(tabdef.schema_name) || '.' || quote_ident(tabdef.table_name) || E' (\n' ||\n  array_to_string(\n    array_agg(\n      '  ' || quote_ident(tabdef.column_name) || ' ' ||\n      case when tabdef.def_val like 'nextval(%_seq%' then\n        case when tabdef.type = 'integer' then 'serial'\n            when tabdef.type = 'smallint' then 'smallserial'\n            when tabdef.type = 'bigint' then 'bigserial'\n            else tabdef.type end\n      else\n        tabdef.type\n      end || ' ' ||\n      tabdef.not_null ||\n      CASE WHEN tabdef.def_val IS NOT NULL\n                AND NOT (tabdef.def_val like 'nextval(%_seq%'\n                        AND (tabdef.type = 'integer' OR tabdef.type = 'smallint' OR tabdef.type = 'bigint'))\n          THEN ' DEFAULT ' || tabdef.def_val\n      ELSE '' END ||\n      CASE WHEN tabdef.identity IS NOT NULL THEN ' ' || tabdef.identity ELSE '' END\n      ORDER BY tabdef.column_idx ASC\n    )\n    , E',\n'\n  ) || E'\n);\n' ||\n  CASE WHEN tc.constraint_name IS NULL THEN ''\n      ELSE E'\nALTER TABLE ' || quote_ident(tabdef.schema_name) || '.' || quote_ident(tabdef.table_name) ||\n      ' ADD CONSTRAINT ' || quote_ident(tc.constraint_name)  ||\n      ' PRIMARY KEY ' || '(' || substring(constr.column_name from 0 for char_length(constr.column_name)-1) || ')'\n  END AS createtable\n  FROM\n  ( SELECT\n    c.relname AS table_name,\n    a.attname AS column_name,\n    a.attnum AS column_idx,\n    pg_catalog.format_type(a.atttypid, a.atttypmod) AS type,\n    CASE\n      WHEN a.attnotnull OR a.attidentity != '' THEN 'NOT NULL'\n    ELSE 'NULL'\n    END AS not_null,\n    CASE WHEN a.atthasdef THEN pg_catalog.pg_get_expr(ad.adbin, ad.adrelid) ELSE null END AS def_val,\n    CASE WHEN a.attidentity = 'a' THEN 'GENERATED ALWAYS AS IDENTITY' when a.attidentity = 'd' THEN 'GENERATED BY DEFAULT AS IDENTITY' ELSE null END AS identity,\n    n.nspname as schema_name\n  FROM pg_class c\n  JOIN pg_namespace n ON (n.oid = c.relnamespace)\n  JOIN pg_attribute a ON (a.attnum > 0 AND a.attrelid = c.oid)\n  JOIN pg_type t ON (a.atttypid = t.oid)\n  LEFT JOIN pg_attrdef ad ON (a.attrelid = ad.adrelid AND a.attnum = ad.adnum)\n  WHERE c.relname = $1\n  AND n.nspname = $2\n  ORDER BY a.attnum DESC\n  ) AS tabdef\n  LEFT JOIN information_schema.table_constraints tc\n  ON  tc.table_name       = tabdef.table_name\n  AND tc.table_schema     = tabdef.schema_name\n  AND tc.constraint_Type  = 'PRIMARY KEY'\n  LEFT JOIN LATERAL (\n  SELECT column_name || ', ' AS column_name\n  FROM   information_schema.key_column_usage kcu\n  WHERE  kcu.constraint_name = tc.constraint_name\n  AND kcu.table_name = tabdef.table_name\n  AND kcu.table_schema = tabdef.schema_name\n  ORDER BY ordinal_position\n  ) AS constr ON true\n  GROUP BY tabdef.schema_name, tabdef.table_name, tc.constraint_name, constr.column_name;\n\n" []
+2 F Bind "" "" [0 0] ["compat_orders" "compat_beekeeper"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("createtable" 0 0 25 -1 -1 0)]
+2 B DataRow ["CREATE TABLE compat_beekeeper.compat_orders (\n  id integer NOT NULL,\n  code bigserial NOT NULL,\n  item_id integer NOT NULL,\n  qty integer NOT NULL\n);\n\nALTER TABLE compat_beekeeper.compat_orders ADD CONSTRAINT compat_orders_pkey PRIMARY KEY (id)"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "SELECT pg_get_viewdef($1::regclass, true)" []
+2 F Bind "" "" [0] ["\"compat_beekeeper\".\"compat_item_totals\""] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("pg_get_viewdef" 0 0 25 -1 -1 0)]
+2 B DataRow [" SELECT i.id,\n    i.name,\n    sum(o.qty) AS qty\n   FROM compat_beekeeper.compat_items i\n     JOIN compat_beekeeper.compat_orders o ON o.item_id = i.id\n  GROUP BY i.id, i.name;"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT pg_get_functiondef(p.oid)\n      FROM pg_proc p\n             LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace\n      WHERE proname = $1\n        AND n.nspname = $2\n        AND p.oid = $3::oid\n    " []
+2 F Bind "" "" [0 0 0] ["compat_item_qty" "compat_beekeeper" "16420"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("pg_get_functiondef" 0 0 25 -1 -1 0)]
+2 B DataRow ["CREATE OR REPLACE FUNCTION compat_beekeeper.compat_item_qty(p_item integer)\n RETURNS bigint\n LANGUAGE sql\n STABLE\nAS $function$ SELECT sum(qty) FROM compat_beekeeper.compat_orders WHERE item_id = p_item $function$\n"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT\n        table_schema,\n        table_name,\n        column_name,\n        is_nullable,\n        is_generated,\n          ordinal_position,\n        column_default,\n        CASE\n          WHEN character_maximum_length is not null  and udt_name != 'text'\n            THEN udt_name || '(' || character_maximum_length::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is not null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ',' || numeric_scale::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ')'\n          WHEN datetime_precision is not null AND udt_name != 'date' THEN\n            udt_name || '(' || datetime_precision::varchar(255) || ')'\n          ELSE udt_name\n      END as data_type,\n        udt_schema,\n        CASE\n          WHEN data_type = 'ARRAY' THEN 'YES'\n          ELSE 'NO'\n      END as is_array,\n        pg_catalog.col_description(format('%I.%I', table_schema, table_name)::regclass::oid, ordinal_position) as column_comment\n      FROM information_schema.columns\n      WHERE table_schema = $1 AND table_name = $2\n      ORDER BY table_schema, table_name, ordinal_position\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_items"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("table_schema" 13404 2 19 64 -1 0) ("table_name" 13404 3 19 64 -1 0) ("column_name" 13404 4 19 64 -1 0) ("is_nullable" 13404 7 1043 -1 7 0) ("is_generated" 13404 42 1043 -1 -1 0) ("ordinal_position" 13404 5 23 4 -1 0) ("column_default" 13404 6 1043 -1 -1 0) ("data_type" 0 0 19 64 -1 0) ("udt_schema" 13404 27 19 64 -1 0) ("is_array" 0 0 25 -1 -1 0) ("column_comment" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_beekeeper" "compat_items" "id" "NO" "NEVER" "1" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_items" "name" "NO" "NEVER" "2" NULL "text" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_items" "price" "NO" "NEVER" "3" NULL "numeric(10,2)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_items" "created_at" "NO" "NEVER" "4" NULL "timestamptz(6)" "pg_catalog" "NO" NULL]
+2 B CommandComplete "SELECT 4"
+2 B ReadyForQuery I
+2 F Parse "" "\n        SELECT n.nspname AS schema, t.typname AS typename, e.enumlabel AS label\n        FROM pg_enum e\n        JOIN pg_type t ON t.oid = e.enumtypid\n        JOIN pg_namespace n ON n.oid = t.typnamespace\n        WHERE t.oid IN (\n             SELECT COALESCE(NULLIF(et.typelem, 0), et.oid)\n             FROM pg_attribute a\n             JOIN pg_class c ON c.oid = a.attrelid\n             JOIN pg_namespace cn ON cn.oid = c.relnamespace\n             JOIN pg_type et ON et.oid = a.atttypid\n             WHERE c.relname = $1 AND cn.nspname = $2\n               AND a.attnum > 0 AND NOT a.attisdropped\n           )\n        ORDER BY n.nspname, t.typname, e.enumsortorder\n      " []
+2 F Bind "" "" [0 0] ["compat_items" "compat_beekeeper"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("schema" 2615 2 19 64 -1 0) ("typename" 1247 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT\n        c.conname AS constraint_name,\n        a.attname AS column_name,\n        n.nspname AS from_schema,\n        t.relname AS from_table,\n        af.attname AS to_column,\n        tf.relname AS to_table,\n        nf.nspname AS to_schema,\n        CASE c.confupdtype::text\n          WHEN 'a' THEN 'NO ACTION'\n          WHEN 'r' THEN 'RESTRICT'\n          WHEN 'c' THEN 'CASCADE'\n          WHEN 'n' THEN 'SET NULL'\n          WHEN 'd' THEN 'SET DEFAULT'\n          ELSE c.confupdtype::text\n        END AS update_rule,\n        CASE c.confdeltype::text\n          WHEN 'a' THEN 'NO ACTION'\n          WHEN 'r' THEN 'RESTRICT'\n          WHEN 'c' THEN 'CASCADE'\n          WHEN 'n' THEN 'SET NULL'\n          WHEN 'd' THEN 'SET DEFAULT'\n          ELSE c.confdeltype::text\n        END AS delete_rule,\n        pos AS ordinal_position\n      FROM\n        pg_constraint c\n        JOIN pg_class t ON c.conrelid = t.oid\n        JOIN pg_namespace n ON t.relnamespace = n.oid\n        JOIN generate_subscripts(c.conkey, 1) pos ON true\n        JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = c.conkey[pos]\n        JOIN pg_class tf ON c.confrelid = tf.oid\n        JOIN pg_namespace nf ON tf.relnamespace = nf.oid\n        JOIN pg_attribute af ON af.attrelid = tf.oid AND af.attnum = c.confkey[pos]\n      WHERE\n        c.contype = 'f'\n        AND n.nspname = $1\n        AND t.relname = $2\n      ORDER BY\n        c.conname,\n        pos;\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_items"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("constraint_name" 2606 2 19 64 -1 0) ("column_name" 1249 2 19 64 -1 0) ("from_schema" 2615 2 19 64 -1 0) ("from_table" 1259 2 19 64 -1 0) ("to_column" 1249 2 19 64 -1 0) ("to_table" 1259 2 19 64 -1 0) ("to_schema" 2615 2 19 64 -1 0) ("update_rule" 0 0 25 -1 -1 0) ("delete_rule" 0 0 25 -1 -1 0) ("ordinal_position" 0 0 23 4 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT\n        a.attname as column_name,\n        format_type(a.atttypid, a.atttypmod) AS data_type,\n        a.attnum as position\n      FROM   pg_index i\n        JOIN   pg_attribute a ON a.attrelid = i.indrelid\n        AND a.attnum = ANY(i.indkey)\n      WHERE  i.indrelid = '\"compat_beekeeper\".\"compat_items\"'::regclass\n        AND    i.indisprimary\n      ORDER BY a.attnum\n    "
+2 B RowDescription [("column_name" 1249 2 19 64 -1 0) ("data_type" 0 0 25 -1 -1 0) ("position" 1249 5 21 2 -1 0)]
+2 B DataRow ["id" "integer" "1"]
+2 B CommandComplete "SELECT 1"
+2 B ReadyForQuery I
+2 F Query "\n      SELECT * \n      FROM \"compat_beekeeper\".\"compat_items\"\n      \n    \n      ORDER BY \"id\" ASC\n      LIMIT 101\n      OFFSET 0\n      "
+2 B RowDescription [("id" 16386 1 23 4 -1 0) ("name" 16386 2 25 -1 -1 0) ("price" 16386 3 1700 -1 655366 0) ("created_at" 16386 4 1184 8 -1 0)]
+2 B DataRow ["1" "item 1" "1.50" "2026-01-02 04:00:00+00"]
+2 B DataRow ["2" "item 2" "3.00" "2026-01-02 05:00:00+00"]
+2 B DataRow ["3" "item 3" "4.50" "2026-01-02 06:00:00+00"]
+2 B DataRow ["4" "item 4" "6.00" "2026-01-02 07:00:00+00"]
+2 B DataRow ["5" "item 5" "7.50" "2026-01-02 08:00:00+00"]
+2 B DataRow ["6" "item 6" "9.00" "2026-01-02 09:00:00+00"]
+2 B DataRow ["7" "item 7" "10.50" "2026-01-02 10:00:00+00"]
+2 B DataRow ["8" "item 8" "12.00" "2026-01-02 11:00:00+00"]
+2 B DataRow ["9" "item 9" "13.50" "2026-01-02 12:00:00+00"]
+2 B DataRow ["10" "item 10" "15.00" "2026-01-02 13:00:00+00"]
+2 B DataRow ["11" "item 11" "16.50" "2026-01-02 14:00:00+00"]
+2 B DataRow ["12" "item 12" "18.00" "2026-01-02 15:00:00+00"]
+2 B DataRow ["13" "item 13" "19.50" "2026-01-02 16:00:00+00"]
+2 B DataRow ["14" "item 14" "21.00" "2026-01-02 17:00:00+00"]
+2 B DataRow ["15" "item 15" "22.50" "2026-01-02 18:00:00+00"]
+2 B DataRow ["16" "item 16" "24.00" "2026-01-02 19:00:00+00"]
+2 B DataRow ["17" "item 17" "25.50" "2026-01-02 20:00:00+00"]
+2 B DataRow ["18" "item 18" "27.00" "2026-01-02 21:00:00+00"]
+2 B DataRow ["19" "item 19" "28.50" "2026-01-02 22:00:00+00"]
+2 B DataRow ["20" "item 20" "30.00" "2026-01-02 23:00:00+00"]
+2 B DataRow ["21" "item 21" "31.50" "2026-01-03 00:00:00+00"]
+2 B DataRow ["22" "item 22" "33.00" "2026-01-03 01:00:00+00"]
+2 B DataRow ["23" "item 23" "34.50" "2026-01-03 02:00:00+00"]
+2 B DataRow ["24" "item 24" "36.00" "2026-01-03 03:00:00+00"]
+2 B DataRow ["25" "item 25" "37.50" "2026-01-03 04:00:00+00"]
+2 B DataRow ["26" "item 26" "39.00" "2026-01-03 05:00:00+00"]
+2 B DataRow ["27" "item 27" "40.50" "2026-01-03 06:00:00+00"]
+2 B DataRow ["28" "item 28" "42.00" "2026-01-03 07:00:00+00"]
+2 B DataRow ["29" "item 29" "43.50" "2026-01-03 08:00:00+00"]
+2 B DataRow ["30" "item 30" "45.00" "2026-01-03 09:00:00+00"]
+2 B CommandComplete "SELECT 30"
+2 B ReadyForQuery I
+2 F Parse "" "\n      SELECT\n        table_schema,\n        table_name,\n        column_name,\n        is_nullable,\n        is_generated,\n          ordinal_position,\n        column_default,\n        CASE\n          WHEN character_maximum_length is not null  and udt_name != 'text'\n            THEN udt_name || '(' || character_maximum_length::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is not null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ',' || numeric_scale::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ')'\n          WHEN datetime_precision is not null AND udt_name != 'date' THEN\n            udt_name || '(' || datetime_precision::varchar(255) || ')'\n          ELSE udt_name\n      END as data_type,\n        udt_schema,\n        CASE\n          WHEN data_type = 'ARRAY' THEN 'YES'\n          ELSE 'NO'\n      END as is_array,\n        pg_catalog.col_description(format('%I.%I', table_schema, table_name)::regclass::oid, ordinal_position) as column_comment\n      FROM information_schema.columns\n      WHERE table_schema = $1 AND table_name = $2\n      ORDER BY table_schema, table_name, ordinal_position\n    " []
+2 F Bind "" "" [0 0] ["compat_beekeeper" "compat_items"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("table_schema" 13404 2 19 64 -1 0) ("table_name" 13404 3 19 64 -1 0) ("column_name" 13404 4 19 64 -1 0) ("is_nullable" 13404 7 1043 -1 7 0) ("is_generated" 13404 42 1043 -1 -1 0) ("ordinal_position" 13404 5 23 4 -1 0) ("column_default" 13404 6 1043 -1 -1 0) ("data_type" 0 0 19 64 -1 0) ("udt_schema" 13404 27 19 64 -1 0) ("is_array" 0 0 25 -1 -1 0) ("column_comment" 0 0 25 -1 -1 0)]
+2 B DataRow ["compat_beekeeper" "compat_items" "id" "NO" "NEVER" "1" NULL "int4(32,0)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_items" "name" "NO" "NEVER" "2" NULL "text" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_items" "price" "NO" "NEVER" "3" NULL "numeric(10,2)" "pg_catalog" "NO" NULL]
+2 B DataRow ["compat_beekeeper" "compat_items" "created_at" "NO" "NEVER" "4" NULL "timestamptz(6)" "pg_catalog" "NO" NULL]
+2 B CommandComplete "SELECT 4"
+2 B ReadyForQuery I
+2 F Parse "" "\n        SELECT n.nspname AS schema, t.typname AS typename, e.enumlabel AS label\n        FROM pg_enum e\n        JOIN pg_type t ON t.oid = e.enumtypid\n        JOIN pg_namespace n ON n.oid = t.typnamespace\n        WHERE t.oid IN (\n             SELECT COALESCE(NULLIF(et.typelem, 0), et.oid)\n             FROM pg_attribute a\n             JOIN pg_class c ON c.oid = a.attrelid\n             JOIN pg_namespace cn ON cn.oid = c.relnamespace\n             JOIN pg_type et ON et.oid = a.atttypid\n             WHERE c.relname = $1 AND cn.nspname = $2\n               AND a.attnum > 0 AND NOT a.attisdropped\n           )\n        ORDER BY n.nspname, t.typname, e.enumsortorder\n      " []
+2 F Bind "" "" [0 0] ["compat_items" "compat_beekeeper"] [0]
+2 F Describe P ""
+2 F Execute "" 0
+2 F Sync
+2 B ParseComplete
+2 B BindComplete
+2 B RowDescription [("schema" 2615 2 19 64 -1 0) ("typename" 1247 2 19 64 -1 0) ("label" 3501 4 19 64 -1 0)]
+2 B CommandComplete "SELECT 0"
+2 B ReadyForQuery I
+2 F Terminate
+2 F End
+2 B End
+3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
+3 B AuthenticationSASL "SCRAM-SHA-256"
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=xWZVhB1q1L97kurSBQHMFyGH"
+3 B AuthenticationSASLContinue "r=xWZVhB1q1L97kurSBQHMFyGHuYU2I2Cq0r4Yp6/CXv4OY2sU,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
+3 F SASLResponse "c=biws,r=xWZVhB1q1L97kurSBQHMFyGHuYU2I2Cq0r4Yp6/CXv4OY2sU,p=ZmUFtfqcKkUBs6iqLeoZNqOHaSklLx93pqhYeQq89ys="
+3 B AuthenticationSASLFinal "v=revoYpCkwWf61+Ej1gYmXqep9ljrltYSLp5f53L7u7Q="
+3 B AuthenticationOk
+3 B ParameterStatus "IntervalStyle" "postgres"
+3 B ParameterStatus "search_path" "\"$user\", public"
+3 B ParameterStatus "is_superuser" "on"
+3 B ParameterStatus "standard_conforming_strings" "on"
+3 B ParameterStatus "session_authorization" "postgres"
+3 B ParameterStatus "client_encoding" "UTF8"
+3 B ParameterStatus "server_version" "19beta4"
+3 B ParameterStatus "server_encoding" "UTF8"
+3 B ParameterStatus "in_hot_standby" "off"
+3 B ParameterStatus "integer_datetimes" "on"
+3 B ParameterStatus "TimeZone" "UTC"
+3 B ParameterStatus "application_name" "psql"
+3 B ParameterStatus "default_transaction_read_only" "off"
+3 B ParameterStatus "scram_iterations" "4096"
+3 B ParameterStatus "DateStyle" "ISO, MDY"
+3 B BackendKeyData 3380799 "zE\xf9\\"
+3 B ReadyForQuery I
+3 F Query "DROP SCHEMA compat_beekeeper CASCADE"
+3 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "drop cascades to 5 other objects" D "drop cascades to table compat_beekeeper.compat_items\ndrop cascades to sequence compat_beekeeper.compat_orders_code_seq\ndrop cascades to table compat_beekeeper.compat_orders\ndrop cascades to view compat_beekeeper.compat_item_totals\ndrop cascades to function compat_beekeeper.compat_item_qty(integer)" F "dependency.c" L "1181" R "reportDependentObjects"
+3 B CommandComplete "DROP SCHEMA"
+3 B ReadyForQuery I
+3 F Terminate
+3 F End
+3 B End

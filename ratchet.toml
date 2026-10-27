@@ -7,6 +7,8 @@
 "19 libpq_pipeline" = 24
 "19 trace activerecord" = 829
 "19 trace asyncpg" = 140
+"19 trace beekeeper" = 494
+"19 trace dbeaver" = 2078
 "19 trace diesel" = 449
 "19 trace django" = 112
 "19 trace drizzle" = 425

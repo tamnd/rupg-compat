@@ -54,6 +54,14 @@ version = "0.32.0"
 # Active Record, the ORM of Rails, on the pg gem 1.7.0.
 version = "8.1.4"
 
+[clients.beekeeper]
+# Beekeeper Studio has no headless mode. The trace sends the queries of its PostgreSQL code at this release through node-postgres 8.18.0 (the package pg), see clients/beekeeper.
+version = "6.1.6"
+
+[clients.dbeaver]
+# DBeaver has no headless mode. The trace sends the queries of its PostgreSQL code at this release through pgjdbc 42.7.13, see clients/dbeaver.
+version = "26.2.3"
+
 [clients.diesel]
 # Diesel CLI, with the libpq of the oracle build.
 version = "2.3.13"
