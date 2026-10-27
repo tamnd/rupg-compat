@@ -27,6 +27,7 @@ pub(crate) const FIRST_UNPINNED_OID: u32 = 12_000;
 
 /// The type OID of `oid`.
 const OID_TYPE: i64 = 26;
+const TEXT_TYPE: i64 = 25;
 
 /// The OID of the catalog `pg_enum`.
 const PG_ENUM: i64 = 3501;
@@ -227,9 +228,14 @@ fn parse_oid(s: &[u8]) -> Option<u32> {
     std::str::from_utf8(s).ok()?.parse().ok()
 }
 
-/// The types of the columns of a `RowDescription`.
+/// The types of the columns of a `RowDescription`. A `text` column with the name `oid` counts as type `oid`, because some clients cast an OID to text and send it back later. Beekeeper Studio gets `p.oid::text as oid` from `pg_proc` and binds it to `pg_get_functiondef`.
 fn row_types(msg: &Msg) -> Vec<i64> {
-    msg.vals[0].list().iter().map(|f| f.list().get(3).and_then(Val::int).unwrap_or(0)).collect()
+    let ty = |f: &Val| {
+        let ty = f.list().get(3).and_then(Val::int).unwrap_or(0);
+        let name = f.list().first().and_then(Val::bytes);
+        if ty == TEXT_TYPE && name == Some(b"oid".as_slice()) { OID_TYPE } else { ty }
+    };
+    msg.vals[0].list().iter().map(ty).collect()
 }
 
 /// The places of the columns of a `RowDescription` that are the `oid` column of `pg_enum`.
@@ -941,6 +947,27 @@ mod tests {
         assert_eq!(out, b"SELECT 16500, '16500', x16400, 16400.5, 164001, 1.16400, c.oid = 16500");
         assert_eq!(m.applied, 3);
         assert_eq!(m.map_sql(&out, true), sql);
+    }
+
+    #[test]
+    fn a_text_column_named_oid_is_an_oid() {
+        let field = |name: &str, ty: i64| {
+            Val::Tuple(vec![
+                str_val(name),
+                Val::Int(0),
+                Val::Int(0),
+                Val::Int(ty),
+                Val::Int(-1),
+                Val::Int(-1),
+                Val::Int(0),
+            ])
+        };
+        let rd = Msg::new(
+            Dir::B,
+            "RowDescription",
+            vec![Val::List(vec![field("oid", 25), field("name", 25), field("id", 23)])],
+        );
+        assert_eq!(row_types(&rd), [OID_TYPE, 25, 23]);
     }
 
     #[test]

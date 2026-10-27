@@ -166,6 +166,16 @@ const NOT_RUN: [(usize, &str, &str); 4] = [
     (4, "client suites", "tests"),
 ];
 
+/// The tools of spec/21 section 21.4.2 that CI cannot run, each with the driver that it uses. L1 shows the share of the trace of the driver for each tool.
+const DRIVER_TRACES: [(&str, &str); 6] = [
+    ("datagrip", "pgjdbc"),
+    ("looker", "pgjdbc"),
+    ("power-bi", "npgsql"),
+    ("postico", "libpq"),
+    ("tableau", "psqlodbc"),
+    ("tableplus", "libpq"),
+];
+
 /// The rows of one version.
 pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
     let mut rows: BTreeMap<(usize, String), Row> = BTreeMap::new();
@@ -239,6 +249,13 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
                     put(0, format!("trace {name}"), "messages", r, n, count);
                 }
             }
+        }
+    }
+    // A tool row copies the numbers of its driver. It has no count of its own, so the ratchet checks the driver only.
+    for (tool, driver) in DRIVER_TRACES {
+        if let Some(d) = rows.get(&(0, format!("trace {driver}"))).cloned() {
+            let key = format!("trace {tool} through {driver}");
+            rows.insert((0, key.clone()), Row { key, count: None, ..d });
         }
     }
     for (level, key, unit) in NOT_RUN {
@@ -558,6 +575,23 @@ mod tests {
         let mut want = run.checked.unwrap();
         want.cases.sort_by(|a, b| a.0.cmp(&b.0));
         assert_eq!(r.checked.unwrap(), want);
+    }
+
+    #[test]
+    fn a_tool_row_copies_its_driver() {
+        let mut replay = record("replay-libpq", "server", 1, 1);
+        replay.checked = Some(Checked {
+            share: Share { messages: 10, messages_equal: 9, ..Share::default() },
+            ..Checked::default()
+        });
+        let got = rows(&[replay], 19);
+        let find = |key: &str| got.iter().find(|r| r.key == key);
+        let tool = find("trace tableplus through libpq").unwrap();
+        assert_eq!(tool.server, Some((9, 10)));
+        assert_eq!(tool.count, None);
+        assert!(find("trace postico through libpq").is_some());
+        // pgjdbc did not run, so its tools have no row.
+        assert!(find("trace datagrip through pgjdbc").is_none());
     }
 
     #[test]
