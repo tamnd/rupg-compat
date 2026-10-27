@@ -1,0 +1,238 @@
+# The milestone of each test of the regression suite that counts (spec/05 section 5.13). Give each test on one line as `<test>: M<n>` or `<test>: M<n>, <reason>`. The tests of M3 are the M3 list. They need no PL/pgSQL, no transaction feature of M5 and no index type of M6, and gate G4 needs them to pass. The list was fixed at the start of M3 and does not change.
+# The list was made from the SQL of each test at the pin of 19, without comments. A test goes to M7 for PL/pgSQL, triggers, event triggers or rules, to M6 for an index type other than B-tree, `CREATE EXTENSION` or an index operation with `CONCURRENTLY`, and to M5 for savepoints, two-phase commit, advisory locks, `LOCK`, the isolation levels above read committed, transaction IDs, timeouts or backend signals (spec/11, spec/12 and spec/16 of tamnd/rupg). The latest milestone wins. A test that passed on rupg at the start of M3 is in the M3 list, so that it cannot regress.
+test_setup: M3, passes at the start of M3
+boolean: M3
+char: M3
+name: M3, passes at the start of M3
+varchar: M3
+text: M3
+int2: M3
+int4: M3
+int8: M3
+oid: M3
+float4: M3
+float8: M3
+bit: M3
+numeric: M3
+txid: M3, passes at the start of M3
+uuid: M3, passes at the start of M3
+enum: M3, passes at the start of M3
+money: M3
+rangetypes: M6, index types other than B-tree
+pg_lsn: M3
+regproc: M3
+strings: M7, PL/pgSQL
+md5: M3
+numerology: M3, passes at the start of M3
+point: M6, index types other than B-tree
+lseg: M3
+line: M3
+box: M6, index types other than B-tree
+path: M3
+polygon: M6, index types other than B-tree
+circle: M3
+date: M3
+time: M3
+timetz: M3
+timestamp: M3
+timestamptz: M3
+interval: M3, passes at the start of M3
+inet: M6, index types other than B-tree
+macaddr: M3, passes at the start of M3
+macaddr8: M3, passes at the start of M3
+multirangetypes: M7, PL/pgSQL and index types other than B-tree
+geometry: M6, index types other than B-tree
+horology: M3
+tstypes: M3
+regex: M3
+type_sanity: M3, passes at the start of M3
+opr_sanity: M3
+misc_sanity: M3
+comments: M3
+expressions: M3, passes at the start of M3
+unicode: M3
+xid: M3, passes at the start of M3
+mvcc: M3, passes at the start of M3
+database: M3
+stats_import: M3
+pg_ndistinct: M3
+pg_dependencies: M3
+oid8: M3, passes at the start of M3
+encoding: M7, PL/pgSQL
+euc_kr: M3
+copy: M7, PL/pgSQL and triggers
+copyselect: M3
+copydml: M3, passes at the start of M3
+copyencoding: M3
+insert: M3, passes at the start of M3
+insert_conflict: M7, PL/pgSQL, triggers, index types other than B-tree and isolation levels
+create_misc: M3
+create_operator: M3, passes at the start of M3
+create_procedure: M3
+create_table: M7, PL/pgSQL, triggers and savepoints
+create_type: M3
+create_schema: M3, passes at the start of M3
+create_index: M7, PL/pgSQL, index types other than B-tree, CONCURRENTLY and transaction IDs
+create_index_spgist: M6, index types other than B-tree
+create_view: M7, PL/pgSQL and rules
+index_including: M6, index types other than B-tree and CONCURRENTLY
+index_including_gist: M6, index types other than B-tree and CONCURRENTLY
+create_aggregate: M3
+create_function_sql: M3, passes at the start of M3
+create_cast: M3
+constraints: M6, index types other than B-tree and savepoints
+triggers: M7, PL/pgSQL, triggers, rules, savepoints and isolation levels
+select: M3
+inherit: M7, PL/pgSQL, triggers and index types other than B-tree
+typed_table: M3
+vacuum: M6, index types other than B-tree and isolation levels
+drop_if_exists: M7, PL/pgSQL, triggers and rules
+updatable_views: M7, PL/pgSQL, triggers and rules
+roleattributes: M3
+create_am: M5, LOCK
+hash_func: M3
+errors: M3
+infinite_recurse: M3
+sanity_check: M3
+select_into: M7, PL/pgSQL
+select_distinct: M7, PL/pgSQL
+select_distinct_on: M3
+select_implicit: M3
+select_having: M3
+subselect: M7, PL/pgSQL and rules
+union: M7, PL/pgSQL
+case: M3, passes at the start of M3
+join: M7, PL/pgSQL and rules
+aggregates: M7, PL/pgSQL
+transactions: M7, PL/pgSQL, savepoints and isolation levels
+random: M3, passes at the start of M3
+portals: M7, rules and isolation levels
+arrays: M7, PL/pgSQL
+btree_index: M3, passes at the start of M3
+hash_index: M3, passes at the start of M3
+update: M7, PL/pgSQL, triggers, index types other than B-tree and transaction IDs
+delete: M3
+namespace: M7, PL/pgSQL
+prepared_xacts: M5, savepoints, two-phase commit, advisory locks, LOCK and isolation levels
+brin: M7, PL/pgSQL, index types other than B-tree and CONCURRENTLY
+gin: M7, PL/pgSQL and index types other than B-tree
+gist: M6, index types other than B-tree
+spgist: M6, index types other than B-tree
+privileges: M7, PL/pgSQL, triggers, index types other than B-tree, CONCURRENTLY, savepoints, LOCK and backend signals
+init_privs: M3
+security_label: M3
+collate: M3
+matview: M7, PL/pgSQL
+lock: M5, LOCK
+replica_identity: M3, passes at the start of M3
+rowsecurity: M7, PL/pgSQL, triggers and savepoints
+object_address: M7, PL/pgSQL and triggers
+tablesample: M3
+groupingsets: M7, PL/pgSQL
+drop_operator: M3
+password: M3
+identity: M3
+generated_stored: M3, passes at the start of M3
+join_hash: M7, PL/pgSQL and savepoints
+brin_bloom: M7, PL/pgSQL and index types other than B-tree
+brin_multi: M7, PL/pgSQL and index types other than B-tree
+create_table_like: M3
+alter_generic: M6, index types other than B-tree
+alter_operator: M3
+misc: M3
+async: M3, passes at the start of M3
+dbsize: M3
+merge: M7, PL/pgSQL and triggers
+misc_functions: M7, PL/pgSQL
+nls: M7, PL/pgSQL
+sysviews: M3
+tsrf: M3
+tid: M3
+tidscan: M5, isolation levels
+tidrangescan: M3
+collate.utf8: M3
+collate.icu.utf8: M7, PL/pgSQL
+incremental_sort: M7, PL/pgSQL and index types other than B-tree
+create_role: M3
+without_overlaps: M6, index types other than B-tree
+generated_virtual: M7, PL/pgSQL, triggers and rules
+rules: M3, passes at the start of M3
+psql: M7, PL/pgSQL
+psql_crosstab: M3
+psql_pipeline: M3, passes at the start of M3
+amutils: M3
+stats_ext: M7, PL/pgSQL
+collate.linux.utf8: M3, passes at the start of M3
+collate.windows.win1252: M3, passes at the start of M3
+select_parallel: M7, PL/pgSQL and savepoints
+write_parallel: M3
+vacuum_parallel: M3
+maintain_every: M3
+publication: M7, PL/pgSQL
+subscription: M3
+select_views: M7, PL/pgSQL
+portals_p2: M3
+foreign_key: M7, PL/pgSQL, triggers, rules and savepoints
+dependency: M7, PL/pgSQL
+guc: M7, PL/pgSQL, savepoints and LISTEN and NOTIFY
+bitmapops: M3
+combocid: M5, savepoints
+tsearch: M7, triggers and index types other than B-tree
+tsdicts: M3
+foreign_data: M7, PL/pgSQL and triggers
+window: M3
+xmlmap: M3
+functional_deps: M3
+advisory_lock: M5, advisory locks
+equivclass: M6, index types other than B-tree
+stats_rewrite: M5, savepoints and two-phase commit
+json: M3
+jsonb: M6, index types other than B-tree and CONCURRENTLY
+json_encoding: M3
+jsonpath: M3
+jsonpath_encoding: M3
+jsonb_jsonpath: M3
+sqljson: M7, PL/pgSQL
+sqljson_queryfuncs: M7, PL/pgSQL
+sqljson_jsontable: M3
+plancache: M7, PL/pgSQL
+limit: M3
+plpgsql: M7, PL/pgSQL, triggers and savepoints
+copy2: M7, PL/pgSQL, triggers and savepoints
+temp: M7, PL/pgSQL, savepoints, two-phase commit and LOCK
+domain: M7, PL/pgSQL and rules
+rangefuncs: M7, PL/pgSQL, triggers and rules
+prepare: M3
+conversion: M7, PL/pgSQL
+truncate: M7, PL/pgSQL and triggers
+alter_table: M7, PL/pgSQL, triggers, rules, index types other than B-tree and transaction IDs
+sequence: M5, savepoints
+polymorphism: M7, PL/pgSQL
+rowtypes: M3
+returning: M7, PL/pgSQL, triggers and rules
+largeobject: M3
+with: M7, PL/pgSQL, triggers and rules
+xml: M7, PL/pgSQL
+partition_join: M3
+partition_prune: M7, PL/pgSQL and index types other than B-tree
+reloptions: M3
+hash_part: M3
+indexing: M6, index types other than B-tree and CONCURRENTLY
+partition_aggregate: M3
+partition_info: M3
+tuplesort: M3
+memoize: M7, PL/pgSQL
+stats: M7, PL/pgSQL, index types other than B-tree, CONCURRENTLY and savepoints
+predicate: M3
+numa: M3
+eager_aggregate: M3
+planner_est: M7, PL/pgSQL
+compression: M3
+compression_lz4: M3
+compression_pglz: M3
+cluster: M7, PL/pgSQL and index types other than B-tree
+oidjoins: M7, PL/pgSQL
+event_trigger: M7, PL/pgSQL, triggers, event triggers and CONCURRENTLY
+event_trigger_login: M7, PL/pgSQL and event triggers
+fast_default: M7, PL/pgSQL, triggers and event triggers
+tablespace: M6, CONCURRENTLY
