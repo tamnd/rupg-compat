@@ -35,6 +35,7 @@ mod proxy;
 mod reference;
 mod replay;
 mod report;
+mod resources;
 mod scram;
 mod suites;
 mod toml;
@@ -108,7 +109,9 @@ options:
                             the startup message also sets rupg.compat_version to N on the server under test
   --version N               the same as --compat-version N, for the oracle commands only; without N and a
                             command, print the version of the harness
-  --work DIR                the work directory (default: $RUPG_COMPAT_WORK, then ./work)";
+  --work DIR                the work directory (default: $RUPG_COMPAT_WORK, then ./work)
+  --cgroup DIR              the cgroup v2 directory of the server that the run measures; each result file
+                            then has the peak memory and the CPU time of that server (spec/02 section 2.6.1)";
 
 fn main() -> ExitCode {
     let raw: Vec<String> = std::env::args().skip(1).collect();
@@ -135,6 +138,9 @@ fn main() -> ExitCode {
 
 fn run(args: &Args) -> Result<ExitCode, String> {
     let pins = Pins::builtin();
+    if let Some(dir) = args.get("cgroup") {
+        resources::start(Path::new(dir))?;
+    }
     match args.word(0) {
         Some("pins") => {
             for pin in &pins.postgres {
@@ -535,7 +541,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         let path = suites::result_file(&work, pg.pin.major, &run.suite, server.side());
         std::fs::create_dir_all(path.parent().unwrap_or(&work))
             .map_err(|e| format!("{}: {e}", path.display()))?;
-        std::fs::write(&path, run.to_toml(pg, &server, &started))
+        std::fs::write(&path, suites::with_resources(run.to_toml(pg, &server, &started))?)
             .map_err(|e| format!("{}: {e}", path.display()))?;
         out!("  result in {}", path.display());
         if let Some(out) = args.get("out") {
@@ -802,7 +808,13 @@ fn version_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
 
 /// Writes the report and checks the ratchet (spec/21 section 21.15).
 fn report_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
-    args.only(1, &["compat-version", "date", "out", "ratchet", "raise"])?;
+    args.only(1, &["compat-version", "date", "out", "ratchet", "raise", "rupg-commit"])?;
+    // The pins are in the binary, so the commit of rupg under test can come from the command line.
+    let mut pins = pins.clone();
+    if let Some(c) = args.get("rupg-commit") {
+        pins.rupg_commit = c.to_string();
+    }
+    let pins = &pins;
     let work = args.work_dir();
     let mut versions: Vec<u32> = match args.number("compat-version")? {
         Some(v) if pins.postgres.iter().any(|p| p.major == v) => vec![v],

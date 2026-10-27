@@ -332,6 +332,7 @@ mod tests {
             passed,
             unstable: (0..unstable).map(|i| i.to_string()).collect(),
             checked: None,
+            ..Record::default()
         }
     }
 

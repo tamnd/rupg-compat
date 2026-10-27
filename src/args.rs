@@ -82,7 +82,11 @@ impl Args {
         if let Some(w) = self.words.get(words) {
             return Err(format!("unexpected word {w:?}"));
         }
-        match self.options.keys().find(|k| !known.contains(&k.as_str()) && *k != "work") {
+        match self
+            .options
+            .keys()
+            .find(|k| !known.contains(&k.as_str()) && !["work", "cgroup"].contains(&k.as_str()))
+        {
             Some(k) => Err(format!("unknown option --{k}")),
             None => Ok(()),
         }

@@ -8,6 +8,7 @@ use std::path::{Path, PathBuf};
 
 use crate::compare::{self, Count, Share};
 use crate::pins::Pins;
+use crate::resources::Resources;
 use crate::suites::{Checked, quote};
 use crate::toml::{self, Table, Value};
 
@@ -26,7 +27,11 @@ pub(crate) struct Record {
     pub(crate) passed: usize,
     /// The cases that the unstable filter took out.
     pub(crate) unstable: Vec<String>,
+    /// The tests that fail.
+    pub(crate) fail: Vec<String>,
     pub(crate) checked: Option<Checked>,
+    /// The peak memory and the CPU time of the server, for a run with `--cgroup`.
+    pub(crate) resources: Option<Resources>,
 }
 
 fn int(t: &Table, key: &str) -> Result<i64, String> {
@@ -68,11 +73,19 @@ impl Record {
     /// Reads a result file that `Run::to_toml` wrote.
     pub(crate) fn parse(text_: &str) -> Result<Record, String> {
         let t = toml::parse(text_).map_err(|e| e.to_string())?;
-        let unstable = match t.get("unstable") {
+        let names = |key: &str| match t.get(key) {
             Some(Value::Array(a)) => {
                 a.iter().filter_map(Value::as_str).map(str::to_string).collect()
             }
             _ => Vec::new(),
+        };
+        let resources = match (t.get("peak_memory"), t.get("cpu_usec")) {
+            (Some(Value::Int(peak)), Some(Value::Int(cpu))) => Some(Resources {
+                peak: *peak as u64,
+                cpu_usec: *cpu as u64,
+                reset: matches!(t.get("peak_reset"), Some(Value::Bool(true))),
+            }),
+            _ => None,
         };
         let checked = t.contains_key("messages").then(|| {
             let total = |k: &str| t.get(k).and_then(Value::as_int).unwrap_or(0) as usize;
@@ -106,8 +119,10 @@ impl Record {
             seconds: int(&t, "seconds")? as u64,
             total: int(&t, "total")? as usize,
             passed: int(&t, "passed")? as usize,
-            unstable,
+            unstable: names("unstable"),
+            fail: names("fail"),
             checked,
+            resources,
         })
     }
 }
@@ -536,6 +551,8 @@ pub(crate) fn markdown(
             }
         }
         m.push_str(if any { &table } else { "No run of this version used an exclusion.\n" });
+        m.push_str(&resources(&recs));
+        m.push_str(&failing(&recs));
     }
     m.push_str("\n## Ratchet\n");
     if check.below.is_empty() && check.above.is_empty() {
@@ -558,6 +575,77 @@ pub(crate) fn markdown(
     m
 }
 
+/// The resource table of one version: for each suite, the peak memory and the CPU time of the server under test and of the oracle.
+fn resources(recs: &[&Record]) -> String {
+    let mut m = String::from(
+        "\n### Resources\n\nThe peak memory and the CPU time of the server of each run, from its cgroup v2 (spec/02 section 2.6.1 of tamnd/rupg). The ratio is the number of the oracle over the number of rupg, so a ratio above 1 is better for rupg. A peak with * is the peak since the cgroup started, because the kernel cannot reset it before Linux 6.12.\n\n",
+    );
+    let side = |suite: &str, side: &str| {
+        recs.iter().find(|r| r.suite == suite && r.side == side).and_then(|r| r.resources)
+    };
+    let mib = |r: Option<Resources>| {
+        r.map_or("not measured".into(), |r| {
+            format!("{:.1} MiB{}", r.peak as f64 / 1048576.0, if r.reset { "" } else { " *" })
+        })
+    };
+    let cpu = |r: Option<Resources>| {
+        r.map_or("not measured".into(), |r| format!("{:.2} s", r.cpu_usec as f64 / 1e6))
+    };
+    let ratio = |a: Option<u64>, b: Option<u64>| match (a, b) {
+        (Some(o), Some(s)) if s > 0 => format!("{:.2}", o as f64 / s as f64),
+        _ => "-".into(),
+    };
+    let mut suites: Vec<&str> = recs.iter().map(|r| r.suite.as_str()).collect();
+    suites.dedup();
+    let mut table = String::from(
+        "| Run | rupg peak | Oracle peak | Ratio | rupg CPU | Oracle CPU | Ratio |\n|---|---|---|---|---|---|---|\n",
+    );
+    let mut any = false;
+    for suite in suites {
+        let (s, o) = (side(suite, "server"), side(suite, "oracle"));
+        if s.is_none() && o.is_none() {
+            continue;
+        }
+        any = true;
+        table.push_str(&format!(
+            "| {suite} | {} | {} | {} | {} | {} | {} |\n",
+            mib(s),
+            mib(o),
+            ratio(o.map(|r| r.peak), s.map(|r| r.peak)),
+            cpu(s),
+            cpu(o),
+            ratio(o.map(|r| r.cpu_usec), s.map(|r| r.cpu_usec)),
+        ));
+    }
+    m.push_str(if any {
+        &table
+    } else {
+        "No run of this version has resource numbers. A run with `--cgroup` has them.\n"
+    });
+    m
+}
+
+/// The tests of the server under test that fail, for each run of one version.
+fn failing(recs: &[&Record]) -> String {
+    let mut m = String::from("\n### Failing items\n\n");
+    let mut any = false;
+    for r in recs.iter().filter(|r| r.side == "server" && !r.fail.is_empty()) {
+        any = true;
+        let names: Vec<String> = r.fail.iter().map(|n| format!("`{n}`")).collect();
+        m.push_str(&format!(
+            "{} ({} of {}): {}\n\n",
+            r.suite,
+            r.fail.len(),
+            r.total,
+            names.join(", ")
+        ));
+    }
+    if !any {
+        m.push_str("No test of the server under test fails.\n");
+    }
+    m
+}
+
 /// The directory of a report: `reports/<date>/` under `base`.
 pub(crate) fn report_dir(base: &Path, date: &str) -> PathBuf {
     base.join(date)
@@ -576,6 +664,36 @@ mod tests {
             total,
             ..Record::default()
         }
+    }
+
+    #[test]
+    fn the_report_has_resources_and_failing_items() {
+        let mut server = Record::parse(
+            "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 3\npassed = 1\npass = [\"int4\"]\nfail = [\"join\", \"rules\"]\nunstable = []\npeak_memory = 1048576\ncpu_usec = 500000\npeak_reset = false\n",
+        )
+        .unwrap();
+        assert_eq!(server.fail, ["join", "rules"]);
+        assert_eq!(
+            server.resources,
+            Some(Resources { peak: 1048576, cpu_usec: 500000, reset: false })
+        );
+        let mut oracle = server.clone();
+        oracle.side = "oracle".into();
+        oracle.fail.clear();
+        oracle.resources = Some(Resources { peak: 4194304, cpu_usec: 1000000, reset: true });
+        let text = resources(&[&oracle, &server]);
+        assert!(
+            text.contains("| regress | 1.0 MiB * | 4.0 MiB | 4.00 | 0.50 s | 1.00 s | 2.00 |"),
+            "{text}"
+        );
+        assert!(failing(&[&oracle, &server]).contains("regress (2 of 3): `join`, `rules`"));
+        server.resources = None;
+        server.fail.clear();
+        oracle.resources = None;
+        assert!(
+            resources(&[&oracle, &server]).contains("No run of this version has resource numbers")
+        );
+        assert!(failing(&[&server]).contains("No test of the server under test fails."));
     }
 
     #[test]

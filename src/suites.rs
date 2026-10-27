@@ -452,6 +452,19 @@ pub(crate) fn pipeline(
     Ok(run)
 }
 
+/// A result file with the resource lines, when the command has `--cgroup`. Each call starts a new measure. The lines go before the first table, because a key after a table header is a key of that table.
+pub(crate) fn with_resources(text: String) -> Result<String, String> {
+    let Some(r) = crate::resources::lap()? else {
+        return Ok(text);
+    };
+    Ok(before_tables(&text, &r.to_toml()))
+}
+
+fn before_tables(text: &str, lines: &str) -> String {
+    let at = text.find("\n[").map_or(text.len(), |i| i + 1);
+    format!("{}{lines}{}", &text[..at], &text[at..])
+}
+
 /// Writes the result file and prints the summary of a run.
 pub(crate) fn report_run(
     run: &Run,
@@ -462,7 +475,7 @@ pub(crate) fn report_run(
 ) -> Result<PathBuf, String> {
     let path = result_file(work, o.pin.major, &run.suite, server.side());
     fs::create_dir_all(path.parent().unwrap_or(work)).map_err(|e| e.to_string())?;
-    fs::write(&path, run.to_toml(o, server, started))
+    fs::write(&path, with_resources(run.to_toml(o, server, started))?)
         .map_err(|e| format!("{}: {e}", path.display()))?;
     out!(
         "{} {} on {} ({}): {} of {} pass in {} s; result in {}",
@@ -491,6 +504,12 @@ pub(crate) fn report_run(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resource_lines_go_before_the_tables() {
+        assert_eq!(before_tables("a = 1\n[t]\nb = 2\n", "c = 3\n"), "a = 1\nc = 3\n[t]\nb = 2\n");
+        assert_eq!(before_tables("a = 1\n", "c = 3\n"), "a = 1\nc = 3\n");
+    }
 
     #[test]
     fn the_tap_lines_of_16_and_later_are_read() {
