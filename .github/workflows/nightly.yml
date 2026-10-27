@@ -1,0 +1,87 @@
+# The nightly runs of the harness. The pg_dump round trip (spec/21 section 21.4.1): pg_dump of the oracle dumps a database of rupg main, and a restore into the oracle dumps to the same text.
+#
+# Each action is pinned to a full commit SHA, with the version in a comment. Dependabot updates both.
+
+name: nightly
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  dump:
+    name: pg_dump round trip
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      RUPG_COMPAT_WORK: ${{ github.workspace }}/work
+    steps:
+      - uses: step-security/harden-runner@351661ca32ac09a36dc5ee2d536e3128f2a3c8ed # v2.22.0
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: check out rupg main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: tamnd/rupg
+          ref: main
+          path: rupg
+          persist-credentials: false
+      - name: install the build dependencies of the oracle
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends bison flex pkg-config libreadline-dev zlib1g-dev libssl-dev libicu-dev liblz4-dev libzstd-dev
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          workspaces: |
+            . -> target
+            rupg -> target
+      - name: build the harness
+        run: cargo build --release
+      - name: build and start the oracle
+        run: |
+          ./target/release/rupg-compat oracle build --compat-version 19 --jobs 4
+          ./target/release/rupg-compat oracle start --compat-version 19
+      - name: build rupg
+        working-directory: rupg
+        run: cargo build --release -p rupg-cli
+      - name: start rupg
+        run: |
+          ./target/release/rupg-compat oracle conf "$RUNNER_TEMP/conf" --port 5498 --compat-version 19
+          echo rupg-compat > "$RUNNER_TEMP/pw"
+          nohup ./rupg/target/release/rupg serve -D "$RUNNER_TEMP/conf" --pwfile "$RUNNER_TEMP/pw" > "$RUNNER_TEMP/rupg.log" 2>&1 &
+          for i in $(seq 1 300); do
+            if (echo > /dev/tcp/127.0.0.1/5498) 2> /dev/null; then exit 0; fi
+            sleep 0.2
+          done
+          cat "$RUNNER_TEMP/rupg.log"
+          exit 1
+      - name: round trip on the oracle
+        run: ./target/release/rupg-compat dump --compat-version 19
+      - name: round trip on rupg
+        run: ./target/release/rupg-compat dump --server 127.0.0.1:5498 --compat-version 19
+      - name: keep the results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dump-results
+          path: |
+            work/results
+            work/runs/19/dump-*
+            ${{ runner.temp }}/rupg.log
+          if-no-files-found: ignore
+          retention-days: 14
