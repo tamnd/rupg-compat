@@ -241,6 +241,30 @@ impl Oracle {
         Ok(())
     }
 
+    /// Writes the configuration files of the oracle to `dir` for the server under test: `postgresql.conf` with the port `port` in place of the port of the oracle, the host rules, and the certificate and its key. The other lines stay the same, so `pg_settings` and `pg_file_settings` show the same file lines on the two servers.
+    pub(crate) fn write_conf(&self, dir: &Path, port: u16) -> Result<(), String> {
+        let data = self.data();
+        let path = data.join("postgresql.conf");
+        let conf = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+        let own = format!("port = {}", self.port());
+        if !conf.lines().any(|l| l == own) {
+            return Err(format!("{}: no line {own:?}", path.display()));
+        }
+        let conf: String = conf
+            .lines()
+            .map(|l| if l == own { format!("port = {port}\n") } else { format!("{l}\n") })
+            .collect();
+        fs::create_dir_all(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+        fs::write(dir.join("postgresql.conf"), conf).map_err(|e| e.to_string())?;
+        for name in ["pg_hba.conf", "pg_ident.conf", "pg_hosts.conf", "server.crt", "server.key"] {
+            let from = data.join(name);
+            if from.exists() {
+                fs::copy(&from, dir.join(name)).map_err(|e| format!("{}: {e}", from.display()))?;
+            }
+        }
+        set_owner_only(&dir.join("server.key"))
+    }
+
     /// True when the postmaster of this oracle runs.
     pub(crate) fn running(&self) -> bool {
         Command::new(self.bin("pg_ctl"))
@@ -427,6 +451,30 @@ mod tests {
     fn the_certificate_and_the_key_are_pem() {
         assert!(SERVER_CRT.starts_with("-----BEGIN CERTIFICATE-----"));
         assert!(SERVER_KEY.starts_with("-----BEGIN PRIVATE KEY-----"));
+    }
+
+    #[test]
+    fn the_conf_of_the_server_has_its_own_port() {
+        let work = std::env::temp_dir().join(format!("rupg-compat-conf-{}", std::process::id()));
+        let o = Oracle::new(&Pins::builtin(), 19, &work).unwrap();
+        fs::create_dir_all(o.data()).unwrap();
+        fs::write(
+            o.data().join("postgresql.conf"),
+            "ssl = on\nport = 54319\nmax_connections = 100\n",
+        )
+        .unwrap();
+        fs::write(o.data().join("pg_hba.conf"), PG_HBA_CONF).unwrap();
+        fs::write(o.data().join("server.key"), SERVER_KEY).unwrap();
+        let dir = work.join("conf");
+        o.write_conf(&dir, 5433).unwrap();
+        let conf = fs::read_to_string(dir.join("postgresql.conf")).unwrap();
+        assert_eq!(conf, "ssl = on\nport = 5433\nmax_connections = 100\n");
+        assert_eq!(fs::read_to_string(dir.join("pg_hba.conf")).unwrap(), PG_HBA_CONF);
+        assert!(dir.join("server.key").exists());
+        assert!(!dir.join("server.crt").exists());
+        fs::write(o.data().join("postgresql.conf"), "port = 5432\n").unwrap();
+        assert!(o.write_conf(&dir, 5433).is_err());
+        fs::remove_dir_all(&work).unwrap();
     }
 
     #[test]
