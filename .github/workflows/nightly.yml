@@ -1,5 +1,6 @@
-# The nightly runs of the harness. The pg_dump round trip (spec/21 section 21.4.1): pg_dump of the oracle dumps a database of rupg main, and a restore into the oracle dumps to the same text.
+# The nightly page of spec/05 section 5.8: each suite on the oracle and on rupg main, with the peak memory and the CPU time of each server, then the report. The page of each rupg commit goes to `commits/<commit>.md` on the branch `pages`.
 #
+# The suites run with a read-only token. Only the job that pushes the page can write.
 # Each action is pinned to a full commit SHA, with the version in a comment. Dependabot updates both.
 
 name: nightly
@@ -8,6 +9,10 @@ on:
   schedule:
     - cron: "17 3 * * *"
   workflow_dispatch:
+    inputs:
+      rupg-ref:
+        description: the rupg branch, tag or commit to test
+        default: main
 
 concurrency:
   group: ${{ github.workflow }}
@@ -21,10 +26,12 @@ env:
   CARGO_INCREMENTAL: 0
 
 jobs:
-  dump:
-    name: pg_dump round trip
+  suites:
+    name: suites on rupg
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 330
+    outputs:
+      commit: ${{ steps.rupg.outputs.commit }}
     env:
       RUPG_COMPAT_WORK: ${{ github.workspace }}/work
     steps:
@@ -34,13 +41,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: check out rupg main
+      - name: check out rupg
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: tamnd/rupg
-          ref: main
+          ref: ${{ inputs.rupg-ref || 'main' }}
           path: rupg
           persist-credentials: false
+      - name: the rupg commit
+        id: rupg
+        run: echo "commit=$(git -C rupg rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: install the build dependencies of the oracle
         run: |
           sudo apt-get update
@@ -50,38 +60,86 @@ jobs:
           workspaces: |
             . -> target
             rupg -> target
+      - name: keep the clients
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: work/clients
+          key: clients-${{ hashFiles('clients/**', 'pins.toml') }}
+          restore-keys: clients-
       - name: build the harness
         run: cargo build --release
-      - name: build and start the oracle
-        run: |
-          ./target/release/rupg-compat oracle build --compat-version 19 --jobs 4
-          ./target/release/rupg-compat oracle start --compat-version 19
+      - name: build the oracle
+        run: ./target/release/rupg-compat oracle build --compat-version 19 --jobs 4
       - name: build rupg
         working-directory: rupg
         run: cargo build --release -p rupg-cli
-      - name: start rupg
-        run: |
-          ./target/release/rupg-compat oracle conf "$RUNNER_TEMP/conf" --port 5498 --compat-version 19
-          echo rupg-compat > "$RUNNER_TEMP/pw"
-          nohup ./rupg/target/release/rupg serve -D "$RUNNER_TEMP/conf" --pwfile "$RUNNER_TEMP/pw" > "$RUNNER_TEMP/rupg.log" 2>&1 &
-          for i in $(seq 1 300); do
-            if (echo > /dev/tcp/127.0.0.1/5498) 2> /dev/null; then exit 0; fi
-            sleep 0.2
-          done
-          cat "$RUNNER_TEMP/rupg.log"
-          exit 1
-      - name: round trip on the oracle
-        run: ./target/release/rupg-compat dump --compat-version 19
-      - name: round trip on rupg
-        run: ./target/release/rupg-compat dump --server 127.0.0.1:5498 --compat-version 19
+      - name: run the suites
+        env:
+          COMMIT: ${{ steps.rupg.outputs.commit }}
+        run: .github/nightly.sh rupg/target/release/rupg "$COMMIT" page
+      - name: keep the page
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: page
+          path: page/report.md
+          if-no-files-found: ignore
+          retention-days: 14
       - name: keep the results
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: dump-results
+          name: results
           path: |
             work/results
-            work/runs/19/dump-*
-            ${{ runner.temp }}/rupg.log
+            work/nightly
+            work/runs
           if-no-files-found: ignore
           retention-days: 14
+
+  publish:
+    name: publish the page
+    needs: suites
+    if: always() && needs.suites.outputs.commit != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: step-security/harden-runner@351661ca32ac09a36dc5ee2d536e3128f2a3c8ed # v2.22.0
+        with:
+          egress-policy: audit
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: page
+          path: page
+      - name: push the page to the branch pages
+        env:
+          COMMIT: ${{ needs.suites.outputs.commit }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RESULT: ${{ needs.suites.result }}
+        run: |
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git init -q site
+          cd site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://github.com/$REPO.git"
+          if git -c http.extraheader="$auth" fetch -q --depth 1 origin pages; then
+            git checkout -q -b pages FETCH_HEAD
+          else
+            git checkout -q --orphan pages
+          fi
+          mkdir -p commits
+          cp ../page/report.md "commits/$COMMIT.md"
+          if [ ! -f README.md ]; then
+            printf '# rupg-compat pages\n\nOne page for each tested commit of rupg main, newest first (spec/05 section 5.8). The nightly workflow of the main branch writes them.\n\n' > README.md
+          fi
+          line="- $(date -u +%Y-%m-%d) [\`$COMMIT\`](commits/$COMMIT.md): the suites job is $RESULT"
+          grep -v "commits/$COMMIT.md" README.md > README.new || true
+          awk -v line="$line" 'NR == 4 { print; print line; next } { print }' README.new > README.md
+          rm README.new
+          git add README.md "commits/$COMMIT.md"
+          git commit -q -m "page: rupg $COMMIT"
+          git -c http.extraheader="$auth" push -q origin pages
