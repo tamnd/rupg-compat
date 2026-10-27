@@ -14,7 +14,7 @@ use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
 use std::time::{Duration, Instant};
 
-use crate::client::{Auth, Target, add_params, str_val};
+use crate::client::{Auth, Conn, Target, add_params, error_text, str_val};
 use crate::frame;
 use crate::message::{Dir, Msg, Val};
 use crate::trace::{Event, Line, Trace};
@@ -35,8 +35,14 @@ const PG_ENUM: i64 = 3501;
 /// How long replay waits for a server that is quiet after a group without a terminator.
 const IDLE: Duration = Duration::from_millis(500);
 
-/// How long a connection whose server runs a statement holds back the lines of the other connections. A slow statement, such as an `INSERT` of 100000 rows, must end before the next line of another connection, as in the trace. A statement that waits for a lock of another connection ends this wait.
+/// How long a connection whose server runs a statement holds back the lines of the other connections before replay asks the server if the statement waits for a lock. A slow statement, such as an `INSERT` of 100000 rows, must end before the next line of another connection, as in the trace, also on a busy host.
 const BUSY: Duration = Duration::from_secs(5);
+
+/// How often replay asks the server again if a statement waits for a lock.
+const LOCK_CHECK: Duration = Duration::from_secs(1);
+
+/// The longest time that a connection whose server runs a statement holds back the lines of the other connections. This limit is for a server that does not show its lock waits in `pg_stat_activity`.
+const STUCK: Duration = Duration::from_secs(120);
 
 /// The map between the OIDs of a trace and the OIDs of one server.
 #[derive(Debug, Default)]
@@ -513,6 +519,10 @@ struct Session {
     last: Option<Instant>,
     /// True after a `Query`, a `Sync` or a `CopyDone` until the server sends a terminator: the server runs a statement.
     busy: bool,
+    /// True when the statement that the server runs waits for a lock of another connection. Replay asks the server after [`BUSY`].
+    waits: bool,
+    /// When replay last asked the server if the statement waits for a lock.
+    checked: Option<Instant>,
     auth: Auth,
     server_first: Vec<u8>,
     /// The column types of the last `RowDescription` of the server.
@@ -529,10 +539,19 @@ impl Session {
         self.last.map_or(Duration::MAX, |t| now.duration_since(t))
     }
 
-    /// True when the connection holds back the lines of the other connections: its server sent a message a moment ago, or it runs a statement.
+    /// True when the connection holds back the lines of the other connections: its server sent a message a moment ago, or it runs a statement that does not wait for a lock.
     fn holds(&self, now: Instant) -> bool {
         let quiet = self.quiet(now);
-        !self.eof && (quiet < IDLE || self.busy && quiet < BUSY)
+        !self.eof && (quiet < IDLE || self.busy && !self.waits && quiet < STUCK)
+    }
+
+    /// True when replay must ask the server if the statement waits for a lock.
+    fn must_check(&self, now: Instant) -> bool {
+        self.busy
+            && !self.waits
+            && !self.eof
+            && self.quiet(now) >= BUSY
+            && self.checked.is_none_or(|t| now.duration_since(t) >= LOCK_CHECK)
     }
 
     /// The key that the server sent. Replay takes the messages of a server when the next line of the connection runs, so a connection that is idle until another connection cancels it still holds its `BackendKeyData` in `got`.
@@ -598,6 +617,7 @@ pub(crate) fn replay(trace: &Trace, target: &Target, timeout: Duration) -> Repla
     let mut waiting: Option<(usize, Instant)> = None;
     loop {
         r.drain(Duration::ZERO);
+        r.check_waits();
         let mut heads: Vec<usize> = queues.values().filter_map(|q| q.front().copied()).collect();
         if heads.is_empty() {
             break;
@@ -629,6 +649,7 @@ pub(crate) fn replay(trace: &Trace, target: &Target, timeout: Duration) -> Repla
     // Take what the servers still send on the connections that the trace left open, then close them.
     loop {
         r.drain(TICK);
+        r.check_waits();
         let now = Instant::now();
         if r.sessions.values().all(|s| !s.holds(now)) {
             break;
@@ -652,12 +673,66 @@ fn in_order(sessions: &BTreeMap<u32, Session>, step: &Step, now: Instant) -> boo
         .all(|&(conn, n)| sessions.get(&conn).is_none_or(|s| s.received >= n || !s.holds(now)))
 }
 
+/// The backends of `pids` that wait for a lock, from `pg_stat_activity` on a new connection to `target`.
+fn waiting(target: &Target, pids: impl Iterator<Item = i64>) -> Result<Vec<i64>, String> {
+    let list: Vec<String> = pids.map(|pid| pid.to_string()).collect();
+    if list.is_empty() {
+        return Ok(Vec::new());
+    }
+    let sql = format!(
+        "SELECT pid FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND pid IN ({})",
+        list.join(", ")
+    );
+    let mut c = Conn::connect(target, "postgres")?;
+    let mut out = Vec::new();
+    for m in c.query(&sql)? {
+        match m.name() {
+            "DataRow" => {
+                out.extend(
+                    m.vals[0].list().first().and_then(Val::bytes).and_then(|b| {
+                        std::str::from_utf8(b).ok().and_then(|t| t.parse::<i64>().ok())
+                    }),
+                )
+            }
+            "ErrorResponse" => return Err(error_text(&m)),
+            _ => {}
+        }
+    }
+    Ok(out)
+}
+
 /// How long replay waits for a message before it looks at the connections again.
 const TICK: Duration = Duration::from_millis(10);
 
 impl Runner<'_> {
     fn note(&mut self, text: String) {
         self.out.notes.push(text);
+    }
+
+    /// Asks the server on a new connection if the statements that run for more than [`BUSY`] wait for a lock (`wait_event_type` is `Lock` in `pg_stat_activity`). Such a statement waits for a connection that replay holds back, so it stops holding back the other connections. The new connection closes at once, so that the queries of the trace do not see it. When replay cannot ask, the statement does not hold back the other connections, as before.
+    fn check_waits(&mut self) {
+        let now = Instant::now();
+        let pids: Vec<(u32, Option<i64>)> = self
+            .sessions
+            .iter()
+            .filter(|(_, s)| s.must_check(now))
+            .map(|(&conn, s)| (conn, s.server_key().map(|(pid, _)| pid)))
+            .collect();
+        if pids.is_empty() {
+            return;
+        }
+        let waits = waiting(self.target, pids.iter().filter_map(|&(_, pid)| pid));
+        for (conn, pid) in pids {
+            let s = self.sessions.entry(conn).or_default();
+            s.checked = Some(now);
+            s.waits = match (&waits, pid) {
+                (Ok(waits), Some(pid)) => waits.contains(&pid),
+                _ => true,
+            };
+        }
+        if let Err(e) = waits {
+            self.note(format!("cannot ask the server for lock waits: {e}"));
+        }
     }
 
     /// How many received messages answer `step`, or None when replay must wait. A `CancelRequest` also waits until the server of the connection that it cancels is quiet, so the statement runs when the cancel comes, as in the trace.
@@ -688,6 +763,7 @@ impl Runner<'_> {
             match msg {
                 Some(m) => {
                     s.busy &= !is_terminator(&m);
+                    s.waits &= s.busy;
                     s.got.push_back(m);
                     s.received += 1;
                     s.last = Some(Instant::now());
@@ -1155,8 +1231,21 @@ mod tests {
             "a server that runs a statement holds the step back"
         );
         assert!(
-            in_order(&sessions, &steps[1], now + BUSY),
-            "a statement that waits for a lock does not hold the step back for ever"
+            !in_order(&sessions, &steps[1], now + BUSY),
+            "a slow statement holds the step back"
+        );
+        assert!(sessions[&1].must_check(now + BUSY));
+        sessions.get_mut(&1).unwrap().checked = Some(now + BUSY);
+        assert!(!sessions[&1].must_check(now + BUSY), "replay asks once in each LOCK_CHECK");
+        sessions.get_mut(&1).unwrap().waits = true;
+        assert!(
+            in_order(&sessions, &steps[1], now + IDLE),
+            "a statement that waits for a lock does not hold the step back"
+        );
+        sessions.get_mut(&1).unwrap().waits = false;
+        assert!(
+            in_order(&sessions, &steps[1], now + STUCK),
+            "a statement does not hold the step back for ever"
         );
         sessions.get_mut(&1).unwrap().received = 2;
         assert!(in_order(&sessions, &steps[1], now));
