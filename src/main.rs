@@ -536,6 +536,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             suite: format!("replay-{name}"),
             tests: vec![(name, !bad)],
             unstable: Vec::new(),
+            excluded: Vec::new(),
             seconds: clock.elapsed().as_secs(),
             statements: None,
             checked: Some(suites::Checked::new(&o, Vec::new())),

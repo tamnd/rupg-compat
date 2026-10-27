@@ -29,6 +29,8 @@ pub(crate) struct Record {
     pub(crate) unstable: Vec<String>,
     /// The tests that fail.
     pub(crate) fail: Vec<String>,
+    /// The tests that the suite excludes, with the reason of each.
+    pub(crate) excluded: Vec<(String, String)>,
     /// The statement count of the regression suite: equal and total.
     pub(crate) statements: Option<Number>,
     pub(crate) checked: Option<Checked>,
@@ -129,6 +131,15 @@ impl Record {
             passed: int(&t, "passed")? as usize,
             unstable: names("unstable"),
             fail: names("fail"),
+            excluded: t
+                .get("excluded")
+                .and_then(Value::as_table)
+                .map(|e| {
+                    e.iter()
+                        .filter_map(|(k, v)| Some((k.clone(), v.as_str()?.to_string())))
+                        .collect()
+                })
+                .unwrap_or_default(),
             statements,
             checked,
             resources,
@@ -571,6 +582,7 @@ pub(crate) fn markdown(
         m.push_str(if any { &table } else { "No run of this version used an exclusion.\n" });
         m.push_str(&resources(&recs));
         m.push_str(&failing(&recs));
+        m.push_str(&excluded(&recs));
     }
     m.push_str("\n## Ratchet\n");
     if check.below.is_empty() && check.above.is_empty() {
@@ -664,6 +676,31 @@ fn failing(recs: &[&Record]) -> String {
     m
 }
 
+/// The tests that a suite takes out of its counts, with the reason of each, from the run of the oracle or else the run of the server under test.
+fn excluded(recs: &[&Record]) -> String {
+    let mut m = String::from("\n### Excluded tests\n\n");
+    let mut seen: Vec<&str> = Vec::new();
+    for r in recs.iter().filter(|r| !r.excluded.is_empty()) {
+        if seen.contains(&r.suite.as_str()) {
+            continue;
+        }
+        seen.push(&r.suite);
+        m.push_str(&format!(
+            "{} excludes {} tests. They run, but they are not in the counts (spec/05 section 5.8).\n\n| Test | Reason |\n|---|---|\n",
+            r.suite,
+            r.excluded.len()
+        ));
+        for (test, reason) in &r.excluded {
+            m.push_str(&format!("| `{test}` | {reason} |\n"));
+        }
+        m.push('\n');
+    }
+    if seen.is_empty() {
+        m.push_str("No suite of this version excludes a test.\n");
+    }
+    m
+}
+
 /// The directory of a report: `reports/<date>/` under `base`.
 pub(crate) fn report_dir(base: &Path, date: &str) -> PathBuf {
     base.join(date)
@@ -702,6 +739,18 @@ mod tests {
     }
 
     #[test]
+    fn the_report_names_each_excluded_test_with_its_reason() {
+        let text = "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 1\npassed = 1\npass = [\"int4\"]\nfail = []\nunstable = []\n\n[excluded]\nexplain = \"the plan\"\n";
+        let server = Record::parse(text).unwrap();
+        assert_eq!(server.excluded, [("explain".to_string(), "the plan".to_string())]);
+        let oracle = Record { side: "oracle".into(), ..server.clone() };
+        let m = excluded(&[&oracle, &server]);
+        assert!(m.contains("regress excludes 1 tests."), "{m}");
+        assert_eq!(m.matches("| `explain` | the plan |").count(), 1);
+        assert!(excluded(&[]).contains("No suite of this version excludes a test."));
+    }
+
+    #[test]
     fn the_report_has_resources_and_failing_items() {
         let mut server = Record::parse(
             "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 3\npassed = 1\npass = [\"int4\"]\nfail = [\"join\", \"rules\"]\nunstable = []\npeak_memory = 1048576\ncpu_usec = 500000\npeak_reset = false\n",
@@ -737,6 +786,7 @@ mod tests {
             suite: "catalog".into(),
             tests: vec![("pg_class".into(), true), ("pg_am\"x".into(), false)],
             unstable: vec!["pg_locks".into()],
+            excluded: Vec::new(),
             seconds: 7,
             statements: None,
             checked: Some(Checked {

@@ -121,7 +121,7 @@ The workflow `nightly` builds rupg main each night and runs `.github/nightly.sh`
 
 1. The oracle decides. When the documentation and the oracle disagree, the oracle is correct.
 2. The regression number is the strict count: a test passes only when `pg_regress` says so. The statement count is published for progress and never used for a gate.
-3. A test leaves the denominator only when it needs a `regress.c` function or a C extension that rupg does not have, or when its purpose is an excluded item such as the exact `EXPLAIN` output. The list is published with the reason for each test.
+3. A test leaves the denominator only when it needs a `regress.c` function or a C extension that rupg does not have, or when its purpose is an excluded item such as the exact `EXPLAIN` output. The list is published with the reason for each test in `suites/regress/excluded.txt`, and the report shows it.
 4. `expected-fail.txt` for each client may only get shorter, and each line names its cause and the milestone that fixes it.
 5. `ratchet.toml` holds the best number of each row, and `rupg-compat report` fails when a number goes below it. A number may go down only with an entry in spec/24 that says why.
 6. The number can go down when the pin moves. The fall is published with its cause, and the pin is never held back to keep a number.
@@ -136,6 +136,7 @@ oracle/            build scripts for the six oracles
 src/               the runner, the proxy, the comparison, the generator
 clients/<name>/    run.sh, the gate and connect programs, oracle-fail.txt, expected-fail.txt
 suites/pipeline/   oracle-fail.txt, expected-fail.txt for libpq_pipeline
+suites/regress/    excluded.txt, the tests that leave the counts of the regression suite
 corpus/            traces, the differential corpus, reduced cases
 shim/<N>/          divergences.toml, and the reference output of the oracle of N in reference/
 jepsen/            the Jepsen and Elle workloads
