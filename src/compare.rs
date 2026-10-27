@@ -555,6 +555,34 @@ fn oid_in_name(text: &[u8], collations: Option<u32>) -> Option<(usize, usize, us
     (len > 0 && oid >= 16_384 && suffix).then_some((start, end, item))
 }
 
+/// The type OID of `anyarray`.
+const ANYARRAY_TYPE: i64 = 2277;
+
+/// The text of the array `text` with each element that is an OID from `from` to 16384 replaced by the mark of item 16, or `None` if no element is such an OID. The statistics that `initdb` collects on the catalogs keep such OIDs in the `anyarray` columns of `pg_statistic` and `pg_stats`. The rule applies only when the caller knows the first OID of the collations, that is, in the catalog suite.
+fn initdb_oids_in_array(text: &[u8], from: u32) -> Option<Vec<u8>> {
+    let inner = text.strip_prefix(b"{")?.strip_suffix(b"}")?;
+    if inner.iter().any(|b| b"\"{}".contains(b)) {
+        return None;
+    }
+    let mark = excluded(Rule::Item(16));
+    let mut found = false;
+    let parts: Vec<&[u8]> = inner
+        .split(|&b| b == b',')
+        .map(|p| {
+            let oid = (!p.is_empty() && p[0] != b'0' && p.iter().all(u8::is_ascii_digit))
+                .then(|| std::str::from_utf8(p).ok()?.parse::<u64>().ok())
+                .flatten();
+            if oid.is_some_and(|oid| (u64::from(from)..16_384).contains(&oid)) {
+                found = true;
+                mark.bytes().unwrap_or_default()
+            } else {
+                p
+            }
+        })
+        .collect();
+    found.then(|| [&b"{"[..], &parts.join(&b","[..]), b"}"].concat())
+}
+
 /// The OID at the end of a specific name of `information_schema`, such as `_pg_char_max_length_13745`. The view makes the name from the name of the function and its OID, so the OID is out under item 16 or item 2. The rule applies only when the caller knows the first OID of the collations, that is, in the catalog suite.
 fn specific_name(text: &[u8], from: u32) -> Option<(usize, usize, usize)> {
     let start = text.iter().rposition(|&b| b == b'_')? + 1;
@@ -718,6 +746,14 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                             s.mask(c, Rule::Item(item), &mut oid);
                             text.extend_from_slice(oid.bytes().unwrap_or_default());
                             text.extend_from_slice(&tail);
+                            continue;
+                        }
+                        if cols.types.get(c) == Some(&ANYARRAY_TYPE)
+                            && let (Some(from), Val::Str(text)) = (ctx.collations, &mut *v)
+                            && let Some(shown) = initdb_oids_in_array(text, from)
+                        {
+                            let orig = Val::Str(std::mem::replace(text, shown));
+                            s.masks.push(Mask { slot: c, rule: Rule::Item(16), orig });
                             continue;
                         }
                         if let Some(item) = column_rule(ctx, cols, c, &row) {
@@ -1368,6 +1404,31 @@ mod tests {
         let o = run(&q("\"13760\" \"a\""), &q("\"13370\" \"a\""));
         assert_eq!(o.diffs.len(), 1);
         assert_eq!(oid_in_name(b"pg_toast_13925_index", Some(12386)), Some((9, 14, 16)));
+    }
+
+    #[test]
+    fn initdb_oids_in_statistics_are_out() {
+        let q = |row: &str| {
+            format!(
+                "1 F Query \"SELECT most_common_vals FROM pg_stats\"\n1 B RowDescription [(\"most_common_vals\" 0 0 2277 -1 -1 0)]\n1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let run16 = |want: &str, got: &str| {
+            compare_with(&lines(&q(want)), &lines(&q(got)), &BTreeSet::new(), Some(12386))
+        };
+        let o = run16("\"{13486,1259,12156}\"", "\"{13520,1259,12156}\"");
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[15], Count { applied: 1, differed: 1 });
+        let o = run16("\"{13486,1259}\"", "\"{13520,1247}\"");
+        assert_eq!(o.diffs.len(), 1);
+        let o = run(&q("\"{13486}\""), &q("\"{13520}\""));
+        assert_eq!(o.diffs.len(), 1);
+        assert_eq!(initdb_oids_in_array(b"{1259,12156}", 12386), None);
+        assert_eq!(initdb_oids_in_array(b"{\"13486\"}", 12386), None);
+        assert_eq!(
+            initdb_oids_in_array(b"{013486,13486}", 12386),
+            Some(b"{013486,<excluded 16>}".to_vec())
+        );
     }
 
     #[test]
