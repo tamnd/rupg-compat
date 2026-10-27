@@ -2,12 +2,13 @@
 # compat-version: 19
 # server: PostgreSQL 19beta4 7d3d2db7d5e533fa42a4202c7d308cbb0cbf9333
 # recorded: clients/beekeeper/run.sh
+# databases: compat compat_catalog compat_dump compat_gate compat_restore postgres template1
 1 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
 1 B AuthenticationSASL "SCRAM-SHA-256"
-1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=uWMOENsnK9SAdjK6z+f9iGYg"
-1 B AuthenticationSASLContinue "r=uWMOENsnK9SAdjK6z+f9iGYg1Od+Ms7nR/hssjpc5onj8xGf,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
-1 F SASLResponse "c=biws,r=uWMOENsnK9SAdjK6z+f9iGYg1Od+Ms7nR/hssjpc5onj8xGf,p=JZjnud7dKcQt3l3L/k8XhiCXwlPHRavUldGc40t/dKY="
-1 B AuthenticationSASLFinal "v=lwlvlBorPBemry3FXTxZxYiTxao/hIirdmi7Hsxopms="
+1 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=5Z9qKGH56j497OsYC64znWb3"
+1 B AuthenticationSASLContinue "r=5Z9qKGH56j497OsYC64znWb3TtKQmuFrcXWAnsixd+Src5iT,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
+1 F SASLResponse "c=biws,r=5Z9qKGH56j497OsYC64znWb3TtKQmuFrcXWAnsixd+Src5iT,p=KALoIee1M9IFEMuBeNEkaDpTmDy9bpjFsxLAZqP4gOA="
+1 B AuthenticationSASLFinal "v=aBr4+kbl3HMlat1Alqp9ezjITw+BxWM/rtl6ic/6WBk="
 1 B AuthenticationOk
 1 B ParameterStatus "IntervalStyle" "postgres"
 1 B ParameterStatus "search_path" "\"$user\", public"
@@ -24,7 +25,7 @@
 1 B ParameterStatus "default_transaction_read_only" "off"
 1 B ParameterStatus "scram_iterations" "4096"
 1 B ParameterStatus "DateStyle" "ISO, MDY"
-1 B BackendKeyData 3380727 "L\xd7\x03*"
+1 B BackendKeyData 3948234 "2\x9c\xcd\x1a"
 1 B ReadyForQuery I
 1 F Query "CREATE SCHEMA compat_beekeeper;"
 1 B CommandComplete "CREATE SCHEMA"
@@ -61,10 +62,10 @@
 1 B End
 2 F StartupMessage 3.0 "user" "postgres" "database" "compat" "client_encoding" "UTF8"
 2 B AuthenticationSASL "SCRAM-SHA-256"
-2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=F7b3f+RifTKr2HBiDS7ONur3"
-2 B AuthenticationSASLContinue "r=F7b3f+RifTKr2HBiDS7ONur3S205bkyarxO8P+sujaF09AaB,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
-2 F SASLResponse "c=biws,r=F7b3f+RifTKr2HBiDS7ONur3S205bkyarxO8P+sujaF09AaB,p=vSbwR+TIUU0MSxGMDXr0cfMTPxp9FD4So8m5G55xwfk="
-2 B AuthenticationSASLFinal "v=bGarbXw039v07otxJWrZQZYCW7dh6qHnjsi6YK2AJUg="
+2 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=*,r=evE+nkHqw8U0XDFUx+tTN06m"
+2 B AuthenticationSASLContinue "r=evE+nkHqw8U0XDFUx+tTN06mFdvIa/VYOj+nV8XXARonLuUp,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
+2 F SASLResponse "c=biws,r=evE+nkHqw8U0XDFUx+tTN06mFdvIa/VYOj+nV8XXARonLuUp,p=B613O7+hWSt+6MbQ5oXRR13L0RTtcs0BJikzAOLEsFI="
+2 B AuthenticationSASLFinal "v=+UkxUaoJdLRH0+6hE6dcFael1d/1mSaQ+nwq0bWnUrc="
 2 B AuthenticationOk
 2 B ParameterStatus "IntervalStyle" "postgres"
 2 B ParameterStatus "search_path" "\"$user\", public"
@@ -81,7 +82,7 @@
 2 B ParameterStatus "default_transaction_read_only" "off"
 2 B ParameterStatus "scram_iterations" "4096"
 2 B ParameterStatus "DateStyle" "ISO, MDY"
-2 B BackendKeyData 3380740 "\x9f\x11\x04,"
+2 B BackendKeyData 3948248 "\xea+f\x1b"
 2 B ReadyForQuery I
 2 F Query "SELECT CURRENT_SCHEMA() AS schema"
 2 B RowDescription [("schema" 0 0 19 64 -1 0)]
@@ -106,8 +107,12 @@
 2 B BindComplete
 2 B RowDescription [("datname" 1262 2 19 64 -1 0)]
 2 B DataRow ["compat"]
+2 B DataRow ["compat_catalog"]
+2 B DataRow ["compat_dump"]
+2 B DataRow ["compat_gate"]
+2 B DataRow ["compat_restore"]
 2 B DataRow ["postgres"]
-2 B CommandComplete "SELECT 2"
+2 B CommandComplete "SELECT 6"
 2 B ReadyForQuery I
 2 F Query "\n      SELECT schema_name\n      FROM information_schema.schemata\n             \n      ORDER BY schema_name\n    "
 2 B RowDescription [("schema_name" 13491 2 19 64 -1 0)]
@@ -354,12 +359,12 @@
 2 B ReadyForQuery I
 2 F Query "\n      SELECT\n        r.specific_name as id,\n        r.routine_schema as routine_schema,\n        r.routine_name as name,\n        r.routine_type as routine_type,\n        r.data_type as data_type,\n        p.oid::text as oid\n      FROM INFORMATION_SCHEMA.ROUTINES r\n      LEFT JOIN pg_catalog.pg_proc p\n        ON r.specific_name::text = p.proname || '_' || p.oid::text\n      where r.routine_schema not in ('sys', 'information_schema',\n                                     'pg_catalog', 'performance_schema')\n        \n      ORDER BY routine_schema, routine_name\n    "
 2 B RowDescription [("id" 13486 3 19 64 -1 0) ("routine_schema" 13486 5 19 64 -1 0) ("name" 13486 6 19 64 -1 0) ("routine_type" 13486 7 1043 -1 -1 0) ("data_type" 13486 14 1043 -1 -1 0) ("oid" 0 0 25 -1 -1 0)]
-2 B DataRow ["compat_item_qty_16420" "compat_beekeeper" "compat_item_qty" "FUNCTION" "bigint" "16420"]
+2 B DataRow ["compat_item_qty_49829" "compat_beekeeper" "compat_item_qty" "FUNCTION" "bigint" "49829"]
 2 B CommandComplete "SELECT 1"
 2 B ReadyForQuery I
 2 F Query "\n      select\n        r.routine_schema as routine_schema,\n        r.specific_name as specific_name,\n        p.parameter_name as parameter_name,\n        p.character_maximum_length as char_length,\n          p.data_type as data_type\n      from information_schema.routines r\n        left join information_schema.parameters p\n      on p.specific_schema = r.routine_schema\n        and p.specific_name = r.specific_name\n      where r.routine_schema not in ('sys', 'information_schema',\n        'pg_catalog', 'performance_schema')\n        \n\n        AND p.parameter_mode = 'IN'\n      order by r.routine_schema,\n        r.specific_name,\n        p.ordinal_position;\n\n    "
 2 B RowDescription [("routine_schema" 13486 5 19 64 -1 0) ("specific_name" 13486 3 19 64 -1 0) ("parameter_name" 13443 8 19 64 -1 0) ("char_length" 13443 10 23 4 -1 0) ("data_type" 13443 9 1043 -1 -1 0)]
-2 B DataRow ["compat_beekeeper" "compat_item_qty_16420" "p_item" NULL "integer"]
+2 B DataRow ["compat_beekeeper" "compat_item_qty_49829" "p_item" NULL "integer"]
 2 B CommandComplete "SELECT 1"
 2 B ReadyForQuery I
 2 F Parse "" "\n      SELECT\n        table_schema,\n        table_name,\n        column_name,\n        is_nullable,\n        is_generated,\n          ordinal_position,\n        column_default,\n        CASE\n          WHEN character_maximum_length is not null  and udt_name != 'text'\n            THEN udt_name || '(' || character_maximum_length::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is not null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ',' || numeric_scale::varchar(255) || ')'\n          WHEN numeric_precision is not null and numeric_scale is null\n            THEN udt_name || '(' || numeric_precision::varchar(255) || ')'\n          WHEN datetime_precision is not null AND udt_name != 'date' THEN\n            udt_name || '(' || datetime_precision::varchar(255) || ')'\n          ELSE udt_name\n      END as data_type,\n        udt_schema,\n        CASE\n          WHEN data_type = 'ARRAY' THEN 'YES'\n          ELSE 'NO'\n      END as is_array,\n        pg_catalog.col_description(format('%I.%I', table_schema, table_name)::regclass::oid, ordinal_position) as column_comment\n      FROM information_schema.columns\n      WHERE table_schema = $1 AND table_name = $2\n      ORDER BY table_schema, table_name, ordinal_position\n    " []
@@ -428,8 +433,8 @@
 2 B ParseComplete
 2 B BindComplete
 2 B RowDescription [("indexname" 0 0 19 64 -1 0) ("index_order" 0 0 23 4 -1 0) ("id" 2610 1 26 4 -1 0) ("indisunique" 2610 5 16 1 -1 0) ("indisprimary" 2610 7 16 1 -1 0) ("indnullsnotdistinct" 2610 6 16 1 -1 0) ("index_column" 0 0 19 64 -1 0) ("ascending" 0 0 16 1 -1 0)]
-2 B DataRow ["compat_orders_pkey" "1" "16407" "t" "t" "f" "id" "t"]
-2 B DataRow ["compat_orders_code_key" "1" "16414" "t" "f" "f" "code" "t"]
+2 B DataRow ["compat_orders_pkey" "1" "49816" "t" "t" "f" "id" "t"]
+2 B DataRow ["compat_orders_code_key" "1" "49823" "t" "f" "f" "code" "t"]
 2 B CommandComplete "SELECT 2"
 2 B ReadyForQuery I
 2 F Parse "" "\n      SELECT\n        c.conname AS constraint_name,\n        a.attname AS column_name,\n        n.nspname AS from_schema,\n        t.relname AS from_table,\n        af.attname AS to_column,\n        tf.relname AS to_table,\n        nf.nspname AS to_schema,\n        CASE c.confupdtype::text\n          WHEN 'a' THEN 'NO ACTION'\n          WHEN 'r' THEN 'RESTRICT'\n          WHEN 'c' THEN 'CASCADE'\n          WHEN 'n' THEN 'SET NULL'\n          WHEN 'd' THEN 'SET DEFAULT'\n          ELSE c.confupdtype::text\n        END AS update_rule,\n        CASE c.confdeltype::text\n          WHEN 'a' THEN 'NO ACTION'\n          WHEN 'r' THEN 'RESTRICT'\n          WHEN 'c' THEN 'CASCADE'\n          WHEN 'n' THEN 'SET NULL'\n          WHEN 'd' THEN 'SET DEFAULT'\n          ELSE c.confdeltype::text\n        END AS delete_rule,\n        pos AS ordinal_position\n      FROM\n        pg_constraint c\n        JOIN pg_class t ON c.conrelid = t.oid\n        JOIN pg_namespace n ON t.relnamespace = n.oid\n        JOIN generate_subscripts(c.conkey, 1) pos ON true\n        JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = c.conkey[pos]\n        JOIN pg_class tf ON c.confrelid = tf.oid\n        JOIN pg_namespace nf ON tf.relnamespace = nf.oid\n        JOIN pg_attribute af ON af.attrelid = tf.oid AND af.attnum = c.confkey[pos]\n      WHERE\n        c.contype = 'f'\n        AND n.nspname = $1\n        AND t.relname = $2\n      ORDER BY\n        c.conname,\n        pos;\n    " []
@@ -491,7 +496,7 @@
 2 B CommandComplete "SELECT 1"
 2 B ReadyForQuery I
 2 F Parse "" "\n      SELECT pg_get_functiondef(p.oid)\n      FROM pg_proc p\n             LEFT JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace\n      WHERE proname = $1\n        AND n.nspname = $2\n        AND p.oid = $3::oid\n    " []
-2 F Bind "" "" [0 0 0] ["compat_item_qty" "compat_beekeeper" "16420"] [0]
+2 F Bind "" "" [0 0 0] ["compat_item_qty" "compat_beekeeper" "49829"] [0]
 2 F Describe P ""
 2 F Execute "" 0
 2 F Sync
@@ -541,7 +546,7 @@
 2 B CommandComplete "SELECT 1"
 2 B ReadyForQuery I
 2 F Query "\n      SELECT * \n      FROM \"compat_beekeeper\".\"compat_items\"\n      \n    \n      ORDER BY \"id\" ASC\n      LIMIT 101\n      OFFSET 0\n      "
-2 B RowDescription [("id" 16386 1 23 4 -1 0) ("name" 16386 2 25 -1 -1 0) ("price" 16386 3 1700 -1 655366 0) ("created_at" 16386 4 1184 8 -1 0)]
+2 B RowDescription [("id" 49795 1 23 4 -1 0) ("name" 49795 2 25 -1 -1 0) ("price" 49795 3 1700 -1 655366 0) ("created_at" 49795 4 1184 8 -1 0)]
 2 B DataRow ["1" "item 1" "1.50" "2026-01-02 04:00:00+00"]
 2 B DataRow ["2" "item 2" "3.00" "2026-01-02 05:00:00+00"]
 2 B DataRow ["3" "item 3" "4.50" "2026-01-02 06:00:00+00"]
@@ -603,10 +608,10 @@
 2 B End
 3 F StartupMessage 3.0 "user" "postgres" "database" "compat" "application_name" "psql"
 3 B AuthenticationSASL "SCRAM-SHA-256"
-3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=xWZVhB1q1L97kurSBQHMFyGH"
-3 B AuthenticationSASLContinue "r=xWZVhB1q1L97kurSBQHMFyGHuYU2I2Cq0r4Yp6/CXv4OY2sU,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
-3 F SASLResponse "c=biws,r=xWZVhB1q1L97kurSBQHMFyGHuYU2I2Cq0r4Yp6/CXv4OY2sU,p=ZmUFtfqcKkUBs6iqLeoZNqOHaSklLx93pqhYeQq89ys="
-3 B AuthenticationSASLFinal "v=revoYpCkwWf61+Ej1gYmXqep9ljrltYSLp5f53L7u7Q="
+3 F SASLInitialResponse "SCRAM-SHA-256" "n,,n=,r=VpRIy7X6ggP/HY8kwz/1HCPN"
+3 B AuthenticationSASLContinue "r=VpRIy7X6ggP/HY8kwz/1HCPNRqzpjP667/8ji6yRfbc8PQdF,s=kHGWrRIGJJa9VOGZ16rNdw==,i=4096"
+3 F SASLResponse "c=biws,r=VpRIy7X6ggP/HY8kwz/1HCPNRqzpjP667/8ji6yRfbc8PQdF,p=9VguEI9Tiq1u3seZ7/qMRRtFN8brmnvBJOD9BO1ssjU="
+3 B AuthenticationSASLFinal "v=UuIARHb9ZpWQjUpvMf8UhdFfb1QrIsnMVtJOydOiwbo="
 3 B AuthenticationOk
 3 B ParameterStatus "IntervalStyle" "postgres"
 3 B ParameterStatus "search_path" "\"$user\", public"
@@ -623,7 +628,7 @@
 3 B ParameterStatus "default_transaction_read_only" "off"
 3 B ParameterStatus "scram_iterations" "4096"
 3 B ParameterStatus "DateStyle" "ISO, MDY"
-3 B BackendKeyData 3380799 "zE\xf9\\"
+3 B BackendKeyData 3948268 "\xce]Ε"
 3 B ReadyForQuery I
 3 F Query "DROP SCHEMA compat_beekeeper CASCADE"
 3 B NoticeResponse S "NOTICE" V "NOTICE" C "00000" M "drop cascades to 5 other objects" D "drop cascades to table compat_beekeeper.compat_items\ndrop cascades to sequence compat_beekeeper.compat_orders_code_seq\ndrop cascades to table compat_beekeeper.compat_orders\ndrop cascades to view compat_beekeeper.compat_item_totals\ndrop cascades to function compat_beekeeper.compat_item_qty(integer)" F "dependency.c" L "1181" R "reportDependentObjects"
