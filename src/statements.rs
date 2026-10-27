@@ -354,6 +354,85 @@ pub(crate) fn count(
     n
 }
 
+/// The line of the SQL file, from 0, where the text of a unit starts: the first line that is not empty and not a `--` comment.
+fn first_line(sql: &[&str], u: &Unit) -> Option<usize> {
+    u.lines.clone().find(|&i| {
+        let l = sql[i].trim_start();
+        !l.is_empty() && !l.starts_with("--")
+    })
+}
+
+/// True when a unit is one `EXPLAIN` statement.
+fn is_explain(sql: &[&str], u: &Unit) -> bool {
+    u.statements == 1
+        && first_line(sql, u).is_some_and(|i| {
+            let l = sql[i].trim_start().as_bytes();
+            l.len() >= 7
+                && l[..7].eq_ignore_ascii_case(b"explain")
+                && !l.get(7).is_some_and(|b| b.is_ascii_alphanumeric() || *b == b'_')
+        })
+}
+
+/// The lines of the SQL file, from 1, where the `EXPLAIN` statements start.
+pub(crate) fn explain_lines(sql: &str) -> Vec<usize> {
+    let lines: Vec<&str> = sql.lines().collect();
+    units(sql)
+        .iter()
+        .filter(|u| is_explain(&lines, u))
+        .filter_map(|u| first_line(&lines, u).map(|i| i + 1))
+        .collect()
+}
+
+/// True when each statement in the output of the oracle that is not an `EXPLAIN` statement has the same output on the server. A test whose `EXPLAIN` lines are filtered passes with this check (spec/05 section 5.8).
+pub(crate) fn equal_but_explain(
+    oracle_sql: &str,
+    oracle: &str,
+    server_sql: &str,
+    server: &str,
+) -> bool {
+    let (o_lines, s_lines): (Vec<&str>, Vec<&str>) =
+        (oracle_sql.lines().collect(), server_sql.lines().collect());
+    let (o_units, s_units) = (units(oracle_sql), units(server_sql));
+    if o_units.len() != s_units.len() {
+        return false;
+    }
+    let (o_out, s_out): (Vec<&str>, Vec<&str>) =
+        (oracle.lines().collect(), server.lines().collect());
+    let o = outputs(&o_lines, &o_units, &o_out);
+    let s = outputs(&s_lines, &s_units, &s_out);
+    o_units.iter().zip(&o).zip(&s).all(|((u, o), s)| match o {
+        Some(o) => is_explain(&o_lines, u) || s.is_some_and(|s| same(o, s)),
+        None => true,
+    })
+}
+
+/// The SQL files and the output files of one test on both sides, with the path of each output directory as `@outputdir@`. The output of the server is None when the server has no output file.
+fn test_files(
+    suite: &Path,
+    oracle: &Path,
+    server: &Path,
+    t: &str,
+) -> Option<(String, String, String, Option<String>)> {
+    let read = |dir: &Path| read(&dir.join("results").join(format!("{t}.out")));
+    let (o_out, (o_sql, o_dir), (s_sql, s_dir)) =
+        (read(oracle)?, sql_file(oracle, suite, t)?, sql_file(server, suite, t)?);
+    let plain = |text: &str, dir: &str| text.replace(dir, "@outputdir@");
+    let s_out = read(server).map(|s| plain(&s, &s_dir));
+    Some((plain(&o_sql, &o_dir), plain(&o_out, &o_dir), plain(&s_sql, &s_dir), s_out))
+}
+
+/// For a test whose `EXPLAIN` lines are filtered: true when the test passes with the filter, and the lines of its `EXPLAIN` statements. None when the oracle has no output for the test.
+pub(crate) fn test_but_explain(
+    suite: &Path,
+    oracle: &Path,
+    server: &Path,
+    t: &str,
+) -> Option<(bool, Vec<usize>)> {
+    let (o_sql, o_out, s_sql, s_out) = test_files(suite, oracle, server, t)?;
+    let equal = s_out.is_some_and(|s| equal_but_explain(&o_sql, &o_out, &s_sql, &s));
+    Some((equal, explain_lines(&o_sql)))
+}
+
 /// The SQL file of a test: the file that `pg_regress` made from `input/` in the output directory, or else the file of `sql/` in the directory of the suite.
 fn sql_file(outdir: &Path, suite: &Path, test: &str) -> Option<(String, String)> {
     let dir = outdir.display().to_string();
@@ -377,20 +456,10 @@ pub(crate) fn suite_count(
 ) -> (usize, usize) {
     let mut n = (0, 0);
     for t in tests {
-        let read = |dir: &Path| read(&dir.join("results").join(format!("{t}.out")));
-        let (Some(o_out), Some((o_sql, o_dir)), Some((s_sql, s_dir))) =
-            (read(oracle), sql_file(oracle, suite, t), sql_file(server, suite, t))
-        else {
+        let Some((o_sql, o_out, s_sql, s_out)) = test_files(suite, oracle, server, t) else {
             continue;
         };
-        let plain = |text: &str, dir: &str| text.replace(dir, "@outputdir@");
-        let s_out = read(server).map(|s| plain(&s, &s_dir));
-        let c = count(
-            &plain(&o_sql, &o_dir),
-            &plain(&o_out, &o_dir),
-            &plain(&s_sql, &s_dir),
-            s_out.as_deref(),
-        );
+        let c = count(&o_sql, &o_out, &s_sql, s_out.as_deref());
         n.0 += c.0;
         n.1 += c.1;
     }
@@ -427,6 +496,17 @@ mod tests {
     fn copy_data_and_backslash_commands_end_units() {
         let sql = "COPY t FROM stdin;\n1;2\n\\.\n\\d t\nSELECT 1 \\gset\nSELECT 0\\; COPY t FROM stdin\\; COPY t FROM stdin;\n1\n\\.\n2\n\\.\nSELECT 2\n";
         assert_eq!(ends(sql), [(0, 3, 1), (3, 4, 1), (4, 5, 1), (5, 10, 1), (10, 11, 1)]);
+    }
+
+    #[test]
+    fn the_filter_takes_out_the_output_of_explain() {
+        let sql = "-- a plan\nexplain (costs off) select 1;\nselect 1;\nEXPLAIN select 2;\nselect explain_x();\n";
+        assert_eq!(explain_lines(sql), [2, 4]);
+        let oracle = "-- a plan\nexplain (costs off) select 1;\n Result\nselect 1;\n 1\nEXPLAIN select 2;\n Result\nselect explain_x();\n t\n";
+        let server = oracle.replace(" Result", " Seq Scan");
+        assert!(equal_but_explain(sql, oracle, sql, &server));
+        assert!(!equal_but_explain(sql, oracle, sql, &server.replace(" t", " f")));
+        assert!(!equal_but_explain(sql, oracle, sql, &server.replace(" 1\n", " 2\n")));
     }
 
     #[test]

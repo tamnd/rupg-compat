@@ -31,6 +31,8 @@ pub(crate) struct Record {
     pub(crate) fail: Vec<String>,
     /// The tests that the suite excludes, with the reason of each.
     pub(crate) excluded: Vec<(String, String)>,
+    /// The tests that pass with their `EXPLAIN` lines filtered, with the lines of each.
+    pub(crate) filtered: Vec<(String, Vec<usize>)>,
     /// The statement count of the regression suite: equal and total.
     pub(crate) statements: Option<Number>,
     /// The tests of the M3 list that pass, and the tests of the M3 list.
@@ -147,6 +149,11 @@ impl Record {
                         .filter_map(|(k, v)| Some((k.clone(), v.as_str()?.to_string())))
                         .collect()
                 })
+                .unwrap_or_default(),
+            filtered: t
+                .get("explain_filtered")
+                .and_then(Value::as_table)
+                .map(|e| e.iter().map(|(k, v)| (k.clone(), ints(Some(v)))).collect())
                 .unwrap_or_default(),
             statements,
             m3,
@@ -495,7 +502,7 @@ pub(crate) fn markdown(
 ) -> String {
     let mut m = format!("# rupg-compat report {date}\n\n");
     m.push_str(&format!(
-        "This report reads {} result files in `{}`. Each number is the count that is equal to the oracle, of the count that the oracle gives. The server column is the server under test, and the oracle column is the oracle against itself. The unstable cases of the oracle are not counted (spec/21 section 21.1). The row of the M3 list counts the regression tests that spec/05 section 5.13 gives to M3, from `suites/regress/milestones.txt`. The regression statements row is the statement count of spec/05 section 5.8: the statements whose output is equal to the output of the oracle. It shows progress inside a test that fails, and the ratchet does not check it. The ratchet checks the count of the oracle less the differences, with each unstable case as no difference, so that a run with more unstable cases does not fail it. A relation that was unstable in the run of the server under test shows as unstable, and the ratchet does not check its rows in that run.\n\n",
+        "This report reads {} result files in `{}`. Each number is the count that is equal to the oracle, of the count that the oracle gives. The server column is the server under test, and the oracle column is the oracle against itself. The unstable cases of the oracle are not counted (spec/21 section 21.1). A regression test of `suites/regress/explain.txt` that fails also passes when each statement that is not `EXPLAIN` gives the output of the oracle, and the section Filtered EXPLAIN lines names the lines. The row of the M3 list counts the regression tests that spec/05 section 5.13 gives to M3, from `suites/regress/milestones.txt`. The regression statements row is the statement count of spec/05 section 5.8: the statements whose output is equal to the output of the oracle. It shows progress inside a test that fails, and the ratchet does not check it. The ratchet checks the count of the oracle less the differences, with each unstable case as no difference, so that a run with more unstable cases does not fail it. A relation that was unstable in the run of the server under test shows as unstable, and the ratchet does not check its rows in that run.\n\n",
         records.len(),
         work.join("results").display()
     ));
@@ -595,6 +602,7 @@ pub(crate) fn markdown(
         m.push_str(&resources(&recs));
         m.push_str(&failing(&recs));
         m.push_str(&excluded(&recs));
+        m.push_str(&filtered(&recs));
     }
     m.push_str("\n## Ratchet\n");
     if check.below.is_empty() && check.above.is_empty() {
@@ -713,6 +721,28 @@ fn excluded(recs: &[&Record]) -> String {
     m
 }
 
+/// The tests of the server under test that pass only with their `EXPLAIN` lines filtered, with the filtered lines (spec/05 section 5.8).
+fn filtered(recs: &[&Record]) -> String {
+    let mut m = String::from("\n### Filtered EXPLAIN lines\n\n");
+    let mut any = false;
+    for r in recs.iter().filter(|r| r.side == "server") {
+        for (test, lines) in &r.filtered {
+            if !any {
+                m.push_str("These tests pass with the output of their `EXPLAIN` statements filtered. Each other statement gives the output of the oracle. The lines are the lines of the SQL file of the test where each `EXPLAIN` statement starts.\n\n| Run | Test | Lines |\n|---|---|---|\n");
+                any = true;
+            }
+            let lines: Vec<String> = lines.iter().map(usize::to_string).collect();
+            m.push_str(&format!("| {} | `{test}` | {} |\n", r.suite, lines.join(", ")));
+        }
+    }
+    if !any {
+        m.push_str(
+            "No test of the server under test passes only with its `EXPLAIN` lines filtered.\n",
+        );
+    }
+    m
+}
+
 /// The directory of a report: `reports/<date>/` under `base`.
 pub(crate) fn report_dir(base: &Path, date: &str) -> PathBuf {
     base.join(date)
@@ -766,6 +796,16 @@ mod tests {
     }
 
     #[test]
+    fn the_report_names_the_filtered_explain_lines() {
+        let text = "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 1\npassed = 1\npass = [\"join\"]\nfail = []\nunstable = []\n\n[explain_filtered]\njoin = [3, 9]\n";
+        let server = Record::parse(text).unwrap();
+        assert_eq!(server.filtered, [("join".to_string(), vec![3, 9])]);
+        assert!(filtered(&[&server]).contains("| regress | `join` | 3, 9 |"));
+        let oracle = Record { side: "oracle".into(), ..server.clone() };
+        assert!(filtered(&[&oracle]).contains("No test of the server under test"));
+    }
+
+    #[test]
     fn the_report_has_resources_and_failing_items() {
         let mut server = Record::parse(
             "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 3\npassed = 1\npass = [\"int4\"]\nfail = [\"join\", \"rules\"]\nunstable = []\npeak_memory = 1048576\ncpu_usec = 500000\npeak_reset = false\n",
@@ -802,6 +842,7 @@ mod tests {
             tests: vec![("pg_class".into(), true), ("pg_am\"x".into(), false)],
             unstable: vec!["pg_locks".into()],
             excluded: Vec::new(),
+            filtered: Vec::new(),
             seconds: 7,
             statements: None,
             m3: None,

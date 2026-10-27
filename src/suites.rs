@@ -138,6 +138,8 @@ pub(crate) struct Run {
     pub(crate) unstable: Vec<String>,
     /// The tests that `suites/<suite>/excluded.txt` takes out, with the reason of each. They are in neither list.
     pub(crate) excluded: Vec<(String, String)>,
+    /// The tests that pass only with their `EXPLAIN` lines filtered, with the lines of the SQL file of each `EXPLAIN` statement.
+    pub(crate) filtered: Vec<(String, Vec<usize>)>,
     pub(crate) seconds: u64,
     /// The statement count of the regression suite: the statements whose output is equal to the output of the oracle, and the statements of the oracle (spec/05 section 5.8).
     pub(crate) statements: Option<(usize, usize)>,
@@ -185,6 +187,20 @@ impl Run {
                 .unwrap_or_default()
             + &self.checked.as_ref().map(Checked::to_toml).unwrap_or_default()
             + &self.excluded_toml()
+            + &self.filtered_toml()
+    }
+
+    /// The table of the tests that pass with their `EXPLAIN` lines filtered, or nothing when no test does.
+    fn filtered_toml(&self) -> String {
+        if self.filtered.is_empty() {
+            return String::new();
+        }
+        let mut text = String::from("\n[explain_filtered]\n");
+        for (test, lines) in &self.filtered {
+            let lines: Vec<String> = lines.iter().map(usize::to_string).collect();
+            text.push_str(&format!("{} = [{}]\n", quote(test), lines.join(", ")));
+        }
+        text
     }
 
     /// The table of the excluded tests and their reasons, or nothing when no test is excluded.
@@ -335,7 +351,8 @@ fn run_suite(
 ) -> Result<Run, String> {
     let checked = import::verify(&o.src(), &import::corpus_dir(corpus, o.pin.major), s.dir)?;
     out!("{} {}: {checked} files equal to the manifest of the pin", s.name, o.pin.major);
-    let excluded = fails::load_excluded(&Path::new("suites").join(s.name))?;
+    let excluded = fails::load_reasons(&Path::new("suites").join(s.name), "excluded.txt")?;
+    let explain = fails::load_reasons(&Path::new("suites").join(s.name), "explain.txt")?;
     let milestones = fails::load_milestones(&Path::new("suites").join(s.name))?;
     let out = run_dir(work, o.pin.major, s.name, server);
     fresh_dir(&out)?;
@@ -386,7 +403,21 @@ fn run_suite(
         .join("schedule");
     let statements = (s.name == REGRESS_SUITE.name && oracle_out.join("results").is_dir())
         .then(|| statements::suite_count(&cwd, &oracle_out, &out.join("schedule"), &scheduled));
-    let tests = pass_set(&scheduled, &results);
+    let mut tests = pass_set(&scheduled, &results);
+    // A test of `explain.txt` that fails also passes when each statement that is not `EXPLAIN` gives the output of the oracle (spec/05 section 5.8).
+    let mut filtered = Vec::new();
+    if oracle_out.join("results").is_dir() {
+        for (t, passed) in
+            tests.iter_mut().filter(|(t, p)| !*p && explain.iter().any(|(e, _)| e == t))
+        {
+            if let Some((true, lines)) =
+                statements::test_but_explain(&cwd, &oracle_out, &out.join("schedule"), t)
+            {
+                *passed = true;
+                filtered.push((t.clone(), lines));
+            }
+        }
+    }
     let m3 = (!milestones.is_empty()).then(|| {
         let listed: Vec<&(String, bool)> =
             tests.iter().filter(|(t, _)| milestones.contains(&(t.clone(), 3))).collect();
@@ -399,6 +430,7 @@ fn run_suite(
         statements,
         m3,
         excluded,
+        filtered,
         ..Run::default()
     };
     if run.passed() == run.tests.len() && !all_ok {
@@ -625,6 +657,7 @@ mod tests {
             tests: vec![("a".into(), true), ("b\"".into(), false)],
             unstable: vec!["c".into()],
             excluded: vec![("explain".into(), "the plan".into())],
+            filtered: vec![("join".into(), vec![3, 9])],
             seconds: 3,
             statements: Some((31, 40)),
             m3: Some((1, 2)),
@@ -644,6 +677,11 @@ mod tests {
             (Some(40), Some(31))
         );
         assert_eq!((t["m3_tests"].as_int(), t["m3_passed"].as_int()), (Some(2), Some(1)));
+        let filtered = t["explain_filtered"].as_table().unwrap();
+        assert_eq!(
+            filtered["join"],
+            crate::toml::Value::Array(vec![crate::toml::Value::Int(3), crate::toml::Value::Int(9)])
+        );
         let excluded = t["excluded"].as_table().unwrap();
         assert_eq!(excluded["explain"].as_str(), Some("the plan"));
     }
