@@ -67,6 +67,34 @@ pub(crate) fn load_dir(dir: &Path) -> Result<Fails, String> {
         .map_err(|e| format!("{}/{e}", dir.display()))
 }
 
+/// Reads the excluded tests of a suite from its text: one test on each line as `<test>: <reason>`. The reason gives the item of spec/05 section 5.3 or the section of spec/16 that excludes the test.
+pub(crate) fn parse_excluded(text: &str) -> Result<Vec<(String, String)>, String> {
+    let mut out: Vec<(String, String)> = Vec::new();
+    for (n, line) in tests(text) {
+        let bad = || format!("excluded.txt line {n}: give the test as `<test>: <reason>`");
+        let (test, reason) = line.split_once(':').ok_or_else(bad)?;
+        let (test, reason) = (test.trim(), reason.trim());
+        if test.is_empty() || reason.is_empty() {
+            return Err(bad());
+        }
+        if out.iter().any(|(t, _)| t == test) {
+            return Err(format!("excluded.txt line {n}: {test} is in the list two times"));
+        }
+        out.push((test.to_string(), reason.to_string()));
+    }
+    Ok(out)
+}
+
+/// Reads `excluded.txt` in a directory. A directory with no such file excludes no test.
+pub(crate) fn load_excluded(dir: &Path) -> Result<Vec<(String, String)>, String> {
+    let path = dir.join("excluded.txt");
+    match fs::read_to_string(&path) {
+        Ok(text) => parse_excluded(&text).map_err(|e| format!("{}/{e}", dir.display())),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Vec::new()),
+        Err(e) => Err(format!("{}: {e}", path.display())),
+    }
+}
+
 /// True when the results of a run agree with the lists: each test that fails is in `oracle-fail.txt` or in `expected-fail.txt`, and no test in `expected-fail.txt` passes. A line goes to the output for each test in `expected-fail.txt`, and the list in `dir` is named for a test to remove.
 pub(crate) fn agree(tests: &[(String, bool)], fails: &Fails, dir: &str) -> bool {
     let mut good = true;
@@ -122,5 +150,17 @@ mod tests {
     #[test]
     fn the_pipeline_suite_has_its_lists() {
         load_dir(Path::new("suites/pipeline")).unwrap();
+    }
+
+    #[test]
+    fn each_excluded_test_has_a_reason() {
+        let list = parse_excluded("# a comment\n\nexplain: the plan, item 1\n").unwrap();
+        assert_eq!(list, [("explain".to_string(), "the plan, item 1".to_string())]);
+        assert!(parse_excluded("explain\n").is_err());
+        assert!(parse_excluded("explain:\n").is_err());
+        assert!(parse_excluded("a: x\na: y\n").is_err());
+        let regress = load_excluded(Path::new("suites/regress")).unwrap();
+        assert!(regress.iter().any(|(t, _)| t == "explain"));
+        assert_eq!(load_excluded(Path::new("suites/types")).unwrap(), []);
     }
 }

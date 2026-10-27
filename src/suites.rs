@@ -10,6 +10,7 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 use crate::client;
 use crate::compare::{Count, Outcome, Share};
+use crate::fails;
 use crate::import::{self, ISOLATION, PIPELINE, REGRESS};
 use crate::oracle::{self, Oracle};
 use crate::statements;
@@ -135,6 +136,8 @@ pub(crate) struct Run {
     pub(crate) tests: Vec<(String, bool)>,
     /// The cases that the unstable filter took out. They are in neither list.
     pub(crate) unstable: Vec<String>,
+    /// The tests that `suites/<suite>/excluded.txt` takes out, with the reason of each. They are in neither list.
+    pub(crate) excluded: Vec<(String, String)>,
     pub(crate) seconds: u64,
     /// The statement count of the regression suite: the statements whose output is equal to the output of the oracle, and the statements of the oracle (spec/05 section 5.8).
     pub(crate) statements: Option<(usize, usize)>,
@@ -175,6 +178,19 @@ impl Run {
             .map(|(equal, total)| format!("statements = {total}\nstatements_equal = {equal}\n"))
             .unwrap_or_default()
             + &self.checked.as_ref().map(Checked::to_toml).unwrap_or_default()
+            + &self.excluded_toml()
+    }
+
+    /// The table of the excluded tests and their reasons, or nothing when no test is excluded.
+    fn excluded_toml(&self) -> String {
+        if self.excluded.is_empty() {
+            return String::new();
+        }
+        let mut text = String::from("\n[excluded]\n");
+        for (test, reason) in &self.excluded {
+            text.push_str(&format!("{} = {}\n", quote(test), quote(reason)));
+        }
+        text
     }
 }
 
@@ -313,6 +329,7 @@ fn run_suite(
 ) -> Result<Run, String> {
     let checked = import::verify(&o.src(), &import::corpus_dir(corpus, o.pin.major), s.dir)?;
     out!("{} {}: {checked} files equal to the manifest of the pin", s.name, o.pin.major);
+    let excluded = fails::load_excluded(&Path::new("suites").join(s.name))?;
     let out = run_dir(work, o.pin.major, s.name, server);
     fresh_dir(&out)?;
     let cwd = o.src().join(s.dir);
@@ -337,6 +354,16 @@ fn run_suite(
         scheduled.extend(unscheduled.iter().cloned());
         all_ok &= ok;
     }
+    // An excluded test still runs, so that the tests after it see its objects, but it leaves the counts (spec/05 section 5.8).
+    for (test, _) in &excluded {
+        if !scheduled.contains(test) {
+            return Err(format!(
+                "suites/{}/excluded.txt: {test} is not a test of the suite",
+                s.name
+            ));
+        }
+    }
+    scheduled.retain(|t| !excluded.iter().any(|(e, _)| e == t));
     // The statement count compares the output of each statement with the last run of the oracle in the work directory. The run of the oracle compares with itself.
     let oracle_out = run_dir(work, o.pin.major, s.name, &Server { oracle: true, ..server.clone() })
         .join("schedule");
@@ -347,6 +374,7 @@ fn run_suite(
         tests: pass_set(&scheduled, &results),
         seconds: started.elapsed().as_secs(),
         statements,
+        excluded,
         ..Run::default()
     };
     if run.passed() == run.tests.len() && !all_ok {
@@ -572,6 +600,7 @@ mod tests {
             suite: "regress".into(),
             tests: vec![("a".into(), true), ("b\"".into(), false)],
             unstable: vec!["c".into()],
+            excluded: vec![("explain".into(), "the plan".into())],
             seconds: 3,
             statements: Some((31, 40)),
             checked: None,
@@ -589,5 +618,7 @@ mod tests {
             (t["statements"].as_int(), t["statements_equal"].as_int()),
             (Some(40), Some(31))
         );
+        let excluded = t["excluded"].as_table().unwrap();
+        assert_eq!(excluded["explain"].as_str(), Some("the plan"));
     }
 }

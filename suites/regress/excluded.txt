@@ -1,0 +1,4 @@
+# The tests of the regression suite that leave the counts of the suite (spec/05 section 5.8). Each test still runs, so that the tests after it see the objects that it makes. Give each test on one line as `<test>: <reason>`. The reason gives the item of spec/05 section 5.3 or the section of spec/16 of tamnd/rupg that excludes the test. A test that tests a feature of rupg is not in this list, also when it fails.
+explain: the test examines the text, JSON, XML and YAML formats of EXPLAIN plans, spec/05 section 5.3 item 1
+create_function_c: the test examines the errors of C functions in a shared library, spec/05 section 5.3 item 6
+indirect_toast: the test makes indirect TOAST pointers with the C function make_tuple_indirect, spec/05 section 5.3 item 11 and spec/16 section 16.7.6
