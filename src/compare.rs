@@ -916,12 +916,18 @@ pub(crate) fn compare_with(
         let replication = startup_has_replication(wgs);
         let mut prepared = BTreeMap::new();
         let (mut wcols, mut gcols) = (Columns::default(), Columns::default());
+        let blank = Group::default();
+        let mut last = &blank;
         for i in 0..wgs.len().max(ggs.len()) {
-            let blank = Group::default();
             let wg = wgs.get(i).unwrap_or(&blank);
             let gg = ggs.get(i).unwrap_or(&blank);
-            let mut ctx =
-                context(if wg.front.is_empty() { gg } else { wg }, &mut prepared, replication);
+            // A client that sends the next statements before it reads the answer gives a group with no frontend messages. Its answer is for the statements of the last group that has them.
+            if !wg.front.is_empty() {
+                last = wg;
+            } else if !gg.front.is_empty() {
+                last = gg;
+            }
+            let mut ctx = context(last, &mut prepared, replication);
             ctx.collations = collations;
             if skip.contains(&(conn, i)) {
                 out.unstable += 1;
@@ -984,8 +990,12 @@ pub(crate) fn answers(lines: &[Line]) -> Vec<Answer> {
         let replication = startup_has_replication(&gs);
         let mut prepared = BTreeMap::new();
         let mut cols = Columns::default();
+        let mut last = &Group::default();
         for (i, g) in gs.iter().enumerate() {
-            let ctx = context(g, &mut prepared, replication);
+            if !g.front.is_empty() {
+                last = g;
+            }
+            let ctx = context(last, &mut prepared, replication);
             let shown = show(g, &ctx, &mut cols);
             let query: Vec<String> = g
                 .front
@@ -1052,6 +1062,22 @@ mod tests {
         assert_eq!(o.rules[3], Count { applied: 1, differed: 1 });
         let c = a.replace("\"key1\"", "\"longer key\"");
         assert_eq!(run(&a, &c).diffs.len(), 1);
+    }
+
+    #[test]
+    fn a_group_with_no_statements_has_the_rules_of_the_last_statements() {
+        // The order of Prisma: the client sends Bind before it reads the answer to the Sync of Parse.
+        let trace = |version: &str| {
+            format!(
+                "1 F Parse \"s1\" \"SELECT version()\" []\n1 F Describe S \"s1\"\n1 F Sync\n1 B ParseComplete\n1 B ParameterDescription []\n1 B RowDescription [(\"version\" 0 0 25 -1 -1 0)]\n1 F Bind \"\" \"s1\" [] [] [1]\n1 F Execute \"\" 0\n1 F Sync\n1 B ReadyForQuery I\n1 B BindComplete\n1 B DataRow [\"PostgreSQL {version}, 64-bit\"]\n1 B CommandComplete \"SELECT 1\"\n1 B ReadyForQuery I"
+            )
+        };
+        let o = run(
+            &trace("19beta4 on x86_64-pc-linux-gnu, compiled by gcc"),
+            &trace("19.0 (rupg 0.3.2) on x86_64-unknown-linux-gnu, compiled by rustc"),
+        );
+        assert!(o.diffs.is_empty(), "{:?}", o.diffs);
+        assert_eq!(o.items[9], Count { applied: 1, differed: 1 });
     }
 
     #[test]
