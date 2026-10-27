@@ -29,6 +29,8 @@ pub(crate) struct Record {
     pub(crate) unstable: Vec<String>,
     /// The tests that fail.
     pub(crate) fail: Vec<String>,
+    /// The statement count of the regression suite: equal and total.
+    pub(crate) statements: Option<Number>,
     pub(crate) checked: Option<Checked>,
     /// The peak memory and the CPU time of the server, for a run with `--cgroup`.
     pub(crate) resources: Option<Resources>,
@@ -87,6 +89,12 @@ impl Record {
             }),
             _ => None,
         };
+        let statements = match (t.get("statements_equal"), t.get("statements")) {
+            (Some(Value::Int(equal)), Some(Value::Int(total))) => {
+                Some((*equal as usize, *total as usize))
+            }
+            _ => None,
+        };
         let checked = t.contains_key("messages").then(|| {
             let total = |k: &str| t.get(k).and_then(Value::as_int).unwrap_or(0) as usize;
             let cases = t
@@ -121,6 +129,7 @@ impl Record {
             passed: int(&t, "passed")? as usize,
             unstable: names("unstable"),
             fail: names("fail"),
+            statements,
             checked,
             resources,
         })
@@ -308,7 +317,12 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
             "dump" => put(1, "pg_dump round trip".into(), "checks", r, tests, count),
             "gate" => put(1, "gate G1".into(), "clients", r, tests, count),
             "connect" => put(0, "connect with SCRAM over TLS".into(), "clients", r, tests, count),
-            "regress" => put(2, "regression tests".into(), "tests", r, tests, count),
+            "regress" => {
+                put(2, "regression tests".into(), "tests", r, tests, count);
+                if r.statements.is_some() {
+                    put(2, "regression statements".into(), "statements", r, r.statements, 0);
+                }
+            }
             "types" => put(2, "type input and output cases".into(), "cases", r, tests, count),
             "isolation" => put(3, "isolation specs".into(), "specs", r, tests, count),
             "parameters" => put(3, "parameter cases".into(), "cases", r, tests, count),
@@ -320,6 +334,10 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
                 }
             }
         }
+    }
+    // The statement count shows progress inside a test that fails. It is never used for a gate (spec/05 section 5.8), so the ratchet does not check it.
+    if let Some(row) = rows.get_mut(&(2, "regression statements".into())) {
+        row.count = None;
     }
     // A tool row copies the numbers of its driver. It has no count of its own, so the ratchet checks the driver only.
     for (tool, driver) in DRIVER_TRACES {
@@ -454,7 +472,7 @@ pub(crate) fn markdown(
 ) -> String {
     let mut m = format!("# rupg-compat report {date}\n\n");
     m.push_str(&format!(
-        "This report reads {} result files in `{}`. Each number is the count that is equal to the oracle, of the count that the oracle gives. The server column is the server under test, and the oracle column is the oracle against itself. The unstable cases of the oracle are not counted (spec/21 section 21.1). The ratchet checks the count of the oracle less the differences, with each unstable case as no difference, so that a run with more unstable cases does not fail it. A relation that was unstable in the run of the server under test shows as unstable, and the ratchet does not check its rows in that run.\n\n",
+        "This report reads {} result files in `{}`. Each number is the count that is equal to the oracle, of the count that the oracle gives. The server column is the server under test, and the oracle column is the oracle against itself. The unstable cases of the oracle are not counted (spec/21 section 21.1). The regression statements row is the statement count of spec/05 section 5.8: the statements whose output is equal to the output of the oracle. It shows progress inside a test that fails, and the ratchet does not check it. The ratchet checks the count of the oracle less the differences, with each unstable case as no difference, so that a run with more unstable cases does not fail it. A relation that was unstable in the run of the server under test shows as unstable, and the ratchet does not check its rows in that run.\n\n",
         records.len(),
         work.join("results").display()
     ));
@@ -667,6 +685,23 @@ mod tests {
     }
 
     #[test]
+    fn the_statement_count_has_a_row_that_the_ratchet_does_not_check() {
+        let text = "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 2\npassed = 1\npass = [\"int4\"]\nfail = [\"join\"]\nunstable = []\nstatements = 40\nstatements_equal = 31\n";
+        let server = Record::parse(text).unwrap();
+        assert_eq!(server.statements, Some((31, 40)));
+        let oracle = Record { side: "oracle".into(), statements: Some((40, 40)), ..server.clone() };
+        let rows = rows(&[oracle, server], 19);
+        let row = rows.iter().find(|r| r.key == "regression statements").unwrap();
+        assert_eq!(
+            (row.level, row.server, row.oracle, row.count),
+            (2, Some((31, 40)), Some((40, 40)), None)
+        );
+        let check =
+            check(&Ratchet::new(), &rows.into_iter().map(|r| (19, r)).collect::<Vec<_>>(), &[19]);
+        assert!(check.above.iter().all(|(_, key, _, _)| key != "19 regression statements"));
+    }
+
+    #[test]
     fn the_report_has_resources_and_failing_items() {
         let mut server = Record::parse(
             "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 3\npassed = 1\npass = [\"int4\"]\nfail = [\"join\", \"rules\"]\nunstable = []\npeak_memory = 1048576\ncpu_usec = 500000\npeak_reset = false\n",
@@ -703,6 +738,7 @@ mod tests {
             tests: vec![("pg_class".into(), true), ("pg_am\"x".into(), false)],
             unstable: vec!["pg_locks".into()],
             seconds: 7,
+            statements: None,
             checked: Some(Checked {
                 items: std::array::from_fn(|i| Count { applied: i, differed: 0 }),
                 rules: [Count { applied: 2, differed: 1 }; 5],
@@ -815,6 +851,7 @@ mod tests {
         assert_eq!(find("regression tests").server, Some((200, 239)));
         assert_eq!(find("regression tests").oracle, Some((239, 239)));
         assert_eq!(find("regression tests").count, Some(200));
+        assert!(got.iter().all(|r| r.key != "regression statements"));
         assert_eq!(find("rows of pg_class").server, Some((2, 3)));
         assert_eq!(find("rows of pg_class").count, Some(2));
         assert!(find("rows of pg_locks").unstable);
