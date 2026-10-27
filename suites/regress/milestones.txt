@@ -66,6 +66,7 @@ copydml: M3, passes at the start of M3
 copyencoding: M3
 insert: M3, passes at the start of M3
 insert_conflict: M7, PL/pgSQL, triggers, index types other than B-tree and isolation levels
+create_function_c: M3
 create_misc: M3
 create_operator: M3, passes at the start of M3
 create_procedure: M3
