@@ -29,8 +29,10 @@ cgroup() {
 
 # incg CGROUP CMD...: runs CMD as the current user in CGROUP.
 incg() {
+    cg=$1
+    shift
     sudo sh -c 'cg=$1 user=$2; shift 2; echo $$ > "$cg/cgroup.procs" && exec runuser -u "$user" -- "$@"' \
-        sh "$1" "$(id -un)" env PATH="$PATH" HOME="$HOME" RUPG_COMPAT_WORK="$work" "$@"
+        sh "$cg" "$(id -un)" env PATH="$PATH" HOME="$HOME" RUPG_COMPAT_WORK="$work" "$@"
 }
 
 stop_rupg() {
