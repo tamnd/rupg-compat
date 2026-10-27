@@ -1,5 +1,6 @@
 #!/bin/sh
 # The trace scenario for psqlODBC. `rupg-compat record psqlodbc` runs this script through the proxy.
+# With the argument connect, it runs the connect program in place of the scenario, and `rupg-compat connect` runs it.
 # It builds the pinned psqlODBC with the libpq of the oracle build and the unixODBC driver manager, from their source archives under the work directory, and checks their SHA-256. psqlODBC has no source archive for Linux, so the build makes its configure script from the tag with autoconf, automake and libtool. The scenario is a C program that runs the 10 steps of the driver scenario through the driver manager.
 set -eu
 dir=$(cd "$(dirname "$0")" && pwd)
@@ -38,6 +39,7 @@ if [ ! -f "$driver" ]; then
     (cd "$out/unixODBC-$unixodbc" && ./configure -q --prefix="$out/odbc" --disable-gui --disable-readline && make -s && make -s install) >> "$out/build.log" 2>&1
     (cd "$out/psqlodbc-REL-$(echo "$version" | tr . _)" && autoreconf -fi && ./configure -q --prefix="$out/odbc" --with-unixodbc="$out/odbc/bin/odbc_config" LDFLAGS="-Wl,-rpath,$("$bin/pg_config" --libdir)" && make -s && make -s install) >> "$out/build.log" 2>&1
 fi
-cc -std=c11 -Wall -Wextra -Werror -O2 -I"$out/odbc/include" -o "$out/scenario" "$dir/scenario.c" -L"$out/odbc/lib" -Wl,-rpath,"$out/odbc/lib" -lodbc
+program="${1:-scenario}"
+cc -std=c11 -Wall -Wextra -Werror -O2 -I"$out/odbc/include" -o "$out/$program" "$dir/$program.c" -L"$out/odbc/lib" -Wl,-rpath,"$out/odbc/lib" -lodbc
 # The driver manager reads its settings from the work directory and finds the driver by its path.
-ODBCSYSINI="$out" ODBCINI="$out/odbc.ini" "$out/scenario" "$driver"
+ODBCSYSINI="$out" ODBCINI="$out/odbc.ini" "$out/$program" "$driver"

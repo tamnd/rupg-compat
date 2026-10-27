@@ -3,6 +3,12 @@
 // The connection does not use the pool, so Close ends the session with Terminate.
 using Npgsql;
 
+if (args is ["connect"])
+{
+    Connect.Run();
+    return;
+}
+
 static string Env(string name) => Environment.GetEnvironmentVariable(name) ?? throw new InvalidOperationException(name);
 
 var cs = new NpgsqlConnectionStringBuilder
