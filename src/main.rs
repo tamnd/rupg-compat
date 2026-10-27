@@ -53,6 +53,8 @@ commands:
   oracle start | stop       start or stop the oracle (--all for the six)
   oracle status             print the pin, the port and version() of each built oracle
   oracle env                print the libpq environment of the oracle
+  oracle conf DIR           write the configuration files of the oracle to DIR for the server under test, with
+                            the port of --port N (default 5432), as in rupg serve -D DIR
   proxy --out FILE          record every connection to the oracle until stopped (--listen ADDR)
   record <name> [-- CMD]    run CMD, or clients/<name>/run.sh, through the proxy and write a trace
                             (default: corpus/traces/<name>.trace, --out FILE)
@@ -168,7 +170,8 @@ fn run(args: &Args) -> Result<ExitCode, String> {
 }
 
 fn oracle_command(args: &Args, pins: &Pins) -> Result<(), String> {
-    args.only(2, &["compat-version", "version", "all", "jobs", "force"])?;
+    let words = if args.word(1) == Some("conf") { 3 } else { 2 };
+    args.only(words, &["compat-version", "version", "all", "jobs", "force", "port"])?;
     let work = args.work_dir();
     // Spec/21 section 21.3.4 writes `oracle build --version V`, and every command takes `--compat-version V`. Both work here.
     let version = match args.number("version")? {
@@ -221,9 +224,15 @@ fn oracle_command(args: &Args, pins: &Pins) -> Result<(), String> {
                 out!("export {k}={v}");
             }
         }
+        Some("conf") => {
+            let dir = args.word(2).ok_or("usage: rupg-compat oracle conf DIR [--port N]")?;
+            let port = args.number("port")?.unwrap_or(5432);
+            oracles[0].write_conf(Path::new(dir), port)?;
+            out!("oracle {}: configuration for port {port} in {dir}", oracles[0].pin.major);
+        }
         _ => {
             return Err(format!(
-                "usage: rupg-compat oracle <build | start | stop | status | env>\n{USAGE}"
+                "usage: rupg-compat oracle <build | start | stop | status | env | conf>\n{USAGE}"
             ));
         }
     }

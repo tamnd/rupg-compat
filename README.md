@@ -43,6 +43,8 @@ A level is at 100 percent when every item of its denominator gives the same resu
 
 Every oracle runs with the same fixed configuration: `initdb --no-locale` with `UTF8`, `TimeZone` UTC, `DateStyle` `ISO, MDY`, `lc_messages` C, SCRAM passwords, and TLS with a fixed test certificate. A second nightly set runs with an ICU locale and a time zone that is not UTC. The 19 pin moves on a branch and lands on one day, with every count taken again.
 
+The server under test runs with the same configuration files as the oracle. `rupg-compat oracle conf DIR --port N` copies `postgresql.conf`, the host rules, the certificate and its key from the data directory of the oracle to DIR, and changes only the port. Then `rupg serve -D DIR` reads them. Without these files, `pg_settings`, `pg_file_settings`, `pg_hba_file_rules`, `ssl` and `max_prepared_transactions` give other values than the oracle, and the cause is the setup and not the server.
+
 ## The suites
 
 | Suite | Size at the pin | Level | First milestone |
