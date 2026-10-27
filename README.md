@@ -136,7 +136,7 @@ oracle/            build scripts for the six oracles
 src/               the runner, the proxy, the comparison, the generator
 clients/<name>/    run.sh, the gate and connect programs, oracle-fail.txt, expected-fail.txt
 suites/pipeline/   oracle-fail.txt, expected-fail.txt for libpq_pipeline
-suites/regress/    excluded.txt, the tests that leave the counts of the regression suite
+suites/regress/    excluded.txt, the tests that leave the counts of the regression suite, and milestones.txt, the milestone of each other test
 corpus/            traces, the differential corpus, reduced cases
 shim/<N>/          divergences.toml, and the reference output of the oracle of N in reference/
 jepsen/            the Jepsen and Elle workloads

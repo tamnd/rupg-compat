@@ -33,6 +33,8 @@ pub(crate) struct Record {
     pub(crate) excluded: Vec<(String, String)>,
     /// The statement count of the regression suite: equal and total.
     pub(crate) statements: Option<Number>,
+    /// The tests of the M3 list that pass, and the tests of the M3 list.
+    pub(crate) m3: Option<Number>,
     pub(crate) checked: Option<Checked>,
     /// The peak memory and the CPU time of the server, for a run with `--cgroup`.
     pub(crate) resources: Option<Resources>,
@@ -97,6 +99,12 @@ impl Record {
             }
             _ => None,
         };
+        let m3 = match (t.get("m3_passed"), t.get("m3_tests")) {
+            (Some(Value::Int(passed)), Some(Value::Int(total))) => {
+                Some((*passed as usize, *total as usize))
+            }
+            _ => None,
+        };
         let checked = t.contains_key("messages").then(|| {
             let total = |k: &str| t.get(k).and_then(Value::as_int).unwrap_or(0) as usize;
             let cases = t
@@ -141,6 +149,7 @@ impl Record {
                 })
                 .unwrap_or_default(),
             statements,
+            m3,
             checked,
             resources,
         })
@@ -330,6 +339,9 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
             "connect" => put(0, "connect with SCRAM over TLS".into(), "clients", r, tests, count),
             "regress" => {
                 put(2, "regression tests".into(), "tests", r, tests, count);
+                if let Some(n) = r.m3 {
+                    put(2, "regression tests of the M3 list".into(), "tests", r, r.m3, n.0);
+                }
                 if r.statements.is_some() {
                     put(2, "regression statements".into(), "statements", r, r.statements, 0);
                 }
@@ -483,7 +495,7 @@ pub(crate) fn markdown(
 ) -> String {
     let mut m = format!("# rupg-compat report {date}\n\n");
     m.push_str(&format!(
-        "This report reads {} result files in `{}`. Each number is the count that is equal to the oracle, of the count that the oracle gives. The server column is the server under test, and the oracle column is the oracle against itself. The unstable cases of the oracle are not counted (spec/21 section 21.1). The regression statements row is the statement count of spec/05 section 5.8: the statements whose output is equal to the output of the oracle. It shows progress inside a test that fails, and the ratchet does not check it. The ratchet checks the count of the oracle less the differences, with each unstable case as no difference, so that a run with more unstable cases does not fail it. A relation that was unstable in the run of the server under test shows as unstable, and the ratchet does not check its rows in that run.\n\n",
+        "This report reads {} result files in `{}`. Each number is the count that is equal to the oracle, of the count that the oracle gives. The server column is the server under test, and the oracle column is the oracle against itself. The unstable cases of the oracle are not counted (spec/21 section 21.1). The row of the M3 list counts the regression tests that spec/05 section 5.13 gives to M3, from `suites/regress/milestones.txt`. The regression statements row is the statement count of spec/05 section 5.8: the statements whose output is equal to the output of the oracle. It shows progress inside a test that fails, and the ratchet does not check it. The ratchet checks the count of the oracle less the differences, with each unstable case as no difference, so that a run with more unstable cases does not fail it. A relation that was unstable in the run of the server under test shows as unstable, and the ratchet does not check its rows in that run.\n\n",
         records.len(),
         work.join("results").display()
     ));
@@ -723,9 +735,10 @@ mod tests {
 
     #[test]
     fn the_statement_count_has_a_row_that_the_ratchet_does_not_check() {
-        let text = "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 2\npassed = 1\npass = [\"int4\"]\nfail = [\"join\"]\nunstable = []\nstatements = 40\nstatements_equal = 31\n";
+        let text = "suite = \"regress\"\nversion = 19\ncommit = \"c\"\nserver = \"s\"\nside = \"server\"\nstarted = \"t\"\nseconds = 1\ntotal = 2\npassed = 1\npass = [\"int4\"]\nfail = [\"join\"]\nunstable = []\nstatements = 40\nstatements_equal = 31\nm3_tests = 2\nm3_passed = 1\n";
         let server = Record::parse(text).unwrap();
         assert_eq!(server.statements, Some((31, 40)));
+        assert_eq!(server.m3, Some((1, 2)));
         let oracle = Record { side: "oracle".into(), statements: Some((40, 40)), ..server.clone() };
         let rows = rows(&[oracle, server], 19);
         let row = rows.iter().find(|r| r.key == "regression statements").unwrap();
@@ -733,6 +746,8 @@ mod tests {
             (row.level, row.server, row.oracle, row.count),
             (2, Some((31, 40)), Some((40, 40)), None)
         );
+        let row = rows.iter().find(|r| r.key == "regression tests of the M3 list").unwrap();
+        assert_eq!((row.level, row.server, row.count), (2, Some((1, 2)), Some(1)));
         let check =
             check(&Ratchet::new(), &rows.into_iter().map(|r| (19, r)).collect::<Vec<_>>(), &[19]);
         assert!(check.above.iter().all(|(_, key, _, _)| key != "19 regression statements"));
@@ -789,6 +804,7 @@ mod tests {
             excluded: Vec::new(),
             seconds: 7,
             statements: None,
+            m3: None,
             checked: Some(Checked {
                 items: std::array::from_fn(|i| Count { applied: i, differed: 0 }),
                 rules: [Count { applied: 2, differed: 1 }; 5],

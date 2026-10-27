@@ -539,6 +539,7 @@ fn replay_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             excluded: Vec::new(),
             seconds: clock.elapsed().as_secs(),
             statements: None,
+            m3: None,
             checked: Some(suites::Checked::new(&o, Vec::new())),
         };
         let path = suites::result_file(&work, pg.pin.major, &run.suite, server.side());

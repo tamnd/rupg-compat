@@ -141,6 +141,8 @@ pub(crate) struct Run {
     pub(crate) seconds: u64,
     /// The statement count of the regression suite: the statements whose output is equal to the output of the oracle, and the statements of the oracle (spec/05 section 5.8).
     pub(crate) statements: Option<(usize, usize)>,
+    /// The tests of the M3 list that pass, and the tests of the M3 list (spec/05 section 5.13).
+    pub(crate) m3: Option<(usize, usize)>,
     /// The counts of the comparison, for the runs that use `compare`.
     pub(crate) checked: Option<Checked>,
 }
@@ -177,6 +179,10 @@ impl Run {
             .statements
             .map(|(equal, total)| format!("statements = {total}\nstatements_equal = {equal}\n"))
             .unwrap_or_default()
+            + &self
+                .m3
+                .map(|(passed, total)| format!("m3_tests = {total}\nm3_passed = {passed}\n"))
+                .unwrap_or_default()
             + &self.checked.as_ref().map(Checked::to_toml).unwrap_or_default()
             + &self.excluded_toml()
     }
@@ -330,6 +336,7 @@ fn run_suite(
     let checked = import::verify(&o.src(), &import::corpus_dir(corpus, o.pin.major), s.dir)?;
     out!("{} {}: {checked} files equal to the manifest of the pin", s.name, o.pin.major);
     let excluded = fails::load_excluded(&Path::new("suites").join(s.name))?;
+    let milestones = fails::load_milestones(&Path::new("suites").join(s.name))?;
     let out = run_dir(work, o.pin.major, s.name, server);
     fresh_dir(&out)?;
     let cwd = o.src().join(s.dir);
@@ -364,16 +371,33 @@ fn run_suite(
         }
     }
     scheduled.retain(|t| !excluded.iter().any(|(e, _)| e == t));
+    // Each test that counts has a milestone, so that the M3 list stays fixed (spec/05 section 5.13).
+    if !milestones.is_empty() {
+        let file = format!("suites/{}/milestones.txt", s.name);
+        if let Some(t) = scheduled.iter().find(|t| !milestones.iter().any(|(m, _)| m == *t)) {
+            return Err(format!("{file}: give the milestone of {t}"));
+        }
+        if let Some((t, _)) = milestones.iter().find(|(m, _)| !scheduled.contains(m)) {
+            return Err(format!("{file}: {t} is not a test that counts"));
+        }
+    }
     // The statement count compares the output of each statement with the last run of the oracle in the work directory. The run of the oracle compares with itself.
     let oracle_out = run_dir(work, o.pin.major, s.name, &Server { oracle: true, ..server.clone() })
         .join("schedule");
     let statements = (s.name == REGRESS_SUITE.name && oracle_out.join("results").is_dir())
         .then(|| statements::suite_count(&cwd, &oracle_out, &out.join("schedule"), &scheduled));
+    let tests = pass_set(&scheduled, &results);
+    let m3 = (!milestones.is_empty()).then(|| {
+        let listed: Vec<&(String, bool)> =
+            tests.iter().filter(|(t, _)| milestones.contains(&(t.clone(), 3))).collect();
+        (listed.iter().filter(|(_, ok)| *ok).count(), listed.len())
+    });
     let run = Run {
         suite: s.name.into(),
-        tests: pass_set(&scheduled, &results),
+        tests,
         seconds: started.elapsed().as_secs(),
         statements,
+        m3,
         excluded,
         ..Run::default()
     };
@@ -603,6 +627,7 @@ mod tests {
             excluded: vec![("explain".into(), "the plan".into())],
             seconds: 3,
             statements: Some((31, 40)),
+            m3: Some((1, 2)),
             checked: None,
         };
         let pins = crate::pins::Pins::builtin();
@@ -618,6 +643,7 @@ mod tests {
             (t["statements"].as_int(), t["statements_equal"].as_int()),
             (Some(40), Some(31))
         );
+        assert_eq!((t["m3_tests"].as_int(), t["m3_passed"].as_int()), (Some(2), Some(1)));
         let excluded = t["excluded"].as_table().unwrap();
         assert_eq!(excluded["explain"].as_str(), Some("the plan"));
     }

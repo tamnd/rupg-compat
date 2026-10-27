@@ -95,6 +95,36 @@ pub(crate) fn load_excluded(dir: &Path) -> Result<Vec<(String, String)>, String>
     }
 }
 
+/// Reads the milestone of each test of a suite from its text: one test on each line as `<test>: M<n>` or `<test>: M<n>, <reason>`.
+pub(crate) fn parse_milestones(text: &str) -> Result<Vec<(String, u32)>, String> {
+    let mut out: Vec<(String, u32)> = Vec::new();
+    for (n, line) in tests(text) {
+        let bad = || format!("milestones.txt line {n}: give the test as `<test>: M<n>, <reason>`");
+        let (test, rest) = line.split_once(':').ok_or_else(bad)?;
+        let test = test.trim();
+        let milestone = rest.split(',').next().unwrap_or_default().trim();
+        let number = milestone.strip_prefix('M').and_then(|m| m.parse().ok()).ok_or_else(bad)?;
+        if test.is_empty() {
+            return Err(bad());
+        }
+        if out.iter().any(|(t, _)| t == test) {
+            return Err(format!("milestones.txt line {n}: {test} is in the list two times"));
+        }
+        out.push((test.to_string(), number));
+    }
+    Ok(out)
+}
+
+/// Reads `milestones.txt` in a directory. A directory with no such file gives no milestone.
+pub(crate) fn load_milestones(dir: &Path) -> Result<Vec<(String, u32)>, String> {
+    let path = dir.join("milestones.txt");
+    match fs::read_to_string(&path) {
+        Ok(text) => parse_milestones(&text).map_err(|e| format!("{}/{e}", dir.display())),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Vec::new()),
+        Err(e) => Err(format!("{}: {e}", path.display())),
+    }
+}
+
 /// True when the results of a run agree with the lists: each test that fails is in `oracle-fail.txt` or in `expected-fail.txt`, and no test in `expected-fail.txt` passes. A line goes to the output for each test in `expected-fail.txt`, and the list in `dir` is named for a test to remove.
 pub(crate) fn agree(tests: &[(String, bool)], fails: &Fails, dir: &str) -> bool {
     let mut good = true;
@@ -162,5 +192,18 @@ mod tests {
         let regress = load_excluded(Path::new("suites/regress")).unwrap();
         assert!(regress.iter().any(|(t, _)| t == "explain"));
         assert_eq!(load_excluded(Path::new("suites/types")).unwrap(), []);
+    }
+
+    #[test]
+    fn each_test_has_a_milestone() {
+        let list = parse_milestones("# a comment\nint4: M3\nplpgsql: M7, PL/pgSQL\n").unwrap();
+        assert_eq!(list, [("int4".to_string(), 3), ("plpgsql".to_string(), 7)]);
+        assert!(parse_milestones("int4\n").is_err());
+        assert!(parse_milestones("int4: 3\n").is_err());
+        assert!(parse_milestones("int4: M3\nint4: M5\n").is_err());
+        let regress = load_milestones(Path::new("suites/regress")).unwrap();
+        let excluded = load_excluded(Path::new("suites/regress")).unwrap();
+        assert!(regress.iter().any(|(t, m)| t == "boolean" && *m == 3));
+        assert!(regress.iter().all(|(t, _)| !excluded.iter().any(|(e, _)| e == t)));
     }
 }
