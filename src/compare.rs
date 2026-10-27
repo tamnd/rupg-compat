@@ -20,7 +20,7 @@ pub(crate) const ITEMS: [&str; 16] = [
     "physical streaming replication",
     "data directory files and WAL positions",
     "time",
-    "platform text of version() and pg_config, and the F, L, R error fields",
+    "platform text of version() and pg_config, the F, L, R error fields and the clock source of timing_clock_source",
     "pg_node_tree and TOAST relations",
     "suffix of server_version",
     "process ID",
@@ -612,6 +612,16 @@ fn port_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
     row_name == Some(b"port") && ["setting", "reset_val"].contains(&name)
 }
 
+/// True when column `c` of a row is the value of `timing_clock_source`: the column of `SHOW timing_clock_source`, or the `setting` column of its row of `SHOW ALL` and `pg_settings`. For `auto`, PostgreSQL 19 shows the clock source that it chose in parentheses, `tsc` or `system`. The choice depends on the CPU and the kernel of the host, so a trace that one host records can have another value on the host that replays it.
+fn clock_source_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
+    let name = cols.names.get(c).map(String::as_str).unwrap_or("");
+    if name == "timing_clock_source" {
+        return true;
+    }
+    let row_name = cols.names.iter().position(|n| n == "name").and_then(|i| row.get(i)?.bytes());
+    row_name == Some(b"timing_clock_source") && name == "setting"
+}
+
 /// True when column `c` of a row is the value of `server_version`: the column of `SHOW server_version`, or a value column of the `server_version` row of `SHOW ALL` or `pg_settings`.
 fn server_version_value(cols: &Columns, c: usize, row: &[Val]) -> bool {
     let name = cols.names.get(c).map(String::as_str).unwrap_or("");
@@ -723,6 +733,15 @@ fn show(group: &Group<'_>, ctx: &Context, cols: &mut Columns) -> Vec<Shown> {
                                     None => mask_server_version(&mut s, c, text),
                                 }
                             }
+                            continue;
+                        }
+                        if clock_source_value(cols, c, &row)
+                            && let Val::Str(text) = v
+                            && let Some(at) = text.windows(2).position(|w| w == b" (")
+                        {
+                            // Item 10: the text in parentheses after `auto` is the clock source that the host gives.
+                            let mut tail = Val::Str(text.split_off(at));
+                            s.mask(c, Rule::Item(10), &mut tail);
                             continue;
                         }
                         if port_value(cols, c, &row) {
@@ -1490,6 +1509,30 @@ mod tests {
         let o = run(&q("\"work_mem\" \"1\" \"t\""), &q("\"work_mem\" \"2\" \"t\""));
         assert_eq!(o.diffs.len(), 1);
         let o = run(&q("\"port\" \"54319\" \"t\""), &q("\"port\" \"55442\" \"f\""));
+        assert_eq!(o.diffs.len(), 1);
+    }
+
+    #[test]
+    fn the_clock_source_of_the_host_is_out() {
+        let q = |row: &str| {
+            format!(
+                "1 F Query \"SELECT name, setting FROM pg_catalog.pg_settings\"\n\
+                 1 B RowDescription [(\"name\" 0 0 25 -1 -1 0) (\"setting\" 0 0 25 -1 -1 0)]\n\
+                 1 B DataRow [{row}]\n1 B ReadyForQuery I"
+            )
+        };
+        let o = run(
+            &q("\"timing_clock_source\" \"auto (system)\""),
+            &q("\"timing_clock_source\" \"auto (tsc)\""),
+        );
+        assert!(o.diffs.is_empty());
+        assert_eq!(o.items[9], Count { applied: 1, differed: 1 });
+        let o = run(
+            &q("\"timing_clock_source\" \"auto (tsc)\""),
+            &q("\"timing_clock_source\" \"system\""),
+        );
+        assert_eq!(o.diffs.len(), 1);
+        let o = run(&q("\"work_mem\" \"auto (tsc)\""), &q("\"work_mem\" \"auto (system)\""));
         assert_eq!(o.diffs.len(), 1);
     }
 
