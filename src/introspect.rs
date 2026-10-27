@@ -3,6 +3,7 @@
 //! Each suite is a list of cases. Most cases are simple queries, and a case of the types suite can use the extended query protocol. The runner sends the list to the oracle two times and to the server under test one time, and keeps each answer as trace lines. Then it compares the answers with the rules of `compare`, as replay does: the groups that differ between the two oracle runs leave the comparison, and the excluded items and the rules of spec/05 section 5.2 apply.
 //!
 //! - The catalog suite runs `SELECT *` on each catalog, each system view and each `information_schema` view of the import, in a new database. With `--schema gate`, the new database first gets the gate schema of `clients/gate.sql`, and the suite is `catalog-gate`.
+//! - The catalog corpus suite runs the catalog queries of the client traces in `corpus/traces` (spec/05 section 5.6.5), in a new database with the gate schema. A query is in the corpus when it starts with `SELECT` or `WITH`, reads the catalog and has no parameters.
 //! - The parameter suite runs `SHOW ALL`, `SELECT * FROM pg_settings` and, for each parameter, `SET p TO DEFAULT`, `set_config` with the value of the oracle, and `SHOW p`.
 //! - The types suite runs three cases for each value of `suites/types/values.txt` (spec/07 section 7.9): the text output of the value, its binary output from the send function, and the text output of the binary value of the oracle after the receive function of the server.
 
@@ -55,6 +56,91 @@ pub(crate) fn catalog_cases(dir: &Path) -> Result<Vec<Case>, String> {
                     format!("{schema}.{name}"),
                     format!("SELECT * FROM {schema}.{name}"),
                 ));
+            }
+        }
+    }
+    Ok(cases)
+}
+
+/// The words of a query of the catalog corpus that read the catalog, apart from the words that start with `pg_`.
+const CATALOG_WORDS: [&str; 14] = [
+    "information_schema",
+    "regclass",
+    "regtype",
+    "regproc",
+    "regprocedure",
+    "regnamespace",
+    "regrole",
+    "regoper",
+    "format_type",
+    "version",
+    "current_schema",
+    "current_schemas",
+    "obj_description",
+    "col_description",
+];
+
+/// The words that make a query of a trace leave the catalog corpus: the words that change data, and the starts of the names of functions that change a state or take a lock.
+const WRITE_WORDS: [&str; 5] = ["into", "insert", "update", "delete", "merge"];
+const WRITE_FUNCTIONS: [&str; 13] = [
+    "pg_sleep",
+    "pg_advisory",
+    "pg_try_advisory",
+    "pg_cancel_backend",
+    "pg_terminate_backend",
+    "pg_notify",
+    "pg_reload_conf",
+    "pg_stat_reset",
+    "pg_current_xact_id",
+    "txid_current",
+    "set_config",
+    "nextval",
+    "setval",
+];
+
+/// Whether `sql` goes in the catalog corpus: it starts with `SELECT` or `WITH`, it reads the catalog, it changes nothing, and it has no parameters. A word in a string or a comment counts too.
+fn corpus_query(sql: &str) -> bool {
+    let lower = sql.to_ascii_lowercase();
+    let words: Vec<&str> = lower
+        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_' || c == '$'))
+        .filter(|w| !w.is_empty())
+        .collect();
+    let parameter =
+        |w: &&str| w.split('$').skip(1).any(|n| n.starts_with(|c: char| c.is_ascii_digit()));
+    matches!(words.first(), Some(&("select" | "with")))
+        && words.iter().any(|w| w.starts_with("pg_") || CATALOG_WORDS.contains(w))
+        && !words.iter().any(|w| WRITE_WORDS.contains(w))
+        && !words.iter().any(|w| WRITE_FUNCTIONS.iter().any(|f| w.starts_with(f)))
+        && !words.iter().any(parameter)
+        && !lower.contains("lo_")
+}
+
+/// The catalog corpus suite: each query of the traces in `dir` that [`corpus_query`] accepts, one time. The name of a case is the name of the first trace that sends the query and the number of the query in that trace.
+pub(crate) fn corpus_cases(dir: &Path) -> Result<Vec<Case>, String> {
+    let mut files: Vec<_> = fs::read_dir(dir)
+        .map_err(|e| format!("{}: {e}", dir.display()))?
+        .filter_map(Result::ok)
+        .map(|e| e.path())
+        .filter(|p| p.extension().is_some_and(|x| x == "trace"))
+        .collect();
+    files.sort();
+    let mut seen = BTreeSet::new();
+    let mut cases = Vec::new();
+    for path in files {
+        let trace = Trace::read(&path)?;
+        let client = path.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
+        let mut n = 0;
+        for msg in trace.lines.iter().filter(|l| l.dir == Dir::F).filter_map(Line::msg) {
+            let sql = match msg.name() {
+                "Query" => msg.vals.first(),
+                "Parse" => msg.vals.get(1),
+                _ => None,
+            };
+            let Some(sql) = sql.and_then(Val::bytes) else { continue };
+            let sql = String::from_utf8_lossy(sql).trim().trim_end_matches(';').to_string();
+            if corpus_query(&sql) && seen.insert(sql.clone()) {
+                n += 1;
+                cases.push(Case::query(format!("{client} {n}"), sql));
             }
         }
     }
@@ -373,6 +459,21 @@ pub(crate) fn run_suite(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_catalog_corpus_takes_the_catalog_queries_without_parameters() {
+        assert!(corpus_query("SELECT oid, typname FROM pg_catalog.pg_type"));
+        assert!(corpus_query("with t as (select 1) select * from information_schema.tables, t"));
+        assert!(corpus_query("SELECT 'x'::regclass"));
+        assert!(!corpus_query("SELECT * FROM pg_type WHERE oid = $1"));
+        assert!(!corpus_query("SELECT * FROM compat_items"));
+        assert!(!corpus_query("INSERT INTO t SELECT * FROM pg_class"));
+        assert!(!corpus_query("SELECT relname INTO t FROM pg_class"));
+        assert!(!corpus_query("SELECT pg_advisory_lock(1), pg_backend_pid()"));
+        assert!(!corpus_query("SELECT nextval('s'), version()"));
+        // A dollar quote is not a parameter.
+        assert!(corpus_query("SELECT $$a$$, pg_backend_pid()"));
+    }
 
     #[test]
     fn the_catalog_cases_come_from_the_lists() {
