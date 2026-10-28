@@ -360,6 +360,10 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
                 let equal = r.statements.map_or(0, |n| n.0);
                 put(2, "sqllogictest records".into(), "records", r, r.statements, equal);
             }
+            "generate" => {
+                let equal = r.statements.map_or(0, |n| n.0);
+                put(2, "generated statements".into(), "statements", r, r.statements, equal);
+            }
             "parameters" => put(3, "parameter cases".into(), "cases", r, tests, count),
             s => {
                 if let (Some(name), Some(c)) = (s.strip_prefix("replay-"), &r.checked) {

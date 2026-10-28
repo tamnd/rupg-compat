@@ -25,6 +25,7 @@ mod dump;
 mod fails;
 mod frame;
 mod gate;
+mod generate;
 mod import;
 mod introspect;
 mod levels;
@@ -80,6 +81,11 @@ commands:
                             under PATH (default: all) on the oracle and on the server under test, and compare the
                             answers of the two servers (--server ADDR, else the oracle in other databases;
                             --jobs N, --timeout S for one record on the server, default 30; --show N)
+  generate                  write statements from the grammar of the oracle (gram.y) with a seed, run each one on
+                            two databases of the oracle and on the server under test, and compare the answers
+                            (--seed N, default from the clock; --count N, default 1000; --server ADDR, else the
+                            oracle in another database; --timeout S, default 30; --show N); it writes the
+                            different statements to generate/<seed>.sql in the work directory
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
@@ -179,6 +185,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("connect") => return gate_command(args, &pins, &connect::SUITE, &connect::CLIENTS),
         Some("version") => return version_command(args, &pins),
         Some("sqllogictest") => return sqllogictest_command(args, &pins),
+        Some("generate") => return generate_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -752,6 +759,75 @@ fn sqllogictest_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
             out!("    server: {}", cut(got));
         }
     }
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the statements of the grammar of the oracle with a seed (spec/21 section 21.4.5). The seed is on the first line and on the last line of the output, so that a run can be done again.
+fn generate_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(1, &["compat-version", "server", "seed", "count", "timeout", "show"])?;
+    let seed = match args.get("seed") {
+        Some(s) => s.parse::<u64>().map_err(|e| format!("--seed {s}: {e}"))?,
+        None => std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs()),
+    };
+    out!("seed {seed}");
+    let work = args.work_dir();
+    let o = running_oracle(args, pins)?;
+    let target = server_target(args, &o)?;
+    let server = suites::Server { addr: target.addr, oracle: args.get("server").is_none() };
+    let grammar = generate::Grammar::load(&o.src())?;
+    let count = args.number("count")?.unwrap_or(1000);
+    out!(
+        "generate {}: {} rules and {} productions in gram.y, {count} statements",
+        o.pin.major,
+        grammar.rules.len(),
+        grammar.productions()
+    );
+    let sides = generate::Sides {
+        oracle: oracle_target(&o),
+        server: target,
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+    };
+    let started = suites::utc_now();
+    let clock = std::time::Instant::now();
+    let result = generate::run(&grammar, &sides, seed, count)?;
+    let stable = result.statements - result.unstable.len();
+    let run = suites::Run {
+        suite: "generate".into(),
+        tests: vec![(format!("seed {seed}"), result.diffs.is_empty())],
+        unstable: Vec::new(),
+        excluded: Vec::new(),
+        filtered: Vec::new(),
+        seconds: clock.elapsed().as_secs(),
+        statements: Some((result.equal, stable)),
+        m3: None,
+        checked: None,
+    };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    out!(
+        "{} of {stable} statements equal ({} of them errors), {} unstable; the statements used {} of the {} productions that the starts reach",
+        result.equal,
+        result.errors,
+        result.unstable.len(),
+        result.used,
+        result.reachable
+    );
+    if !result.diffs.is_empty() {
+        let dir = work.join("generate");
+        std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+        let path = dir.join(format!("{seed}.sql"));
+        std::fs::write(&path, generate::diff_file(seed, &result))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        out!("the different statements are in {}", path.display());
+    }
+    let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
+    for d in result.diffs.iter().take(args.number("show")?.unwrap_or(5)) {
+        out!("  statement {}: {}", d.number, cut(&d.sql));
+        out!("    oracle: {}", cut(&d.oracle));
+        out!("    server: {}", cut(&d.server));
+    }
+    out!("seed {seed}");
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
