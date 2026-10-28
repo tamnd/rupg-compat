@@ -120,6 +120,7 @@ suite regress regress
 suite sqllogictest sqllogictest select1.test select2.test select3.test select4.test select5.test evidence index/between
 # The seed is the date, so that a difference of the night can be found again.
 suite generate generate --seed "$(date -u +%Y%m%d)" --count 20000
+suite logic logic --seed "$(date -u +%Y%m%d)" --count 5000
 # On rupg, a spec that waits for a lock that rupg does not take would wait 180 s for each step.
 server_env=PG_TEST_TIMEOUT_DEFAULT=10 suite isolation isolation
 stop_rupg

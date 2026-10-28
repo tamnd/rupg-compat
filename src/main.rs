@@ -29,6 +29,7 @@ mod generate;
 mod import;
 mod introspect;
 mod levels;
+mod logic;
 mod message;
 mod oracle;
 mod pins;
@@ -86,6 +87,11 @@ commands:
                             (--seed N, default from the clock; --count N, default 1000; --server ADDR, else the
                             oracle in another database; --timeout S, default 30; --show N); it writes the
                             different statements to generate/<seed>.sql in the work directory
+  logic                     make predicates over the schema of a seed and check the TLP, NoREC and PQS relations
+                            on the server under test, and the answer of each query against the oracle
+                            (--seed N, --count N predicates, default 500; --server ADDR, else the oracle in
+                            another database; --timeout S, default 30; --show N); it writes the failed checks
+                            to logic/<seed>.sql in the work directory
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
@@ -186,6 +192,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("version") => return version_command(args, &pins),
         Some("sqllogictest") => return sqllogictest_command(args, &pins),
         Some("generate") => return generate_command(args, &pins),
+        Some("logic") => return logic_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -826,6 +833,64 @@ fn generate_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
         out!("  statement {}: {}", d.number, cut(&d.sql));
         out!("    oracle: {}", cut(&d.oracle));
         out!("    server: {}", cut(&d.server));
+    }
+    out!("seed {seed}");
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the logic oracles with a seed (spec/21 section 21.4.5). The seed is on the first line and on the last line of the output.
+fn logic_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(1, &["compat-version", "server", "seed", "count", "timeout", "show"])?;
+    let seed = match args.get("seed") {
+        Some(s) => s.parse::<u64>().map_err(|e| format!("--seed {s}: {e}"))?,
+        None => std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs()),
+    };
+    out!("seed {seed}");
+    let work = args.work_dir();
+    let o = running_oracle(args, pins)?;
+    let target = server_target(args, &o)?;
+    let server = suites::Server { addr: target.addr, oracle: args.get("server").is_none() };
+    let count = args.number("count")?.unwrap_or(500);
+    out!("logic {}: {count} predicates", o.pin.major);
+    let sides = generate::Sides {
+        oracle: oracle_target(&o),
+        server: target,
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+    };
+    let started = suites::utc_now();
+    let clock = std::time::Instant::now();
+    let result = logic::run(&sides, seed, count)?;
+    let passed: usize = result.tallies.iter().map(|t| t.passed).sum();
+    let checked: usize = result.tallies.iter().map(|t| t.checked).sum();
+    let run = suites::Run {
+        suite: "logic".into(),
+        tests: result.tallies.iter().map(|t| (t.kind.to_string(), t.passed == t.checked)).collect(),
+        unstable: Vec::new(),
+        excluded: Vec::new(),
+        filtered: Vec::new(),
+        seconds: clock.elapsed().as_secs(),
+        statements: Some((passed, checked)),
+        m3: None,
+        checked: None,
+    };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    for t in &result.tallies {
+        out!("  {}: {} of {} checks pass, {} skipped", t.kind, t.passed, t.checked, t.skipped);
+    }
+    if !result.fails.is_empty() {
+        let dir = work.join("logic");
+        std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+        let path = dir.join(format!("{seed}.sql"));
+        std::fs::write(&path, logic::fail_file(seed, &result))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        out!("the failed checks are in {}", path.display());
+    }
+    let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
+    for f in result.fails.iter().take(args.number("show")?.unwrap_or(5)) {
+        out!("  {} {}: {}", f.kind, f.number, cut(&f.first));
+        out!("    {}", cut(&f.why));
     }
     out!("seed {seed}");
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
