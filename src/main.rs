@@ -35,6 +35,7 @@ mod message;
 mod oracle;
 mod pins;
 mod proxy;
+mod reduce;
 mod reference;
 mod replay;
 mod report;
@@ -103,6 +104,11 @@ commands:
                             text output of the binary value of the oracle after the receive function
                             (all three: two runs on the oracle find the unstable cases, then --server ADDR, else
                             the first oracle run, is compared with the rules and the exclusions of spec/05)
+  reduce FILE               make a SQL file that fails on the server under test smaller: remove statements, then
+                            clauses, groups and tokens, then make literals smaller, and keep each step only if the
+                            first different statement has the same first different message type and SQLSTATE
+                            (--server ADDR; --out FILE, default FILE.reduced.sql; --max-runs N, default 3000;
+                            --timeout S, default 30)
   copy                      COPY TO and COPY FROM in the text, csv, binary and json formats, with their options and
                             errors and round trips of the output of the oracle, in a new database on the oracle and on
                             the server under test, compared message by message (--server ADDR, else the oracle in
@@ -199,6 +205,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("sqllogictest") => return sqllogictest_command(args, &pins),
         Some("generate") => return generate_command(args, &pins),
         Some("logic") => return logic_command(args, &pins),
+        Some("reduce") => return reduce_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -967,6 +974,48 @@ fn dump_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     let run = dump::round_trip(&o, &server, &work)?;
     suites::report_run(&run, &o, &server, &work, &started)?;
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Reduces a failing SQL file (spec/21 section 21.3.7).
+fn reduce_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(2, &["compat-version", "server", "out", "max-runs", "timeout"])?;
+    let Some(file) = args.words.get(1) else {
+        return Err("reduce: give the SQL file".into());
+    };
+    let text = std::fs::read_to_string(file).map_err(|e| format!("{file}: {e}"))?;
+    let o = running_oracle(args, pins)?;
+    let target = server_target(args, &o)?;
+    let mut tester = reduce::Tester {
+        oracle: oracle_target(&o),
+        server: target,
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+        runs: 0,
+        max_runs: args.number("max-runs")?.unwrap_or(3000),
+    };
+    let list = reduce::split(&text);
+    let size = |l: &[String]| l.iter().map(String::len).sum::<usize>();
+    let before = (list.len(), size(&list));
+    let clock = std::time::Instant::now();
+    let r = reduce::reduce(&mut tester, list)?;
+    let out = args.get("out").map_or_else(|| format!("{file}.reduced.sql"), str::to_string);
+    let mut body = format!("-- {}\n", r.signature);
+    for s in &r.statements {
+        body.push_str(s);
+        body.push_str(";\n");
+    }
+    std::fs::write(&out, &body).map_err(|e| format!("{out}: {e}"))?;
+    out!("{}", r.signature);
+    out!(
+        "{} statements and {} bytes to {} statements and {} bytes in {} runs and {} s, in {out}",
+        before.0,
+        before.1,
+        r.statements.len(),
+        size(&r.statements),
+        tester.runs,
+        clock.elapsed().as_secs()
+    );
+    out!("{}", body.trim_end());
+    Ok(ExitCode::SUCCESS)
 }
 
 /// Runs the `COPY` suite (spec/05 section 5.13) on the oracle and on the server under test, and compares the messages of each case.
