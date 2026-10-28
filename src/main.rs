@@ -20,6 +20,7 @@ mod args;
 mod client;
 mod compare;
 mod connect;
+mod copy;
 mod diff;
 mod dump;
 mod fails;
@@ -102,6 +103,10 @@ commands:
                             text output of the binary value of the oracle after the receive function
                             (all three: two runs on the oracle find the unstable cases, then --server ADDR, else
                             the first oracle run, is compared with the rules and the exclusions of spec/05)
+  copy                      COPY TO and COPY FROM in the text, csv, binary and json formats, with their options and
+                            errors and round trips of the output of the oracle, in a new database on the oracle and on
+                            the server under test, compared message by message (--server ADDR, else the oracle in
+                            another database; --show N)
   dump                      the pg_dump round trip: run clients/pg_dump/roundtrip.sql in a new database, dump it with
                             pg_dump of the oracle build, restore the dump into the oracle and dump it again, and
                             compare the dumps (--server ADDR for the server under test, else the oracle)
@@ -187,6 +192,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
             return introspect_command(args, &pins, suite);
         }
         Some("dump") => return dump_command(args, &pins),
+        Some("copy") => return copy_command(args, &pins),
         Some("gate") => return gate_command(args, &pins, &gate::SUITE, &gate::CLIENTS),
         Some("connect") => return gate_command(args, &pins, &connect::SUITE, &connect::CLIENTS),
         Some("version") => return version_command(args, &pins),
@@ -960,6 +966,39 @@ fn dump_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     let started = suites::utc_now();
     let run = dump::round_trip(&o, &server, &work)?;
     suites::report_run(&run, &o, &server, &work, &started)?;
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the `COPY` suite (spec/05 section 5.13) on the oracle and on the server under test, and compares the messages of each case.
+fn copy_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(1, &["compat-version", "server", "show"])?;
+    let work = args.work_dir();
+    let o = running_oracle(args, pins)?;
+    let target = server_target(args, &o)?;
+    let server = suites::Server { addr: target.addr, oracle: args.get("server").is_none() };
+    let started = suites::utc_now();
+    let clock = std::time::Instant::now();
+    let results = copy::run(&oracle_target(&o), &target)?;
+    let run = suites::Run {
+        suite: "copy".into(),
+        tests: results.iter().map(|r| (r.name.clone(), r.oracle == r.server)).collect(),
+        unstable: Vec::new(),
+        excluded: Vec::new(),
+        filtered: Vec::new(),
+        seconds: clock.elapsed().as_secs(),
+        statements: None,
+        m3: None,
+        checked: None,
+    };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    let cut = |s: &str| s.chars().take(300).collect::<String>().replace('\n', " | ");
+    for r in results.iter().filter(|r| r.oracle != r.server).take(args.number("show")?.unwrap_or(5))
+    {
+        let (want, got) = copy::first_lines(&r.oracle, &r.server);
+        out!("  {}", r.name);
+        out!("    oracle: {}", cut(want));
+        out!("    server: {}", cut(got));
+    }
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 

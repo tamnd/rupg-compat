@@ -342,6 +342,7 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
                 put(1, "catalog queries of the client traces".into(), "queries", r, tests, count);
             }
             "dump" => put(1, "pg_dump round trip".into(), "checks", r, tests, count),
+            "copy" => put(2, "COPY cases".into(), "cases", r, tests, count),
             "gate" => put(1, "gate G1".into(), "clients", r, tests, count),
             "connect" => put(0, "connect with SCRAM over TLS".into(), "clients", r, tests, count),
             "regress" => {
