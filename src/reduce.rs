@@ -3,7 +3,7 @@
 use std::time::Duration;
 
 use crate::client::{self, Conn, Target};
-use crate::message::Msg;
+use crate::message::{Msg, Val};
 
 /// The keywords that start a clause that the second pass can remove.
 const CLAUSES: [&str; 16] = [
@@ -275,13 +275,33 @@ fn normal(msgs: &[Msg]) -> Vec<String> {
                     rows.sort();
                     out.append(&mut rows);
                 }
-                out.push(format!("{name} {:?}", m.vals));
+                out.push(format!("{name} {:?}", without_oids(m)));
             }
         }
     }
     rows.sort();
     out.append(&mut rows);
     out
+}
+
+/// The values of a message without the OIDs that differ between two clusters: the table OIDs of a `RowDescription` and the OIDs of user types, as in spec/05 section 5.2.
+fn without_oids(m: &Msg) -> Vec<Val> {
+    let mut vals = m.vals.clone();
+    if m.name() == "RowDescription"
+        && let Some(Val::List(fields)) = vals.first_mut()
+    {
+        for f in fields {
+            if let Val::Tuple(v) = f {
+                if v[1] != Val::Int(0) {
+                    v[1] = Val::Null;
+                }
+                if v[3].int().is_some_and(|t| t >= 16384) {
+                    v[3] = Val::Null;
+                }
+            }
+        }
+    }
+    vals
 }
 
 /// The way a statement fails: the first different message type and the SQLSTATE on each side, or `None` when the answers are the same.
@@ -357,7 +377,7 @@ impl Tester {
 }
 
 /// A signature without the number of the statement, because the first pass removes statements.
-fn without_number(sig: &str) -> &str {
+pub(crate) fn without_number(sig: &str) -> &str {
     sig.split_once(": ").map_or(sig, |(_, rest)| rest)
 }
 
@@ -439,6 +459,39 @@ pub(crate) fn reduce(t: &mut Tester, mut list: Vec<String>) -> Result<Reduced, S
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::message::Dir;
+
+    fn row_description(table: i64, ty: i64) -> Msg {
+        let field = Val::Tuple(vec![
+            Val::Str(b"a".to_vec()),
+            Val::Int(table),
+            Val::Int(1),
+            Val::Int(ty),
+            Val::Int(4),
+            Val::Int(-1),
+            Val::Int(0),
+        ]);
+        Msg::new(Dir::B, "RowDescription", vec![Val::List(vec![field])])
+    }
+
+    #[test]
+    fn the_table_oids_and_user_types_are_not_compared() {
+        assert_eq!(
+            first_difference(&[row_description(16390, 23)], &[row_description(24576, 23)]),
+            None
+        );
+        assert_eq!(
+            first_difference(&[row_description(16390, 16400)], &[row_description(16390, 16500)]),
+            None
+        );
+        assert!(
+            first_difference(&[row_description(16390, 23)], &[row_description(16390, 25)])
+                .is_some()
+        );
+        assert!(
+            first_difference(&[row_description(0, 23)], &[row_description(16390, 23)]).is_some()
+        );
+    }
 
     #[test]
     fn the_statements_split_at_semicolons() {
