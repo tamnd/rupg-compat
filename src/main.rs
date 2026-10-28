@@ -17,6 +17,7 @@ macro_rules! out {
 }
 
 mod args;
+mod bisect;
 mod client;
 mod compare;
 mod connect;
@@ -109,6 +110,11 @@ commands:
                             first different statement has the same first different message type and SQLSTATE
                             (--server ADDR; --out FILE, default FILE.reduced.sql; --max-runs N, default 3000;
                             --timeout S, default 30)
+  bisect FILE               find the first rupg commit where a SQL file fails in the way that it fails at the bad
+                            commit: build rupg in the work directory at about log2(N) of the N commits from
+                            --good SHA to --bad SHA, start each build on --port N (default 5599), and compare
+                            each statement with the oracle as reduce does (--rupg DIR, the rupg repository;
+                            --timeout S, default 30); when --bad is older than --good, find the commit of the fix
   copy                      COPY TO and COPY FROM in the text, csv, binary and json formats, with their options and
                             errors and round trips of the output of the oracle, in a new database on the oracle and on
                             the server under test, compared message by message (--server ADDR, else the oracle in
@@ -206,6 +212,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("generate") => return generate_command(args, &pins),
         Some("logic") => return logic_command(args, &pins),
         Some("reduce") => return reduce_command(args, &pins),
+        Some("bisect") => return bisect_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -1016,6 +1023,92 @@ fn reduce_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     );
     out!("{}", body.trim_end());
     Ok(ExitCode::SUCCESS)
+}
+
+/// Builds rupg at the commits from a good commit to a bad commit and finds the first commit where a SQL file fails in the way that it fails at the bad commit (spec/21 section 21.3.7).
+fn bisect_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(2, &["compat-version", "rupg", "good", "bad", "port", "timeout"])?;
+    let Some(file) = args.words.get(1) else {
+        return Err("bisect: give the SQL file".into());
+    };
+    let (Some(repo), Some(good), Some(bad)) = (args.get("rupg"), args.get("good"), args.get("bad"))
+    else {
+        return Err("bisect: give --rupg DIR, --good SHA and --bad SHA".into());
+    };
+    let text = std::fs::read_to_string(file).map_err(|e| format!("{file}: {e}"))?;
+    let o = running_oracle(args, pins)?;
+    let work = std::path::absolute(args.work_dir()).map_err(|e| e.to_string())?;
+    let mut b = bisect::Bisect {
+        repo: Path::new(repo).to_path_buf(),
+        work,
+        oracle: &o,
+        oracle_target: oracle_target(&o),
+        port: args.number("port")?.unwrap_or(5599),
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+        statements: reduce::split(&text),
+        builds: 0,
+    };
+    let clock = std::time::Instant::now();
+    let result = bisect_run(&mut b, good, bad);
+    b.clean();
+    let (first, fix, count) = result?;
+    let what = if fix { "first commit without the failure" } else { "first bad commit" };
+    out!("{what}: {}", b.describe(&first));
+    out!("{} builds for {count} commits in {} s", b.builds, clock.elapsed().as_secs());
+    Ok(ExitCode::SUCCESS)
+}
+
+fn bisect_run(
+    b: &mut bisect::Bisect<'_>,
+    good: &str,
+    bad: &str,
+) -> Result<(String, bool, usize), String> {
+    let fix = if b.is_ancestor(good, bad) {
+        false
+    } else if b.is_ancestor(bad, good) {
+        true
+    } else {
+        return Err(format!("{good} and {bad} are not on one line of commits"));
+    };
+    let show = |b: &bisect::Bisect<'_>, commit: &str, step: &bisect::Step| {
+        let what = match step {
+            bisect::Step::Skip(e) => format!("skip, {e}"),
+            bisect::Step::Other(None) => "the answers of the oracle".into(),
+            bisect::Step::Other(Some(s)) => format!("another failure, {s}"),
+            bisect::Step::Same => "the failure".into(),
+        };
+        out!("build {}: {}: {what}", b.builds, b.describe(commit));
+    };
+    let (step, sig) = b.test(bad, None)?;
+    show(b, bad, &step);
+    let Some(want) = sig else {
+        return Err(format!("the file gives the answers of the oracle at {bad}"));
+    };
+    out!("signature: {want}");
+    let (step, _) = b.test(good, Some(&want))?;
+    show(b, good, &step);
+    match step {
+        bisect::Step::Skip(e) => return Err(format!("{good}: {e}")),
+        bisect::Step::Same => return Err(format!("the file fails in the same way at {good}")),
+        bisect::Step::Other(_) => {}
+    }
+    let (from, to) = if fix { (bad, good) } else { (good, bad) };
+    let commits = b.commits(from, to)?;
+    let last = commits.last().cloned().unwrap_or_default();
+    let first = bisect::first(&commits, |c| {
+        if c == last {
+            return Ok(Some(true));
+        }
+        let (step, _) = b.test(c, Some(&want))?;
+        show(b, c, &step);
+        Ok(match step {
+            bisect::Step::Skip(_) => None,
+            bisect::Step::Same => Some(!fix),
+            bisect::Step::Other(_) => Some(fix),
+        })
+    })?
+    .ok_or("there are no commits to search")?;
+    Ok((first, fix, commits.len()))
 }
 
 /// Runs the `COPY` suite (spec/05 section 5.13) on the oracle and on the server under test, and compares the messages of each case.
