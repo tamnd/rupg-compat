@@ -478,8 +478,8 @@
 "19 rows of pg_catalog.pg_wait_events with the gate schema" = 287
 
 [L3]
-"19 regression tests" = 98
-"19 regression tests of the M3 list" = 95
+"19 regression tests" = 108
+"19 regression tests of the M3 list" = 98
 "19 type input and output cases" = 593
 
 [L4]
