@@ -177,6 +177,25 @@ impl Conn {
         }
     }
 
+    /// Runs `COPY FROM STDIN` as a simple query. When the server asks for the data, it sends `data` in one `CopyData` message and then `CopyDone`. It returns the backend messages up to `ReadyForQuery`.
+    pub(crate) fn copy_in(&mut self, sql: &str, data: &[u8]) -> Result<Vec<Msg>, String> {
+        self.send(&Msg::new(Dir::F, "Query", vec![str_val(sql)]))?;
+        let mut out = Vec::new();
+        loop {
+            let msg = self.recv()?;
+            let name = msg.name();
+            out.push(msg);
+            match name {
+                "CopyInResponse" => {
+                    self.send(&Msg::new(Dir::F, "CopyData", vec![Val::Str(data.to_vec())]))?;
+                    self.send(&Msg::new(Dir::F, "CopyDone", Vec::new()))?;
+                }
+                "ReadyForQuery" => return Ok(out),
+                _ => {}
+            }
+        }
+    }
+
     /// Runs a simple query and fails on an error.
     pub(crate) fn execute(&mut self, sql: &str) -> Result<(), String> {
         match self.query(sql)?.iter().find(|m| m.name() == "ErrorResponse") {

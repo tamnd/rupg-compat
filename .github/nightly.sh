@@ -111,6 +111,7 @@ suite catalog-corpus catalog-corpus
 suite parameters parameters
 suite types types
 suite dump dump
+suite copy copy
 suite gate gate
 suite connect connect
 for t in corpus/traces/*.trace; do
