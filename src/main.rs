@@ -37,6 +37,7 @@ mod replay;
 mod report;
 mod resources;
 mod scram;
+mod slt;
 mod statements;
 mod suites;
 mod toml;
@@ -75,6 +76,10 @@ commands:
   pipeline                  run each test of libpq_pipeline and compare the 9 libpq traces
                             (each suite: --server ADDR for the server under test, else the oracle; --corpus DIR;
                             it writes results/N/<suite>-<oracle|server>.toml in the work directory)
+  sqllogictest [PATH...]    fetch the sqllogictest corpus of SQLite at the pin, run each record of the test files
+                            under PATH (default: all) on the oracle and on the server under test, and compare the
+                            answers of the two servers (--server ADDR, else the oracle in other databases;
+                            --jobs N, --timeout S for one record on the server, default 30; --show N)
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
@@ -173,6 +178,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("gate") => return gate_command(args, &pins, &gate::SUITE, &gate::CLIENTS),
         Some("connect") => return gate_command(args, &pins, &connect::SUITE, &connect::CLIENTS),
         Some("version") => return version_command(args, &pins),
+        Some("sqllogictest") => return sqllogictest_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
             return suite_command(args, &pins, suite);
         }
@@ -693,6 +699,60 @@ fn suite_command(args: &Args, pins: &Pins, suite: &str) -> Result<ExitCode, Stri
         run.failed().is_empty()
     };
     Ok(if good { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the files of the sqllogictest corpus on the oracle and on the server under test, and compares the answer of each record (spec/21 section 21.4.4).
+fn sqllogictest_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(usize::MAX, &["compat-version", "server", "jobs", "timeout", "show"])?;
+    let work = args.work_dir();
+    let o = running_oracle(args, pins)?;
+    let target = server_target(args, &o)?;
+    let server = suites::Server { addr: target.addr, oracle: args.get("server").is_none() };
+    let (repository, commit) = &pins.sqllogictest;
+    let root = slt::fetch(&work, repository, commit)?;
+    let paths: Vec<String> = match &args.words[1..] {
+        [] => vec![".".into()],
+        words => words.to_vec(),
+    };
+    let files = slt::test_files(&root, &paths)?;
+    let jobs = match args.number("jobs")? {
+        Some(n) => n,
+        None => std::thread::available_parallelism().map_or(4, |n| n.get()),
+    };
+    let sides = slt::Sides {
+        oracle: oracle_target(&o),
+        server: target,
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+    };
+    out!("sqllogictest {}: {} files at {commit} with {jobs} jobs", o.pin.major, files.len());
+    let started = suites::utc_now();
+    let clock = std::time::Instant::now();
+    let results = slt::run(&root, &files, &sides, jobs)?;
+    let run = suites::Run {
+        suite: "sqllogictest".into(),
+        tests: results.iter().map(|r| (r.name.clone(), r.pass())).collect(),
+        unstable: Vec::new(),
+        excluded: Vec::new(),
+        filtered: Vec::new(),
+        seconds: clock.elapsed().as_secs(),
+        statements: Some((
+            results.iter().map(|r| r.equal).sum(),
+            results.iter().map(|r| r.records).sum(),
+        )),
+        m3: None,
+        checked: None,
+    };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    let show = args.number("show")?.unwrap_or(5);
+    for r in results.iter().filter(|r| !r.pass()).take(show) {
+        if let Some((line, want, got)) = &r.first_diff {
+            let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
+            out!("  {}:{line}: {} of {} records equal", r.name, r.equal, r.records);
+            out!("    oracle: {}", cut(want));
+            out!("    server: {}", cut(got));
+        }
+    }
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Runs the catalog suite or the parameter suite (spec/05 section 5.6.5).

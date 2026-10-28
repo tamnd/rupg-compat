@@ -117,6 +117,7 @@ for t in corpus/traces/*.trace; do
     suite "replay-$(basename "$t" .trace)" replay "$t"
 done
 suite regress regress
+suite sqllogictest sqllogictest select1.test select2.test select3.test select4.test select5.test evidence index/between
 # On rupg, a spec that waits for a lock that rupg does not take would wait 180 s for each step.
 server_env=PG_TEST_TIMEOUT_DEFAULT=10 suite isolation isolation
 stop_rupg

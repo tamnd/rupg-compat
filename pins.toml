@@ -38,6 +38,11 @@ release = "14.24"
 ref = "REL_14_24"
 commit = "6b3806732b7c5df06bdd0ed150e8a07b4ad62315"
 
+# The sqllogictest corpus of SQLite (spec/21 section 21.4.4), from a mirror on GitHub of the fossil repository.
+[sqllogictest]
+repository = "https://github.com/gregrahn/sqllogictest"
+commit = "c93ac416f05635ff5cc490009add936d9753d01d"
+
 [rupg]
 # The rupg commit under test. The harness does not link rupg. It talks to a rupg server through a socket.
 repository = "https://github.com/tamnd/rupg"
