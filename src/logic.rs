@@ -192,6 +192,11 @@ fn rows(answer: &str) -> Vec<&str> {
     answer.lines().skip(1).collect()
 }
 
+/// A predicate of the given depth over the columns of the tables.
+pub(crate) fn predicate(rng: &mut Rng, tables: &[&Table], depth: usize) -> String {
+    Expr::new(rng, tables).expr(Ty::Bool, depth)
+}
+
 /// The checks of one predicate. The PQS check needs the oracle, to get the value of the predicate on a row.
 fn checks(rng: &mut Rng, tables: &[Table], oracle: &mut Conn) -> Result<Vec<Check>, String> {
     let a = &tables[rng.below(tables.len())];

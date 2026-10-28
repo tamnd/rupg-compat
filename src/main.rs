@@ -30,6 +30,7 @@ mod gate;
 mod generate;
 mod import;
 mod introspect;
+mod layout;
 mod levels;
 mod logic;
 mod message;
@@ -95,6 +96,12 @@ commands:
                             (--seed N, --count N predicates, default 500; --server ADDR, else the oracle in
                             another database; --timeout S, default 30; --show N); it writes the failed checks
                             to logic/<seed>.sql in the work directory
+  layout                    load the data of a seed in the hot only, cold only, mixed, mixed after change, no
+                            summaries and many workers layouts, run the same queries on each layout and on the
+                            oracle, and compare the answers; a layout that the server does not accept is not
+                            available (--seed N; --count N queries, default 300; --rows N, default 200;
+                            --server ADDR; --timeout S, default 30; --show N); it writes the failed queries to
+                            layout/<seed>.sql in the work directory
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
@@ -211,6 +218,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("sqllogictest") => return sqllogictest_command(args, &pins),
         Some("generate") => return generate_command(args, &pins),
         Some("logic") => return logic_command(args, &pins),
+        Some("layout") => return layout_command(args, &pins),
         Some("reduce") => return reduce_command(args, &pins),
         Some("bisect") => return bisect_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
@@ -910,6 +918,83 @@ fn logic_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
     for f in result.fails.iter().take(args.number("show")?.unwrap_or(5)) {
         out!("  {} {}: {}", f.kind, f.number, cut(&f.first));
+        out!("    {}", cut(&f.why));
+    }
+    out!("seed {seed}");
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the layout equivalence oracle (spec/21 section 21.4.5): the data of a seed in each layout, and the same queries on each layout and on the oracle.
+fn layout_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(1, &["compat-version", "server", "seed", "count", "rows", "timeout", "show"])?;
+    let seed = match args.get("seed") {
+        Some(s) => s.parse::<u64>().map_err(|e| format!("--seed {s}: {e}"))?,
+        None => std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs()),
+    };
+    out!("seed {seed}");
+    let work = args.work_dir();
+    let o = running_oracle(args, pins)?;
+    let target = server_target(args, &o)?;
+    let server = suites::Server { addr: target.addr, oracle: args.get("server").is_none() };
+    let count = args.number("count")?.unwrap_or(300);
+    let rows = args.number("rows")?.unwrap_or(200).max(1);
+    out!("layout {}: {count} queries over 3 tables of {rows} rows", o.pin.major);
+    let sides = generate::Sides {
+        oracle: oracle_target(&o),
+        server: target,
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+    };
+    let started = suites::utc_now();
+    let clock = std::time::Instant::now();
+    let result = layout::run(&sides, seed, rows, count)?;
+    let here: Vec<&layout::Tally> = result.tallies.iter().filter(|t| t.missing.is_none()).collect();
+    let passed: usize = result.tallies.iter().map(|t| t.passed).sum();
+    let checked: usize = result.tallies.iter().map(|t| t.checked).sum();
+    let run = suites::Run {
+        suite: "layout".into(),
+        tests: here.iter().map(|t| (t.layout.to_string(), t.passed == t.checked)).collect(),
+        unstable: Vec::new(),
+        excluded: result
+            .tallies
+            .iter()
+            .filter_map(|t| {
+                t.missing.as_ref().map(|m| (t.layout.to_string(), format!("not available: {m}")))
+            })
+            .collect(),
+        filtered: Vec::new(),
+        seconds: clock.elapsed().as_secs(),
+        statements: Some((passed, checked)),
+        m3: None,
+        checked: None,
+    };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    for t in &result.tallies {
+        match &t.missing {
+            Some(m) if t.checked == 0 => out!("  {}: not available, {m}", t.layout),
+            _ => out!(
+                "  {}: {} of {} queries give the answer of the oracle, {} differ from the hot layout, {} skipped{}",
+                t.layout,
+                t.passed,
+                t.checked,
+                t.not_hot,
+                t.skipped,
+                t.missing.as_ref().map_or(String::new(), |m| format!(", {m}"))
+            ),
+        }
+    }
+    if !result.fails.is_empty() {
+        let dir = work.join("layout");
+        std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+        let path = dir.join(format!("{seed}.sql"));
+        std::fs::write(&path, layout::fail_file(seed, &result))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        out!("the failed queries are in {}", path.display());
+    }
+    let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
+    for f in result.fails.iter().take(args.number("show")?.unwrap_or(5)) {
+        out!("  {} {}: {}", f.layout, f.number, cut(&f.sql));
         out!("    {}", cut(&f.why));
     }
     out!("seed {seed}");
