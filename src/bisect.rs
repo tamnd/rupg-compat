@@ -5,7 +5,7 @@
 use std::fs::{self, File};
 use std::net::{SocketAddr, TcpStream};
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::process::{Child, Command, Stdio};
 use std::time::{Duration, Instant};
 
 use crate::client::Target;
@@ -54,6 +54,55 @@ fn git(dir: &Path, args: &[&str]) -> Result<String, String> {
 
 fn is_ancestor(repo: &Path, a: &str, b: &str) -> bool {
     git(repo, &["merge-base", "--is-ancestor", a, b]).is_ok()
+}
+
+/// Starts `rupg serve` on a data directory with the configuration of the oracle, and waits until the port takes connections.
+pub(crate) fn start(
+    bin: &Path,
+    dir: &Path,
+    pw: &Path,
+    port: u16,
+    log_path: &Path,
+) -> Result<Result<Child, String>, String> {
+    let log = File::create(log_path).map_err(|e| format!("{}: {e}", log_path.display()))?;
+    let err = log.try_clone().map_err(|e| e.to_string())?;
+    let mut child = Command::new(bin)
+        .arg("serve")
+        .arg("-D")
+        .arg(dir)
+        .arg("--pwfile")
+        .arg(pw)
+        .stdin(Stdio::null())
+        .stdout(log)
+        .stderr(err)
+        .spawn()
+        .map_err(|e| format!("{}: {e}", bin.display()))?;
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let clock = Instant::now();
+    loop {
+        if TcpStream::connect_timeout(&addr, Duration::from_secs(1)).is_ok() {
+            return Ok(Ok(child));
+        }
+        if clock.elapsed() > Duration::from_secs(60) || child.try_wait().ok().flatten().is_some() {
+            stop(child);
+            return Ok(Err(format!("the server does not start, see {}", log_path.display())));
+        }
+        std::thread::sleep(Duration::from_millis(200));
+    }
+}
+
+/// Stops a server with SIGTERM, and with SIGKILL after 60 s.
+pub(crate) fn stop(mut child: Child) {
+    let _ = Command::new("kill").arg("-TERM").arg(child.id().to_string()).status();
+    let clock = Instant::now();
+    while clock.elapsed() < Duration::from_secs(60) {
+        if child.try_wait().ok().flatten().is_some() {
+            return;
+        }
+        std::thread::sleep(Duration::from_millis(200));
+    }
+    let _ = child.kill();
+    let _ = child.wait();
 }
 
 /// The first commit of `commits` where `found` is true, when it is true for the last commit. A commit that gives `None` does not count.
@@ -130,33 +179,12 @@ impl Bisect<'_> {
         let pw = self.dir().join("pw");
         fs::write(&pw, oracle::PASSWORD).map_err(|e| format!("{}: {e}", pw.display()))?;
         let log_path = self.dir().join("rupg.log");
-        let log = File::create(&log_path).map_err(|e| format!("{}: {e}", log_path.display()))?;
-        let err = log.try_clone().map_err(|e| e.to_string())?;
-        let mut child = Command::new(&bin)
-            .arg("serve")
-            .arg("-D")
-            .arg(&conf)
-            .arg("--pwfile")
-            .arg(&pw)
-            .stdin(Stdio::null())
-            .stdout(log)
-            .stderr(err)
-            .spawn()
-            .map_err(|e| format!("{}: {e}", bin.display()))?;
-        let addr = SocketAddr::from(([127, 0, 0, 1], self.port));
-        let start = Instant::now();
-        let up = loop {
-            if TcpStream::connect_timeout(&addr, Duration::from_secs(1)).is_ok() {
-                break true;
-            }
-            if start.elapsed() > Duration::from_secs(60)
-                || child.try_wait().ok().flatten().is_some()
-            {
-                break false;
-            }
-            std::thread::sleep(Duration::from_millis(200));
+        let child = match start(&bin, &conf, &pw, self.port, &log_path)? {
+            Ok(c) => c,
+            Err(e) => return Ok((Step::Skip(e), None)),
         };
-        let result = if up {
+        let addr = SocketAddr::from(([127, 0, 0, 1], self.port));
+        let result = {
             let mut server = self.oracle_target.clone();
             server.addr = addr;
             server.params.push(("rupg.compat_version".into(), self.oracle.pin.major.to_string()));
@@ -175,11 +203,8 @@ impl Bisect<'_> {
                 };
                 (if same { Step::Same } else { Step::Other(sig.clone()) }, sig)
             })
-        } else {
-            Ok((Step::Skip(format!("the server does not start, see {}", log_path.display())), None))
         };
-        let _ = child.kill();
-        let _ = child.wait();
+        stop(child);
         result
     }
 

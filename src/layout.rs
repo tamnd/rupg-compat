@@ -192,7 +192,7 @@ pub(crate) enum Step {
 }
 
 /// Runs the steps, and gives the first error.
-fn load(c: &mut Conn, steps: &[Step]) -> Result<Option<String>, String> {
+pub(crate) fn load(c: &mut Conn, steps: &[Step]) -> Result<Option<String>, String> {
     for step in steps {
         let msgs = match step {
             Step::Sql(sql) => c.query(sql)?,
