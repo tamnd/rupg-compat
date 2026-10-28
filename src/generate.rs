@@ -344,7 +344,7 @@ impl Rng {
         usize::try_from(self.next() % n as u64).unwrap_or_default()
     }
 
-    fn pick<'a>(&mut self, list: &[&'a str]) -> &'a str {
+    pub(crate) fn pick<'a>(&mut self, list: &[&'a str]) -> &'a str {
         list[self.below(list.len())]
     }
 }
@@ -451,13 +451,14 @@ fn token(g: &Grammar, t: &str, rng: &mut Rng) -> String {
 }
 
 /// The schema and the data of a seed: three tables of two to four columns, and up to eight rows in each.
-pub(crate) fn schema(rng: &mut Rng) -> Vec<String> {
+pub(crate) fn schema(rng: &mut Rng) -> (Vec<Table>, Vec<String>) {
     let types = ["int4", "int8", "text", "bool", "numeric", "float8"];
+    let mut tables = Vec::new();
     let mut sql = Vec::new();
     let mut column = 0;
     for t in 0..3 {
         let n = 2 + rng.below(3);
-        let mut cols: Vec<(String, &str)> = Vec::new();
+        let mut cols: Vec<(String, &'static str)> = Vec::new();
         for _ in 0..n {
             // A column name can be in more than one table, so that a name can be ambiguous.
             column = (column + 1 + rng.below(2)) % 5;
@@ -472,8 +473,16 @@ pub(crate) fn schema(rng: &mut Rng) -> Vec<String> {
             let vals: Vec<String> = cols.iter().map(|(_, ty)| value(ty, rng)).collect();
             sql.push(format!("INSERT INTO t{t} VALUES ({})", vals.join(", ")));
         }
+        tables.push(Table { name: format!("t{t}"), cols });
     }
-    sql
+    (tables, sql)
+}
+
+/// A table of the schema of a seed, with the name and the type of each column.
+#[derive(Clone, Debug)]
+pub(crate) struct Table {
+    pub(crate) name: String,
+    pub(crate) cols: Vec<(String, &'static str)>,
 }
 
 fn value(ty: &str, rng: &mut Rng) -> String {
@@ -535,7 +544,12 @@ pub(crate) struct Outcome {
     pub(crate) reachable: usize,
 }
 
-fn open(target: &Target, db: &str, timeout: Duration, reset: bool) -> Result<Conn, String> {
+pub(crate) fn open(
+    target: &Target,
+    db: &str,
+    timeout: Duration,
+    reset: bool,
+) -> Result<Conn, String> {
     if reset {
         client::reset_database(target, db)?;
     }
@@ -553,7 +567,7 @@ pub(crate) fn run(g: &Grammar, sides: &Sides, seed: u64, count: usize) -> Result
         .iter()
         .map(|s| g.rule(s).ok_or(format!("gram.y has no rule {s}")))
         .collect::<Result<_, _>>()?;
-    let mut out = Outcome { schema: schema(&mut rng), ..Default::default() };
+    let mut out = Outcome { schema: schema(&mut rng).1, ..Default::default() };
     let same = sides.oracle.addr == sides.server.addr;
     let server_db = if same { "gen_server" } else { "gen" };
     let mut a = open(&sides.oracle, "gen_a", Duration::from_secs(60), true)?;
@@ -701,7 +715,7 @@ mod tests {
 
     #[test]
     fn the_schema_has_three_tables() {
-        let sql = schema(&mut Rng::new(1));
+        let sql = schema(&mut Rng::new(1)).1;
         assert_eq!(sql.iter().filter(|s| s.starts_with("CREATE TABLE")).count(), 3);
     }
 }
