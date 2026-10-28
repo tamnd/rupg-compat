@@ -355,6 +355,11 @@ pub(crate) fn rows(records: &[Record], version: u32) -> Vec<Row> {
             }
             "types" => put(2, "type input and output cases".into(), "cases", r, tests, count),
             "isolation" => put(3, "isolation specs".into(), "specs", r, tests, count),
+            "sqllogictest" => {
+                put(2, "sqllogictest files".into(), "files", r, tests, count);
+                let equal = r.statements.map_or(0, |n| n.0);
+                put(2, "sqllogictest records".into(), "records", r, r.statements, equal);
+            }
             "parameters" => put(3, "parameter cases".into(), "cases", r, tests, count),
             s => {
                 if let (Some(name), Some(c)) = (s.strip_prefix("replay-"), &r.checked) {

@@ -42,6 +42,8 @@ pub(crate) struct Pins {
     pub(crate) rupg_commit: String,
     /// The client pins, in name order.
     pub(crate) clients: Vec<Client>,
+    /// The repository and the commit of the sqllogictest corpus.
+    pub(crate) sqllogictest: (String, String),
 }
 
 /// An error in `pins.toml`.
@@ -91,6 +93,12 @@ impl Pins {
             return Err(Error(format!("the reference {reference} has no pin")));
         }
         let rupg = table(&root, "rupg")?;
+        let slt = table(&root, "sqllogictest")?;
+        let sqllogictest =
+            (string(slt, "repository", "sqllogictest")?, string(slt, "commit", "sqllogictest")?);
+        if sqllogictest.1.len() != 40 || !sqllogictest.1.bytes().all(|b| b.is_ascii_hexdigit()) {
+            return Err(Error("[sqllogictest] commit is not a full commit hash".into()));
+        }
         let mut clients = Vec::new();
         if let Some(Value::Table(c)) = root.get("clients") {
             for (name, value) in c {
@@ -106,6 +114,7 @@ impl Pins {
             postgres,
             rupg_commit: string(rupg, "commit", "rupg")?,
             clients,
+            sqllogictest,
         })
     }
 }

@@ -145,6 +145,11 @@ impl Conn {
         }
     }
 
+    /// Sets the time that a read waits for the server.
+    pub(crate) fn set_timeout(&self, timeout: Duration) -> Result<(), String> {
+        self.stream.set_read_timeout(Some(timeout)).map_err(|e| e.to_string())
+    }
+
     pub(crate) fn send(&mut self, msg: &Msg) -> Result<(), String> {
         msg.encode().write_to(&mut self.stream).map_err(|e| e.to_string())?;
         self.stream.flush().map_err(|e| e.to_string())
