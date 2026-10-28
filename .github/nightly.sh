@@ -126,6 +126,9 @@ suite layout layout --seed "$(date -u +%Y%m%d)" --count 1000
 # On rupg, a spec that waits for a lock that rupg does not take would wait 180 s for each step.
 server_env=PG_TEST_TIMEOUT_DEFAULT=10 suite isolation isolation
 stop_rupg
+# The summary deletion run starts its own rupg on a new data directory and on a copy after rupg strip --summaries.
+"$rc" strip --rupg-bin "$rupg" --seed "$(date -u +%Y%m%d)" --count 1000 --compat-version 19 > "$logs/strip-server.log" 2>&1 || true
+tail -n 1 "$logs/strip-server.log"
 "$rc" oracle stop --compat-version 19 > /dev/null 2>&1
 
 "$rc" report --compat-version 19 --ratchet ratchet.toml --rupg-commit "$commit" --out "$out" > "$logs/report.log" 2>&1 || status=1

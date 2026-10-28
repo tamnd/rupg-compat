@@ -45,6 +45,7 @@ mod resources;
 mod scram;
 mod slt;
 mod statements;
+mod strip;
 mod suites;
 mod toml;
 mod trace;
@@ -102,6 +103,12 @@ commands:
                             available (--seed N; --count N queries, default 300; --rows N, default 200;
                             --server ADDR; --timeout S, default 30; --show N); it writes the failed queries to
                             layout/<seed>.sql in the work directory
+  strip                     the summary deletion run: start rupg on a new data directory, load the data of a seed
+                            in four layouts with indexes, keep the answers of the queries of the seed, run
+                            `rupg strip --summaries` on a copy of the data directory and compare the answers on
+                            the copy, then again without the indexes that are not constraints (--rupg-bin FILE,
+                            default rupg; --port N, default 5598; --seed N; --count N, default 300; --rows N,
+                            default 200; --timeout S, default 30; --show N)
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
@@ -219,6 +226,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("generate") => return generate_command(args, &pins),
         Some("logic") => return logic_command(args, &pins),
         Some("layout") => return layout_command(args, &pins),
+        Some("strip") => return strip_command(args, &pins),
         Some("reduce") => return reduce_command(args, &pins),
         Some("bisect") => return bisect_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
@@ -995,6 +1003,90 @@ fn layout_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
     for f in result.fails.iter().take(args.number("show")?.unwrap_or(5)) {
         out!("  {} {}: {}", f.layout, f.number, cut(&f.sql));
+        out!("    {}", cut(&f.why));
+    }
+    out!("seed {seed}");
+    Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the summary deletion run (spec/21 section 21.8) on a rupg that the run starts.
+fn strip_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(
+        1,
+        &["compat-version", "rupg-bin", "port", "seed", "count", "rows", "timeout", "show"],
+    )?;
+    let seed = match args.get("seed") {
+        Some(s) => s.parse::<u64>().map_err(|e| format!("--seed {s}: {e}"))?,
+        None => std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs()),
+    };
+    out!("seed {seed}");
+    let work = std::path::absolute(args.work_dir()).map_err(|e| e.to_string())?;
+    let o = running_oracle(args, pins)?;
+    let port = args.number("port")?.unwrap_or(5598);
+    let mut target = oracle_target(&o);
+    target.addr = SocketAddr::from(([127, 0, 0, 1], port));
+    target.params.push(("rupg.compat_version".into(), o.pin.major.to_string()));
+    let count = args.number("count")?.unwrap_or(300);
+    let rows = args.number("rows")?.unwrap_or(200).max(1);
+    out!("strip {}: {count} queries over 3 tables of {rows} rows", o.pin.major);
+    let s = strip::Strip {
+        bin: PathBuf::from(args.get("rupg-bin").unwrap_or("rupg")),
+        work: work.clone(),
+        oracle: &o,
+        target,
+        port,
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+    };
+    let started = suites::utc_now();
+    let clock = std::time::Instant::now();
+    let result = s.run(seed, rows, count)?;
+    let passed: usize = result.tallies.iter().map(|t| t.passed).sum();
+    let checked: usize = result.tallies.iter().map(|t| t.checked).sum();
+    let run = suites::Run {
+        suite: "strip".into(),
+        tests: result
+            .tallies
+            .iter()
+            .filter(|t| t.missing.is_none())
+            .map(|t| (t.check.to_string(), t.passed == t.checked))
+            .collect(),
+        unstable: Vec::new(),
+        excluded: result
+            .tallies
+            .iter()
+            .filter_map(|t| {
+                t.missing.as_ref().map(|m| (t.check.to_string(), format!("not available: {m}")))
+            })
+            .collect(),
+        filtered: Vec::new(),
+        seconds: clock.elapsed().as_secs(),
+        statements: Some((passed, checked)),
+        m3: None,
+        checked: None,
+    };
+    let server = suites::Server { addr: s.target.addr, oracle: false };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    for (layout, e) in &result.missing {
+        out!("  layout {layout}: not available, {e}");
+    }
+    for t in &result.tallies {
+        match &t.missing {
+            Some(m) => out!("  {}: not available, {m}", t.check),
+            None => out!("  {}: {} of {} answers are the same", t.check, t.passed, t.checked),
+        }
+    }
+    if !result.fails.is_empty() {
+        let dir = work.join("strip");
+        let path = dir.join(format!("{seed}.sql"));
+        std::fs::write(&path, strip::fail_file(seed, &result))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        out!("the failed queries are in {}", path.display());
+    }
+    let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
+    for f in result.fails.iter().take(args.number("show")?.unwrap_or(5)) {
+        out!("  {}, {} {}: {}", f.check, f.layout, f.number, cut(&f.sql));
         out!("    {}", cut(&f.why));
     }
     out!("seed {seed}");
