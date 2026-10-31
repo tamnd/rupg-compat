@@ -2,6 +2,7 @@
 
 One page for each tested commit of rupg main, newest first (spec/05 section 5.8). The nightly workflow of the main branch writes them.
 
+- 2026-10-31 [`e4c23647fbc40592fb85a8d4b2add7a0fe53b9dc`](commits/e4c23647fbc40592fb85a8d4b2add7a0fe53b9dc.md): the suites job is failure
 - 2026-10-30 [`0aecaa0b55c15b5b38504bb1fb1454b16bb535de`](commits/0aecaa0b55c15b5b38504bb1fb1454b16bb535de.md): the suites job is failure
 - 2026-10-29 [`40e7c6f94280aad609324d6346c6daa541e2a5c4`](commits/40e7c6f94280aad609324d6346c6daa541e2a5c4.md): the suites job is success
 - 2026-10-28 [`acd61830fa802fe15c0d80573e9d73a4612b898e`](commits/acd61830fa802fe15c0d80573e9d73a4612b898e.md): the suites job is success
