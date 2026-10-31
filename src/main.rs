@@ -22,6 +22,7 @@ mod client;
 mod compare;
 mod connect;
 mod copy;
+mod crash;
 mod diff;
 mod dump;
 mod fails;
@@ -109,6 +110,11 @@ commands:
                             the copy, then again without the indexes that are not constraints (--rupg-bin FILE,
                             default rupg; --port N, default 5598; --seed N; --count N, default 300; --rows N,
                             default 200; --timeout S, default 30; --show N)
+  crash                     the crash run: start rupg on a new data directory, run rounds of transactions of a seed
+                            on the oracle and on rupg, stop rupg with SIGKILL (SIGTERM in each fourth round), start
+                            it again and compare each table with the oracle (--rupg-bin FILE, default rupg; --port N,
+                            default 5597; --seed N; --rounds N, default 20; --rows N, default 1000; --timeout S,
+                            default 30; --show N); it writes the failed checks to crash/<seed>.sql in the work directory
   catalog                   SELECT * on each catalog, system view and information_schema view of the import,
                             in a new database (--schema gate: run clients/gate.sql in it first, as the suite
                             catalog-gate)
@@ -227,6 +233,7 @@ fn run(args: &Args) -> Result<ExitCode, String> {
         Some("logic") => return logic_command(args, &pins),
         Some("layout") => return layout_command(args, &pins),
         Some("strip") => return strip_command(args, &pins),
+        Some("crash") => return crash_command(args, &pins),
         Some("reduce") => return reduce_command(args, &pins),
         Some("bisect") => return bisect_command(args, &pins),
         Some(suite @ ("regress" | "isolation" | "pipeline")) => {
@@ -1091,6 +1098,85 @@ fn strip_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
     }
     out!("seed {seed}");
     Ok(if run.failed().is_empty() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+}
+
+/// Runs the crash run on a rupg that the run starts.
+fn crash_command(args: &Args, pins: &Pins) -> Result<ExitCode, String> {
+    args.only(
+        1,
+        &["compat-version", "rupg-bin", "port", "seed", "rounds", "rows", "timeout", "show"],
+    )?;
+    let seed = match args.get("seed") {
+        Some(s) => s.parse::<u64>().map_err(|e| format!("--seed {s}: {e}"))?,
+        None => std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs()),
+    };
+    out!("seed {seed}");
+    let work = std::path::absolute(args.work_dir()).map_err(|e| e.to_string())?;
+    let o = running_oracle(args, pins)?;
+    let port = args.number("port")?.unwrap_or(5597);
+    let oracle = oracle_target(&o);
+    let mut target = oracle.clone();
+    target.addr = SocketAddr::from(([127, 0, 0, 1], port));
+    target.params.push(("rupg.compat_version".into(), o.pin.major.to_string()));
+    let rounds = args.number("rounds")?.unwrap_or(20);
+    let rows = args.number("rows")?.unwrap_or(1000).max(1);
+    out!("crash {}: {rounds} rounds with up to {rows} rows in an insert", o.pin.major);
+    let c = crash::Crash {
+        bin: PathBuf::from(args.get("rupg-bin").unwrap_or("rupg")),
+        work: work.clone(),
+        oracle: &o,
+        oracle_target: oracle,
+        target,
+        port,
+        timeout: std::time::Duration::from_secs(args.number("timeout")?.unwrap_or(30)),
+    };
+    let started = suites::utc_now();
+    let clock = std::time::Instant::now();
+    let result = c.run(seed, rounds, rows)?;
+    let run = suites::Run {
+        suite: "crash".into(),
+        tests: result
+            .rounds
+            .iter()
+            .enumerate()
+            .map(|(i, &ok)| (format!("round {}", i + 1), ok))
+            .collect(),
+        unstable: Vec::new(),
+        excluded: Vec::new(),
+        filtered: Vec::new(),
+        seconds: clock.elapsed().as_secs(),
+        statements: Some((result.passed, result.checked)),
+        m3: None,
+        checked: None,
+    };
+    let server = suites::Server { addr: c.target.addr, oracle: false };
+    suites::report_run(&run, &o, &server, &work, &started)?;
+    out!(
+        "  {} of {} rounds pass, {} of {} checks",
+        run.passed(),
+        result.rounds.len(),
+        result.passed,
+        result.checked
+    );
+    if let Some(why) = &result.stopped {
+        out!("  stopped: {why}");
+    }
+    if !result.fails.is_empty() {
+        let path = work.join("crash").join(format!("{seed}.sql"));
+        std::fs::write(&path, crash::fail_file(seed, &result))
+            .map_err(|e| format!("{}: {e}", path.display()))?;
+        out!("the failed checks are in {}", path.display());
+    }
+    let cut = |s: &str| s.chars().take(200).collect::<String>().replace('\n', " | ");
+    for f in result.fails.iter().take(args.number("show")?.unwrap_or(5)) {
+        out!("  round {}: {}", f.round, cut(&f.sql));
+        out!("    {}", cut(&f.why));
+    }
+    out!("seed {seed}");
+    let ok = run.failed().is_empty() && result.stopped.is_none();
+    Ok(if ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 }
 
 /// Runs the catalog suite or the parameter suite (spec/05 section 5.6.5).
